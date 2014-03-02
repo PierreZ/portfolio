@@ -1,0 +1,25 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+
+.welcome{
+	background-color: $blue_background;
+	text-align: center;
+	padding-top: 60px;
+	
+	h1{
+		color: white;
+	}
+
+	.social{
+		margin-top: 30px;
+		.socials_icons{
+			margin: 15px;
+			width: 50px;
+
+		}
+	}
+}
+
+}
+
