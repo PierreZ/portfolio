@@ -543,7 +543,8 @@ body {
   body .welcome {
     background-color: #34495e;
     text-align: center;
-    padding-top: 60px; }
+    padding-top: 60px;
+    padding-bottom: 60px; }
     body .welcome h1 {
       color: white; }
     body .welcome .social {
@@ -551,3 +552,26 @@ body {
       body .welcome .social .socials_icons {
         margin: 15px;
         width: 50px; }
+
+.google_color {
+  height: 15px;
+  margin-bottom: 50px; }
+
+#google_color:after, #google_color:before {
+  content: "";
+  float: right;
+  height: 4px; }
+
+.google_color:before {
+  border-width: 500px;
+  border-left: 70px solid #33b5e5;
+  border-right: 70px solid #ff4444;
+  height: 1px;
+  content: ""; }
+
+.google_color:after {
+  border-width: 500px;
+  border-left: 70px solid #99cc00;
+  border-right: 70px solid #ffbb33;
+  height: 1px;
+  content: ""; }

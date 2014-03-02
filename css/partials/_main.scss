@@ -6,6 +6,7 @@ body {
 	background-color: $blue_background;
 	text-align: center;
 	padding-top: 60px;
+	padding-bottom: 60px;
 	
 	h1{
 		color: white;
@@ -22,4 +23,38 @@ body {
 }
 
 }
+
+.google_color{
+	height: 15px;
+	margin-bottom: 50px;
+}
+
+#google_color:after, #google_color:before {
+content: "";
+float: right;
+height: 4px;
+}
+
+.google_color:before{
+	border-width:500px;
+	border-left: 70px solid $blue_google;
+border-right: 70px solid $red_google;
+height: 1px;
+content: "";
+}.google_color:after{
+		border-width:500px;
+
+	border-left: 70px solid $green_google;
+	border-right: 70px solid $orange_google;
+height: 1px;
+content: "";
+}
+
+
+// .google_color:after{
+// 	border-width: 0 25.5px 0 26.25px;
+// 	height: 3px;
+// 	border-left: 34px solid #0089fa;
+// border-right: 35px solid #ff002b;
+// }
 
