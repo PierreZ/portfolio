@@ -21,11 +21,6 @@
   border-width: 1px;
   border-radius: 50%;
 
-  -webkit-transform: scale(1.1);
-        -moz-transform: scale(1.1);
-        -o-transform: scale(1.1);
-        -ms-transform: scale(1.1);
-        transform: scale(1.1);
 
   /* set defaults to skill-2 */
   width: 2em;
@@ -147,71 +142,23 @@
 	color:rgba(138, 138, 140, 1);
 }
 
-.dev_skills.ng-enter { 
-  -webkit-animation: flipInX 1s;
-  -moz-animation: flipInX 1s;
-  -o-animation: flipInX 1s;
-  -ms-animation: flipInX 1s;
-}
-.dev_skills.ng-leave {
-  -webkit-animation: flipOutX 1s;
-  -moz-animation: flipOutX 1s;
-  -o-animation: flipOutX 1s;
-  -ms-animation: flipOutX 1s;
- }
-
-
- 
-.web_skills.ng-enter { 
-  -webkit-animation: flipInX 1s;
-  -moz-animation: flipInX 1s;
-  -o-animation: flipInX 1s;
-  -ms-animation: flipInX 1s;
-}
-.web_skills.ng-leave {
-  -webkit-animation: flipOutX 1s;
-  -moz-animation: flipOutX 1s;
-  -o-animation: flipOutX 1s;
-  -ms-animation: flipOutX 1s;
- }
-
- 
-.network_skills.ng-enter { 
-  -webkit-animation: flipInX 1s;
-  -moz-animation: flipInX 1s;
-  -o-animation: flipInX 1s;
-  -ms-animation: flipInX 1s;
-}
-.network_skills.ng-leave {
-  -webkit-animation: flipOutX 1s;
-  -moz-animation: flipOutX 1s;
-  -o-animation: flipOutX 1s;
-  -ms-animation: flipOutX 1s;
- }
- 
- 
-.OS_skills.ng-enter { 
-  -webkit-animation: flipInX 1s;
-  -moz-animation: flipInX 1s;
-  -o-animation: flipInX 1s;
-  -ms-animation: flipInX 1s;
-}
-.OS_skills.ng-leave {
-  -webkit-animation: flipOutX 1s;
-  -moz-animation: flipOutX 1s;
-  -o-animation: flipOutX 1s;
-  -ms-animation: flipOutX 1s;
- }
-
-
- 
+.dev_skills.ng-enter,
+.web_skills.ng-enter,
+.network_skills.ng-enter,
+.OS_skills.ng-enter,
 .other_skills.ng-enter { 
   -webkit-animation: flipInX 1s;
   -moz-animation: flipInX 1s;
   -o-animation: flipInX 1s;
   -ms-animation: flipInX 1s;
 }
-.other_skills.ng-leave {
+
+
+.dev_skills.ng-leave,
+.web_skills.ng-leave,
+.network_skills.ng-leave,
+.OS_skills.ng-leave,
+.other_skills.ng-leave  {
   -webkit-animation: flipOutX 1s;
   -moz-animation: flipOutX 1s;
   -o-animation: flipOutX 1s;
