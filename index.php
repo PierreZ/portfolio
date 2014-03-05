@@ -144,9 +144,9 @@ require("elements/menu.php");
   <div class="row education">
     <h2 class="text-center">Education</h2>
     <div class="google_color text-center"></div>
-    <div class="col-md-12">
-      <article class="text-center">
-        <header>
+    <div class="col-md-6">
+      <article>
+        <header class="text-center">
           <h3>Institut Supérieur de l'Electronique et du Numérique</h3>
           <div class="logo-isen">
             <h1>ISEN</h1>
@@ -154,13 +154,24 @@ require("elements/menu.php");
           </div>
           <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
         </header>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <h4><strong>Computer and Network Cycle(2 years)</strong></h4>
+        <p>After spending 2 years in preparatory classes, I've decided to go into Computer and Cycle in order to enhanced my technical skills.</p>
+<p>Technical courses:</p>
+<ul>
+<li> Hardware</li>
+<li> Linux-based systemes</li>
+<li> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks(CCNA 1-2-3-4)</li>
+<li> Databases</li>
+<li> C, C++, Java</li>
+<li> PHP, Javascript, HTML5</li>
+</ul>
+<h4><strong>Preparatory classes(2 years)</strong></h4>
+<p>They consist of two very intensive years which act as a preparatory course (or cram school) with the main goal of training undergraduate students. The workload is one of the highest in the world(between 35 and 40 contact hours a week, including written and oral exams).</p>
       </article>
+    </div>
+    <div class="col-md-6 text-center">
+      <h2>More to come!</h2>
+      <p>My goal is to spend a full year in a foreign country during my final year at ISEN!</p>
     </div>
   </div>
 

@@ -95,11 +95,6 @@ skills.push({
 	"css":"skill-7 web_skills",
 });
 
-skills.push({
-	"name":"Node.JS",
-	"type":"Web",
-	"css":"skill-7 web_skills",
-});
 //******************
 //******************
 // Network
@@ -166,7 +161,7 @@ skills.push({
 	"css":"skill-5 other_skills",
 });
 skills.push({
-	"name":"GIT",
+	"name":"Git",
 	"type":"Data/Others",
 	"css":"skill-6 other_skills",
 });

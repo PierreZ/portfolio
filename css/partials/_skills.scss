@@ -147,23 +147,12 @@
 .network_skills.ng-enter,
 .OS_skills.ng-enter,
 .other_skills.ng-enter { 
-  -webkit-animation: flipInX 1s;
-  -moz-animation: flipInX 1s;
-  -o-animation: flipInX 1s;
-  -ms-animation: flipInX 1s;
+  -webkit-animation: flipInX 1.5s;
+  -moz-animation: flipInX 1.5s;
+  -o-animation: flipInX 1.5s;
+  -ms-animation: flipInX 1.5s;
 }
 
-
-.dev_skills.ng-leave,
-.web_skills.ng-leave,
-.network_skills.ng-leave,
-.OS_skills.ng-leave,
-.other_skills.ng-leave  {
-  -webkit-animation: flipOutX 1s;
-  -moz-animation: flipOutX 1s;
-  -o-animation: flipOutX 1s;
-  -ms-animation: flipOutX 1s;
- }
 
 
 
