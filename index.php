@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app='PortfolioApp'> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app='PortfolioApp'> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app='PortfolioApp'> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app='PortfolioApp'> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -10,6 +10,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
 
+  <link rel="stylesheet" href="css/animate.css">
   <link rel="stylesheet" href="css/bootstrap.css">
   <style>
     body {
@@ -20,8 +21,11 @@
   <link rel="stylesheet" href="css/main.css">
 
   <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-animate.min.js"></script>
 </head>
-<body>
+<body ng-controller='Ctrl'>
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
@@ -30,48 +34,87 @@
 require("elements/menu.php");
 ?> 
 
-<div class="row welcome">
+ <div class="row welcome">
   <h1>Pierre Zemb<br/>
     <small>
-      <span class="txt-rotate biggest" data-period="2000" data-rotate='[ "French Engineer student", "Software developer", "But also Web when needed", "Pierre Who ??" ]'></span>
+      <span class="txt-rotate biggest" data-period="2000" data-rotate='[ "French Engineer student", "Software developer", "But also Web when needed", "Pierre Who??" ]'></span>
     </small>
   </h1>
-    <div class="social">
+  <div class="social">
         <a  href="http://www.facebook.com/pierre.zemb"><img class="socials_icons" src="img/facebook.png" alt="Facebook" /></a>
         <a href="http://twitter.com/PierreZ"><img class="socials_icons" src="img/twitter.png" alt="Twitter" /></a>
         <a href="http://plus.google.com/108156342712745521162"><img class="socials_icons" src="img/googleplus-revised.png" alt="Google+" /></a>
         <a href="http://www.flickr.com/photos/34207436@N03/sets/"><img class="socials_icons" src="img/flickr.png" alt="Flickr" /></a>
         <a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="img/linkedin.png" alt="Youtube" /></a>
         <a href="https://github.com/PierreZ"><img class="socials_icons"  src="img/github.png" alt="git" /></a>
-    </div>
-  </div>
-
-
-<div class="container">
-  <!-- Example row of columns -->
-  <div class="row">
-    <h2 class="text-center">About Me</h2>
-    <div class="google_color text-center"></div>
-    <div class="col-md-3">
-      <img class="profile" src="img/myself.png">
-    </div>
-    <div class="col-md-9">
-    <p> ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmodtempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat. Duis aute irure dolor in reprehenderit in voluptate velit essecillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat nonproident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-    </div>
   </div>
 </div>
-  <hr>
+
+
+  <div class="container">
+    <div class="row about">
+      <h2 class="text-center">About Me</h2>
+      <div class="google_color text-center"></div>
+      <div class="col-md-3">
+        <img class="profile_image" src="img/myself.png">
+      </div>
+      <div class="col-md-9">
+        <p>
+          Hi! My name's Pierre Zemb, and I'm a french student in an engineering school called ISEN where I'm currently studying in the Computer and Network Cycle.
+        </p>
+        <p>
+          I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills. I am really enjoying learning new languages or frameworks by myself, and using them to develop either web or native apps on my free time. I'm really enjoying coding in Java and C++, but I always end up developping web things.
+        </p>
+        <p>
+          I am committed to many local meetings such as Google Developers Group, Java User Group or Startup Week-end. I am also the vice-president of the IT-Electronics club of ISEN, where I became a new-tech speaker among other things.
+        </p>
+        <p>
+          As a work experience, I spent a year in a part-time internship as a devops(developer and sysadmin)  at Systems team for a French bank, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…
+        </p>
+      </div>
+    </div>
+  </div>
+<!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'" 
+ -->  <div class="row skills">
+      <h2 class="text-center">Skills</h2>
+      <div class="google_color text-center"></div>
+      <div class="container">
+        <ul class="nav nav-pills skills-nav">
+          <li ng-click="setSkill(cat)" ng-class="{active:skillSelected==cat}"
+          ng-repeat="cat in skills_cat"><a href="">{{cat}}</a></li>
+        </ul>
+      </div>
+      <dl class="skills-diagram">
+      <dt ng-repeat="skill in skills | filter:skill_filter" ng-class="skill.css">{{skill.name}}</dt>
+        <dd>0</dd>
+      </dl>
+  </div>
+
+  <div class="container">
+    <div class="row education">
+      <h2 class="text-center">Education</h2>
+      <div class="google_color text-center"></div>
+      <div class="col-md-12">
+        <article class="text-center">
+          <header>
+            <h3>Institut Supérieur de l'Electronique et du Numérique</h3>
+            <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
+          </header>
+          <p>descrtiption...</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+    <hr>
 
   <footer>
-    <p>&copy; Pierre Zemb 2014</p>
+    <p class="text-center">&copy; Pierre Zemb 2014</p>
   </footer>
 </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 
 <script src="js/vendor/bootstrap.min.js"></script>
-
-<script src="js/vendor/angular.min.js"></script>
 <script src="js/classie.js"></script>
 <script src="js/gnmenu.js"></script>
 <script src="js/carrousel.js"></script>
@@ -79,6 +122,7 @@ require("elements/menu.php");
   new gnMenu( document.getElementById( 'gn-menu' ) );
 </script>
 
+<script src="js/skills.js"></script>
 <script src="js/main.js"></script>
 
 <script>

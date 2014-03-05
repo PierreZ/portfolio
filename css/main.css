@@ -330,38 +330,11 @@ input.gn-search:focus {
     border-left: 0.1em solid #b82a28;
     text-transform: lowercase; }
 
-@-webkit-keyframes fade {
-  0% {
-    opacity: 0;
-    -webkit-transform: scale(0); }
-
-  100% {
-    opacity: 1;
-    -webkit-transform: scale(1.2); } }
-
-@-ms-keyframes fade {
-  0% {
-    opacity: 0;
-    -ms-transform: scale(0); }
-
-  100% {
-    opacity: 1;
-    -ms-transform: scale(1.2); } }
-
-@-moz-keyframes fade {
-  0% {
-    opacity: 0;
-    -moz-transform: scale(0); }
-
-  100% {
-    opacity: 1;
-    -moz-transform: scale(1.2); } }
-
 .skills-diagram {
+  max-width: 90%;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-  max-width: 900px;
   margin: 2em auto 2em;
   margin-top: 60px; }
 
@@ -375,11 +348,11 @@ input.gn-search:focus {
   border-style: solid;
   border-width: 1px;
   border-radius: 50%;
-  -webkit-transform: scale(1.2);
-  -moz-transform: scale(1.2);
-  -o-transform: scale(1.2);
-  -ms-transform: scale(1.2);
-  transform: scale(1.2);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
   /* set defaults to skill-2 */
   width: 2em;
   height: 2em;
@@ -402,149 +375,156 @@ input.gn-search:focus {
 .skills-diagram .skill-2 {
   width: 2em;
   height: 2em;
-  line-height: 2em;
-  -webkit-animation: fade 2.2s ease-in 1;
-  -moz-animation: fade 1.2s ease-in 1;
-  -ms-animation: fade 1.2s ease-in 1; }
+  line-height: 2em; }
 
 .skills-diagram .skill-3 {
   vertical-align: middle;
   width: 3em;
   height: 3em;
-  line-height: 3em;
-  -webkit-animation: fade 1s ease-in 1;
-  -moz-animation: fade 1s ease-in 1;
-  -ms-animation: fade 1s ease-in 1; }
+  line-height: 3em; }
 
 .skills-diagram .skill-4 {
   width: 4em;
   height: 4em;
-  line-height: 4em;
-  -webkit-animation: fade 1.5s ease-in 1;
-  -moz-animation: fade 1.5s ease-in 1;
-  -ms-animation: fade 1.5s ease-in 1; }
+  line-height: 4em; }
 
 .skills-diagram .skill-5 {
   vertical-align: bottom;
   width: 5em;
   height: 5em;
-  line-height: 5em;
-  -webkit-animation: fade 2s ease-in 1;
-  -moz-animation: fade 2s ease-in 1;
-  -ms-animation: fade 2s ease-in 1; }
+  line-height: 5em; }
 
 .skills-diagram .skill-6 {
   vertical-align: top;
   width: 6em;
   height: 6em;
-  line-height: 6em;
-  -webkit-animation: fade 2.5s ease-in 1;
-  -moz-animation: fade 2.5s ease-in 1;
-  -ms-animation: fade 2.5s ease-in 1; }
+  line-height: 6em; }
 
 .skills-diagram .skill-7 {
   width: 7em;
   height: 7em;
-  line-height: 7em;
-  -webkit-animation: fade 2.7s ease-in 1;
-  -moz-animation: fade 2.7s ease-in 1;
-  -ms-animation: fade 2.7s ease-in 1; }
+  line-height: 7em; }
 
 .skills-diagram .skill-8 {
   vertical-align: bottom;
   width: 8em;
   height: 8em;
-  line-height: 8em;
-  -webkit-animation: fade 3.1s ease-in 1;
-  -moz-animation: fade 3.1s ease-in 1;
-  -ms-animation: fade 3.1s ease-in 1; }
+  line-height: 8em; }
 
 .skills-diagram .skill-9 {
   width: 9em;
   height: 9em;
-  line-height: 11em;
-  -webkit-animation: fade 3.3s ease-in 1;
-  -moz-animation: fade 3.3s ease-in 1;
-  -ms-animation: fade 3.3s ease-in 1; }
+  line-height: 11em; }
 
 .skills-diagram .skill-10 {
   width: 10em;
   height: 10em;
-  line-height: 10em;
-  -webkit-animation: fade 3.4s ease-in 1;
-  -moz-animation: fade 3.4s ease-in 1;
-  -ms-animation: fade 3.4s ease-in 1; }
+  line-height: 10em; }
 
 .OS_skills {
-  background-color: rgba(195, 192, 100, 0.7);
+  background-color: rgba(195, 192, 100, 0.3);
   border-color: #c3c064;
-  color: white; }
-
-.OS_font {
+  color: white;
   color: #c3c064; }
 
 .dev_skills {
-  background-color: rgba(81, 112, 144, 0.7);
+  background-color: rgba(81, 112, 144, 0.3);
   border-color: #6e8397;
-  color: white; }
-
-.dev_font {
+  color: white;
   color: #517090; }
 
 .web_skills {
-  background-color: rgba(214, 89, 102, 0.7);
+  background-color: rgba(214, 89, 102, 0.3);
   border-color: #d65966;
-  color: white; }
-
-.web_font {
+  color: white;
   color: #d65966; }
 
 .network_skills {
-  background-color: rgba(46, 138, 75, 0.7);
+  background-color: rgba(46, 138, 75, 0.3);
   border-color: #2e8a4b;
-  color: white; }
-
-.network_font {
+  color: white;
   color: #2e8a4b; }
 
 .other_skills {
-  background-color: rgba(138, 138, 140, 0.7);
+  background-color: rgba(138, 138, 140, 0.3);
   border-color: #8a8a8c;
-  color: white; }
+  color: white;
+  color: #8a8a8c; }
 
 .others_font {
   color: #8a8a8c; }
 
-/* Just to add real-scenario feeling */
-.skills_wrapper {
-  background: #34495e;
-  text-align: center;
-  padding: 40px; }
-  .skills_wrapper a {
-    color: grey; }
-  .skills_wrapper a:hover {
-    color: #ccc; }
-  .skills_wrapper h1 {
-    color: white;
-    font-size: 3.2em;
-    line-height: 1.3;
-    margin: 0;
-    font-weight: 300; }
-  .skills_wrapper h2 {
-    color: white;
-    font-size: 1.6em;
-    line-height: .7;
-    margin: 0;
-    font-weight: 300; }
+.dev_skills.ng-enter {
+  -webkit-animation: flipInX 1s;
+  -moz-animation: flipInX 1s;
+  -o-animation: flipInX 1s;
+  -ms-animation: flipInX 1s; }
+
+.dev_skills.ng-leave {
+  -webkit-animation: flipOutX 1s;
+  -moz-animation: flipOutX 1s;
+  -o-animation: flipOutX 1s;
+  -ms-animation: flipOutX 1s; }
+
+.web_skills.ng-enter {
+  -webkit-animation: flipInX 1s;
+  -moz-animation: flipInX 1s;
+  -o-animation: flipInX 1s;
+  -ms-animation: flipInX 1s; }
+
+.web_skills.ng-leave {
+  -webkit-animation: flipOutX 1s;
+  -moz-animation: flipOutX 1s;
+  -o-animation: flipOutX 1s;
+  -ms-animation: flipOutX 1s; }
+
+.network_skills.ng-enter {
+  -webkit-animation: flipInX 1s;
+  -moz-animation: flipInX 1s;
+  -o-animation: flipInX 1s;
+  -ms-animation: flipInX 1s; }
+
+.network_skills.ng-leave {
+  -webkit-animation: flipOutX 1s;
+  -moz-animation: flipOutX 1s;
+  -o-animation: flipOutX 1s;
+  -ms-animation: flipOutX 1s; }
+
+.OS_skills.ng-enter {
+  -webkit-animation: flipInX 1s;
+  -moz-animation: flipInX 1s;
+  -o-animation: flipInX 1s;
+  -ms-animation: flipInX 1s; }
+
+.OS_skills.ng-leave {
+  -webkit-animation: flipOutX 1s;
+  -moz-animation: flipOutX 1s;
+  -o-animation: flipOutX 1s;
+  -ms-animation: flipOutX 1s; }
+
+.other_skills.ng-enter {
+  -webkit-animation: flipInX 1s;
+  -moz-animation: flipInX 1s;
+  -o-animation: flipInX 1s;
+  -ms-animation: flipInX 1s; }
+
+.other_skills.ng-leave {
+  -webkit-animation: flipOutX 1s;
+  -moz-animation: flipOutX 1s;
+  -o-animation: flipOutX 1s;
+  -ms-animation: flipOutX 1s; }
 
 body {
   font-family: "Open Sans", sans-serif;
-  font-weight: 300; }
+  font-weight: 300;
+  max-width: 100%; }
   body .welcome {
     background-color: #34495e;
     text-align: center;
     padding-top: 60px;
-    padding-bottom: 60px; }
+    padding-bottom: 60px;
+    margin-left: 0;
+    margin-right: 0; }
     body .welcome h1 {
       color: white; }
     body .welcome .social {
@@ -552,26 +532,36 @@ body {
       body .welcome .social .socials_icons {
         margin: 15px;
         width: 50px; }
+  body .about {
+    padding-bottom: 30px; }
+    body .about .profile_image {
+      margin-bottom: 20px; }
+  body .skills {
+    background: #f7f7f7;
+    padding: 30px;
+    margin-left: 0;
+    margin-right: 0; }
+    body .skills .skills-nav {
+      text-align: center; }
 
 .google_color {
-  height: 15px;
-  margin-bottom: 50px; }
+  height: 1px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  font-size: 2px; }
 
 #google_color:after, #google_color:before {
   content: "";
-  float: right;
-  height: 4px; }
+  float: right; }
 
 .google_color:before {
   border-width: 500px;
   border-left: 70px solid #33b5e5;
   border-right: 70px solid #ff4444;
-  height: 1px;
   content: ""; }
 
 .google_color:after {
   border-width: 500px;
   border-left: 70px solid #99cc00;
   border-right: 70px solid #ffbb33;
-  height: 1px;
   content: ""; }
