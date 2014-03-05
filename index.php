@@ -55,21 +55,21 @@ require("elements/menu.php");
     <div class="row about">
       <h2 class="text-center">About Me</h2>
       <div class="google_color text-center"></div>
-      <div class="col-md-3">
+      <div class="text-center col-md-3">
         <img class="profile_image" src="img/myself.png">
       </div>
       <div class="col-md-9">
         <p>
-          Hi! My name's Pierre Zemb, and I'm a french student in an engineering school called ISEN where I'm currently studying in the Computer and Network Cycle.
+          Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.
         </p>
         <p>
-          I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills. I am really enjoying learning new languages or frameworks by myself, and using them to develop either web or native apps on my free time. I'm really enjoying coding in Java and C++, but I always end up developping web things.
+          I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Java and C++</strong>, but <strong>I always end up developping web apps</strong>.
         </p>
         <p>
-          I am committed to many local meetings such as Google Developers Group, Java User Group or Startup Week-end. I am also the vice-president of the IT-Electronics club of ISEN, where I became a new-tech speaker among other things.
+          I am committed to many local meetings such as <strong>Google Developers Group, Java User Group or Startup Week-end</strong>. I am also the vice-president of the IT-Electronics club of ISEN, where I became a <strong>new-tech speaker among other things</strong>.
         </p>
         <p>
-          As a work experience, I spent a year in a part-time internship as a devops(developer and sysadmin)  at Systems team for a French bank, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…
+          As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
         </p>
       </div>
     </div>
@@ -79,7 +79,7 @@ require("elements/menu.php");
       <h2 class="text-center">Skills</h2>
       <div class="google_color text-center"></div>
       <div class="container">
-        <ul class="nav nav-pills skills-nav">
+        <ul class="nav nav-pills nav-justified skills-nav text-center">
           <li ng-click="setSkill(cat)" ng-class="{active:skillSelected==cat}"
           ng-repeat="cat in skills_cat"><a href="">{{cat}}</a></li>
         </ul>
@@ -91,18 +91,76 @@ require("elements/menu.php");
   </div>
 
   <div class="container">
-    <div class="row education">
-      <h2 class="text-center">Education</h2>
+    <div class="row work">
+      <h2 class="text-center">Work experience</h2>
       <div class="google_color text-center"></div>
-      <div class="col-md-12">
-        <article class="text-center">
+      <div class="col-md-4">
+        <article>
           <header>
-            <h3>Institut Supérieur de l'Electronique et du Numérique</h3>
-            <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
+            <h3 class="text-center">Crédit Mutuel Arkéa</h3>
+            <img src="img/arkea.png" class="md-4-img">
+            <p><strong>Devops internship </strong> June-July 2013</p>
+            <p><strong>Devops part-time internship </strong> October 2013-September 2014</p>
           </header>
-          <p>descrtiption...</p>
+          <p><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
+          <p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>…</p>
+          <p><strong>Some of my work:</strong></p>
+          <ul>
+            <li>Merging and upgrading Arkea's version of Apache Flume (Maven Project)</li>
+            <li>Porting arkea's version of Flume for Windows</li>
+            <li>Writing some VBscripts to generating Windows's metrics</li>
+            <li>Writing Powershell scripts to retrieve VMWare metrics</li>
+            <li>In-house training about Hadoop and Pig</li>
+            <li>Creation of an web-based app to visualize metrics in realtime using AngularJS</li>
+
+          </ul>
         </article>
       </div>
+      <div class="col-md-4">
+        <article>
+          <header>
+            <h3 class="text-center">Thomson Video Networks</h3>
+            <img src="img/thomson.png" class="md-4-img">
+            <p><strong>developer internship </strong> June-July 2012</p>
+          </header>
+          <p><em></em></p>
+          <p>I worked at the Headquarters of Thomson Video Networks on the Configurator. It's a really heavy Excel program  allows the employees to calculate the price list(rate) of every product, knowing that they are extremely flexible. One click was representing minutes of wait just to calculate what's possible to add.</p>
+          <p>My goal was to optimize it to make it more useable.</p>
+        </article>
+      </div>
+      <div class="col-md-4">
+        <article>
+          <header>
+            <h3 class="text-center">CAEC</h3>
+            <img src="img/caec.gif" class="md-4-img">
+            <p><strong>Charity work </strong>July 2012</p>
+          </header>
+          <p>Assistance for unemployed to help them find a job</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="row education">
+    <h2 class="text-center">Education</h2>
+    <div class="google_color text-center"></div>
+    <div class="col-md-12">
+      <article class="text-center">
+        <header>
+          <h3>Institut Supérieur de l'Electronique et du Numérique</h3>
+          <div class="logo-isen">
+            <h1>ISEN</h1>
+            <h2>École d'ingénieurs</h2>
+          </div>
+          <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
+        </header>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </article>
     </div>
   </div>
 

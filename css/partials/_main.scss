@@ -28,6 +28,9 @@ body {
 .about{
 	padding-bottom:30px;
 	.profile_image{
+		  display: block;
+  margin-left: auto;
+  margin-right: auto;
 		margin-bottom: 20px;
 	}
 }
@@ -37,10 +40,24 @@ body {
 	margin-left:0;
 	margin-right:0;
 	.skills-nav{
-		text-align:center;
+		    margin: 0 auto;
+    padding: 0;
 	}
 }
+.education{
+	background: #f7f7f7;
+		margin-left:0;
+	margin-right:0;
+}
 
+}
+
+.md-4-img{
+	max-width:370px;
+	max-height: 370px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .google_color{
