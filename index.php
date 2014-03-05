@@ -26,6 +26,10 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-animate.min.js"></script>
 </head>
 <body ng-controller='Ctrl'>
+      <img class="arrow" src="img/arrow.png" alt="myself">
+    <div class="arrow_text">
+      <p>Have a look over here !</p>
+    </div>
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
@@ -35,6 +39,7 @@ require("elements/menu.php");
 ?> 
 
  <div class="row welcome">
+
   <h1>Pierre Zemb<br/>
     <small>
       <span class="txt-rotate biggest" data-period="2000" data-rotate='[ "French Engineer student", "Software developer", "But also Web when needed", "Pierre Who??" ]'></span>
