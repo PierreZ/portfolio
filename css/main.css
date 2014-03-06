@@ -511,6 +511,9 @@ body {
         margin: 15px;
         width: 50px; }
   body .about {
+    margin-left: 0;
+    margin-right: 0;
+    background: #f7f7f7;
     padding-bottom: 30px; }
     body .about .profile_image {
       display: block;
@@ -518,7 +521,6 @@ body {
       margin-right: auto;
       margin-bottom: 20px; }
   body .skills {
-    background: #f7f7f7;
     padding: 30px;
     margin-left: 0;
     margin-right: 0; }
@@ -526,9 +528,12 @@ body {
       margin: 0 auto;
       padding: 0; }
   body .education {
-    background: #f7f7f7;
     margin-left: 0;
     margin-right: 0; }
+  body .work {
+    margin-left: 0;
+    margin-right: 0;
+    background: #f7f7f7; }
 
 .md-4-img {
   max-width: 370px;

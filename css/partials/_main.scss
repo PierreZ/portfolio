@@ -62,6 +62,9 @@ body {
 }
 
 .about{
+	margin-left:0;
+	margin-right:0;
+	background: #f7f7f7;
 	padding-bottom:30px;
 	.profile_image{
 		  display: block;
@@ -71,7 +74,7 @@ body {
 	}
 }
 .skills{
-	background: #f7f7f7;
+
 	padding:30px;
 	margin-left:0;
 	margin-right:0;
@@ -81,9 +84,13 @@ body {
 	}
 }
 .education{
-	background: #f7f7f7;
 		margin-left:0;
 	margin-right:0;
+}
+.work{
+	margin-left:0;
+	margin-right:0;
+		background: #f7f7f7;
 }
 
 }

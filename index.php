@@ -56,7 +56,7 @@ require("elements/menu.php");
 </div>
 
 
-  <div class="container">
+
     <div class="row about">
       <h2 class="text-center">About Me</h2>
       <div class="google_color text-center"></div>
@@ -78,7 +78,7 @@ require("elements/menu.php");
         </p>
       </div>
     </div>
-  </div>
+
 <!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'" 
  -->  <div class="row skills">
       <h2 class="text-center">Skills</h2>
@@ -95,7 +95,6 @@ require("elements/menu.php");
       </dl>
   </div>
 
-  <div class="container">
     <div class="row work">
       <h2 class="text-center">Work experience</h2>
       <div class="google_color text-center"></div>
@@ -144,7 +143,7 @@ require("elements/menu.php");
         </article>
       </div>
     </div>
-  </div>
+
 
   <div class="row education">
     <h2 class="text-center">Education</h2>
@@ -159,7 +158,7 @@ require("elements/menu.php");
           </div>
           <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
         </header>
-        <h4><strong>Computer and Network Cycle(2 years)</strong></h4>
+        <h4 class="text-center"><strong>Computer and Network Cycle(2 years)</strong></h4>
         <p>After spending 2 years in preparatory classes, I've decided to go into Computer and Cycle in order to enhanced my technical skills.</p>
 <p>Technical courses:</p>
 <ul>
@@ -170,7 +169,7 @@ require("elements/menu.php");
 <li> C, C++, Java</li>
 <li> PHP, Javascript, HTML5</li>
 </ul>
-<h4><strong>Preparatory classes(2 years)</strong></h4>
+<h4 class="text-center"><strong>Preparatory classes(2 years)</strong></h4>
 <p>They consist of two very intensive years which act as a preparatory course (or cram school) with the main goal of training undergraduate students. The workload is one of the highest in the world(between 35 and 40 contact hours a week, including written and oral exams).</p>
       </article>
     </div>
