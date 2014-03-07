@@ -53,6 +53,7 @@ require("elements/menu.php");
         <a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="img/linkedin.png" alt="Youtube" /></a>
         <a href="https://github.com/PierreZ"><img class="socials_icons"  src="img/github.png" alt="git" /></a>
   </div>
+
 </div>
 
 
@@ -76,7 +77,12 @@ require("elements/menu.php");
         <p>
           As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
         </p>
+         
       </div>
+       <p class="text-center"><a href="/CV.pdf">Download my resume</a></li></p>
+
+        <p class="text-center"><a href="/CV_fr.pdf" class="lang">Mon CV français est dispo ici !</a></p>
+
     </div>
 
 <!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'" 
@@ -102,7 +108,7 @@ require("elements/menu.php");
         <article>
           <header>
             <h3 class="text-center">Crédit Mutuel Arkéa</h3>
-            <img src="img/arkea.png" class="md-4-img">
+            <a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-4-img"></a>
             <p><strong>Devops internship </strong> June-July 2013</p>
             <p><strong>Devops part-time internship </strong> October 2013-September 2014</p>
           </header>
@@ -124,22 +130,22 @@ require("elements/menu.php");
         <article>
           <header>
             <h3 class="text-center">Thomson Video Networks</h3>
-            <img src="img/thomson.png" class="md-4-img">
+            <a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-4-img"></a>
             <p><strong>developer internship </strong> June-July 2012</p>
           </header>
           <p><em></em></p>
-          <p>I worked at the Headquarters of Thomson Video Networks on the Configurator. It's a really heavy Excel program  allows the employees to calculate the price list(rate) of every product, knowing that they are extremely flexible. One click was representing minutes of wait just to calculate what's possible to add.</p>
-          <p>My goal was to optimize it to make it more useable.</p>
+          <p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
+          <p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
         </article>
       </div>
       <div class="col-md-4">
         <article>
           <header>
             <h3 class="text-center">CAEC</h3>
-            <img src="img/caec.gif" class="md-4-img">
+            <a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img"></a>
             <p><strong>Charity work </strong>July 2012</p>
           </header>
-          <p>Assistance for unemployed to help them find a job</p>
+          <p><strong>Assistance for unemployed</strong> to help them find a job</p>
         </article>
       </div>
     </div>
@@ -152,25 +158,25 @@ require("elements/menu.php");
       <article>
         <header class="text-center">
           <h3>Institut Supérieur de l'Electronique et du Numérique</h3>
-          <div class="logo-isen">
+          <a href="http://isen.fr"><div class="logo-isen">
             <h1>ISEN</h1>
             <h2>École d'ingénieurs</h2>
-          </div>
+          </div></a>
           <p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
         </header>
         <h4 class="text-center"><strong>Computer and Network Cycle(2 years)</strong></h4>
-        <p>After spending 2 years in preparatory classes, I've decided to go into Computer and Cycle in order to enhanced my technical skills.</p>
-<p>Technical courses:</p>
+        <p>After spending 2 years in preparatory classes, I've decided to go into <strong>Computer and Cycle</strong> in order to enhanced my technical skills.</p>
+<p><strong>Technical courses:</strong></p>
 <ul>
-<li> Hardware</li>
-<li> Linux-based systemes</li>
-<li> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks(CCNA 1-2-3-4)</li>
-<li> Databases</li>
-<li> C, C++, Java</li>
-<li> PHP, Javascript, HTML5</li>
+<li><strong> Hardware</strong></li>
+<li><strong> Linux-based systemes</strong></li>
+<li><strong> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks(CCNA 1-2-3-4)</strong></li>
+<li><strong> Databases</strong></li>
+<li><strong> C, C++, Java</strong></li>
+<li><strong> PHP, Javascript, HTML5, CSS3</strong></li>
 </ul>
 <h4 class="text-center"><strong>Preparatory classes(2 years)</strong></h4>
-<p>They consist of two very intensive years which act as a preparatory course (or cram school) with the main goal of training undergraduate students. The workload is one of the highest in the world(between 35 and 40 contact hours a week, including written and oral exams).</p>
+<p>They consist of <strong>two very intensive years</strong> which act as a preparatory course with the main goal of training undergraduate students.<br/>The workload is one of the<strong> highest in the world</strong>(between 35 and 40 contact hours a week, including written and oral exams).</p>
       </article>
     </div>
     <div class="col-md-6 text-center">
