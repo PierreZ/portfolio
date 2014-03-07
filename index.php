@@ -26,10 +26,10 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-animate.min.js"></script>
 </head>
 <body ng-controller='Ctrl'>
-      <img class="arrow" src="img/arrow.png" alt="myself">
-    <div class="arrow_text">
-      <p>Have a look over here !</p>
-    </div>
+  <img class="arrow" src="img/arrow.png" alt="myself">
+  <div class="arrow_text">
+    <p>Have a look over here !</p>
+  </div>
 <!--[if lt IE 7]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
@@ -63,11 +63,13 @@ require("elements/menu.php");
   <div class="google_color text-center"></div>
   <div class="text-center col-md-3">
     <img class="profile_image" src="img/myself.png">
+
+    <p class="text-center"><a href="/CV.pdf">Download my resume</a></li></p>
+
+    <p class="text-center"><a href="/CV_fr.pdf" class="lang">Mon CV français est dispo ici !</a></p>
   </div>
   <div class="col-md-9">
-    <p>
-      Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.
-    </p>
+    <p>Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.</p>
     <p>
       I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Java and C++</strong>, but <strong>I always end up developping web apps</strong>.
     </p>
@@ -77,11 +79,8 @@ require("elements/menu.php");
     <p>
       As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
     </p>
-
+    <p>You can find on my <a href="http://blog.pierrezemb.fr/">blog</a> my <strong>slides, resources,articles and my latest project</strong>.</p>
   </div>
-  <p class="text-center"><a href="/CV.pdf">Download my resume</a></li></p>
-
-  <p class="text-center"><a href="/CV_fr.pdf" class="lang">Mon CV français est dispo ici !</a></p>
 
 </div>
 
@@ -104,51 +103,54 @@ require("elements/menu.php");
 <div class="row work">
   <h2 class="text-center">Work experience</h2>
   <div class="google_color text-center"></div>
-  <div class="col-md-4">
-    <article>
-      <header>
-        <h3 class="text-center arkea_trigger">Crédit Mutuel Arkéa</h3>
-        <a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-4-img"></a>
-        <p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
-        <p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
-      </header>
-      <div class="arkea_detail">
-        <p><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
-        <p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>…</p>
-        <p><strong>Some of my work:</strong></p>
-        <ul>
-          <li>Merging and upgrading Arkea's version of Apache Flume (Maven Project)</li>
-          <li>Porting arkea's version of Flume for Windows</li>
-          <li>Writing some VBscripts to generating Windows's metrics</li>
-          <li>Writing Powershell scripts to retrieve VMWare metrics</li>
-          <li>In-house training about Hadoop and Pig</li>
-          <li>Creation of an web-based app to visualize metrics in realtime using AngularJS</li>
-        </ul>
-      </div>
-    </article>
-  </div>
-  <div class="col-md-4">
-    <article>
-      <header>
-        <h3 class="text-center thomson_trigger">Thomson Video Networks</h3>
-        <a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-4-img"></a>
-        <p class="thomson_trigger"><strong>developer internship </strong> June-July 2012</p>
-      </header>
-      <div class="thomson_detail">
-        <p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
-        <p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
-      </div>
-    </article>
-  </div>
-  <div class="col-md-4">
-    <article>
-      <header>
-        <h3 class="text-center">CAEC</h3>
-        <a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img"></a>
-        <p><strong>Charity work </strong>July 2011</p>
-      </header>
-      <p><strong>Assistance for unemployed</strong> to help them find a job</p>
-    </article>
+  <div class="row personal_line">
+    <div class="col-md-4">
+      <article>
+        <header>
+          <h3 class="text-center arkea_trigger">Crédit Mutuel Arkéa</h3>
+          <a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-4-img"></a>
+          <p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
+          <p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
+          <p class="arkea_trigger"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
+        </header>
+        <div class="arkea_detail">
+
+          <p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>…</p>
+          <p><strong>Some of my work:</strong></p>
+          <ul>
+            <li>Merging and upgrading Arkea's version of Apache Flume (Maven Project)</li>
+            <li>Porting arkea's version of Flume for Windows</li>
+            <li>Writing some VBscripts to generating Windows's metrics</li>
+            <li>Writing Powershell scripts to retrieve VMWare metrics</li>
+            <li>In-house training about Hadoop and Pig</li>
+            <li>Creation of an web-based app to visualize metrics in realtime using AngularJS</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article>
+        <header>
+          <h3 class="text-center thomson_trigger">Thomson Video Networks</h3>
+          <a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-4-img"></a>
+          <p class="thomson_trigger"><strong>developer internship </strong> June-July 2012</p>
+        </header>
+        <div class="thomson_detail">
+          <p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
+          <p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article>
+        <header>
+          <h3 class="text-center">CAEC</h3>
+          <a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img"></a>
+          <p><strong>Charity work </strong>July 2011</p>
+        </header>
+        <p><strong>Assistance for unemployed</strong> to help them find a job</p>
+      </article>
+    </div>
   </div>
 </div>
 
@@ -179,7 +181,7 @@ require("elements/menu.php");
           <li><strong> PHP, Javascript, HTML5, CSS3</strong></li>
         </ul>
       </div>
-        <h4 class="text-center prepa_trigger"><strong>Preparatory classes(2 years)</strong></h4>
+      <h4 class="text-center prepa_trigger"><strong>Preparatory classes(2 years)</strong></h4>
       <div class="prepa_detail">
         <p>They consist of <strong>two very intensive years</strong> which act as a preparatory course with the main goal of training undergraduate students.<br/>The workload is one of the<strong> highest in the world</strong>(between 35 and 40 contact hours a week, including written and oral exams).</p>
       </div>
@@ -190,6 +192,96 @@ require("elements/menu.php");
     <h2>More to come!</h2>
     <p>My goal is to spend a full year in a foreign country during my final year at ISEN!</p>
   </div>
+</div>
+
+<div class="row projects">
+  <h2 class="text-center">Projects</h2>
+  <div class="google_color text-center"></div>
+
+  <div class="row personal_line">
+    <h3 class="text-center">2014</h3>
+    <div class="col-lg-4 text-center project_container">
+      <img class="img-circle rentree_trigger" data-src="holder.js/140x140" alt="Generic placeholder image">
+      <h3 class="rentree_trigger">Framework project:Web interface for ISEN</h3>
+      <p class="rentree_trigger">HTML5 - CSS3 - JavaScript - PHP - AngularJS - Handmade REST API</p>
+      <div class="rentree_trigger">
+        <img class="thumb_tech" src="#">
+      </div>
+      <div class="rentree_detail">
+        <p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
+        <p>You can have a look on this project <a href="https://rentree.pierrezemb.fr">here</a></p>
+        <p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
+      </div>
+    </div><!-- /.col-lg-4 -->  
+  </div>
+
+  <div class="row personal_line">
+    <h3 class="text-center">2013</h3>
+    <div class="col-lg-4 text-center project_container">
+      <img class="img-circle paidday_trigger" data-src="holder.js/140x140" alt="Generic placeholder image">
+      <h3 class="paidday_trigger">Web project: Paid day management</h3>
+      <p class="paidday_trigger">HTML5 - CSS3 - JavaScript - PHP - Java</p>
+      <div class="paidday_trigger">
+        <img class="thumb_tech" src="#">
+      </div>
+      <div class="paidday_detail">
+        <p>We had to make by pairs a web project called Paid holiday management; administration side is in Web technology such as PHP and JQuery and the user side is in java.</p>
+        <p>The user client show a calendar, and next holidays. On the administration side, you can select a person, and add/modify/suppress holiday by clicking on the day. A wrapper on the left resume all the holiday on the selected user.</p>
+        <p>The whole calendar and wrapper refresh are in Ajax, to avoid webpage refresh.</p>
+        <p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
+      </div>
+    </div><!-- /.col-lg-4 -->  
+
+    <div class="col-lg-4 text-center project_container">
+      <img class="img-circle python_trigger" data-src="holder.js/140x140" alt="Generic placeholder image">
+      <h3 class="python_trigger">French book: Le python en Prépa</h3>
+      <p class="python_trigger">Python</p>
+      <div class="python_trigger">
+        <img class="thumb_tech" src="#">
+      </div>
+      <div class="python_detail">
+        <p>With the help of our physics teacher, we wrote a book with my class about Python programming for french teachers of preparatory classes.</p>
+        <p>the new computer programs CPGEs introduce two new free languages ​​instead of Maple and Mathematica: Python and SciLab. We therefore converted to Python exercises Mathematica / Maple type and written tutorials on various topics such as database, PC hardware or programming.</p>
+        <p>You can order the book <a href="http://web.isen-bretagne.fr/livres/python/index.php">here</a> and read some interview of myself <a href="http://www.tech-brest-iroise.fr/Actualit%C3%A9s-398-941-0-0.html">here</a></p>
+      </div>
+    </div><!-- /.col-lg-4 -->  
+
+    <div class="col-lg-4 text-center project_container">
+      <img class="img-circle homer_trigger" data-src="holder.js/140x140" alt="Generic placeholder image">
+      <h3 class="homer_trigger">Kinect game: Go Homer!</h3>
+      <p class="homer_trigger">C++ - Kinect SDK - Qt4</p>
+      <div class="homer_trigger">
+        <img class="thumb_tech" src="#">
+      </div>
+      <div class="homer_detail">
+        <p>I realized during my free time a juggling game with Kinect in C++.</p>
+        <p>The game is to make a maximum of jungles with your head,movements are based on your actual position.</p>
+        <p>For this, I used the official SDK and Microsoft Visual Studio with Qt as graphics API.</p>
+        <iframe width="400" height="200" src="http://www.youtube.com/embed/EXtNwbCb7w8" frameborder="0" allowfullscreen=""></iframe>
+        <p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
+      </div>
+    </div><!-- /.col-lg-4 -->
+  </div>
+
+
+  <div class="row personal_line">
+
+    <h3 class="text-center">2012</h3>
+    <div class="text-center project_container">
+      <img class="img-circle line_trigger" data-src="holder.js/140x140" alt="Generic placeholder image">
+      <h3 class="line_trigger">line follower Robot</h3>
+      <p class="line_trigger">Flowcode</p>
+      <div class="line_trigger">
+        <img class="thumb_tech" src="img/icone_flowcode.png">
+      </div>
+      <div class="line_detail">
+        <p>I realized as an project a line follower robot. The hardware was already done, we just had to program it with Flowcode</p>
+        <iframe width="400" height="200" src="http://www.youtube.com/embed/ZokwIFNCysI" frameborder="0" allowfullscreen=""></iframe>
+        <!--       <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
+      </div>
+    </div><!-- /.col-lg-4 -->
+  </div>  
+
 </div>
 
 <hr>

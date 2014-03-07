@@ -534,9 +534,27 @@ body {
     margin-left: 0;
     margin-right: 0;
     background: #f7f7f7; }
+  body .projects {
+    margin-left: 0;
+    margin-right: 0;
+    background: #f7f7f7; }
 
+.project_container {
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
+.rentree_trigger,
+.rentree_detail,
+.paidday_trigger,
+.paidday_detail,
 .CIR_trigger,
 .CIR_detail,
+.python_trigger,
+.python_detail,
+.homer_trigger,
+.homer_detail,
+.line_trigger,
+.line_detail,
 .arkea_trigger,
 .arkea_detail,
 .thomson_trigger,
@@ -556,7 +574,7 @@ body {
 .google_color {
   height: 1px;
   margin-top: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 25px;
   font-size: 2px; }
 
 #google_color:after, #google_color:before {
@@ -590,3 +608,11 @@ body {
   margin-left: 170px;
   padding-top: 70px;
   color: white; }
+
+.thumb_tech {
+  max-width: 75px;
+  max-height: 75px; }
+
+.personal_line {
+  margin-left: 0;
+  margin-right: 0; }

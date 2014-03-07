@@ -32,6 +32,46 @@ $( document ).ready(function() {
     $( ".thomson_detail" ).click(function() {
     	$(".thomson_detail").slideUp("slow");
 	});
+    //line
+	$(".line_detail").hide();
+    $( ".line_trigger" ).click(function() {
+    	$(".line_detail").slideDown("slow");
+	});
+    $( ".line_detail" ).click(function() {
+    	$(".line_detail").slideUp("slow");
+	});
+    //homer
+	$(".homer_detail").hide();
+    $( ".homer_trigger" ).click(function() {
+    	$(".homer_detail").slideDown("slow");
+	});
+    $( ".homer_detail" ).click(function() {
+    	$(".homer_detail").slideUp("slow");
+	});
+    //python
+	$(".python_detail").hide();
+    $( ".python_trigger" ).click(function() {
+    	$(".python_detail").slideDown("slow");
+	});
+    $( ".python_detail" ).click(function() {
+    	$(".python_detail").slideUp("slow");
+	});
+    //paidday
+	$(".paidday_detail").hide();
+    $( ".paidday_trigger" ).click(function() {
+    	$(".paidday_detail").slideDown("slow");
+	});
+    $( ".paidday_detail" ).click(function() {
+    	$(".paidday_detail").slideUp("slow");
+	});
+    //rentree
+	$(".rentree_detail").hide();
+    $( ".rentree_trigger" ).click(function() {
+    	$(".rentree_detail").slideDown("slow");
+	});
+    $( ".rentree_detail" ).click(function() {
+    	$(".rentree_detail").slideUp("slow");
+	});
 });
 
 
