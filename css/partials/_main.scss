@@ -95,12 +95,24 @@ body {
 
 }
 
+.CIR_trigger,
+.CIR_detail,
+.arkea_trigger,
+.arkea_detail,
+.thomson_trigger,
+.thomson_detail,
+.prepa_trigger,
+.prepa_detail,{
+	 cursor:  pointer;
+}
+
 .md-4-img{
 	max-width:370px;
-	max-height: 370px;
+	max-height: 100px;
   display: block;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom:10px;
 }
 
 .google_color{
