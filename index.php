@@ -109,7 +109,7 @@
 					<a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-4-img"></a>
 					<p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
 					<p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
-					<p class="arkea_trigger"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
+					<p class="arkea_trigger text-center"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
 				</header>
 				<div class="arkea_detail">
 					<p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>…</p>
@@ -130,7 +130,9 @@
 				<header>
 					<h3 class="text-center thomson_trigger">Thomson Video Networks</h3>
 					<a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-4-img"></a>
-					<p class="thomson_trigger"><strong>developer internship </strong> June-July 2012</p>
+					<p class="thomson_trigger"><strong>Internship </strong> June-July 2012</p>
+					<p class="thomson_trigger text-center"><em>"Optimization of the products's configurator"</em></p>
+
 				</header>
 				<div class="thomson_detail">
 					<p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
