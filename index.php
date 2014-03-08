@@ -241,7 +241,7 @@
 			<img class="thumb_tech" src="img/html5.png">
 			<img class="thumb_tech" src="img/css3.svg">
 			<img class="thumb_tech" src="img/javascript.png">
-			<img class="thumb_tech" src="img/php.png">
+			<img class="thumb_tech" src="img/PHP.png">
 			<img class="thumb_tech" src="img/angularjs.png">
 		</div>
 		<div class="rentree_detail">
@@ -265,7 +265,7 @@
 			<img class="thumb_tech" src="img/html5.png">
 			<img class="thumb_tech" src="img/css3.svg">
 			<img class="thumb_tech" src="img/javascript.png">
-			<img class="thumb_tech" src="img/php.png">
+			<img class="thumb_tech" src="img/PHP.png">
 			<img class="thumb_tech" src="img/java.svg">
 		</div>
 		<div class="paidday_detail">
