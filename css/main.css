@@ -201,19 +201,19 @@ input.gn-search:focus {
   content: "\e601"; }
 
 .gn-icon-work:before {
-  content: "\e602"; }
+  content: "\e607"; }
 
 .gn-icon-skills:before {
   content: "\e603"; }
 
 .gn-icon-code:before {
-  content: "\e604"; }
+  content: "\e603"; }
 
-.gn-icon-profile:before {
+.gn-icon-education:before {
+  content: "\e602"; }
+
+.gn-icon-about:before {
   content: "\e605"; }
-
-.gn-icon-images:before {
-  content: "\e606"; }
 
 /* if an icon anchor has a span, hide the span */
 .gn-icon span {
@@ -263,13 +263,13 @@ input.gn-search:focus {
   .gn-menu-wrapper.gn-open-all .gn-scroller {
     width: 130%; } }
 .no-touch .gn-menu .gn-icon-home:hover,
-.no-touch .gn-menu .gn-icon-profile:hover {
+.no-touch .gn-menu .gn-icon-code:hover {
   background: #33b5e5;
   color: white;
   transition: background 0.9s; }
 
 .no-touch .gn-menu .gn-icon-blog:hover,
-.no-touch .gn-menu .gn-icon-images:hover {
+.no-touch .gn-menu .gn-icon-education:hover {
   background: #aa66cc;
   color: white;
   transition: background 0.9s; }
@@ -284,7 +284,7 @@ input.gn-search:focus {
   color: white;
   transition: background 0.9s; }
 
-.no-touch .gn-menu .gn-icon-code:hover {
+.no-touch .gn-menu .gn-icon-about:hover {
   background: #ff4444;
   color: white;
   transition: background 0.9s; }

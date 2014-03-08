@@ -1,5 +1,22 @@
 $( document ).ready(function() {
 
+$('a[href*=#]:not([href=#])').click(function() {
+    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+        || location.hostname == this.hostname) {
+
+        var target = $(this.hash);
+        target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+           if (target.length) {
+             $('html,body').animate({
+                 scrollTop: target.offset().top-60
+            }, 1000);
+             gnMenu.prototype._closeMenu;
+            return false;
+        }
+    }
+});
+
+
 	//CIR
     $(".CIR_detail").hide();
     $( ".CIR_trigger" ).click(function() {
@@ -88,8 +105,50 @@ $( document ).ready(function() {
     $( ".skymap_detail" ).click(function() {
     	$(".skymap_detail").slideUp("slow");
 	});
+
+
+
+setTimeout(
+  function() 
+  {
+    $( ".menu_indicator" ).removeClass( "fadeIn" ).addClass( "bounce" );
+  }, 2500);
+setTimeout(
+  function() 
+  {
+    $( ".menu_indicator" ).removeClass( "swing" ).addClass( "fadeOut" );
+  }, 5000);
+
+$(window).scroll(function(){
+    if ($('.projects').isOnScreen()==true) {
+        setMenu('Projects');
+        return ;
+    };
+    if ($('.education').isOnScreen()) {
+        setMenu('Education');
+        return ;
+    };
+    if ($('.work').isOnScreen()) {
+        setMenu('Work');
+        return ;
+    };
+    if ($('.skills').isOnScreen()) {
+        setMenu('Skills');
+        return ;
+    };
+    if ($('.about').isOnScreen()) {
+        setMenu('About Me');
+        return ;
+    };
+    if ($('.welcome').isOnScreen()) {
+        setMenu('Welcome');
+        return ;
+    };
+
+
 });
 
+});
 
 var myApp = angular.module('PortfolioApp', ['ngAnimate']);
 myApp.controller('Ctrl', function ($scope) {
@@ -115,4 +174,35 @@ myApp.controller('Ctrl', function ($scope) {
 function shuffle(o){ //v1.0
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
+};
+
+$.fn.isOnScreen = function(){
+    
+    var win = $(window);
+    
+    var viewport = {
+        top : win.scrollTop(),
+        left : win.scrollLeft()
+    };
+    viewport.right = viewport.left + win.width();
+    viewport.bottom = viewport.top + win.height();
+    
+    var bounds = this.offset();
+    bounds.right = bounds.left + this.outerWidth();
+    bounds.bottom = bounds.top + this.outerHeight();
+    
+    return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+    
+};
+
+function setMenu(text){
+    if ($( '.changing_menu' ).html()!=text) {
+        $( '.changing_menu' ).addClass( "fadeOut" );
+        setTimeout(function() {
+            $( '.changing_menu' ).html(text);
+            $( '.changing_menu' ).removeClass( "fadeOut" ).addClass("fadeIn");
+        }, 1000);
+    };
+
+
 };

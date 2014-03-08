@@ -26,9 +26,11 @@
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-animate.min.js"></script>
 </head>
 <body ng-controller='Ctrl'>
-	<img class="arrow" src="img/arrow.png" alt="myself">
-	<div class="arrow_text">
-		<p>Have a look over here !</p>
+	<div class="menu_indicator animated fadeIn">
+		<img class="arrow" src="img/arrow.png" alt="myself">
+		<div class="arrow_text">
+			<p>Have a look over here !</p>
+		</div>
 	</div>
 	<!--[if lt IE 7]>
 	<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
@@ -38,7 +40,7 @@
 	require("elements/menu.php");
 	?>
 
-	<div class="row welcome">
+	<div id="home" class="row welcome">
 
 		<h1>Pierre Zemb<br/>
 			<small>
@@ -58,7 +60,7 @@
 
 
 
-	<div class="row about">
+	<div id="about" class="row about">
 		<h2 class="text-center">About Me</h2>
 		<div class="google_color text-center"></div>
 		<div class="text-center col-md-3">
@@ -83,7 +85,7 @@
 	</div>
 
 	<!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'"
--->  <div class="row skills">
+-->  <div  id="skills" class="row skills">
 <h2 class="text-center">Skills</h2>
 <div class="google_color text-center"></div>
 <div class="container">
@@ -98,7 +100,7 @@
 </dl>
 </div>
 
-<div class="row work">
+<div id="work" class="row work">
 	<h2 class="text-center">Work experience</h2>
 	<div class="google_color text-center"></div>
 	<div class="row personal_line">
@@ -154,7 +156,7 @@
 </div>
 
 
-<div class="row education">
+<div id="education" class="row education">
 	<h2 class="text-center">Education</h2>
 	<div class="google_color text-center"></div>
 	<div class="col-md-6">
@@ -193,7 +195,7 @@
 	</div>
 </div>
 
-<div class="row projects">
+<div id="projects" class="row projects">
 	<h2 class="text-center">Projects</h2>
 	<div class="google_color text-center"></div>
 
