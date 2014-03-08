@@ -65,12 +65,28 @@ $( document ).ready(function() {
     	$(".paidday_detail").slideUp("slow");
 	});
     //rentree
-	$(".rentree_detail").hide();
+    $(".rentree_detail").hide();
     $( ".rentree_trigger" ).click(function() {
-    	$(".rentree_detail").slideDown("slow");
-	});
+        $(".rentree_detail").slideDown("slow");
+    });
     $( ".rentree_detail" ).click(function() {
-    	$(".rentree_detail").slideUp("slow");
+        $(".rentree_detail").slideUp("slow");
+    });
+    //orizon
+    $(".orizon_detail").hide();
+    $( ".orizon_trigger" ).click(function() {
+        $(".orizon_detail").slideDown("slow");
+    });
+    $( ".orizon_detail" ).click(function() {
+        $(".orizon_detail").slideUp("slow");
+    });
+    //skymap
+	$(".skymap_detail").hide();
+    $( ".skymap_trigger" ).click(function() {
+    	$(".skymap_detail").slideDown("slow");
+	});
+    $( ".skymap_detail" ).click(function() {
+    	$(".skymap_detail").slideUp("slow");
 	});
 });
 
