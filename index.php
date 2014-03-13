@@ -216,7 +216,7 @@
 				<p>I'm crazy about astronomy, but I don't have time to practise it. That's why I decided to make an astronomy app using Google's source code</p>
 				<p>This app will allow you to see a map of the sky in real-time, just by watching the sky.</p>
 				<p>Work in progress!!</p>
-				<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
+				<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/skymap-for-glass" role="button">View on GitHub</a></p>
 
 			</div>
 		</div><!-- /.col-lg-4 -->
