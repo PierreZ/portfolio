@@ -75,7 +75,7 @@
   border-left: 1px solid #c6d0da; }
 
 .gn-menu-main > li > a {
-  padding: 0 5px;
+  padding: 0 30px;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold; }
@@ -304,7 +304,7 @@ input.gn-search:focus {
 .logo-isen {
   display: inline-block;
   font-family: target-light;
-  font-size: x-small;
+  font-size: small;
   text-align: left; }
   .logo-isen h1 {
     color: #b82a28;
