@@ -304,7 +304,7 @@ input.gn-search:focus {
 .logo-isen {
   display: inline-block;
   font-family: target-light;
-  font-size: small;
+  font-size: x-small;
   text-align: left; }
   .logo-isen h1 {
     color: #b82a28;
