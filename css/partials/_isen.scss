@@ -17,8 +17,7 @@ $rouge-isen: #b82a28;
 .logo-isen {
     display: inline-block;
     font-family: target-light;
-	font-size: small;
-    padding: 0 0.3em;
+	font-size: x-small;
     text-align: left;
     h1 {
     	    color: $rouge-isen;
@@ -45,8 +44,4 @@ $rouge-isen: #b82a28;
         border-left: .1em solid $rouge-isen;
         text-transform: lowercase;
     }
-}
-
-@media screen and (max-width: 700px) {
-
 }
