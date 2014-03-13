@@ -20,7 +20,11 @@ $('a[href*=#]:not([href=#])').click(function() {
 	//CIR
     $(".CIR_detail").hide();
     $( ".CIR_trigger" ).click(function() {
-    	$(".CIR_detail").slideDown("slow");
+        if (!$(".CIR_detail").is(":visible")) {
+            $(".CIR_detail").slideDown("slow");
+        } else{
+            $(".CIR_detail").slideUp("slow");
+        };
 	});
     $( ".CIR_detail" ).click(function() {
     	$(".CIR_detail").slideUp("slow");
@@ -28,63 +32,95 @@ $('a[href*=#]:not([href=#])').click(function() {
     //Prepa
 	$(".prepa_detail").hide();
     $( ".prepa_trigger" ).click(function() {
-    	$(".prepa_detail").slideDown("slow");
-	});
+        if (!$(".prepa_detail").is(":visible")) {
+            $(".prepa_detail").slideDown("slow");
+        } else{
+            $(".prepa_detail").slideUp("slow");
+        };
+    });
     $( ".prepa_detail" ).click(function() {
     	$(".prepa_detail").slideUp("slow");
 	});
     //arkea
 	$(".arkea_detail").hide();
     $( ".arkea_trigger" ).click(function() {
-    	$(".arkea_detail").slideDown("slow");
-	});
+        if (!$(".arkea_detail").is(":visible")) {
+            $(".arkea_detail").slideDown("slow");
+        } else{
+            $(".arkea_detail").slideUp("slow");
+        };
+    });
     $( ".arkea_detail" ).click(function() {
     	$(".arkea_detail").slideUp("slow");
 	});
     //thomson
 	$(".thomson_detail").hide();
     $( ".thomson_trigger" ).click(function() {
-    	$(".thomson_detail").slideDown("slow");
-	});
+        if (!$(".thomson_detail").is(":visible")) {
+            $(".thomson_detail").slideDown("slow");
+        } else{
+            $(".thomson_detail").slideUp("slow");
+        };
+    });
     $( ".thomson_detail" ).click(function() {
     	$(".thomson_detail").slideUp("slow");
 	});
     //line
 	$(".line_detail").hide();
     $( ".line_trigger" ).click(function() {
-    	$(".line_detail").slideDown("slow");
-	});
+        if (!$(".line_detail").is(":visible")) {
+            $(".line_detail").slideDown("slow");
+        } else{
+            $(".line_detail").slideUp("slow");
+        };
+    });
     $( ".line_detail" ).click(function() {
     	$(".line_detail").slideUp("slow");
 	});
     //homer
 	$(".homer_detail").hide();
     $( ".homer_trigger" ).click(function() {
-    	$(".homer_detail").slideDown("slow");
-	});
+        if (!$(".homer_detail").is(":visible")) {
+            $(".homer_detail").slideDown("slow");
+        } else{
+            $(".homer_detail").slideUp("slow");
+        };
+    });
     $( ".homer_detail" ).click(function() {
     	$(".homer_detail").slideUp("slow");
 	});
     //python
 	$(".python_detail").hide();
     $( ".python_trigger" ).click(function() {
-    	$(".python_detail").slideDown("slow");
-	});
+        if (!$(".python_detail").is(":visible")) {
+            $(".python_detail").slideDown("slow");
+        } else{
+            $(".python_detail").slideUp("slow");
+        };
+    });
     $( ".python_detail" ).click(function() {
     	$(".python_detail").slideUp("slow");
 	});
     //paidday
 	$(".paidday_detail").hide();
     $( ".paidday_trigger" ).click(function() {
-    	$(".paidday_detail").slideDown("slow");
-	});
+        if (!$(".paidday_detail").is(":visible")) {
+            $(".paidday_detail").slideDown("slow");
+        } else{
+            $(".paidday_detail").slideUp("slow");
+        };
+    });
     $( ".paidday_detail" ).click(function() {
     	$(".paidday_detail").slideUp("slow");
 	});
     //rentree
     $(".rentree_detail").hide();
     $( ".rentree_trigger" ).click(function() {
-        $(".rentree_detail").slideDown("slow");
+        if (!$(".rentree_detail").is(":visible")) {
+            $(".rentree_detail").slideDown("slow");
+        } else{
+            $(".rentree_detail").slideUp("slow");
+        };
     });
     $( ".rentree_detail" ).click(function() {
         $(".rentree_detail").slideUp("slow");
@@ -92,7 +128,11 @@ $('a[href*=#]:not([href=#])').click(function() {
     //orizon
     $(".orizon_detail").hide();
     $( ".orizon_trigger" ).click(function() {
-        $(".orizon_detail").slideDown("slow");
+        if (!$(".orizon_detail").is(":visible")) {
+            $(".orizon_detail").slideDown("slow");
+        } else{
+            $(".orizon_detail").slideUp("slow");
+        };
     });
     $( ".orizon_detail" ).click(function() {
         $(".orizon_detail").slideUp("slow");
@@ -100,8 +140,12 @@ $('a[href*=#]:not([href=#])').click(function() {
     //skymap
 	$(".skymap_detail").hide();
     $( ".skymap_trigger" ).click(function() {
-    	$(".skymap_detail").slideDown("slow");
-	});
+        if (!$(".skymap_detail").is(":visible")) {
+            $(".skymap_detail").slideDown("slow");
+        } else{
+            $(".skymap_detail").slideUp("slow");
+        };
+    });
     $( ".skymap_detail" ).click(function() {
     	$(".skymap_detail").slideUp("slow");
 	});
@@ -111,13 +155,18 @@ $('a[href*=#]:not([href=#])').click(function() {
 setTimeout(
   function() 
   {
-    $( ".menu_indicator" ).removeClass( "fadeIn" ).addClass( "bounce" );
+    $( ".menu_indicator" ).removeClass( "fadeIn" ).addClass( "shake" );
   }, 2500);
 setTimeout(
   function() 
   {
-    $( ".menu_indicator" ).removeClass( "swing" ).addClass( "fadeOut" );
-  }, 5000);
+    $( ".menu_indicator" ).removeClass( "shake" ).addClass( "bounce" );
+  }, 6000);
+setTimeout(
+  function() 
+  {
+    $( ".menu_indicator" ).removeClass( "bounce" ).addClass( "fadeOut" );
+  }, 10000);
 
 $(window).scroll(function(){
     if ($('.projects').isOnScreen()==true) {

@@ -123,6 +123,8 @@
 						<li>Writing Powershell scripts to retrieve VMWare metrics</li>
 						<li>In-house training about Hadoop and Pig</li>
 						<li>Creation of an web-based app to visualize metrics in realtime using AngularJS</li>
+						<li>Creattion of a small Hadoop cluster running Pig for some testing</li>
+						<li>Using <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop into ElasticSearch</li>
 					</ul>
 				</div>
 			</article>
@@ -250,7 +252,7 @@
 		</div>
 		<div class="rentree_detail">
 			<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
-			<p>You can have a look on this project <a href="https://rentree.pierrezemb.fr">here</a></p>
+			<p>You can have a look on this project <a href="http://rentree.pierrezemb.fr">here</a></p>
 			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
 		</div>
 	</div><!-- /.col-lg-4 -->
@@ -335,8 +337,6 @@
 </div>
 
 </div>
-
-<hr>
 
 <footer>
 	<p class="text-center">&copy; Pierre Zemb 2014</p>
