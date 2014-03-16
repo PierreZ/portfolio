@@ -126,7 +126,7 @@ skills.push({
 //******************
 // OS
 //******************
-//******************
+//******************xb
 
 skills.push({
 	"name":"Debian/Ubuntu",
@@ -173,11 +173,11 @@ skills.push({
 skills.push({
 	"name":"Hadoop",
 	"type":"Data/Others",
-	"css":"skill-6 other_skills",
+	"css":"skill-8 other_skills",
 });
 skills.push({
 	"name":"Pig",
 	"type":"Data/Others",
-	"css":"skill-4 other_skills",
+	"css":"skill-7 other_skills",
 });
 
