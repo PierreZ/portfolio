@@ -203,6 +203,24 @@
 
 	<div class="row personal_line">
 		<h3 class="text-center"><strong>2014</strong></h3>
+
+	<div class="col-lg-4 text-center project_container">
+ 		<img class="img-circle skymap_trigger" src="img/skymap.png" alt="Generic placeholder image">
+ 		<h3 class="skymap_trigger">Glass project<br/>Skymap for Google Glass</h3>
+ 		<p class="skymap_trigger">Java - Android - Glass SDK</p>
+ 		<div class="skymap_trigger">
+ 			<img class="thumb_tech" src="img/android.png">
+ 			<img class="thumb_tech" src="img/glass.png">
+ 		</div>
+ 		<div class="skymap_detail">
+ 			<p>A few years ago, Google decided to liberate the source-code of <a href="http://code.google.com/p/stardroid/">Skymap</a>, their astronomy apps for Android</p>
+ 			<p>I'm crazy about astronomy, but I don't have time to practise it. That's why I decided to make an astronomy app using Google's source code</p>
+ 			<p>This app will allow you to see a map of the sky in real-time, just by watching the sky.</p>
+ 			<p>Work in progress!!</p>
+ 			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/skymap-for-glass" role="button">View on GitHub</a></p>
+ 
+ 		</div>
+ 	</div><!-- /.col-lg-4 -->
 		
 		<div class="col-lg-4 text-center project_container">
 			<img class="img-circle orizon_trigger" src="img/orizon.png" alt="Generic placeholder image">
