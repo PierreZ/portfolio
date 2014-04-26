@@ -116,7 +116,7 @@
 				<div class="arkea_detail">
 					<p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team at the headquarters of Crédit Mutuel Arkea.</p>
 					<p>Arkea Realtime Monitoring Infrastructure(Artimon for short) is involving technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house web apps based on D3js.</p>
-					<p>My job was to add Windows's based servers to Artimon and improve data vizualization.</p>
+					<p><strong>My job was to add Windows's based servers to Artimon and improve data vizualization.</strong></p>
 					<p><strong>These are some of my work:</strong></p>
 					<ul>
 						<li>I merged and upgraded Arkea's version of Apache Flume by recompiling it with Maven and making it available to Windows too.</li>
