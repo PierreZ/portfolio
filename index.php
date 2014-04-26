@@ -114,17 +114,17 @@
 					<p class="arkea_trigger text-center"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
 				</header>
 				<div class="arkea_detail">
-					<p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team, where I developed scripts and apps around a Realtime Monitoring Infrastructure which involves technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>…</p>
-					<p><strong>Some of my work:</strong></p>
+					<p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team at the headquarters of Crédit Mutuel Arkea.</p>
+					<p>Arkea Realtime Monitoring Infrastructure(Artimon for short) is involving technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house web apps based on D3js.</p>
+					<p>My job was to add Windows's based servers to Artimon and improve data vizualization.</p>
+					<p><strong>These are some of my work:</strong></p>
 					<ul>
-						<li>Merging and upgrading Arkea's version of Apache Flume (Maven Project)</li>
-						<li>Porting arkea's version of Flume for Windows</li>
-						<li>Writing some VBscripts to generating Windows's metrics</li>
-						<li>Writing Powershell scripts to retrieve VMWare metrics</li>
+						<li>I merged and upgraded Arkea's version of Apache Flume by recompiling it with Maven and making it available to Windows too.</li>
+						<li>I wrote some scripts in order to generate metrics from Windows</li>
+						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a></li>
 						<li>In-house training about Hadoop and Pig</li>
-						<li>Creation of an web-based app to visualize metrics in realtime using AngularJS</li>
-						<li>Creattion of a small Hadoop cluster running Pig for some testing</li>
-						<li>Using <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop into ElasticSearch</li>
+						<li>Creattion of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
+						<li>Enhancement of some vizualization apps written with AngularJS and D3js</li>
 					</ul>
 				</div>
 			</article>

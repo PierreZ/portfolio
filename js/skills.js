@@ -21,6 +21,11 @@ skills.push({
 	"css":"skill-10 dev_skills",
 });
 skills.push({
+	"name":"Go",
+	"type":"Software",
+	"css":"skill-9 dev_skills",
+});
+skills.push({
 	"name":"C++",
 	"type":"Software",
 	"css":"skill-10 dev_skills",
