@@ -623,3 +623,7 @@ body {
 .changing_menu > a {
   padding-left: 0;
   padding-right: 0; }
+
+footer {
+  margin-top: 30px;
+  text-align: center; }

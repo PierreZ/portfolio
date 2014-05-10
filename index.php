@@ -71,10 +71,13 @@
 		<div class="col-md-9">
 			<p>Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.</p>
 			<p>
-				I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Java and C++</strong>, but <strong>I always end up developping web apps</strong>.
+				I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Go, Java and C++</strong>, but <strong>I always end up developping web apps</strong>.
 			</p>
 			<p>
-				I am committed to many local meetings such as <strong>Google Developers Group, Java User Group or Startup Week-end</strong>. I am also the vice-president of the IT-Electronics club of ISEN, where I became a <strong>new-tech speaker among other things</strong>.
+				I am committed to many local meetings such as <strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong>, <strong><a href="http://finistjug.fr/">Java User Group</a></strong> or the <strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong>. I also participated in events as the first <strong><a href="http://brest.startupweekend.org/">Startup Week-end in Brest</a></strong> or the <strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong>.
+			</p>
+			<p>
+			I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
 			</p>
 			<p>
 				As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
@@ -115,7 +118,7 @@
 				</header>
 				<div class="arkea_detail">
 					<p>I worked as a <strong>DevOps</strong>(developer and sysadmin) at Systems team at the headquarters of Crédit Mutuel Arkea.</p>
-					<p>Arkea Realtime Monitoring Infrastructure(Artimon for short) is involving technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house web apps based on D3js.</p>
+					<p><strong>Arkea Realtime Monitoring Infrastructure(Artimon for short)</strong> is involving technology like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house web apps based on D3js.</p>
 					<p><strong>My job was to add Windows's based servers to Artimon and improve data vizualization.</strong></p>
 					<p><strong>These are some of my work:</strong></p>
 					<ul>
@@ -125,6 +128,7 @@
 						<li>In-house training about Hadoop and Pig</li>
 						<li>Creattion of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
 						<li>Enhancement of some vizualization apps written with AngularJS and D3js</li>
+						<li>Creation of a Restful Web Service to automaticly brings data stored into Hadoop to Arkea's vizualization apps</li>
 					</ul>
 				</div>
 			</article>
@@ -342,6 +346,7 @@
 
 <footer>
 	<p class="text-center">&copy; Pierre Zemb 2014</p>
+	<img style="width:20%" src="img/digital.png">
 </footer>
 </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
