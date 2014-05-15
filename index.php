@@ -77,7 +77,7 @@
 				I am committed to many local meetings such as <strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong>, <strong><a href="http://finistjug.fr/">Java User Group</a></strong> or the <strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong>. I also participated in events as the first <strong><a href="http://brest.startupweekend.org/">Startup Week-end in Brest</a></strong> or the <strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong>.
 			</p>
 			<p>
-			I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
+				I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
 			</p>
 			<p>
 				As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
@@ -208,146 +208,157 @@
 	<div class="row personal_line">
 		<h3 class="text-center"><strong>2014</strong></h3>
 
-	<div class="col-lg-4 text-center project_container">
- 		<img class="img-circle skymap_trigger" src="img/skymap.png" alt="Generic placeholder image">
- 		<h3 class="skymap_trigger">Glass project<br/>Skymap for Google Glass</h3>
- 		<p class="skymap_trigger">Java - Android - Glass SDK</p>
- 		<div class="skymap_trigger">
- 			<img class="thumb_tech" src="img/android.png">
- 			<img class="thumb_tech" src="img/glass.png">
- 		</div>
- 		<div class="skymap_detail">
- 			<p>A few years ago, Google decided to liberate the source-code of <a href="http://code.google.com/p/stardroid/">Skymap</a>, their astronomy apps for Android</p>
- 			<p>I'm crazy about astronomy, but I don't have time to practise it. That's why I decided to make an astronomy app using Google's source code</p>
- 			<p>This app will allow you to see a map of the sky in real-time, just by watching the sky.</p>
- 			<p>Work in progress!!</p>
- 			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/skymap-for-glass" role="button">View on GitHub</a></p>
- 
- 		</div>
- 	</div><!-- /.col-lg-4 -->
-		
-		<div class="col-lg-4 text-center project_container">
-			<img class="img-circle orizon_trigger" src="img/orizon.png" alt="Generic placeholder image">
-			<h3 class="orizon_trigger">Startup Week-end<br/>Orizon</h3>
-			<p class="orizon_trigger">HTML5 - CSS3 - JavaScript - AngularJS - Node.JS - MongoDB</p>
-			<div class="orizon_trigger">
-				<img class="thumb_tech" src="img/angularjs.png">
-				<img class="thumb_tech" src="img/nodejs.png">
-				<img src="img/mongodb.png">
+		<div class="col-lg-12 text-center project_container">
+		<img class="img-circle glasscamp_trigger" src="img/skymap.png" alt="Generic placeholder image">
+		<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Name of this amazing app</h3>
+		<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
+		<div class="glasscamp_trigger">
+				<img class="thumb_tech" src="img/android.png">
+				<img class="thumb_tech" src="img/glass.png">
 			</div>
-			<div class="orizon_detail">
-				<img style="width:350px" src="img/startup_2014.jpg">
-				<p>During the first ever start-up week-end in Brest, I worked on an web service called Orizon.</p>
-				<p>The goal's to offer an web service which allows you to match your profile with some of the best students in each schools, in order to help you find your way.</p>
-				<p>I created an web infrastructure with MongoDB, Node.JS and AngularJS</p>
-				<p>You can have a look on this project <a href="http://orizon.pierrezemb.fr">here</a></p>
-				<p>And read an article about it (in French) <a href="http://blog.pierrezemb.fr/retour-sur-le-premier-startup-week-end-de-brest/">here</a></p>
+			<div class="glasscamp_detail">
+			<p>Yolo swag</p>
 			</div>
-		</div><!-- /.col-lg-4 -->
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle skymap_trigger" src="img/skymap.png" alt="Generic placeholder image">
+				<h3 class="skymap_trigger">Glass project<br/>Skymap for Google Glass</h3>
+				<p class="skymap_trigger">Java - Android - Glass SDK</p>
+				<div class="skymap_trigger">
+					<img class="thumb_tech" src="img/android.png">
+					<img class="thumb_tech" src="img/glass.png">
+				</div>
+				<div class="skymap_detail">
+					<p>A few years ago, Google decided to liberate the source-code of <a href="http://code.google.com/p/stardroid/">Skymap</a>, their astronomy apps for Android</p>
+					<p>I'm crazy about astronomy, but I don't have time to practise it. That's why I decided to make an astronomy app using Google's source code</p>
+					<p>This app will allow you to see a map of the sky in real-time, just by watching the sky.</p>
+					<p>Work in progress!!</p>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/skymap-for-glass" role="button">View on GitHub</a></p>
 
-		<div class="col-lg-4 text-center project_container">
-		 <img class="img-circle rentree_trigger" src="img/rentree.png" alt="Generic placeholder image">
-		 <h3 class="rentree_trigger">Framework project<br/>Web interface for ISEN</h3>
-		 <p class="rentree_trigger">HTML5 - CSS3 - JavaScript - PHP - AngularJS - Handmade REST API</p>
-		 <div class="rentree_trigger">
-			<img class="thumb_tech" src="img/html5.png">
-			<img class="thumb_tech" src="img/css3.svg">
-			<img class="thumb_tech" src="img/javascript.png">
-			<img class="thumb_tech" src="img/PHP.png">
-			<img class="thumb_tech" src="img/angularjs.png">
+				</div>
+			</div><!-- /.col-lg-4 -->
+
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle orizon_trigger" src="img/orizon.png" alt="Generic placeholder image">
+				<h3 class="orizon_trigger">Startup Week-end<br/>Orizon</h3>
+				<p class="orizon_trigger">HTML5 - CSS3 - JavaScript - AngularJS - Node.JS - MongoDB</p>
+				<div class="orizon_trigger">
+					<img class="thumb_tech" src="img/angularjs.png">
+					<img class="thumb_tech" src="img/nodejs.png">
+					<img src="img/mongodb.png">
+				</div>
+				<div class="orizon_detail">
+					<img style="width:350px" src="img/startup_2014.jpg">
+					<p>During the first ever start-up week-end in Brest, I worked on an web service called Orizon.</p>
+					<p>The goal's to offer an web service which allows you to match your profile with some of the best students in each schools, in order to help you find your way.</p>
+					<p>I created an web infrastructure with MongoDB, Node.JS and AngularJS</p>
+					<p>You can have a look on this project <a href="http://orizon.pierrezemb.fr">here</a></p>
+					<p>And read an article about it (in French) <a href="http://blog.pierrezemb.fr/retour-sur-le-premier-startup-week-end-de-brest/">here</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
+
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle rentree_trigger" src="img/rentree.png" alt="Generic placeholder image">
+				<h3 class="rentree_trigger">Framework project<br/>Web interface for ISEN</h3>
+				<p class="rentree_trigger">HTML5 - CSS3 - JavaScript - PHP - AngularJS - Handmade REST API</p>
+				<div class="rentree_trigger">
+					<img class="thumb_tech" src="img/html5.png">
+					<img class="thumb_tech" src="img/css3.svg">
+					<img class="thumb_tech" src="img/javascript.png">
+					<img class="thumb_tech" src="img/PHP.png">
+					<img class="thumb_tech" src="img/angularjs.png">
+				</div>
+				<div class="rentree_detail">
+					<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
+					<p>You can have a look on this project <a href="http://rentree.pierrezemb.fr">here</a></p>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
 		</div>
-		<div class="rentree_detail">
-			<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
-			<p>You can have a look on this project <a href="http://rentree.pierrezemb.fr">here</a></p>
-			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
+
+		<hr>
+
+
+		<div class="row personal_line">
+			<h3 class="text-center"><strong>2013</strong></h3>
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle paidday_trigger" src="img/paidday.png" alt="Generic placeholder image">
+				<h3 class="paidday_trigger">Web project<br/>Paid day management</h3>
+				<p class="paidday_trigger">HTML5 - CSS3 - JavaScript - PHP - Java</p>
+				<div class="paidday_trigger">
+					<img class="thumb_tech" src="img/html5.png">
+					<img class="thumb_tech" src="img/css3.svg">
+					<img class="thumb_tech" src="img/javascript.png">
+					<img class="thumb_tech" src="img/PHP.png">
+					<img class="thumb_tech" src="img/java.svg">
+				</div>
+				<div class="paidday_detail">
+					<p>We had to make by pairs a web project called Paid holiday management; administration side is in Web technology such as PHP and JQuery and the user side is in java.</p>
+					<p>The user client show a calendar, and next holidays. On the administration side, you can select a person, and add/modify/suppress holiday by clicking on the day. A wrapper on the left resume all the holiday on the selected user.</p>
+					<p>The whole calendar and wrapper refresh are in Ajax, to avoid webpage refresh.</p>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
+
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle python_trigger" src="img/livre_python.png" alt="Generic placeholder image">
+				<h3 class="python_trigger">French book<br/>Le python en Prépa</h3>
+				<p class="python_trigger">Python</p>
+				<div class="python_trigger">
+					<img class="thumb_tech" src="img/python.png">
+				</div>
+				<div class="python_detail">
+					<p>With the help of our physics teacher, we wrote a book with my class about Python programming for french teachers of preparatory classes.</p>
+					<p>the new computer programs CPGEs introduce two new free languages ​​instead of Maple and Mathematica: Python and SciLab. We therefore converted to Python exercises Mathematica / Maple type and written tutorials on various topics such as database, PC hardware or programming.</p>
+					<p>You can order the book <a href="http://web.isen-bretagne.fr/livres/python/index.php">here</a> and read some interview of myself <a href="http://www.tech-brest-iroise.fr/Actualit%C3%A9s-398-941-0-0.html">here</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
+
+			<div class="col-lg-4 text-center project_container">
+				<img class="img-circle homer_trigger" src="img/homer.png" alt="Generic placeholder image">
+				<h3 class="homer_trigger">Kinect game<br/>Go Homer!</h3>
+				<p class="homer_trigger">C++ - Kinect SDK - Qt4</p>
+				<div class="homer_trigger">
+					<img class="thumb_tech" src="img/cplusplus.png">
+					<img class="thumb_tech" src="img/qt.png">
+					<img class="thumb_tech" src="img/kinect.png">
+
+				</div>
+				<div class="homer_detail">
+					<p>I realized during my free time a juggling game with Kinect in C++.</p>
+					<p>The game is to make a maximum of jungles with your head,movements are based on your actual position.</p>
+					<p>For this, I used the official SDK and Microsoft Visual Studio with Qt as graphics API.</p>
+					<iframe width="400" height="200" src="http://www.youtube.com/embed/EXtNwbCb7w8" frameborder="0" allowfullscreen=""></iframe>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
 		</div>
-	</div><!-- /.col-lg-4 -->
-</div>
-
-<hr>
 
 
-<div class="row personal_line">
-	<h3 class="text-center"><strong>2013</strong></h3>
-	<div class="col-lg-4 text-center project_container">
-		<img class="img-circle paidday_trigger" src="img/paidday.png" alt="Generic placeholder image">
-		<h3 class="paidday_trigger">Web project<br/>Paid day management</h3>
-		<p class="paidday_trigger">HTML5 - CSS3 - JavaScript - PHP - Java</p>
-		<div class="paidday_trigger">
-			<img class="thumb_tech" src="img/html5.png">
-			<img class="thumb_tech" src="img/css3.svg">
-			<img class="thumb_tech" src="img/javascript.png">
-			<img class="thumb_tech" src="img/PHP.png">
-			<img class="thumb_tech" src="img/java.svg">
+		<hr>
+		<div class="row personal_line">
+
+			<h3 class="text-center"><strong>2012</strong></h3>
+			<div class="text-center project_container">
+				<img class="img-circle line_trigger" src="img/img_flowcode.png" alt="Generic placeholder image">
+				<h3 class="line_trigger">line follower Robot</h3>
+				<p class="line_trigger">Flowcode</p>
+				<div class="line_trigger">
+					<img class="thumb_tech" src="img/flowcode.png">
+				</div>
+				<div class="line_detail">
+					<p>I realized as an project a line follower robot. The hardware was already done, we just had to program it with Flowcode</p>
+					<iframe width="400" height="200" src="http://www.youtube.com/embed/ZokwIFNCysI" frameborder="0" allowfullscreen=""></iframe>
+					<!--       <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
+				</div>
+			</div><!-- /.col-lg-4 -->
 		</div>
-		<div class="paidday_detail">
-			<p>We had to make by pairs a web project called Paid holiday management; administration side is in Web technology such as PHP and JQuery and the user side is in java.</p>
-			<p>The user client show a calendar, and next holidays. On the administration side, you can select a person, and add/modify/suppress holiday by clicking on the day. A wrapper on the left resume all the holiday on the selected user.</p>
-			<p>The whole calendar and wrapper refresh are in Ajax, to avoid webpage refresh.</p>
-			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
-		</div>
-	</div><!-- /.col-lg-4 -->
 
-	<div class="col-lg-4 text-center project_container">
-		<img class="img-circle python_trigger" src="img/livre_python.png" alt="Generic placeholder image">
-		<h3 class="python_trigger">French book<br/>Le python en Prépa</h3>
-		<p class="python_trigger">Python</p>
-		<div class="python_trigger">
-			<img class="thumb_tech" src="img/python.png">
-		</div>
-		<div class="python_detail">
-			<p>With the help of our physics teacher, we wrote a book with my class about Python programming for french teachers of preparatory classes.</p>
-			<p>the new computer programs CPGEs introduce two new free languages ​​instead of Maple and Mathematica: Python and SciLab. We therefore converted to Python exercises Mathematica / Maple type and written tutorials on various topics such as database, PC hardware or programming.</p>
-			<p>You can order the book <a href="http://web.isen-bretagne.fr/livres/python/index.php">here</a> and read some interview of myself <a href="http://www.tech-brest-iroise.fr/Actualit%C3%A9s-398-941-0-0.html">here</a></p>
-		</div>
-	</div><!-- /.col-lg-4 -->
+	</div>
 
-	<div class="col-lg-4 text-center project_container">
-		<img class="img-circle homer_trigger" src="img/homer.png" alt="Generic placeholder image">
-		<h3 class="homer_trigger">Kinect game<br/>Go Homer!</h3>
-		<p class="homer_trigger">C++ - Kinect SDK - Qt4</p>
-		<div class="homer_trigger">
-			<img class="thumb_tech" src="img/cplusplus.png">
-			<img class="thumb_tech" src="img/qt.png">
-			<img class="thumb_tech" src="img/kinect.png">
-
-		</div>
-		<div class="homer_detail">
-			<p>I realized during my free time a juggling game with Kinect in C++.</p>
-			<p>The game is to make a maximum of jungles with your head,movements are based on your actual position.</p>
-			<p>For this, I used the official SDK and Microsoft Visual Studio with Qt as graphics API.</p>
-			<iframe width="400" height="200" src="http://www.youtube.com/embed/EXtNwbCb7w8" frameborder="0" allowfullscreen=""></iframe>
-			<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
-		</div>
-	</div><!-- /.col-lg-4 -->
-</div>
-
-
-<hr>
-<div class="row personal_line">
-
-	<h3 class="text-center"><strong>2012</strong></h3>
-	<div class="text-center project_container">
-		<img class="img-circle line_trigger" src="img/img_flowcode.png" alt="Generic placeholder image">
-		<h3 class="line_trigger">line follower Robot</h3>
-		<p class="line_trigger">Flowcode</p>
-		<div class="line_trigger">
-			<img class="thumb_tech" src="img/flowcode.png">
-		</div>
-		<div class="line_detail">
-			<p>I realized as an project a line follower robot. The hardware was already done, we just had to program it with Flowcode</p>
-			<iframe width="400" height="200" src="http://www.youtube.com/embed/ZokwIFNCysI" frameborder="0" allowfullscreen=""></iframe>
-			<!--       <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
-		</div>
-	</div><!-- /.col-lg-4 -->
-</div>
-
-</div>
-
-<footer>
-	<p class="text-center">&copy; Pierre Zemb 2014</p>
-	<img style="width:20%" src="img/digital.png">
-</footer>
+	<footer>
+		<p class="text-center">&copy; Pierre Zemb 2014</p>
+		<img style="width:20%" src="img/digital.png">
+	</footer>
 </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 

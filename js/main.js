@@ -138,7 +138,7 @@ $('a[href*=#]:not([href=#])').click(function() {
         $(".orizon_detail").slideUp("slow");
     });
     //skymap
-	$(".skymap_detail").hide();
+    $(".skymap_detail").hide();
     $( ".skymap_trigger" ).click(function() {
         if (!$(".skymap_detail").is(":visible")) {
             $(".skymap_detail").slideDown("slow");
@@ -147,7 +147,19 @@ $('a[href*=#]:not([href=#])').click(function() {
         };
     });
     $( ".skymap_detail" ).click(function() {
-    	$(".skymap_detail").slideUp("slow");
+        $(".skymap_detail").slideUp("slow");
+    });
+    //glasscamp
+	$(".glasscamp_detail").hide();
+    $( ".glasscamp_trigger" ).click(function() {
+        if (!$(".glasscamp_detail").is(":visible")) {
+            $(".glasscamp_detail").slideDown("slow");
+        } else{
+            $(".glasscamp_detail").slideUp("slow");
+        };
+    });
+    $( ".glasscamp_detail" ).click(function() {
+    	$(".glasscamp_detail").slideUp("slow");
 	});
 
 
