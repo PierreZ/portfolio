@@ -185,4 +185,9 @@ skills.push({
 	"type":"Data/Others",
 	"css":"skill-7 other_skills",
 });
+skills.push({
+	"name":"Docker",
+	"type":"Data/Others",
+	"css":"skill-7 other_skills",
+});
 
