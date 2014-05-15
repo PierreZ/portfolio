@@ -124,7 +124,7 @@
 					<ul>
 						<li>I merged and upgraded Arkea's version of Apache Flume by recompiling it with Maven and making it available to Windows too.</li>
 						<li>I wrote some scripts in order to generate metrics from Windows</li>
-						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a></li>
+						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog and Flume</a></li>
 						<li>In-house training about Hadoop and Pig</li>
 						<li>Creattion of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
 						<li>Enhancement of some vizualization apps written with AngularJS and D3js</li>
