@@ -217,7 +217,7 @@
 		<h3 class="text-center"><strong>2014</strong></h3>
 
 		<div class="col-lg-12 text-center project_container">
-		<img class="img-circle glasscamp_trigger" src="img/sinis.png" alt="Generic placeholder image">
+		<img class="img-circle glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
 		<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
 		<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
 		<div class="glasscamp_trigger">
