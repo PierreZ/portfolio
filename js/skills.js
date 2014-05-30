@@ -153,6 +153,11 @@ skills.push({
 	"type":"OS",
 	"css":"skill-6 OS_skills",
 });
+skills.push({
+	"name":"CoreOS",
+	"type":"OS",
+	"css":"skill-4 OS_skills",
+});
 
 //******************
 //******************

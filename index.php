@@ -74,8 +74,16 @@
 				I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Go, Java and C++ using <a href="http://docker.io">Docker</a></strong>, but <strong>I always end up developping web apps</strong>.
 			</p>
 			<p>
-				I am committed to many local meetings such as <strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong>, <strong><a href="http://finistjug.fr/">Java User Group</a></strong> or the <strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong>. I also participated in events as the first <strong><a href="http://brest.startupweekend.org/">Startup Week-end in Brest</a></strong> or the <strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong>.
+			I am committed to many local meetings and events such as: 			
 			</p>
+			<ul>
+				<li><strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong></li>
+				<li><strong><a href="http://finistjug.fr/">Java User Group</a></strong></li>
+				<li><strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong></li>
+				<li><strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong></li>
+				<li><strong><a href="http://brest.startupweekend.org/">Startup Week-end 2014 in Brest</a></strong></li>
+				<li><strong><a href="http://www.lacantine-brest.net/ai1ec_event/glass-camp-bank/?instance_id=">GlassCamp Bank 2014</a></strong></li>
+			</ul>
 			<p>
 				I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
 			</p>
@@ -209,15 +217,18 @@
 		<h3 class="text-center"><strong>2014</strong></h3>
 
 		<div class="col-lg-12 text-center project_container">
-		<img class="img-circle glasscamp_trigger" src="img/skymap.png" alt="Generic placeholder image">
-		<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Name of this amazing app</h3>
+		<img class="img-circle glasscamp_trigger" src="img/sinis.png" alt="Generic placeholder image">
+		<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
 		<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
 		<div class="glasscamp_trigger">
 				<img class="thumb_tech" src="img/android.png">
 				<img class="thumb_tech" src="img/glass.png">
 			</div>
 			<div class="glasscamp_detail">
-			<p>Yolo swag</p>
+			<p>During the first GlassCamp Bank(event about using Glass for new usage at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declared their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
+			<p>Written in Java using Android SDK and GDK addon.</p>
+			<img style="width:350px"  src="img/glass.jpg">
+				<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/triskell/sinis" role="button">View on GitHub</a></p>
 			</div>
 			<div class="col-lg-4 text-center project_container">
 				<img class="img-circle skymap_trigger" src="img/skymap.png" alt="Generic placeholder image">
