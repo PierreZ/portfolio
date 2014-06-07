@@ -383,6 +383,8 @@
 
 <script src="js/skills.js"></script>
 <script src="js/main.js"></script>
+<script src="https://fightforthefuture.github.io/reset-the-net-banner/banner/rtn.js"
+async></script>
 
 <script>
 	var _gaq=[['_setAccount','UA-41090605-1'],['_trackPageview']];
