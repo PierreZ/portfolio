@@ -50,6 +50,12 @@ skills.push({
 	"type":"Software",
 	"css":"skill-5 dev_skills",
 });
+skills.push({
+	"name":"Assembly",
+	"type":"Software",
+	"css":"skill-6 dev_skills",
+});
+
 
 
 
@@ -210,5 +216,12 @@ skills.push({
 	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
 });
+
+skills.push({
+	"name":"App Engine",
+	"type":"Data, Cloud and others",
+	"css":"skill-6 other_skills",
+});
+
 
 
