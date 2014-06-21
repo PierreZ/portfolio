@@ -162,6 +162,19 @@ $('a[href*=#]:not([href=#])').click(function() {
     	$(".glasscamp_detail").slideUp("slow");
 	});
 
+        //making_data
+    $(".making_data_detail").hide();
+    $( ".making_data_trigger" ).click(function() {
+        if (!$(".making_data_detail").is(":visible")) {
+            $(".making_data_detail").slideDown("slow");
+        } else{
+            $(".making_data_detail").slideUp("slow");
+        };
+    });
+    $( ".making_data_detail" ).click(function() {
+        $(".making_data_detail").slideUp("slow");
+    });
+
 
 
 setTimeout(

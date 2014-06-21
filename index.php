@@ -130,14 +130,15 @@
 					<p><strong>My job was to add Windows's based servers to Artimon and improve data vizualization.</strong></p>
 					<p><strong>These are some of my work:</strong></p>
 					<ul>
-						<li>I merged and upgraded Arkea's version of Apache Flume by recompiling it with Maven and making it available to Windows too.</li>
-						<li>I wrote some scripts in order to generate metrics from Windows</li>
-						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog and Flume</a></li>
+						<li>I merged and upgraded Arkea's version of Apache <a href="https://flume.apache.org/">Flume</a> by recompiling it with Maven and making it available to Windows too.</li>
+						<li>I wrote some scripts in order to generate metrics from Windows(using PowerCLI API for VMware vSphere)</li>
+						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
 						<li>In-house training about Hadoop and Pig</li>
-						<li>Creattion of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
-						<li>Enhancement of some vizualization apps written with AngularJS and D3js</li>
+						<li>Creation of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
+						<li>Enhancement of some vizualization apps written with AngularJS and D3JS</li>
 						<li>Creation of a Restful Web Service to automaticly brings data stored into Hadoop to Arkea's vizualization apps</li>
 					</ul>
+					<p>I also heard a lot about <b> mainframes, Ceph, OpenStack, CoreOS, Docker, Redis, Nagios, VMware vSphere, Citrix</b> and so on...</p>
 				</div>
 			</article>
 		</div>
@@ -203,7 +204,18 @@
 		</article>
 
 	</div>
-	<div class="col-md-6 text-center">
+	<article>
+			<header class="text-center">
+				<h3>Google</h3>
+				<img src="img/google-logo.png" width="200px">
+				<p>Online course - <strong>Graduation:</strong> April 2014</p>
+			</header>
+			<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
+			<div class="making_data_detail">
+				<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="">here.</a></p>
+			</div>
+		</article>
+	<div class="col-md-12 text-center">
 		<h2>More to come!</h2>
 		<p>My goal is to spend a full year in a foreign country during my final year at ISEN!</p>
 	</div>

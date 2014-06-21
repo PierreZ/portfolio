@@ -5,7 +5,7 @@ skills_cat.push("Software");
 skills_cat.push("Web");
 skills_cat.push("Cisco Network");
 skills_cat.push("OS");
-skills_cat.push("Data/Others");
+skills_cat.push("Data, Cloud and others");
 
 var skills= new Array();
 
@@ -50,6 +50,7 @@ skills.push({
 	"type":"Software",
 	"css":"skill-5 dev_skills",
 });
+
 
 
 
@@ -161,38 +162,53 @@ skills.push({
 
 //******************
 //******************
-// Data/others
+// Data, Cloud and others
 //******************
 //******************
 
 skills.push({
 	"name":"MySQL",
-	"type":"Data/Others",
+	"type":"Data, Cloud and others",
 	"css":"skill-5 other_skills",
 });
-skills.push({
-	"name":"Git",
-	"type":"Data/Others",
-	"css":"skill-6 other_skills",
-});
+
 skills.push({
 	"name":"MongoDB",
-	"type":"Data/Others",
+	"type":"Data, Cloud and others",
+	"css":"skill-7 other_skills",
+});
+
+skills.push({
+	"name":"VMware",
+	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
 });
 skills.push({
 	"name":"Hadoop",
-	"type":"Data/Others",
-	"css":"skill-8 other_skills",
+	"type":"Data, Cloud and others",
+	"css":"skill-10 other_skills",
 });
 skills.push({
 	"name":"Pig",
-	"type":"Data/Others",
+	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
 });
 skills.push({
 	"name":"Docker",
-	"type":"Data/Others",
+	"type":"Data, Cloud and others",
+	"css":"skill-9 other_skills",
+});
+
+skills.push({
+	"name":"OpenStack",
+	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
 });
+
+skills.push({
+	"name":"Git",
+	"type":"Data, Cloud and others",
+	"css":"skill-7 other_skills",
+});
+
 
