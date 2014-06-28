@@ -285,8 +285,6 @@
 				<p class="rentree_trigger">HTML5 - CSS3 - JavaScript - PHP - AngularJS - Handmade REST API</p>
 				<div class="rentree_trigger">
 					<img class="thumb_tech" src="img/html5.png">
-					<img class="thumb_tech" src="img/css3.svg">
-					<img class="thumb_tech" src="img/javascript.png">
 					<img class="thumb_tech" src="img/PHP.png">
 					<img class="thumb_tech" src="img/angularjs.png">
 				</div>
@@ -309,8 +307,6 @@
 				<p class="paidday_trigger">HTML5 - CSS3 - JavaScript - PHP - Java</p>
 				<div class="paidday_trigger">
 					<img class="thumb_tech" src="img/html5.png">
-					<img class="thumb_tech" src="img/css3.svg">
-					<img class="thumb_tech" src="img/javascript.png">
 					<img class="thumb_tech" src="img/PHP.png">
 					<img class="thumb_tech" src="img/java.svg">
 				</div>
