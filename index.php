@@ -135,7 +135,7 @@
 						<li>I wrote some VBScripts/PowerShell scripts in order to generate metrics from Windows(using PowerCLI API for VMware vSphere)</li>
 						<li>Enhancement of some vizualization apps written with AngularJS and D3JS</li>
 						<li>Creation of a Restful Web Service to automaticly brings data stored into Hadoop to Arkea's vizualization apps(backend written in Java)</li>
-						<li>Creation of a Kafka consumer in Java to experiment around </li>
+						<li>Creation of a Kafka consumer in Java to feed OpenTSDB over HTTP</li>
 						<li><b>Ops:</b></li>
 						<li>Testing NXLog to bring Eventlogs from Windows to ElasticSearch</li>
 						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
