@@ -130,15 +130,21 @@
 					<p><strong>My job was to add Windows's based servers to Artimon and improve data vizualization.</strong></p>
 					<p><strong>These are some of my work:</strong></p>
 					<ul>
+						<li><b>Dev:</b></li>
 						<li>I merged and upgraded Arkea's version of Apache <a href="https://flume.apache.org/">Flume</a> by recompiling it with Maven and making it available to Windows too.</li>
-						<li>I wrote some scripts in order to generate metrics from Windows(using PowerCLI API for VMware vSphere)</li>
-						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
-						<li>In-house training about Hadoop and Pig</li>
-						<li>Creation of a small Hadoop cluster for some testing about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a> to bring logs stored into Hadoop to ElasticSearch</li>
+						<li>I wrote some VBScripts/PowerShell scripts in order to generate metrics from Windows(using PowerCLI API for VMware vSphere)</li>
 						<li>Enhancement of some vizualization apps written with AngularJS and D3JS</li>
-						<li>Creation of a Restful Web Service to automaticly brings data stored into Hadoop to Arkea's vizualization apps</li>
+						<li>Creation of a Restful Web Service to automaticly brings data stored into Hadoop to Arkea's vizualization apps(backend written in Java)</li>
+						<li>Creation of a Kafka consumer in Java to experiment around </li>
+						<br>
+						<li><b>Ops:</b></li>
+						<li>Testing NXLog to bring Eventlogs from Windows to ElasticSearch</li>
+						<li>put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
+						<li>Creation of a small Hadoop cluster for some experiments about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a>, <a href="http://opentsdb.net/">OpenTSDB</a>, and <a href="https://hbase.apache.org/">HBase</a></li>
+						<li>In-house training about Hadoop and Pig</li>
+						<li>In-house training about Chef</li>
 					</ul>
-					<p>I also heard a lot about <b> mainframes, Ceph, OpenStack, CoreOS, Docker, Redis, Nagios, VMware vSphere, Citrix</b> and so on...</p>
+					<p>I also heard a lot about <b> mainframes,  OpenStack, CoreOS, Docker, Redis, Nagios, VMware vSphere, Citrix</b> and so on...</p>
 				</div>
 			</article>
 		</div>
@@ -376,7 +382,6 @@
 
 	<footer>
 		<p class="text-center">&copy; Pierre Zemb 2014</p>
-		<img style="width:20%" src="img/digital.png">
 	</footer>
 </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
