@@ -279,7 +279,6 @@
 					<p>During the first ever start-up week-end in Brest, I worked on an web service called Orizon.</p>
 					<p>The goal's to offer an web service which allows you to match your profile with some of the best students in each schools, in order to help you find your way.</p>
 					<p>I created an web infrastructure with MongoDB, Node.JS and AngularJS</p>
-					<p>You can have a look on this project <a href="http://orizon.pierrezemb.fr">here</a></p>
 					<p>And read an article about it (in French) <a href="http://blog.pierrezemb.fr/retour-sur-le-premier-startup-week-end-de-brest/">here</a></p>
 				</div>
 			</div><!-- /.col-lg-4 -->
@@ -295,7 +294,6 @@
 				</div>
 				<div class="rentree_detail">
 					<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
-					<p>You can have a look on this project <a href="http://rentree.pierrezemb.fr">here</a></p>
 					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
 				</div>
 			</div><!-- /.col-lg-4 -->
