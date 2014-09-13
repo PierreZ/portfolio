@@ -36,64 +36,84 @@
 	<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 	<![endif]-->
 
-	<?php
-	require("elements/menu.php");
-	?>
+	<ul id="gn-menu" class="gn-menu-main">
+		<li class="gn-trigger">
+			<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
+			<nav class="gn-menu-wrapper">
+				<div class="gn-scroller">
+					<ul class="gn-menu">
+						<li><a  href="#home" class="gn-icon gn-icon-home">Home</a></li>
+						<li><a href="http://blog.pierrezemb.fr" class="gn-icon gn-icon-blog" >Blog</a></li>  
+						<li><a  href="#about" class="gn-icon gn-icon-about">About Me</a></li>
+						<li><a href="#skills" class="gn-icon gn-icon-skills" >Skills</a></li>  
+						<li><a href="#work" class="gn-icon gn-icon-work" >Work experience</a></li> 
+						<li><a href="#education"class="gn-icon gn-icon-education">Education</a></li>
+						<li><a href="#projects" class="gn-icon gn-icon-code">Projects</a></li>
+					</ul>
+					
+				</div><!-- /gn-scroller -->
+			</nav>
+			<li><a class="changing_menu animated fadeIn">About Me</a></li>
+			<li><div class="logo-isen">
+				<h1>ISEN</h1>
+				<h2>École d'ingénieurs</h2>
+			</div></li>
+		</ul>
 
-	<div id="home" class="row welcome">
+		<div id="home" class="row welcome">
 
-		<h1>Pierre Zemb<br/>
-			<small>
-				<span class="txt-rotate biggest" data-period="2000" data-rotate='[ "French Engineer student", "Software developer", "But also Web when needed", "Pierre Who??" ]'></span>
-			</small>
-		</h1>
-		<div class="social">
-			<a  href="http://www.facebook.com/pierre.zemb"><img class="socials_icons" src="img/facebook.png" alt="Facebook" /></a>
-			<a href="http://twitter.com/PierreZ"><img class="socials_icons" src="img/twitter.png" alt="Twitter" /></a>
-			<a href="http://plus.google.com/108156342712745521162"><img class="socials_icons" src="img/googleplus-revised.png" alt="Google+" /></a>
-			<a href="http://www.flickr.com/photos/34207436@N03/sets/"><img class="socials_icons" src="img/flickr.png" alt="Flickr" /></a>
-			<a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="img/linkedin.png" alt="Youtube" /></a>
-			<a href="https://github.com/PierreZ"><img class="socials_icons"  src="img/github.png" alt="git" /></a>
+			<h1>Pierre Zemb<br/>
+				<small>
+					<span class="txt-rotate biggest" data-period="2000" data-rotate='[ "French Engineer student", "Software developer", "But also Web when needed", "Pierre Who??" ]'></span>
+				</small>
+			</h1>
+			<div class="social">
+				<a  href="http://www.facebook.com/pierre.zemb"><img class="socials_icons" src="img/facebook.png" alt="Facebook" /></a>
+				<a href="http://twitter.com/PierreZ"><img class="socials_icons" src="img/twitter.png" alt="Twitter" /></a>
+				<a href="http://plus.google.com/108156342712745521162"><img class="socials_icons" src="img/googleplus-revised.png" alt="Google+" /></a>
+				<a href="http://www.flickr.com/photos/34207436@N03/sets/"><img class="socials_icons" src="img/flickr.png" alt="Flickr" /></a>
+				<a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="img/linkedin.png" alt="Youtube" /></a>
+				<a href="https://github.com/PierreZ"><img class="socials_icons"  src="img/github.png" alt="git" /></a>
+			</div>
+
 		</div>
 
-	</div>
 
 
+		<div id="about" class="row about">
+			<h2 class="text-center">About Me</h2>
+			<div class="google_color text-center"></div>
+			<div class="text-center col-md-3">
+				<img class="profile_image" src="img/myself.png">
+				<p class="text-center"><a href="/CV.pdf">Download my resume</a></li></p>
+				<p class="text-center"><a href="/CV_fr.pdf" class="lang">Mon CV français est dispo ici !</a></p>
+			</div>
+			<div class="col-md-9">
+				<p>Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.</p>
+				<p>
+					I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Go, Java and C++</strong> and ship them with <a href="http://docker.io">Docker</a>, but <strong>I always end up developping web apps</strong>.
+				</p>
+				<p>
+					I am committed to many local meetings and events such as: 			
+				</p>
+				<ul>
+					<li><strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong></li>
+					<li><strong><a href="http://finistjug.fr/">Java User Group</a></strong></li>
+					<li><strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong></li>
+					<li><strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong></li>
+					<li><strong><a href="http://brest.startupweekend.org/">Startup Week-end 2014 in Brest</a></strong></li>
+					<li><strong><a href="http://www.lacantine-brest.net/ai1ec_event/glass-camp-bank/?instance_id=">GlassCamp Bank 2014</a></strong></li>
+				</ul>
+				<p>
+					I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
+				</p>
+				<p>
+					As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
+				</p>
+				<p>You can find on my <a href="http://blog.pierrezemb.fr/">blog</a> my <strong>slides, resources,articles and my latest project</strong>.</p>
+			</div>
 
-	<div id="about" class="row about">
-		<h2 class="text-center">About Me</h2>
-		<div class="google_color text-center"></div>
-		<div class="text-center col-md-3">
-			<img class="profile_image" src="img/myself.png">
-			<p class="text-center"><a href="/CV.pdf">Download my resume</a></li></p>
-			<p class="text-center"><a href="/CV_fr.pdf" class="lang">Mon CV français est dispo ici !</a></p>
 		</div>
-		<div class="col-md-9">
-			<p>Hi! My name's Pierre Zemb, and I'm a <strong>french student</strong> in an engineering school called <strong>ISEN </strong>where I'm currently studying in the Computer and Network Cycle.</p>
-			<p>
-				I first became interested in development during my training, and I never stop ever since. Thanks to it, I learned thorough computer skills.<strong>I am really enjoying learning new languages or frameworks by myself</strong>, and using them to <strong>develop either web or native apps on my free time</strong>. I'm really enjoying coding in <strong>Go, Java and C++</strong> and ship them with <a href="http://docker.io">Docker</a>, but <strong>I always end up developping web apps</strong>.
-			</p>
-			<p>
-			I am committed to many local meetings and events such as: 			
-			</p>
-			<ul>
-				<li><strong> <a href="http://finistgdg.fr/">Google Developers Group</a></strong></li>
-				<li><strong><a href="http://finistjug.fr/">Java User Group</a></strong></li>
-				<li><strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong></li>
-				<li><strong><a href="http://www.dotscale.eu/">DotScale 2014</a></strong></li>
-				<li><strong><a href="http://brest.startupweekend.org/">Startup Week-end 2014 in Brest</a></strong></li>
-				<li><strong><a href="http://www.lacantine-brest.net/ai1ec_event/glass-camp-bank/?instance_id=">GlassCamp Bank 2014</a></strong></li>
-			</ul>
-			<p>
-				I'm the vice-president of the IT-Electronics club of my engineering school, where I became a <strong>new-tech speaker among other things</strong>.
-			</p>
-			<p>
-				As a work experience, I spent <strong>a year in a part-time internship as a DevOps</strong>(developer and sysadmin)  at Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technology like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
-			</p>
-			<p>You can find on my <a href="http://blog.pierrezemb.fr/">blog</a> my <strong>slides, resources,articles and my latest project</strong>.</p>
-		</div>
-
-	</div>
 
 	<!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'"
 -->  <div  id="skills" class="row skills">
@@ -210,16 +230,16 @@
 
 	</div>
 	<article>
-			<header class="text-center">
-				<h3>Google</h3>
-				<img src="img/google-logo.png" width="200px">
-				<p>Online course - <strong>Graduation:</strong> April 2014</p>
-			</header>
-			<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
-			<div class="making_data_detail">
-				<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="">here.</a></p>
-			</div>
-		</article>
+		<header class="text-center">
+			<h3>Google</h3>
+			<img src="img/google-logo.png" width="200px">
+			<p>Online course - <strong>Graduation:</strong> April 2014</p>
+		</header>
+		<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
+		<div class="making_data_detail">
+			<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="">here.</a></p>
+		</div>
+	</article>
 	<div class="col-md-12 text-center">
 		<h2>More to come!</h2>
 		<p>My goal is to spend a full year in a foreign country during my final year at ISEN!</p>
@@ -234,17 +254,17 @@
 		<h3 class="text-center"><strong>2014</strong></h3>
 
 		<div class="col-lg-12 text-center project_container">
-		<img class="img-circle glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
-		<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
-		<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
-		<div class="glasscamp_trigger">
+			<img class="img-circle glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
+			<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
+			<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
+			<div class="glasscamp_trigger">
 				<img class="thumb_tech" src="img/android.png">
 				<img class="thumb_tech" src="img/glass.png">
 			</div>
 			<div class="glasscamp_detail">
-			<p>During the first GlassCamp Bank(event about using Glass for new usage at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declared their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
-			<p>Written in Java using Android SDK and GDK addon.</p>
-			<img style="width:350px"  src="img/glass.jpg">
+				<p>During the first GlassCamp Bank(event about using Glass for new usage at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declared their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
+				<p>Written in Java using Android SDK and GDK addon.</p>
+				<img style="width:350px"  src="img/glass.jpg">
 				<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/triskell/sinis" role="button">View on GitHub</a></p>
 			</div>
 			<div class="col-lg-4 text-center project_container">
