@@ -174,6 +174,18 @@ $('a[href*=#]:not([href=#])').click(function() {
     $( ".making_data_detail" ).click(function() {
         $(".making_data_detail").slideUp("slow");
     });
+        //majeur
+    $(".majeur_detail").hide();
+    $( ".majeur_trigger" ).click(function() {
+        if (!$(".majeur_detail").is(":visible")) {
+            $(".majeur_detail").slideDown("slow");
+        } else{
+            $(".majeur_detail").slideUp("slow");
+        };
+    });
+    $( ".majeur_detail" ).click(function() {
+        $(".majeur_detail").slideUp("slow");
+    });
 
 
 
