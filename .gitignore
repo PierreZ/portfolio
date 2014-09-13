@@ -1,2 +1,4 @@
 .DS_Store
-Css/.sass-cache/
+# ignoring sass-cache...
+**/.sass-cache
+**/.sass-cache/*
