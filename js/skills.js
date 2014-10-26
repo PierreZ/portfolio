@@ -206,12 +206,6 @@ skills.push({
 });
 
 skills.push({
-	"name":"OpenStack",
-	"type":"Data, Cloud and others",
-	"css":"skill-7 other_skills",
-});
-
-skills.push({
 	"name":"Git",
 	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
