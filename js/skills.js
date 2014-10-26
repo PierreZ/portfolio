@@ -57,9 +57,6 @@ skills.push({
 });
 
 
-
-
-
 //******************
 //******************
 // Web
@@ -216,6 +213,3 @@ skills.push({
 	"type":"Data, Cloud and others",
 	"css":"skill-6 other_skills",
 });
-
-
-
