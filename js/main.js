@@ -187,6 +187,19 @@ $('a[href*=#]:not([href=#])').click(function() {
         $(".majeur_detail").slideUp("slow");
     });
 
+            //eudyptula
+    $(".eudyptula_detail").hide();
+    $( ".eudyptula_trigger" ).click(function() {
+        if (!$(".eudyptula_detail").is(":visible")) {
+            $(".eudyptula_detail").slideDown("slow");
+        } else{
+            $(".eudyptula_detail").slideUp("slow");
+        };
+    });
+    $( ".eudyptula_detail" ).click(function() {
+        $(".eudyptula_detail").slideUp("slow");
+    });
+
 
 
 setTimeout(
