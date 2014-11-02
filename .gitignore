@@ -2,3 +2,4 @@
 # ignoring sass-cache...
 **/.sass-cache
 **/.sass-cache/*
+**/main.css.map
