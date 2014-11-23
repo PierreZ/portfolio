@@ -215,7 +215,7 @@ input.gn-search:focus {
   content: "\e605"; }
 
 .gn-icon-recomendation:before {
-  content: "\e604"; }
+  content: "\e600"; }
 
 /* if an icon anchor has a span, hide the span */
 .gn-icon span {
