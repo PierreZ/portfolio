@@ -233,26 +233,30 @@ input.gn-search:focus {
 }
 
 .gn-icon-home:before {
-	content: "\e600";
-}
-.gn-icon-blog:before {
 	content: "\e601";
 }
+.gn-icon-blog:before {
+	content: "\e602";
+}
 .gn-icon-work:before {
-	content: "\e607";
+	content: "\e606";
 }
 .gn-icon-skills:before {
-	content: "\e603";
+	content: "\e607";
 }
 .gn-icon-code:before {
-	content: "\e603";
+	content: "\e604";
 }
 .gn-icon-education:before {
-	content: "\e602";
+	content: "\e603";
 }
 .gn-icon-about:before {
 	content: "\e605";
 }
+.gn-icon-recomendation:before {
+	content: "\e604";
+}
+
 
 /* if an icon anchor has a span, hide the span */
 
@@ -335,7 +339,8 @@ input.gn-search:focus {
     color: white;
     transition: background 0.9s;
 }
-.no-touch .gn-menu .gn-icon-about:hover{
+.no-touch .gn-menu .gn-icon-about:hover,
+.no-touch .gn-menu .gn-icon-recomendation:hover{
     background:#FF4444 ;
     color: white;
     transition: background 0.9s;
