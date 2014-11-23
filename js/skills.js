@@ -207,9 +207,3 @@ skills.push({
 	"type":"Data, Cloud and others",
 	"css":"skill-7 other_skills",
 });
-
-skills.push({
-	"name":"App Engine",
-	"type":"Data, Cloud and others",
-	"css":"skill-6 other_skills",
-});
