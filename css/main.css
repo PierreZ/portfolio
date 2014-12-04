@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,700);
 *,
 *:after,
 *::before {
@@ -530,6 +530,9 @@ body {
     margin-right: 0;
     background: #f7f7f7; }
   body .projects {
+    margin-left: 0;
+    margin-right: 0; }
+  body .recommendation {
     margin-left: 0;
     margin-right: 0; }
 
