@@ -1,0 +1,70 @@
+==================================================================
+https://keybase.io/pierrez
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://pierrezemb.fr
+  * I am pierrez (https://keybase.io/pierrez) on keybase.
+  * I have a public key with fingerprint B41C E5D4 3D1D F601 39BF  1F2E 7FE4 E5B0 B715 64F5
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "b41ce5d43d1df60139bf1f2e7fe4e5b0b71564f5",
+            "host": "keybase.io",
+            "key_id": "7fe4e5b0b71564f5",
+            "uid": "f40ee83da4eb8f0821485756cf71d900",
+            "username": "pierrez"
+        },
+        "service": {
+            "hostname": "pierrezemb.fr",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1418585727,
+    "expire_in": 157680000,
+    "prev": "be2574bc0815d4c746a894be41ce2b5ea5fb488b478cf0c999cb7235b33d0fdb",
+    "seqno": 4,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v1.1.6
+Comment: https://keybase.io/crypto
+
+yML0AnicO8LLzMDFWP/k6YbtoilfGU8f+FTKENL7rL5aKSk/pVLJqlopOxVMpWXm
+pacWFRRl5pUoWSklmRgmp5qmmBinGKakmRkYGlsmpRmmGaWap6WapJomGSSZG5qa
+maSZKukoZeQXg3QAjUlKLE7Vy8wHigE58ZkpQFEs6kvBEmkmBqmpFsYpiSapSRZp
+BhZGhiYWpuamZslp5oYplgYGIIXFqUV5ibmpQNUFmalFRalVSrU6SkDBsszkVJCT
+QTajKkjNTdJLKwLqLSjKL8lPzs8BSmWUlBQUW4G0llQWgNSWpybFQ02JT8rMSwF6
+HKijLLWoODM/T8nKEKgyuSQTZKyhiaGFKdBZRuY6SqkVBZlFqfGZIBWm5mYWBkAA
+sie1DBRcqUam5iZJyQYWhsBASzY3MUu0sDRJSgWFolGSaWqiaVqSiYVFkom5RXKa
+QbKlpWVykrmRsWmSsXGKQVpKkhLIX4V5+UpWJkBnJqYDjSzOTM9LLCktSlWqPXQw
+hoWBkYuBjZUJFHUMXJwCsAj1finAMOWcyZyW+k1Sufl1Ew7kLba1mzgn17H0be3x
++nNv/hledXT8Jl0Vvn/7+cf3t73yVehQCRQUzpo08x9/wxljUcmcmhnTOvwkebys
+HK6ESZ/Q9jwZUiE2//CiyfyMHnzz/h9ZufWm0prjUpr9586ber82bvlZ0qT0IeyW
+a92cRDXHRd6KW77lbJ6vJruU9/Oh9LX/rvRlnCm7PD2o49XqfY2tJjPV5ipVy7Hc
+4ZhVvSf0/l4P/auxTHM5qtq2ipwtv62km7HBXOLsq9qnvA43hd51Gry6eOqF4SkX
+H2sV+QZRz1R1sZXMmTeruJe9S3M2PLbWzbyObd5KuQ7FCWLGV2NjO5Q//oz9pZid
+nHJhtsYjk6bgy00vHLf6LW/JXfFsRrzytqYq/soKkVKtK7YufzlX37H+lFlusOvw
+ttBJdn9eB4e7bLc2rk04uP/EhQBuN72Db5akFld9OP/ixNP2ptKq5yZC0tnvFZ6o
+72y9yOzyMc3q4auFqbvyGLlS7t1Y1qDd8uexn/M69Zuq5qkVX1Inn5m8rEhwC6ve
+T7dXTPcMWVeXlSw+dU8sxsPg18eU71MW/d92o7xu+sU981iYAy9+sVr6+IWp9xq3
+isrMnRtCbgrd6rqmc09Z9nxy4m/W80dvF7I9vDa/xTOwY0qgxHYJPqnk3MKqrd0X
+bEODuift//bz55aYa8nzisVnPX6jdG7e8e11T/oW/j86HwDv2pv5
+=mtvL
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/pierrez
+
+==================================================================
