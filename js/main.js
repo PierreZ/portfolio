@@ -200,7 +200,18 @@ $('a[href*=#]:not([href=#])').click(function() {
         $(".eudyptula_detail").slideUp("slow");
     });
 
-
+            //seatestbase
+    $(".seatestbase_detail").hide();
+    $( ".seatestbase_trigger" ).click(function() {
+        if (!$(".seatestbase_detail").is(":visible")) {
+            $(".seatestbase_detail").slideDown("slow");
+        } else{
+            $(".seatestbase_detail").slideUp("slow");
+        };
+    });
+    $( ".seatestbase_detail" ).click(function() {
+        $(".seatestbase_detail").slideUp("slow");
+    }); 
 
 setTimeout(
   function() 
