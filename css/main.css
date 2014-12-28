@@ -569,7 +569,9 @@ body {
 .majeur_trigger,
 .majeur_detail,
 .eudyptula_trigger,
-.eudyptula_detail {
+.eudyptula_detail,
+.seatestbase_trigger,
+.seatestbase_detail {
   cursor: pointer; }
 
 .md-4-img {
