@@ -212,6 +212,18 @@ $('a[href*=#]:not([href=#])').click(function() {
     $( ".seatestbase_detail" ).click(function() {
         $(".seatestbase_detail").slideUp("slow");
     }); 
+            //youcode
+    $(".youcode_detail").hide();
+    $( ".youcode_trigger" ).click(function() {
+        if (!$(".youcode_detail").is(":visible")) {
+            $(".youcode_detail").slideDown("slow");
+        } else{
+            $(".youcode_detail").slideUp("slow");
+        };
+    });
+    $( ".youcode_detail" ).click(function() {
+        $(".youcode_detail").slideUp("slow");
+    }); 
 
 setTimeout(
   function() 
