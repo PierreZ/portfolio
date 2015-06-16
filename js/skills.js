@@ -69,6 +69,11 @@ skills.push({
 	"css":"skill-9 web_skills",
 });
 skills.push({
+	"name":"Polymer",
+	"type":"Web",
+	"css":"skill-5 web_skills",
+});
+skills.push({
 	"name":"AngularJS",
 	"type":"Web",
 	"css":"skill-9 web_skills",
@@ -145,7 +150,7 @@ skills.push({
 skills.push({
 	"name":"ArchLinux",
 	"type":"OS",
-	"css":"skill-6 OS_skills",
+	"css":"skill-8 OS_skills",
 });
 skills.push({
 	"name":"OSX",
@@ -173,6 +178,11 @@ skills.push({
 	"name":"MySQL",
 	"type":"Data, Cloud and others",
 	"css":"skill-5 other_skills",
+});
+skills.push({
+	"name":"OpenStack",
+	"type":"Data, Cloud and others",
+	"css":"skill-7 other_skills",
 });
 
 skills.push({

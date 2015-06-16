@@ -68,7 +68,7 @@
 
 		<h1>Pierre Zemb<br/>
 			<small>
-				<span class="txt-rotate biggest" data-period="2000" data-rotate='[ "Engineer student", "future intern at OVH", "Software developer", "Archlinux user" ]'></span>
+				<span class="txt-rotate biggest" data-period="2000" data-rotate='[ "Engineer student", "Software developer" ]'></span>
 			</small>
 		</h1>
 		<div class="social">
@@ -96,13 +96,14 @@
 		</div>
 		<div class="col-md-9">
 			<p>Hi! My name is Pierre Zemb, and I'm a <strong>French student</strong> in a graduate school of engineering science called <strong>ISEN </strong>where I'm currently studying Software Engineering.</p>
-			<p>I first became interested in software development during my academic training, and I have never stop ever since. Thanks to it, I have good computer skills.<strong>I really enjoy learning new languages or frameworks by myself</strong>, and using them to <strong>develop either Web or native apps on my free time</strong>. I'm really enjoying coding in <strong>C,C++, Java or Go</strong> and ship them with <a href="http://docker.io">Docker</a>, but <strong>I always end up developping Web apps</strong>.</p>
+			<p>I first became interested in software development during my academic training, and I have never stop ever since. Thanks to it, I have good computer skills.<strong> I really enjoy learning new languages or frameworks by myself</strong>, and using them to <strong>develop either Web or native apps on my free time</strong>. I'm really enjoying coding in <strong>C,C++, Java or Go</strong> and ship them with <a href="http://docker.io">Docker</a>, but <strong>I always end up developping Web apps</strong>.</p>
 			<p>I am committed to many local meetings and events such as:</p>
 			<ul>
 				<li><strong> <a href="http://finistgdg.fr/">The Google Developers Group</a> and <a href="http://finistjug.fr/">Java User Group</a> of Brest</strong></li>
 				<li><strong><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></strong></li>
 				<li><strong><a href="http://brest.startupweekend.org/">The Startup Week-end</a> in Brest as a participant in <a href="https://medium.com/@PierreZ/retour-sur-le-premier-startup-week-end-de-brest-e500b18177ee">2014</a> and as an co-organizer in <a href="https://medium.com/@PierreZ/monthly-update-04-startup-week-end-brest-devoxx-stage-et-alternance-chez-ovh-7cd9a57e3cc6">2015</a></strong></li>
 			</ul>
+			<p>I even had lunch with <b><a href="https://en.wikipedia.org/wiki/Richard_Stallman">Richard Stallman</a></b> (but I'm still living in sin according to the <a href="https://stallman.org/saint.html">Church of Emacs</a>, because I'm using vim).</p>
 			<p>I also went to:</p>
 			<ul>
 				<li><strong><a href="https://medium.com/@PierreZ/monthly-update-02-mai-2014-dotscale-glasscamp-bank-et-google-glass-7582fb5b6133/">DotScale 2014</a></strong></li>
@@ -117,223 +118,243 @@
 				</ul></li>
 				<li><strong>2015</strong><ul>
 					<li><strong><a href="https://medium.com/@PierreZ/mon-premier-talk-au-finistjug-retour-d-exp%C3%A9rience-sur-docker-7b31f7229097">Feedback about Docker</a></strong> at FinistJUG/GDG</li>
+					<li><strong><a href="https://go-talks.appspot.com/github.com/PierreZ/golang-intro-finistgdg2015/finistgdg.slide#1">Introduction to Golang</a></strong> at FinistJUG/GDG</li>
 				</ul></li>
 			</ul>
-			<p>Feel free to have a look on my <strong><a href="http://slides.pierrezemb.fr/">slides</a></strong>.</p>
-
-			<p>
-				As a work experience, I spent <strong>a year in a part-time internship as a junior DevOps</strong> (developer and sysadmin) at the Systems team for a French bank, <strong>where I developed scripts and apps</strong> around a Realtime Monitoring Infrastructure which involves technologies like <strong>Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch…</strong>
-			</p>
-			<p>Feel free to have a look on my French <a href="https://medium.com/@PierreZ/">blog</a>.</p>
-			<p>You can contact me by <a href="mailto:contact@pierrezemb.fr">email</a> (here's my <a href="https://keybase.io/pierrez/key.asc">PGP key</a> if you have security concerns).</p>
+			<p>Feel free to have a look on my <strong><a href="http://slides.pierrezemb.fr/">slides</a></strong>, my French <a href="https://medium.com/@PierreZ/">blog</a> and you can contact me by <a href="mailto:contact@pierrezemb.fr">email</a> (here's my <a href="https://keybase.io/pierrez/key.asc">PGP key</a> if you have security concerns).</p>
 		</div>
 
 	</div>
 
-	<!-- ng-if="skill.type=='skillSelected'||skillSelected=='All'"
--->  <div  id="skills" class="row skills">
-<h2 class="text-center">Skills</h2>
-<div class="google_color text-center"></div>
-<div class="container">
-	<ul class="nav nav-pills nav-justified skills-nav text-center">
-		<li ng-click="setSkill(cat)" ng-class="{active:skillSelected==cat}"
-		ng-repeat="cat in skills_cat"><a href="">{{cat}}</a></li>
-	</ul>
-</div>
-<dl class="skills-diagram">
-	<dt ng-repeat="skill in skills | filter:skill_filter" ng-class="skill.css">{{skill.name}}</dt>
-	<dd>0</dd>
-</dl>
-</div>
+	<div  id="skills" class="row skills">
+		<h2 class="text-center">Skills</h2>
+		<div class="google_color text-center"></div>
+		<div class="container">
+			<ul class="nav nav-pills nav-justified skills-nav text-center">
+				<li ng-click="setSkill(cat)" ng-class="{active:skillSelected==cat}"
+				ng-repeat="cat in skills_cat"><a href="">{{cat}}</a></li>
+			</ul>
+		</div>
+		<dl class="skills-diagram">
+			<dt ng-repeat="skill in skills | filter:skill_filter" ng-class="skill.css">{{skill.name}}</dt>
+			<dd>0</dd>
+		</dl>
+	</div>
 
-<div id="work" class="row work">
-	<h2 class="text-center">Work experience</h2>
-	<div class="google_color text-center"></div>
-	<div class="row personal_line">
-		<div class="col-md-4">
+	<div id="work" class="row work">
+		<h2 class="text-center">Work experience</h2>
+		<div class="google_color text-center"></div>
+		<div class="row personal_line">
+			<div class="col-md-3">
+				<article>
+					<header>
+						<h3 class="text-center ovh_trigger">OVH</h3>
+						<a href="https://www.ovh.com/"><img src="img/ovh.png" class="md-3-img center-block"></a>
+						<p class="ovh_trigger"><strong>Internship </strong> June-August 2015 at Wrocław (Poland)</p>
+						<p class="ovh_trigger"><strong>Estimate part-time internship </strong> October 2015-September 2016</p>
+						<p class="ovh_trigger text-center"><em>"Development and administration of a Cloud computing platform"</em></p>
+					</header>
+					<div class="ovh_detail">
+						<p>I'm currently working as a <strong>DevOps intern</strong> on <a href="https://runabove.com">RunAbove</a>, an IaaS for DevOps provided by OVH. It's based on OpenStack and Ceph.</p>
+						<p><strong>These are some of my work:</strong></p>
+						<p class="text-center"><strong>Ops:</strong></p>
+						<ul>
+							<li>I discovered OpenStack by installing <a href="http://docs.openstack.org/developer/devstack/">DevStack</a></li>
+							<li>I searched for the best monitoring stack between openTSDB, Graphite, InfluxDB and so on.</li>
+						</ul>
+					</div>
+				</article>
+			</div>
+			<div class="col-md-3">
+				<article>
+					<header>
+						<h3 class="text-center arkea_trigger">Crédit Mutuel Arkéa</h3>
+						<a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-3-img center-block"></a>
+						<p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
+						<p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
+						<p class="arkea_trigger text-center"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
+					</header>
+					<div class="arkea_detail">
+						<p>I worked as a <strong>junior DevOps</strong> (developer and sysadmin) at the Systems team at the headquarters of Crédit Mutuel Arkea.</p>
+						<p><strong>Arkea Realtime Monitoring Infrastructure (Artimon for short)</strong> is involving technologies like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house Web apps based on D3js.</p>
+						<p> My job was to add Windows's based servers to Artimon and improve data vizualization.</p>
+						<p><strong>These are some of my work:</strong></p>
+						<p class="text-center"><strong>Dev:</strong></p>
+						<ul>
+							<li>I merged and upgraded Arkea's version of Apache <a href="https://flume.apache.org/">Flume</a> by recompiling it with Maven and making it available to Windows too.</li>
+							<li>I wrote some VBScripts/PowerShell scripts in order to generate metrics from Windows (using PowerCLI API for VMware vSphere)</li>
+							<li>I enhanced the vizualization apps written with AngularJS and D3JS</li>
+							<li>I created a Restful Web Service to brings data stored in Hadoop to Arkea's vizualization apps (backend written in Java)</li>
+							<li>I developped a Kafka consumer in Java to feed OpenTSDB over HTTP</li>
+						</ul>
+						<p class="text-center"><strong>Ops:</strong></p>
+						<ul>
+							<li>I put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
+							<li>I configured NXLog to bring Eventlogs from Windows to ElasticSearch</li>
+							<li>I created a small Hadoop cluster for some experiments about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a>, <a href="http://opentsdb.net/">OpenTSDB</a>, and <a href="https://hbase.apache.org/">HBase</a></li>
+							<li>I had an in-house training about Hadoop, Pig and Chef</li>
+						</ul>
+						<p>I also heard a lot about <b> mainframes,  OpenStack, CoreOS, Docker, Redis, Nagios, VMware vSphere, Citrix, HAProxy, Varnish</b> and so on...</p>
+					</div>
+				</article>
+			</div>
+			<div class="col-md-3">
+				<article>
+					<header>
+						<h3 class="text-center thomson_trigger">Thomson Video Networks</h3>
+						<a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-3-img center-block"></a>
+						<p class="thomson_trigger"><strong>Internship </strong> June-July 2012</p>
+						<p class="thomson_trigger text-center"><em>"Optimization of the products's configurator"</em></p>
+
+					</header>
+					<div class="thomson_detail">
+						<p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
+						<p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
+					</div>
+				</article>
+			</div>
+			<div class="col-md-3">
+				<article>
+					<header>
+						<h3 class="text-center">CAEC</h3>
+						<a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img center-block"></a>
+						<p><strong>Charity work </strong>July 2011</p>
+					</header>
+					<p><strong>Assistance for unemployed</strong> to help them find a job</p>
+				</article>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="recommendation" class="row recommendation">
+		<h2 class="text-center">Recommendation:</h2>
+		<div class="google_color text-center"></div>
+		<div class="col-lg-12 text-center">
+			<img class="img-circle" src="img/plegoff.jpg" alt="Generic placeholder image" style="width: 140px; height: 140px;">
+			<h3><a href="https://www.linkedin.com/profile/view?id=23946261">Philippe Le Goff</a></h3>
+			<p>Head of the Systems Team - Crédit Mutuel Arkéa</p>
+			<p><em>"Pierre worked as a part-time student/engineer in my team for one year and half (2013/2014).<br>It's pretty rare to have a student of such a technical level. Very curious, dynamic and open minded, it was a real pleasure to work with him."</em></p>
+		</div>
+	</div>
+
+
+	<div id="education" class="row education">
+		<h2 class="text-center">Education</h2>
+		<div class="google_color text-center"></div>
+		<div class="col-md-6">
 			<article>
-				<header>
-					<h3 class="text-center arkea_trigger">Crédit Mutuel Arkéa</h3>
-					<a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-4-img"></a>
-					<p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
-					<p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
-					<p class="arkea_trigger text-center"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
+				<header class="text-center">
+					<h3>Institut Supérieur de l'Electronique et du Numérique</h3>
+					<a href="http://isen.fr"><div class="logo-isen">
+						<h1>ISEN</h1>
+						<h2>École d'ingénieurs</h2>
+					</div></a>
+					<p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
 				</header>
-				<div class="arkea_detail">
-					<p>I worked as a <strong>junior DevOps</strong> (developer and sysadmin) at the Systems team at the headquarters of Crédit Mutuel Arkea.</p>
-					<p><strong>Arkea Realtime Monitoring Infrastructure (Artimon for short)</strong> is involving technologies like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong> with in-house Web apps based on D3js.</p>
-					<p> My job was to add Windows's based servers to Artimon and improve data vizualization.</p>
-					<p><strong>These are some of my work:</strong></p>
-					<p class="text-center"><strong>Dev:</strong></p>
+				<h4 class="text-center majeur_trigger"><strong>Specialization in Software Engineering (2 years)</strong></h4>
+				<div class="majeur_detail">
+					<p><strong>Technical courses:</strong></p>
 					<ul>
-						<li>I merged and upgraded Arkea's version of Apache <a href="https://flume.apache.org/">Flume</a> by recompiling it with Maven and making it available to Windows too.</li>
-						<li>I wrote some VBScripts/PowerShell scripts in order to generate metrics from Windows (using PowerCLI API for VMware vSphere)</li>
-						<li>I enhanced the vizualization apps written with AngularJS and D3JS</li>
-						<li>I created a Restful Web Service to brings data stored in Hadoop to Arkea's vizualization apps (backend written in Java)</li>
-						<li>I developped a Kafka consumer in Java to feed OpenTSDB over HTTP</li>
+						<li>Advanced Java</li>
+						<li>Android</li>
+						<li>J2E</li>
+						<li>Distributed Systems in Java</li>
+						<li>Digital algorithm</li>
 					</ul>
-					<p class="text-center"><strong>Ops:</strong></p>
+				</div> 
+				<h4 class="text-center CIR_trigger"><strong>Computer and Network Cycle (2 years)</strong></h4>
+				<div class="CIR_detail">
+					<p>After spending two years in preparatory classes, I've decided to go into the <strong>Computer and Network Cycle</strong> in order to enhanced my technical skills.</p>
+					<p><strong>Technical courses:</strong></p>
 					<ul>
-						<li>I put into production <a href="http://nxlog-ce.sourceforge.net/">NXLog</a> and Flume for Windows</li>
-						<li>I configured NXLog to bring Eventlogs from Windows to ElasticSearch</li>
-						<li>I created a small Hadoop cluster for some experiments about <a href="http://www.elasticsearch.org/overview/hadoop/">ElasticSearch for Hadoop</a>, <a href="http://opentsdb.net/">OpenTSDB</a>, and <a href="https://hbase.apache.org/">HBase</a></li>
-						<li>I had an in-house training about Hadoop, Pig and Chef</li>
+						<li><strong> Hardware</strong></li>
+						<li><strong> Linux-based systemes</strong></li>
+						<li><strong> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks (CCNA 1-2-3-4)</strong></li>
+						<li><strong> Databases</strong></li>
+						<li><strong> C, C++, Java</strong></li>
+						<li><strong> PHP, Javascript, HTML5, CSS3</strong></li>
 					</ul>
-					<p>I also heard a lot about <b> mainframes,  OpenStack, CoreOS, Docker, Redis, Nagios, VMware vSphere, Citrix, HAProxy, Varnish</b> and so on...</p>
+				</div>
+				<h4 class="text-center prepa_trigger"><strong>Preparatory classes (2 years)</strong></h4>
+				<div class="prepa_detail">
+					<p>They consist of <strong>two very intensive years</strong> which act as a preparatory course with the main goal of training undergraduate students.<br/>The workload is one of the<strong> highest in the world</strong>(between 35 and 40 contact hours a week, including written and oral exams).</p>
 				</div>
 			</article>
+
 		</div>
-		<div class="col-md-4">
-			<article>
-				<header>
-					<h3 class="text-center thomson_trigger">Thomson Video Networks</h3>
-					<a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-4-img"></a>
-					<p class="thomson_trigger"><strong>Internship </strong> June-July 2012</p>
-					<p class="thomson_trigger text-center"><em>"Optimization of the products's configurator"</em></p>
-
-				</header>
-				<div class="thomson_detail">
-					<p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
-					<p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
-				</div>
-			</article>
-		</div>
-		<div class="col-md-4">
-			<article>
-				<header>
-					<h3 class="text-center">CAEC</h3>
-					<a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img"></a>
-					<p><strong>Charity work </strong>July 2011</p>
-				</header>
-				<p><strong>Assistance for unemployed</strong> to help them find a job</p>
-			</article>
-		</div>
-	</div>
-</div>
-
-
-<div id="recommendation" class="row recommendation">
-	<h2 class="text-center">Recommendation:</h2>
-	<div class="google_color text-center"></div>
-	<div class="col-lg-12 text-center">
-		<img class="img-circle" src="img/plegoff.jpg" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-		<h3><a href="https://www.linkedin.com/profile/view?id=23946261">Philippe Le Goff</a></h3>
-		<p>Head of the Systems Team - Crédit Mutuel Arkéa</p>
-		<p><em>"Pierre worked as a part-time student/engineer in my team for one year and half (2013/2014).<br>It's pretty rare to have a student of such a technical level. Very curious, dynamic and open minded, it was a real pleasure to work with him."</em></p>
-	</div>
-</div>
-
-
-<div id="education" class="row education">
-	<h2 class="text-center">Education</h2>
-	<div class="google_color text-center"></div>
-	<div class="col-md-6">
 		<article>
 			<header class="text-center">
-				<h3>Institut Supérieur de l'Electronique et du Numérique</h3>
-				<a href="http://isen.fr"><div class="logo-isen">
-					<h1>ISEN</h1>
-					<h2>École d'ingénieurs</h2>
-				</div></a>
-				<p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
+				<h3>Google</h3>
+				<img src="img/google-logo.png" width="200px">
+				<p>Online course - <strong>Graduation:</strong> April 2014</p>
 			</header>
-			<h4 class="text-center majeur_trigger"><strong>Specialization in Software Engineering (2 years)</strong></h4>
- 			<div class="majeur_detail">
-				<p><strong>Technical courses:</strong></p>
-				<ul>
-					<li>Advanced Java</li>
-					<li>Android</li>
-					<li>J2E</li>
-					<li>Distributed Systems in Java</li>
-					<li>Digital algorithm</li>
-				</ul>
-			</div> 
-			<h4 class="text-center CIR_trigger"><strong>Computer and Network Cycle (2 years)</strong></h4>
-			<div class="CIR_detail">
-				<p>After spending two years in preparatory classes, I've decided to go into the <strong>Computer and Network Cycle</strong> in order to enhanced my technical skills.</p>
-				<p><strong>Technical courses:</strong></p>
-				<ul>
-					<li><strong> Hardware</strong></li>
-					<li><strong> Linux-based systemes</strong></li>
-					<li><strong> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks (CCNA 1-2-3-4)</strong></li>
-					<li><strong> Databases</strong></li>
-					<li><strong> C, C++, Java</strong></li>
-					<li><strong> PHP, Javascript, HTML5, CSS3</strong></li>
-				</ul>
-			</div>
-			<h4 class="text-center prepa_trigger"><strong>Preparatory classes (2 years)</strong></h4>
-			<div class="prepa_detail">
-				<p>They consist of <strong>two very intensive years</strong> which act as a preparatory course with the main goal of training undergraduate students.<br/>The workload is one of the<strong> highest in the world</strong>(between 35 and 40 contact hours a week, including written and oral exams).</p>
+			<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
+			<div class="making_data_detail">
+				<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="https://datasense.withgoogle.com/course">here.</a></p>
 			</div>
 		</article>
-
 	</div>
-	<article>
-		<header class="text-center">
-			<h3>Google</h3>
-			<img src="img/google-logo.png" width="200px">
-			<p>Online course - <strong>Graduation:</strong> April 2014</p>
-		</header>
-		<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
-		<div class="making_data_detail">
-			<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="">here.</a></p>
+
+	<div id="projects" class="row projects">
+		<h2 class="text-center">Projects</h2>
+		<div class="google_color text-center"></div>
+
+		<div class="row personal_line">
+			<h3 class="text-center"><strong>2015</strong></h3>
+
+			<div class="col-lg-6 text-center project_container">
+				<img class="youcode_trigger" src="img/youcode.png" alt="Generic placeholder image">
+				<h3 class="youcode_trigger">YouCode<br/>Learn to code using Youtube</h3>
+				<p class="youcode_trigger">Golang - Google App Engine - Youtube API - AngularJS</p>
+				<div class="youcode_detail">
+					<p> <a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="http://youcode.io" role="button">View website</a></p>
+					<p><a class="btn btn-default" href="https://github.com/youcodeio/" role="button">View project on Github</a></p>
+				</div>
+			</div><!-- /.col-lg-4 -->
+			<div class="col-lg-6 text-center project_container">
+				<img class="img-circle seatestbase_trigger" src="img/seatestbase.jpg" alt="Generic placeholder image">
+				<h3 class="seatestbase_trigger">School project<br/>Virtualization et migration of the servers of SeatestBase</h3>
+				<p class="seatestbase_trigger">OpenVZ - Proxmox - Docker - Openstack</p>
+				<div class="seatestbase_detail">
+					<p> <a href="www.seatestbase.com">Sea Test Base</a> is a trial site in the sea build for oceanography, the oil offshore, the submarine cables, the maritime security and the national defence. It's currently used by Thales or DCNS as a relay point to test submarine drone.</p>
+					<p><strong>Lists of changes:</strong></p>
+					<ul style="text-align:left">
+						<li>Moving Proxmox to Docker and automate the whole infrastructure</li>
+						<li>Moving joomla to WordPress</li>
+						<li>Moving Zabbix to InfluxDB/Grafana</li>
+						<li>Moving from PPTP to OpenVPN with OpenSSL</li>
+					</ul>
+				</div>
+			</div><!-- /.col-lg-4 -->
 		</div>
-	</article>
-</div>
-
-<div id="projects" class="row projects">
-	<h2 class="text-center">Projects</h2>
-	<div class="google_color text-center"></div>
-
-	<div class="row personal_line">
-		<h3 class="text-center"><strong>2015</strong></h3>
-
-		<div class="col-lg-6 text-center project_container">
-			<img class="youcode_trigger" src="img/youcode.png" alt="Generic placeholder image">
-			<h3 class="youcode_trigger">YouCode<br/>Learn to code using Youtube</h3>
-			<p class="youcode_trigger">Golang - Google App Engine - Youtube API - AngularJS</p>
-			<div class="youcode_detail">
-				<p> <a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
-				<p><a class="btn btn-default" style="margin-top: 20px" href="http://youcode.io" role="button">View website</a></p>
-				<p><a class="btn btn-default" href="https://github.com/youcodeio/" role="button">View project on Github</a></p>
-			</div>
-		</div><!-- /.col-lg-4 -->
-		<div class="col-lg-6 text-center project_container">
-			<img class="img-circle seatestbase_trigger" src="img/seatestbase.jpg" alt="Generic placeholder image">
-			<h3 class="seatestbase_trigger">School project<br/>Virtualization et migration of the servers of SeatestBase</h3>
-			<p class="seatestbase_trigger">OpenVZ - Proxmox - Docker</p>
-			<div class="seatestbase_detail">
-				<p> <a href="www.seatestbase.com">Sea Test Base</a> is a trial site in the sea build for oceanography, the oil offshore, the submarine cables, the maritime security and the national defence. It's currently used by Thales or DCNS as a relay point to test submarine drone.</p>
-				<p>The main goal of this 250 hours project is to rebuild the whole architecture and move the current data to news servers. Another goal is to add evolution to current systems to bring horizontal scalability.</p>
-			</div>
-		</div><!-- /.col-lg-4 -->
-	</div>
-	<hr>
-	<div class="row personal_line">
-		<h3 class="text-center"><strong>2014</strong></h3>
+		<hr>
+		<div class="row personal_line">
+			<h3 class="text-center"><strong>2014</strong></h3>
 			<div class="col-lg-3 text-center project_container">
-			<img class="img-circle eudyptula_trigger" src="img/tux.png" alt="Generic placeholder image">
-			<h3 class="eudyptula_trigger">the Eudyptula Challenge</h3>
-			<p class="eudyptula_trigger">C - Linux</p>
-			<div class="eudyptula_detail">
-				<p>The Eudyptula Challenge is a series of programming exercises for the Linux kernel, that start from a very basic "Hello world" kernel module, moving on up in complexity to getting patches accepted into the main Linux kernel source tree.</p>
-				<p><strong>List of finished tasks:</strong></p>
-				<p>Write a hello-world module</p>
-				<p>Building a custom kernel</p>
-				<p><a class="btn btn-default" style="margin-top: 20px" href="http://eudyptula-challenge.org/" role="button">View official Website</a></p>
+				<img class="img-circle eudyptula_trigger" src="img/tux.png" alt="Generic placeholder image">
+				<h3 class="eudyptula_trigger">the Eudyptula Challenge</h3>
+				<p class="eudyptula_trigger">C - Linux</p>
+				<div class="eudyptula_detail">
+					<p>The Eudyptula Challenge is a series of programming exercises for the Linux kernel, that start from a very basic "Hello world" kernel module, moving on up in complexity to getting patches accepted into the main Linux kernel source tree.</p>
+					<p><strong>List of finished tasks:</strong></p>
+					<p>Write a hello-world module</p>
+					<p>Building a custom kernel</p>
+					<p><a class="btn btn-default" style="margin-top: 20px" href="http://eudyptula-challenge.org/" role="button">View official Website</a></p>
 
 				</div>
 			</div><!-- /.col-lg-4 -->
 
 			<div class="col-lg-3 text-center project_container">
-			<img class="img-circle glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
-			<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
-			<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
-			<div class="glasscamp_detail">
-				<p>During the first GlassCamp Bank (event about using Glass for new uses at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declaring their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
-				<p>Written in Java using Android SDK and GDK addon.</p>
-				<img style="width:350px"  src="img/glass.jpg">
-				<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/triskell/sinis" role="button">View on GitHub</a></p>
+				<img class="img-circle glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
+				<h3 class="glasscamp_trigger">GlassCamp 2014<br/>Sinis</h3>
+				<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
+				<div class="glasscamp_detail">
+					<p>During the first GlassCamp Bank (event about using Glass for new uses at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declaring their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
+					<p>Written in Java using Android SDK and GDK addon.</p>
+					<img style="width:350px"  src="img/glass.jpg">
+					<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/triskell/sinis" role="button">View on GitHub</a></p>
 
 				</div>
 			</div><!-- /.col-lg-3 -->
@@ -421,7 +442,7 @@
 	</div>
 
 	<footer>
-		<p class="text-center">&copy; Pierre Zemb 2014</p>
+		<p class="text-center">&copy; Pierre Zemb 2015</p>
 	</footer>
 </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>

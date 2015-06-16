@@ -513,7 +513,8 @@ body {
       display: block;
       margin-left: auto;
       margin-right: auto;
-      margin-bottom: 20px; }
+      margin-bottom: 20px;
+      margin-top: 60px; }
   body .skills {
     padding: 30px;
     margin-left: 0;
@@ -573,7 +574,9 @@ body {
 .seatestbase_trigger,
 .seatestbase_detail,
 .youcode_trigger,
-.youcode_detail {
+.youcode_detail,
+.ovh_trigger,
+.ovh_detail {
   cursor: pointer; }
 
 .md-4-img {

@@ -224,6 +224,18 @@ $('a[href*=#]:not([href=#])').click(function() {
     $( ".youcode_detail" ).click(function() {
         $(".youcode_detail").slideUp("slow");
     }); 
+            //ovh
+    $(".ovh_detail").hide();
+    $( ".ovh_trigger" ).click(function() {
+        if (!$(".ovh_detail").is(":visible")) {
+            $(".ovh_detail").slideDown("slow");
+        } else{
+            $(".ovh_detail").slideUp("slow");
+        };
+    });
+    $( ".ovh_detail" ).click(function() {
+        $(".ovh_detail").slideUp("slow");
+    }); 
 
 setTimeout(
   function() 
