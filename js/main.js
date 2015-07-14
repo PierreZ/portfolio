@@ -262,6 +262,10 @@ $(window).scroll(function(){
         setMenu('Education');
         return ;
     };
+    if ($('.life').isOnScreen()) {
+        setMenu('In Real Life');
+        return ;
+    };
     if ($('.work').isOnScreen()) {
         setMenu('Work');
         return ;

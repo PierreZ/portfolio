@@ -64,18 +64,18 @@ body {
 .about{
 	margin-left:0;
 	margin-right:0;
-	background: #f7f7f7;
+
 	padding-bottom:30px;
+
 	.profile_image{
 		  display: block;
   margin-left: auto;
   margin-right: auto;
-		margin-bottom: 20px;
-		margin-top: 60px;
+		width:50%;
 	}
 }
 .skills{
-
+background: #f7f7f7;
 	padding:30px;
 	margin-left:0;
 	margin-right:0;
@@ -87,27 +87,34 @@ body {
 .education{
 		margin-left:0;
 	margin-right:0;
-	background: #f7f7f7;
 }
 .work{
 	margin-left:0;
 	margin-right:0;
-		background: #f7f7f7;
 
 }
 .projects{
 	margin-left:0;
 	margin-right:0;
+	background: #f7f7f7;
+
 }
 .recommendation{
 	margin-left:0;
 	margin-right:0;
+	background: #f7f7f7;
 }
 }
 
 .project_container{
 	margin-top:10px;
 	margin-bottom:10px;
+
+}
+
+.life{
+		margin-left:0;
+	margin-right:0;
 }
 
 .rentree_trigger,
@@ -227,7 +234,7 @@ content: "";
 
 footer{
 	margin-top: 30px;
-	text-align: center;	
+	text-align: center;
 }
 
 

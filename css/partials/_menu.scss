@@ -233,28 +233,31 @@ input.gn-search:focus {
 }
 
 .gn-icon-home:before {
-	content: "\e601";
+	content: "\e600";
 }
 .gn-icon-blog:before {
-	content: "\e602";
+	content: "\e601";
 }
 .gn-icon-work:before {
-	content: "\e606";
+	content: "\e604";
 }
 .gn-icon-skills:before {
-	content: "\e607";
+	content: "\e606";
 }
 .gn-icon-code:before {
 	content: "\e604";
 }
 .gn-icon-education:before {
-	content: "\e603";
+	content: "\e608";
 }
 .gn-icon-about:before {
-	content: "\e605";
+	content: "\e603";
 }
 .gn-icon-recomendation:before {
-	content: "\e600";
+	content: "\e607";
+}
+.gn-icon-life:before {
+	content: "\e605";
 }
 
 
@@ -329,7 +332,8 @@ input.gn-search:focus {
     color: white;
     transition: background 0.9s;
 }
-.no-touch .gn-menu .gn-icon-work:hover{
+.no-touch .gn-menu .gn-icon-work:hover,
+.no-touch .gn-menu .gn-icon-life:hover{
     background:#99CC00 ;
     color: white;
     transition: background 0.9s;

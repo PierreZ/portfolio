@@ -194,28 +194,31 @@ input.gn-search:focus {
   -webkit-font-smoothing: antialiased; }
 
 .gn-icon-home:before {
-  content: "\e601"; }
+  content: "\e600"; }
 
 .gn-icon-blog:before {
-  content: "\e602"; }
+  content: "\e601"; }
 
 .gn-icon-work:before {
-  content: "\e606"; }
+  content: "\e604"; }
 
 .gn-icon-skills:before {
-  content: "\e607"; }
+  content: "\e606"; }
 
 .gn-icon-code:before {
   content: "\e604"; }
 
 .gn-icon-education:before {
-  content: "\e603"; }
+  content: "\e608"; }
 
 .gn-icon-about:before {
-  content: "\e605"; }
+  content: "\e603"; }
 
 .gn-icon-recomendation:before {
-  content: "\e600"; }
+  content: "\e607"; }
+
+.gn-icon-life:before {
+  content: "\e605"; }
 
 /* if an icon anchor has a span, hide the span */
 .gn-icon span {
@@ -276,7 +279,8 @@ input.gn-search:focus {
   color: white;
   transition: background 0.9s; }
 
-.no-touch .gn-menu .gn-icon-work:hover {
+.no-touch .gn-menu .gn-icon-work:hover,
+.no-touch .gn-menu .gn-icon-life:hover {
   background: #99CC00;
   color: white;
   transition: background 0.9s; }
@@ -507,15 +511,14 @@ body {
   body .about {
     margin-left: 0;
     margin-right: 0;
-    background: #f7f7f7;
     padding-bottom: 30px; }
     body .about .profile_image {
       display: block;
       margin-left: auto;
       margin-right: auto;
-      margin-bottom: 20px;
-      margin-top: 60px; }
+      width: 50%; }
   body .skills {
+    background: #f7f7f7;
     padding: 30px;
     margin-left: 0;
     margin-right: 0; }
@@ -524,22 +527,26 @@ body {
       padding: 0; }
   body .education {
     margin-left: 0;
-    margin-right: 0;
-    background: #f7f7f7; }
+    margin-right: 0; }
   body .work {
     margin-left: 0;
-    margin-right: 0;
-    background: #f7f7f7; }
+    margin-right: 0; }
   body .projects {
     margin-left: 0;
-    margin-right: 0; }
+    margin-right: 0;
+    background: #f7f7f7; }
   body .recommendation {
     margin-left: 0;
-    margin-right: 0; }
+    margin-right: 0;
+    background: #f7f7f7; }
 
 .project_container {
   margin-top: 10px;
   margin-bottom: 10px; }
+
+.life {
+  margin-left: 0;
+  margin-right: 0; }
 
 .rentree_trigger,
 .rentree_detail,
