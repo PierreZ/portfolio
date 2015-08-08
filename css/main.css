@@ -206,7 +206,7 @@ input.gn-search:focus {
   content: "\e606"; }
 
 .gn-icon-code:before {
-  content: "\e604"; }
+  content: "\e602"; }
 
 .gn-icon-education:before {
   content: "\e608"; }
@@ -494,6 +494,11 @@ body {
   font-family: "Open Sans", sans-serif;
   font-weight: 300;
   max-width: 100%; }
+  body footer {
+    padding-top: 90px;
+    padding-bottom: 60px;
+    background-color: #34495e;
+    color: white; }
   body .welcome {
     background-color: #34495e;
     text-align: center;
@@ -517,7 +522,8 @@ body {
       margin-left: auto;
       margin-right: auto;
       width: 80%;
-      max-width: 200px; }
+      max-width: 200px;
+      margin-bottom: 30px; }
   body .skills {
     background: #f7f7f7;
     padding: 30px;
@@ -584,7 +590,9 @@ body {
 .youcode_trigger,
 .youcode_detail,
 .ovh_trigger,
-.ovh_detail {
+.ovh_detail,
+.gostatic_trigger,
+.gostatic_detail {
   cursor: pointer; }
 
 .md-4-img {
@@ -648,5 +656,8 @@ body {
 footer {
   margin-top: 30px;
   text-align: center; }
+
+.project_image {
+  height: 140px; }
 
 /*# sourceMappingURL=main.css.map */

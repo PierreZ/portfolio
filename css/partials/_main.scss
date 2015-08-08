@@ -39,6 +39,15 @@ body {
   font-weight: 300;
   max-width:100%;
 
+footer{
+
+	padding-top: 90px;
+	padding-bottom: 60px;
+	background-color: $blue_background;
+	color: white;
+
+}
+
 .welcome{
 	background-color: $blue_background;
 	text-align: center;
@@ -72,7 +81,8 @@ body {
   margin-left: auto;
   margin-right: auto;
 		width:80%;
-		max-width:200px
+		max-width:200px;
+		margin-bottom:30px;
 	}
 }
 .skills{
@@ -153,7 +163,9 @@ background: #f7f7f7;
 .youcode_trigger,
 .youcode_detail,
 .ovh_trigger,
-.ovh_detail{
+.ovh_detail,
+.gostatic_trigger,
+.gostatic_detail{
 	 cursor:  pointer;
 }
 
@@ -238,6 +250,9 @@ footer{
 	text-align: center;
 }
 
+.project_image{
+	height:140px;
+}
 
 
 
