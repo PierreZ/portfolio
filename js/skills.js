@@ -21,6 +21,11 @@ skills.push({
 	"css":"skill-10 dev_skills",
 });
 skills.push({
+	"name":"Perl",
+	"type":"Software",
+	"css":"skill-7 dev_skills",
+});
+skills.push({
 	"name":"Go",
 	"type":"Software",
 	"css":"skill-9 dev_skills",
@@ -208,6 +213,11 @@ skills.push({
 });
 skills.push({
 	"name":"Docker",
+	"type":"Data, Cloud and others",
+	"css":"skill-9 other_skills",
+});
+skills.push({
+	"name":"Microservices",
 	"type":"Data, Cloud and others",
 	"css":"skill-9 other_skills",
 });
