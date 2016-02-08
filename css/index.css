@@ -7,6 +7,10 @@
   }
 }
 
+.bottom{
+    position: absolute;
+    bottom: 65px;
+}
   body {
     display: flex;
     min-height: 100vh;
@@ -22,8 +26,8 @@
 }
 
 #projects {
-  padding-top: 50px;
-  padding-bottom: 25px;
+    margin-top: -150px;
+    padding-bottom: 75px;
 }
 
 .go_up{
