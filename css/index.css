@@ -5,74 +5,83 @@
   .pad {
   	padding-left: 240px;
   }
-    .profile {
+  .profile {
     transform: translate(0px, -280px);
     position:absolute;
-	width: 80%;
-	min-width: 300px;
-	max-width: 700px;
+    width: 80%;
+    min-width: 300px;
+    max-width: 700px;
     left:240px;
     right:0;
     margin-left:auto;
     margin-right:auto;
+  }
+
+  section.timeline-outer {
+  width: 80%;
+  margin: 0 auto;
 }
 
 }
 
 @media only screen and (max-width: 993px) {
-    
-    .profile {
+
+  .profile {
     transform: translate(0px, -280px);
     position:absolute;
-	width: 80%;
-	min-width: 300px;
-	max-width: 700px;
+    width: 80%;
+    min-width: 300px;
+    max-width: 700px;
     left:0px;
     right:0;
     margin-left:auto;
     margin-right:auto;
+  }
+  section.timeline-outer {
+  width: 100%;
+
 }
 }
 
 #projects h1{
-    margin-top: 50px;
+  margin-top: 50px;
 }
 .bottom{
-    position: absolute;
-    bottom: 65px;
+  position: absolute;
+  bottom: 65px;
 }
-  body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
 
-  .main {
-    flex: 1 0 auto;
-  }
+.main {
+  flex: 1 0 auto;
+}
 
 .entry {
 	height: 300px;
 }
 
 #projects {
-    padding-top: 40px;
-    padding-bottom: 75px;
+  padding-top: 40px;
+  padding-bottom: 75px;
 }
 
 #projects > h1 {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
 }
 
 #skills{
-    padding-top: 100px;
+  padding-top: 100px;
 }
 .profile h1 {
 	margin-top: 10px;
-    font-weight: 600;
-    letter-spacing: -2px;
-    font-size: 3em;
-    color: #222;
+  font-weight: 600;
+  letter-spacing: -2px;
+  font-size: 3em;
+  color: #222;
 }
 
 .profile_img {
@@ -83,10 +92,10 @@
 
 .profile h2 {
 	margin-top: -20px;
-		margin-bottom: 0px;
-    font-size: 20px;
-    font-weight: 300;
-    color: #AAA;
+  margin-bottom: 0px;
+  font-size: 20px;
+  font-weight: 300;
+  color: #AAA;
 }
 
 .socials_icons {
@@ -101,11 +110,6 @@ TimeLine CSS
 #content {
   margin-top: 50px;
   text-align: center;
-}
-
-section.timeline-outer {
-  width: 80%;
-  margin: 0 auto;
 }
 
 h1.header {
@@ -203,7 +207,7 @@ Responsive Stuff
 @media (max-width: 768px) {
   .timeline .event::before {
     left: 0.5px;
-    top: 20px;
+    top: 40px;
     min-width: 0;
     font-size: 13px;
   }
