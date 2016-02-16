@@ -1,544 +1,428 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app='PortfolioApp'> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app='PortfolioApp'> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app='PortfolioApp'> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" ng-app='PortfolioApp'> <!--<![endif]-->
+<html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Pierre Zemb portfolio - Software Engineer</title>
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width">
-
-	<link rel='shortcut icon' href='img/fav/fav.png' type='image/x-icon'/ >
-	<link rel="stylesheet" href="css/animate.css">
-	<link rel="stylesheet" href="css/bootstrap.css">
-	<style>
-		body {
-			padding-top: 50px;
-		}
-	</style>
-	<link rel="stylesheet" href="css/main.css">
-
-	<script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/index.css"  media="screen,projection"/>
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta charset="utf-8"/> 
 </head>
-<body ng-controller='Ctrl'>
-	<div class="menu_indicator animated fadeIn">
-		<img class="arrow" src="img/arrow.png" alt="myself">
-		<div class="arrow_text">
-			<p>Have a look over here !</p>
+
+<body>
+	<!-- Navbar goes here -->
+	<header>
+		<div class="fixed out teal lighten-2">
+			<a href="#" data-activates="nav-mobile" class="button-collapse top-nav waves-effect waves-light circle hide-on-large-only"><i class="mdi-navigation-menu medium white-text"></i></a>
 		</div>
-	</div>
-	<!--[if lt IE 7]>
-	<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-	<![endif]-->
-
-	<ul id="gn-menu" class="gn-menu-main">
-		<li class="gn-trigger">
-			<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
-			<nav class="gn-menu-wrapper">
-				<div class="gn-scroller">
-					<ul class="gn-menu">
-						<li><a  href="#home" class="gn-icon gn-icon-home">Home</a></li>
-						<li><a href="https://medium.com/@PierreZ" target="_blank" class="gn-icon gn-icon-blog" >Blog</a></li>
-						<li><a  href="#about" class="gn-icon gn-icon-about">About Me</a></li>
-						<li><a href="#skills" class="gn-icon gn-icon-skills" >Skills</a></li>
-						<li><a href="#work" class="gn-icon gn-icon-work">Work experience</a></li>
-						<li><a href="#recommendation" class="gn-icon gn-icon-recomendation">Recommendations</a></li>
-						<li><a href="#education" class="gn-icon gn-icon-education">Education</a></li>
-						<li><a href="#projects" class="gn-icon gn-icon-code">Projects and contributions</a></li>
-						<li><a href="#life" class="gn-icon gn-icon-life">In Real Life</a></li>
-					</ul>
-
-				</div><!-- /gn-scroller -->
-			</nav>
-			<li><a class="changing_menu animated fadeIn">About Me</a></li>
-			<li>
-				<div class="logo-isen">
-					<h1>ISEN</h1>
-					<h2>École d'ingénieurs</h2>
-				</div>
-			</li>
+		<ul id="nav-mobile" class="side-nav fixed">
+			<li class="center-align"><img src="images/fav.png" width="100px"></li>
+			<li class="bold"><a href="#welcome" class="waves-effect waves-teal"><i class="small material-icons left-align">info_outline</i>Welcome</a></li>
+			<li class="bold"><a href="#skills" class="waves-effect waves-teal"><i class="small material-icons">star</i> Skills</a></li>
+			<li class="bold"><a href="#projects" class="waves-effect waves-teal"><i class="small material-icons">code</i> Projects and talks</a></li>
+			<li class="bold"><a href="#what" class="waves-effect waves-teal"><i class="small material-icons">work</i> When, Where, What</a></li>
+			<li class="bold"><a target="_blank" href="CV.pdf" class="waves-effect waves-teal"><i class="small material-icons">description</i> My Resume</a></li>
 		</ul>
+	</header>
 
-		<div id="home" class="row welcome">
+	<!-- Page Layout here -->
+	<div class="pad">
 
-			<h1>Pierre Zemb<br/>
-				<small>
-					<span class="txt-rotate biggest" data-period="2000" data-rotate='[ "Engineer student", "Software developer","Open Source Advocate","Archlinux and CoreOS user","Gopher" ]'></span>
-				</small>
-			</h1>
-			<div class="social">
-				<a href="http://twitter.com/PierreZ"><img class="socials_icons" src="img/twitter.png" alt="Twitter" /></a>
-				<a href="https://github.com/PierreZ"><img class="socials_icons"  src="img/github.png" alt="git" /></a>
-				<a href="https://keybase.io/pierrez"><img class="socials_icons" src="img/keybase.png" alt="Keybase" /></a>
-				<a href="mailto:contact@pierrezemb.fr"><img class="socials_icons" src="img/email.png" alt="mail" /></a>
-				<a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="img/linkedin.png" alt="Youtube" /></a>
-				<a href="http://plus.google.com/108156342712745521162"><img class="socials_icons" src="img/googleplus-revised.png" alt="Google+" /></a>
-				<a href="http://www.flickr.com/photos/34207436@N03/sets/"><img class="socials_icons" src="img/flickr.png" alt="Flickr" /></a>
-				<a  href="http://www.facebook.com/pierre.zemb"><img class="socials_icons" src="img/facebook.png" alt="Facebook" /></a>
+		<!-- Blue background -->
+		<div id="welcome" class="entry row teal lighten-2"></div>
+
+		<!-- About card -->
+		<div class="card profile center-align go_up">
+			<div class="card-content">
+				<span class="card-title"><img class="circle responsive-img profile_img" src="images/myself.png"></span>
+				<h1>Pierre Zemb</h1>
+				<h2><span class="txt-rotate biggest" data-period="2000" data-rotate='[ "Software Engineer", "DevOps at OVH","Open Source Advocate","Archlinux/CoreOS user" ]'></span></h2>
 			</div>
+			<div class="card-action">
+				<!-- Icons from https://materialdesignicons.com/ -->
+				<a href="http://twitter.com/PierreZ"><img class="socials_icons" src="images/twitter.png" alt="Twitter" /></a>
+				<a href="https://github.com/PierreZ"><img class="socials_icons"  src="images/github.png" alt="git" /></a>
+				<a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="images/linkedin.png" alt="Youtube" /></a>
+				<a href="https://medium.com/@PierreZ"><img class="socials_icons" src="images/medium.png"></a>
+				<a href="mailto:contact@pierrezemb.fr"><img class="socials_icons" src="images/email.png" alt="mail" /></a>
+				<a href="https://keybase.io/PierreZ/key.asc"><img class="socials_icons" src="images/email-secure.png" alt="Keybase" /></a>
+			</div>
+		</div>
+		<!-- End of About -->
 
+		<div id="skills" class="row go_up center-align">
+			<h1 class="blue-text text-lighten-2 align-center">Skills</h1>
+			<div class="row">
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">code</i>
+					<h4 class="blue-grey-text text-darken-1">Server-side coding</h4>
+					<p>This is my main skill. I love working around distributed systems with specific performance goals. My favorite languages at the moment are <b>Go and Java</b> but I know also  <b>C, C++, Node, Perl and some Python</b>. Previous work experience are including experiences with <b>Kafka, Thrift, Hadoop, HBase, HAProxy</b>.</p>
+				</div>
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">dns</i>
+					<h4 class="blue-grey-text text-darken-1">Ops-side</h4>
+					<p>I'm a advanded user of Linux and I'm not afraid of the command-line interface. I have <b>automatisation issues, so Chef, Puppet, Fleet and Ansible are known</b>. I'm fully capable of using <b>ArchLinux</b>, <b>Debian</b> or <b>CoreOS</b> as Operating System and <b>Docker, OpenStack on the virtualization side.</b> I also have a <b>Kubernetes cluster made of Raspberry Pis!</b></p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">web</i>
+					<h4 class="blue-grey-text text-darken-1">Web development</h4>
+					<p>I know my way around around <b>HTML5, CSS3 and JavaScript</b>, especially with <b>AngularJS</b>. Previous work experience are including work around d3js.</p>
+				</div>
+
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">settings_ethernet</i>
+					<h4 class="blue-grey-text text-darken-1">Network knowledge</h4>
+					<p>Thanks to some <b>Cisco courses(CCNA 1,2,3)</b>, I have basics knowledge around things like <b>OSI model, TCP/UDP, Load-balancing, IP, DNS, Routing, HTTP/1.1 and 2, etc...</b>. I'm mostly using them to build better distributed apps.</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">speaker_notes</i>
+					<h4 class="blue-grey-text text-darken-1">Speaker</h4>
+					<p>When I was <b>vice-president of IT-Electronics club</b> of my engineering school, I discovered another passion: <b>sharing my knowledge</b>. I became a <strong>new-tech speaker and I love it!</strong> You can find my slides below if you're curious. I also had the chance to go to conferences like <b>Devoxx France or DotScale.</b></p>
+				</div>
+				<div class="col s12 m6 l6">
+					<i class="large material-icons teal-text text-lighten-2">supervisor_account</i>
+					<h4 class="blue-grey-text text-darken-1">Involved in local community</h4>
+					<p><p>I am committed to many local meetings and events such as the <b><a href="http://gdgfinistere.org/">GDG Finistère</a></b>, <b><a href="http://finistjug.fr/">FinistJUG</a></b>, <b><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></b>, <b><a href="http://brest.startupweekend.org/">Brest Startup Weekend</a></b> as a participant in 2014 and as an <b>co-organizer in 2015 and 2016</b>. I'm also a <b>monthly donator for Mozilla and La Quadrature du Net</b>.</p>
+				</div>
+			</div>
 		</div>
 
+		<div id="projects" class="row teal lighten-2 center-align">
+			<h1 class="white-text">Projects and talks</h1>
 
+			<div class="col s12 m8 offset-m2 l10 offset-l1">
+				<ul class="collapsible popout" data-collapsible="accordion">
+					<!-- CONTRIBUTIONS -->
+					<li>
+						<div class="collapsible-header">
+							<i class="material-icons blue-text text-lighten-1">supervisor_account</i>Contributions
+						</div>
+						<div class="collapsible-body">
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="card-title">HAProxy</span><span class="badge">C</span>
+										</div>
+										<div class="card-action">
+											<ul>
+												<li><a href="https://marc.info/?t=144076971800003&r=1&w=2">Fixing health check bug</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
 
-		<div id="about" class="row about">
-			<h2 class="text-center">About Me</h2>
-			<div class="google_color text-center"></div>
-			<div class="text-center col-md-3 col-sm-3">
-				<img class="profile_image img-circle" src="img/myself.png">
-			</div>
-			<div class="col-md-9 col-sm-9">
-				<p>Hi! My name is Pierre Zemb, and I'm a <strong>French student</strong> in a graduate school of engineering science called <strong>ISEN </strong>where I'm currently studying Software Engineering.</p>
-				<p>I first became interested in software development during my academic training, and I have never stop ever since. Thanks to it, I have good computer skills.<strong> I really enjoy learning new languages or frameworks by myself</strong>, and using them to <strong>develop either Web or native apps on my free time</strong>. I'm really enjoying coding in <strong>C, C++, Java or Go</strong> and ship them with <b><a href="http://docker.io">Docker</a></b>, but <strong>I always end up developping Web apps</strong>.</p>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="card-title">Træfik</span><span class="badge">Go</span>
+										</div>
+										<div class="card-action">
+											<ul>
+												<li><a href="https://github.com/emilevauge/traefik/pull/153">Add REST API in read-only mode</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
 
-				<p>I consider myself as a <b>plumber developer</b>, the one that like <b>getting his hands dirty with distributed/virtualized/automated systems</b>. I strongly believe in <b>Free Open Source Software</b>, and not because I had lunch with <b><a href="https://en.wikipedia.org/wiki/Richard_Stallman">Richard Stallman</a></b> (I'm still living in sin according to the <b><a href="https://stallman.org/saint.html">Church of Emacs</a></b>, because I'm using vim). For this infrastructure, I'm using <b>CoreOS and Docker</b> as explained <b><a href="https://github.com/PierreZ/infra">here</a></b>.</p>
+					<!-- PROGRAMMING PROJECTS -->
+					<li>
+						<div class="collapsible-header"><i class="material-icons blue-text text-lighten-1">code</i>Programming Projects</div>
+						<div class="collapsible-body">
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Go</span>
+											<span class="card-title">goStatic<br/>Light web-server for Docker</span>
+											<p>goStatic is my effort to bring easy, light and secure static web server for Docker. This docker image is only 5MB and you get tons of features like SSL (even if don't have your own certificate), logs by defaults, etc...</p>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2015</span>
+											<ul>
+												<li><a href="https://github.com/PierreZ/gostatic" class="waves-effect waves-light btn">View on GitHub</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">C</span>
+											<span class="card-title">the Eudyptula Challenge<br>Kernel</span>
+											<p>The Eudyptula Challenge is a series of programming exercises for the Linux kernel, that start from a very basic "Hello world" kernel module, moving on up in complexity to getting patches accepted into the main Linux kernel source tree.</p>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2015</span>
+											<ul>
+												<li><a href="http://eudyptula-challenge.org/" class="waves-effect waves-light btn">View website</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Android</span>
+											<span class="card-title">GoogleGlass<br/>Sinis</span>
+											<p>During the first GlassCamp Bank, we created Sinis, an glassware that help people declaring their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2014</span>
+											<ul>
+												<li><a href="https://github.com/triskell/sinis" class="waves-effect waves-light btn">View on GitHub</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">C++</span>
+											<span class="card-title">Kinect Homer</span>
+											<center>
+												<p>	<iframe src="https://www.youtube.com/embed/EXtNwbCb7w8" frameborder="0" allowfullscreen=""></iframe></p>
+											</center>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2013</span>
+											<ul>
+												<li><a href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" class="waves-effect waves-light btn">View on GitHub</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
 
-				<p>During my education, I learned that I love to <b>share my knowledge</b>. That's why I'm trying to do <b>tech talks</b> at my school or at the local GDG. I also had the chance to go to conferences like the <b><a href="http://www.devoxx.fr/">Devoxx France</a></b> or the <b><a href="http://www.dotscale.io/">DotScale</a></b>.</p>
+					<!-- WEB PROJECTS -->
+					<li>
+						<div class="collapsible-header"><i class="material-icons blue-text text-lighten-1">web</i>Web Project</div>
+						<div class="collapsible-body">
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Go</span>
+											<span class="card-title">YouCode<br/>Learn to code using Youtube</span>
+											<p> <a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2015</span>
+											<a href="https://github.com/youcodeio" class="waves-effect waves-light btn">View on GitHub</a>
+										</div>
+									</div>
+								</div>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">PHP</span>
+											<span class="card-title">School project<br/>Web interface for ISEN</span>
+											<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2014</span>
+											<a href="https://github.com/PierreZ/rentree" class="waves-effect waves-light btn">View on GitHub</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Node</span>
+											<span class="card-title">Startup Week-end<br/>Orizon</span>
+											<p>The goal's to offer an Web service which allows you to match your profile with some of the best students in each schools, in order to help you find your way.</p>
+										</div>
+									</div>
+								</div>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">PHP</span>
+											<span class="card-title">Web project<br/>Paid day management</span>
+											<p>We had to make by pairs a Web project called Paid holiday management; administration side is in Web technology such as PHP and JQuery and the user side is in java.</p>
 
-				<p>Feel free to have a look on my <strong><a href="#life">slides</a></strong> from my talks, my <b><a href="/CV.pdf">resume</a></b> (la version française se trouve <b><a href="/CV_fr.pdf">ici</a></b>), my French <b><a href="https://medium.com/@PierreZ/">blog</a></b> and you can contact me by <b><a href="mailto:contact@pierrezemb.fr">email</a></b> (here's my <b><a href="https://keybase.io/pierrez/key.asc">PGP key</a></b> if you have security concerns).</p>
-			</div>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2014</span>
+											<a href="https://github.com/PierreZ/Projet_Web_CIR_2013" class="waves-effect waves-light btn">View on GitHub</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-		</div>
+					</li>
 
-		<div  id="skills" class="row skills">
-			<h2 class="text-center">Skills</h2>
-			<div class="google_color text-center"></div>
-			<div class="container">
-				<ul class="nav nav-pills nav-justified skills-nav text-center">
-					<li ng-click="setSkill(cat)" ng-class="{active:skillSelected==cat}"
-					ng-repeat="cat in skills_cat"><a href="">{{cat}}</a></li>
+					<!-- OTHER PROJECTS -->
+					<li>
+						<div class="collapsible-header"><i class="material-icons blue-text text-lighten-1">business</i>Publications and association</div>
+						<div class="collapsible-body">
+							<div class="row">
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Docker</span>
+											<span class="card-title">School project<br/>Virtualization et migration of the servers of SeatestBase</span>
+											<p> <a href="www.seatestbase.com">Sea Test Base</a> is a trial site in the sea build for oceanography, the oil offshore, the submarine cables, the maritime security and the national defence. It's currently used by Thales or DCNS as a relay point to test submarine drone. Lists of changes:</p>
+											<ul style="text-align:left">
+												<li>- Moving Proxmox to Docker and automate the whole infrastructure</li>
+												<li>- Moving joomla to WordPress</li>
+												<li>- Moving Zabbix to InfluxDB/Grafana</li>
+												<li>- Moving from PPTP to OpenVPN with OpenSSL</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="col s12 m12 l6">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Python</span>
+											<span class="card-title">French book<br/><em>Le python en Prépa</em></span>
+											<p>With the help of our Physic professor, we wrote a book with my class about Python programming for French teachers of preparatory classes.</p>
+											<p>You can order the book <a href="http://web.isen-bretagne.fr/livres/python/index.php">here</a> and read a interview <a href="http://www.tech-brest-iroise.fr/Actualit%C3%A9s-398-941-0-0.html">here</a></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons blue-text text-lighten-1">speaker_notes</i>Talks</div>
+						<div class="collapsible-body">
+							<div class="collection left-align">
+								<a class="collection-item" href="http://pierrez.github.io/devops-isen/#/">ISEN Brest: The cloud, explained to developers<span class="badge">2016</span></a>
+								<a class="collection-item" href="https://pierrez.github.io/intro-secu-isen/#/">ISEN Brest: Introduction to security<span class="badge">2015</span></a>
+								<a class="collection-item" href="https://go-talks.appspot.com/github.com/PierreZ/golang-intro-finistgdg2015/finistgdg.slide">GDG Finistère: Introduction to Go<span class="badge">2015</span></a>
+								<a class="collection-item" href="https://pierrez.github.io/docker-presentation-gdg-2014">FinistJUG: Feedback about Docker<span class="badge">2014</span></a>
+								<a class="collection-item" href="https://pierrez.github.io/angularjs-bootcamp-2014/#/">ISEN Brest: Bootcamp AngularJS<span class="badge">2014</span></a>
+								<a class="collection-item" href="https://pierrez.github.io/big-data-presentation-2014">ISEN Brest: Introduction to Hadoop<span class="badge">2014</span></a>
+							</div>
+
+						</div>
+					</li>
 				</ul>
 			</div>
-			<dl class="skills-diagram">
-				<dt ng-repeat="skill in skills | filter:skill_filter" ng-class="skill.css">{{skill.name}}</dt>
-				<dd>0</dd>
-			</dl>
+
+			<!-- PROJECT END -->
 		</div>
 
-		<div id="work" class="row work">
-			<h2 class="text-center">Work experience</h2>
-			<div class="google_color text-center"></div>
-			<div class="row personal_line">
-				<div class="col-md-6 col-sm-6 text-center">
-					<article>
-						<header>
-							<a href="https://www.ovh.com/"><img src="img/ovh.png" class="md-3-img center-block"></a>
-							<p class="ovh_trigger"><strong>Internship </strong> June-August 2015 at Wrocław (Poland)</p>
-							<p class="ovh_trigger"><strong>Part-time internship </strong> October 2015-September 2016 in Brest</p>
-							<p class="ovh_trigger text-center"><em>"Development and administration of a Cloud computing platform"</em></p>
-						</header>
-						<div class="ovh_detail">
-							<h3>Part-time internship</h3>
-							<p>I'm currently working internal monitoring system for OVH.</p>
-							<h3>Internship</h3>
-							<p>I worked as a <strong>DevOps intern</strong> on <a href="https://runabove.com">RunAbove</a>, an IaaS (Infrastructure as a Service) provided by OVH.</p>
-							<p>Beside<strong> playing with OpenStack</strong>, I created a<strong> new monitoring stack</strong> using Scollector, Bosun, and the new IoT project of OVH. Almost everything I wrote was in <strong>Go</strong>, including contributions to IoT backend, new collectors for OVH, etc...</p>
-							<p>I also discovered<strong> Agile Software Development Methodology</strong>  throught in-house training.</p>
-						</div>
-					</article>
-				</div>
-				<div class="col-md-6 col-sm-6 text-center">
-					<article>
-						<header>
-							<a href="http://www.cmarkea.com/"><img src="img/arkea.png" class="md-3-img center-block"></a>
-							<p class="arkea_trigger"><strong>Internship </strong> June-July 2013</p>
-							<p class="arkea_trigger"><strong>Part-time internship </strong> October 2013-September 2014</p>
-							<p class="arkea_trigger text-center"><em>"Analysis and implementation of technical metrics on VMware virtualized environments and Windows servers"</em></p>
-						</header>
-						<div class="arkea_detail">
-							<p>I worked as a <strong>junior DevOps</strong> (developer and sysadmin) at the Systems team at the headquarters of Crédit Mutuel Arkea.</p>
-							<p>My work was focused on <strong>Arkea Realtime Monitoring Infrastructure</strong> (Artimon for short) which is involving technologies like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>.</p>
-							<p>My <strong>biggest achievement</strong> was the creation of a Restful Web Service to brings data stored in Hadoop to Arkea's vizualization apps in Java. I also enhanced the vizualization apps written with AngularJS and D3.JS, and wrote a kafka consumer to feed OpenTSDB over HTTP, and some minor tasks about Flume, Powershell scripts for VSphere, etc...</p>
-							<p>I also gained heavy knowledge about<strong> Hadoop and distributed systems</strong> thanks to an in-house training, and also the creation of my own hadoop cluster for testing.</p>
-						</div>
-					</article>
-				</div>
-			</div>
-			<hr>
-			<div class="row personal_line">
-
-				<div class="col-md-6 col-sm-6 text-center">
-					<article>
-						<header>
-							<a href="https://www.thomson-networks.com"><img src="img/thomson.png" class="md-3-img center-block"></a>
-							<p class="thomson_trigger"><strong>Internship </strong> June-July 2012</p>
-							<p class="thomson_trigger text-center"><em>"Optimization of the products's configurator"</em></p>
-
-						</header>
-						<div class="thomson_detail">
-							<p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
-							<p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
-						</div>
-					</article>
-				</div>
-				<div class="col-md-6 col-sm-6 text-center">
-					<article>
-						<header>
-							<a href="http://caec.pagesperso-orange.fr/page13.html"><img src="img/caec.gif" class="md-4-img center-block"></a>
-							<p><strong>Charity work </strong>July 2011</p>
-						</header>
-						<p><strong>Assistance for unemployed</strong> to help them find a job</p>
-					</article>
-				</div>
-			</div>
-		</div>
-
-
-		<div id="recommendation" class="row recommendation">
-			<h2 class="text-center">Recommendation:</h2>
-			<div class="google_color text-center"></div>
-			<div class="col-lg-12 text-center">
-				<img class="img-circle project_image" src="img/plegoff.jpg" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-				<h3><a href="https://www.linkedin.com/profile/view?id=23946261">Philippe Le Goff</a></h3>
-				<p>Head of the Systems Team - Crédit Mutuel Arkéa</p>
-				<p><em>"Pierre worked as a part-time student/engineer in my team for one year and half (2013/2014).<br>It's pretty rare to have a student of such a technical level. Very curious, dynamic and open minded, it was a real pleasure to work with him."</em></p>
-			</div>
-		</div>
-
-
-		<div id="education">
-			<h2 class="text-center">Education</h2>
-			<div class="google_color text-center"></div>
-			<div class="row education">
-				<div class="col-md-6 col-sm-6">
-					<article>
-						<header class="text-center">
-							<img src="img/isen.jpg" width="200px" style="margin-bottom:20px">
-
-							<p>French engineering school - <strong>Estimate graduation:</strong> 2016</p>
-						</header>
-						<h4 class="text-center majeur_trigger"><strong>Specialization in Software Engineering (2 years)</strong></h4>
-						<div class="majeur_detail">
-							<p><strong>Technical courses:</strong></p>
-							<ul>
-								<li>Advanced Java (JSP/JSF/Spring Boot)</li>
-								<li>B.I with Pentaho</li>
-								<li>Cobol/Mainframe</li>
-								<li>Android</li>
-								<li>JEE</li>
-								<li>Distributed Systems in Java</li>
-								<li>Digital algorithm</li>
+		<!-- http://codepen.io/samerpik/pen/OVKyVZ -->
+		<div id="what" class="main-container">
+			<section id="timeline" class="timeline-outer">
+				<div class="container" id="content">
+					<div class="row">
+						<div class="col s12 m12 l12 center-align">
+							<h1 class="blue-text text-lighten-2">When, Where, What</h1>
+							<ul class="timeline">
+								<li class="event" data-date="2015/Present">
+									
+									<div class="center-align"><b>
+										<a href="https://www.ovh.com/"><img src="images/ovh.png" class="align-center responsive-img icones_timeline"></a>
+										<p>Internship at OVH Wrocław (Poland)<br>Part-time internship at OVH Brest</p></b>
+									</div>
+									<p>I'm currently working on internal monitoring system for OVH. Beside playing with OpenStack, I'm creating a new monitoring stack using Scollector and the new IoT project of OVH. Almost everything I wrote was in Go, including contributions to IoT backend, new collectors for OVH, etc...</p>
+									<p>I also discovered Agile Software Development Methodology throught in-house training.
+									</p>
+								</li>
+								<li class="event" data-date="2014">
+									<div class="center-align">
+										<img src="images/google-logo.png" class="responsive-img icones_timeline">
+										<b><p>Online course: Making Sense of Data</p></b>
+									</div>
+									<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="https://datasense.withgoogle.com/course">here.</a></p>
+								</li>
+								<li class="event" data-date="2013/2014">
+									
+									<div class="center-align">
+										<a href="http://arkea.com/"><img src="images/arkea.png" class="center-align responsive-img icones_timeline icones_timeline"></a>
+										<b><p>Internship at Crédit Mutuel Arkéa<br>Part-time internship at Crédit Mutuel Arkéa</p></b>
+									</div>
+									
+									<p>I worked as a <strong>junior DevOps</strong> (developer and sysadmin) at the Systems team at the headquarters of Crédit Mutuel Arkea.</p>
+									<p>My work was focused on <strong>Arkea Realtime Monitoring Infrastructure</strong> (Artimon for short) which is involving technologies like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>.</p>
+									<p>My <strong>biggest achievement</strong> was the creation of a Restful Web Service to brings data stored in Hadoop to Arkea's vizualization apps in Java. I also enhanced the vizualization apps written with AngularJS and D3.JS, and wrote a kafka consumer to feed OpenTSDB over HTTP, and some minor tasks about Flume, Powershell scripts for VSphere, etc...</p>
+									<p>I also gained heavy knowledge about<strong> Hadoop and distributed systems</strong> thanks to an in-house training, and also the creation of my own hadoop cluster for testing.</p>
+								</li>
+								<li class="event" data-date="Summer 2012">
+									<div class="center-align">
+										<a href="https://www.thomson-networks.com"><img src="images/thomson.png" class="center-align responsive-img icones_timeline"></a>
+										<b><p>Internship at Thomson</p></b>
+									</div>
+									<p>I worked at the <strong>Headquarters</strong> of Thomson Video Networks on the Configurator. It's a <strong>really heavy Excel program</strong> allows the employees to calculate the price list of every product, knowing that they are extremely flexible. One click was representing <strong>minutes of wait</strong> just to calculate what's possible to add.</p>
+									<p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
+								</li>
+								<li class="event" data-date="2010/2016">
+									
+									<div class="center-align">
+										<a href="http://http://www.isen.fr"><img src="images/isen.jpg" class="center-align responsive-img icones_timeline"></a>
+										<h3>ISEN Brest</h3>
+									</div>
+									<p><strong>Technical courses across Computer and Network Cycle (2 years) and Specialization in Software Engineering (2 years):</strong></p>
+									<ul>
+										<li>Advanced Java (JSP/JSF/Spring/Spring Boot)</li>
+										<li>Android</li>
+										<li>JEE</li>
+										<li>Distributed Systems in Java</li>
+										<li>Digital algorithm</li>
+										<li>Linux-based systems</li>
+										<li>Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks (CCNA 1-2-3)</li>
+										<li>Databases</li>
+										<li>C, C++, Java</li>
+										<li>PHP, Javascript, HTML5, CSS3</li>
+									</ul>
+								</li>
 							</ul>
 						</div>
-						<h4 class="text-center CIR_trigger"><strong>Computer and Network Cycle (2 years)</strong></h4>
-						<div class="CIR_detail">
-							<p>After spending two years in preparatory classes, I've decided to go into the <strong>Computer and Network Cycle</strong> in order to enhanced my technical skills.</p>
-							<p><strong>Technical courses:</strong></p>
-							<ul>
-								<li><strong> Linux-based systemes</strong></li>
-								<li><strong> Cisco-based courses: Network Basics/Routing and Switching/Scaling Networks (CCNA 1-2-3-4)</strong></li>
-								<li><strong> Databases</strong></li>
-								<li><strong> C, C++, Java</strong></li>
-								<li><strong> PHP, Javascript, HTML5, CSS3</strong></li>
-							</ul>
-						</div>
-						<h4 class="text-center prepa_trigger"><strong>Preparatory classes (2 years)</strong></h4>
-						<div class="prepa_detail">
-							<p>They consist of <strong>two very intensive years</strong> which act as a preparatory course with the main goal of training undergraduate students.<br/>The workload is one of the<strong> highest in the world</strong>(between 35 and 40 contact hours a week, including written and oral exams).</p>
-						</div>
-					</article>
+					</div>
 				</div>
-				<div class="col-md-6 col-sm-6">
-					<article>
-						<header class="text-center">
-							<img src="img/google-logo.png" width="200px">
-							<p>Online course - <strong>Graduation:</strong> April 2014</p>
-						</header>
-						<h4 class="text-center making_data_trigger"><strong>Making Sense of Data</strong></h4>
-						<div class="making_data_detail">
-							<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="https://datasense.withgoogle.com/course">here.</a></p>
-						</div>
-					</article>
-				</div>
-			</div>
+			</section>
+			<br/>
 		</div>
 
-
-		<div id="projects" class="row projects">
-			<h2 class="text-center">Projects and contributions</h2>
-			<p class="text-center">(Well, the finished one I mean, as you can see <a href="https://github.com/PierreZ?tab=repositories">here</a>...)</p>
-			<div class="google_color text-center"></div>
-
-			<div class="row personal_line">
-				<h4 class="text-center"><strong>Contributions to open-source</strong></h4>
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<a class="text-center" href="https://traefik.github.io/"><img class="project_image" style="width:50%;height:auto" src="https://camo.githubusercontent.com/0d83f4ec95b28ecc0353078ca4364bf461b99c2d/687474703a2f2f7472616566696b2e6769746875622e696f2f7472616566696b2e6c6f676f2e737667" alt="Generic placeholder image"></a>
-					<h3>Træfɪk<br/>A modern reverse proxy written in Go</h3>
-					<ul>
-						<li><a href="https://github.com/emilevauge/traefik/pull/153">Add possibility to have REST API in read-only mode</a></li>
-					</ul>
-				</div>
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<a class="text-center" href="https://traefik.github.io/"><img class="project_image" style="width:50%;height:auto" src="https://www.haproxy.com/static/img/logo.png" alt="Generic placeholder image"></a>
-					<h3>HAProxy<br/>Open-source load-balancing proxy server in C</h3>
-					<ul>
-						<li><a href="https://marc.info/?t=144076971800003&r=1&w=2">Fixing health check bug</a></li>
-					</ul>
-				</div>
-			</div>
-			<hr>
-			<div class="row personal_line">
-				<h4 class="text-center"><strong>Programming projects</strong></h4>
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="gostatic_trigger project_image" src="img/go-docker.png" alt="Generic placeholder image">
-					<h3 class="gostatic_trigger">goStatic<br/>Light web-server for Docker</h3>
-					<h4 class="gostatic_trigger">2015</h4>
-					<p class="gostatic_trigger">Go - Docker</p>
-					<div class="gostatic_detail">
-						<p>goStatic is my effort to bring easy, light and secure static web server for Docker. This docker image is only 5MB and you get tons of features like SSL (even if don't have your own certificate), logs by defaults, etc...</p>
-						<p>If you want more info about this project and why you should care, go on Github with the button below.</p>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/gostatic" role="button">View project on Github</a></p>
-						<p><a class="btn btn-default" href="https://registry.hub.docker.com/u/pierrezemb/gostatic/" role="button">View image on DockerHub</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image eudyptula_trigger" src="img/tux.png" alt="Generic placeholder image">
-					<h3 class="eudyptula_trigger">the Eudyptula Challenge<br>Linux kernel</h3>
-					<h4 class="eudyptula_trigger">2014</h4>
-					<p class="eudyptula_trigger">C - Linux</p>
-					<div class="eudyptula_detail">
-						<p>The Eudyptula Challenge is a series of programming exercises for the Linux kernel, that start from a very basic "Hello world" kernel module, moving on up in complexity to getting patches accepted into the main Linux kernel source tree.</p>
-						<p><strong>List of finished tasks:</strong></p>
-						<p>Write a hello-world module</p>
-						<p>Build a custom kernel</p>
-						<p>Change some options and rebuild it</p>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="http://eudyptula-challenge.org/" role="button">View official Website</a></p>
+		<footer class="page-footer teal lighten-2">
+			<div class="container">
+				<div class="row">
+					<div class="col l6 s12">
+						<h5 class="white-text">Pierre Zemb's portfolio</h5>
 
 					</div>
-				</div>
-
-			</div>
-			<hr>
-			<div class="row personal_line">
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image glasscamp_trigger" src="img/SINIS.png" alt="Generic placeholder image">
-					<h3 class="glasscamp_trigger">GlassCamp<br/>Sinis</h3>
-					<h4 class="glasscamp_trigger">2014</h4>
-
-					<p class="glasscamp_trigger">Java - Android - Glass SDK</p>
-					<div class="glasscamp_detail">
-						<p>During the first GlassCamp Bank (event about using Glass for new uses at Crédit Mutuel Arkéa), we created Sinis, an glassware that help people declaring their sinister to their insurance by taking pictures and shooting videos directly from Google Glass.</p>
-						<p>Written in Java using Android SDK and GDK addon.</p>
-						<img style="width:350px"  src="img/glass.jpg">
-						<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/triskell/sinis" role="button">View on GitHub</a></p>
-
-					</div>
-				</div>
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image homer_trigger" src="img/homer.png" alt="Generic placeholder image">
-					<h3 class="homer_trigger">Kinect game<br/>Go Homer!</h3>
-					<h4 class="homer_trigger">2013</h4>
-					<p class="homer_trigger">C++ - Kinect SDK - Qt4</p>
-					<div class="homer_detail">
-						<p>I realized during my free time a juggling game with Kinect in C++.</p>
-						<p>The game is to make a maximum of jungles with your head. Movements are based on your actual position.</p>
-						<p>For this, I used the official SDK and Microsoft Visual Studio with Qt as graphics API.</p>
-						<iframe src="https://www.youtube.com/embed/EXtNwbCb7w8" frameborder="0" allowfullscreen=""></iframe>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-
-			</div>
-
-			<hr>
-
-
-			<div class="row personal_line">
-				<h4 class="text-center"><strong>Web-based projects</strong></h4>
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="youcode_trigger project_image" src="img/youcode.png" alt="Generic placeholder image">
-					<h3 class="youcode_trigger">YouCode<br/>Learn to code using Youtube</h3>
-					<h4 class="youcode_trigger">2015</h4>
-					<p class="youcode_trigger">Go - Google App Engine - Youtube API - AngularJS</p>
-					<div class="youcode_detail">
-						<p> <a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="http://youcode.io" role="button">View website</a></p>
-						<p><a class="btn btn-default" href="https://github.com/youcodeio/" role="button">View project on Github</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image rentree_trigger" src="img/rentree.png" alt="Generic placeholder image">
-					<h3 class="rentree_trigger">School project<br/>Web interface for ISEN</h3>
-					<h4 class="rentree_trigger">2014</h4>
-					<p class="rentree_trigger">HTML5 - CSS3 - JavaScript - PHP - AngularJS</p>
-					<div class="rentree_detail">
-						<p>Creation of an Web interface for downloading documents about the start of a school year at ISEN using an PHP framework called Limonade and AngularJS</p>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/rentree" role="button">View on GitHub</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-
-			</div>
-			<hr>
-			<div class="row personal_line">
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image orizon_trigger" src="img/orizon.png" alt="Generic placeholder image">
-					<h3 class="orizon_trigger">Startup Week-end<br/>Orizon</h3>
-					<h4 class="orizon_trigger">2014</h4>
-					<p class="orizon_trigger">HTML5 - CSS3 - JavaScript - AngularJS - Node.JS - MongoDB</p>
-					<div class="orizon_detail">
-						<img style="width:350px" src="img/startup_2014.jpg">
-						<p>During the first  start-up week-end in the city of Brest, I worked on a Web service called Orizon.</p>
-						<p>The goal's to offer an Web service which allows you to match your profile with some of the best students in each schools, in order to help you find your way.</p>
-						<p>I created an Web infrastructure with MongoDB, Node.JS and AngularJS</p>
-						<p>You can read an article about it (in French) <a href="https://medium.com/@PierreZ/retour-sur-le-premier-startup-week-end-de-brest/">here</a></p>
-					</div>
-				</div><!-- /.col-lg-3 -->
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-12 text-center project_container'>
-					<img class="img-circle project_image paidday_trigger" src="img/paidday.png" alt="Generic placeholder image">
-					<h3 class="paidday_trigger">Web project<br/>Paid day management</h3>
-					<h4 class="paidday_trigger">2013</h4>
-					<p class="paidday_trigger">HTML5 - CSS3 - JavaScript - PHP - Java</p>
-					<div class="paidday_detail">
-						<p>We had to make by pairs a Web project called Paid holiday management; administration side is in Web technology such as PHP and JQuery and the user side is in java.</p>
-						<p><a class="btn btn-default" style="margin-top: 20px" href="https://github.com/PierreZ/Jeux-de-Jongles-Visual-Studio" role="button">View on GitHub</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-
-			</div>
-			<hr>
-			<div class="row personal_line">
-				<h4 class="text-center"><strong>Other projects</strong></h4>
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center project_container'>
-					<img class="img-circle project_image seatestbase_trigger" src="img/seatestbase.jpg" alt="Generic placeholder image">
-					<h3 class="seatestbase_trigger">School project<br/>Virtualization et migration of the servers of SeatestBase</h3>
-					<h4 class="seatestbase_trigger">2015</h4>
-					<p class="seatestbase_trigger">OpenVZ - Proxmox - Docker - OpenStack</p>
-					<div class="seatestbase_detail">
-						<p> <a href="www.seatestbase.com">Sea Test Base</a> is a trial site in the sea build for oceanography, the oil offshore, the submarine cables, the maritime security and the national defence. It's currently used by Thales or DCNS as a relay point to test submarine drone.</p>
-						<p><strong>Lists of changes:</strong></p>
-						<ul style="text-align:left">
-							<li>Moving Proxmox to Docker and automate the whole infrastructure</li>
-							<li>Moving joomla to WordPress</li>
-							<li>Moving Zabbix to InfluxDB/Grafana</li>
-							<li>Moving from PPTP to OpenVPN with OpenSSL</li>
+					<div class="col l4 offset-l2 s12">
+						<h5 class="white-text">Links</h5>
+						<ul>
+							<li><a class="grey-text text-lighten-3" href="https://twitter.com/PierreZ">Twitter</a></li>
+							<li><a class="grey-text text-lighten-3" href="https://github.com/PierreZ">GitHub</a></li>
+							<li><a class="grey-text text-lighten-3" href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800">LinkedIn</a></li>
 						</ul>
 					</div>
 				</div>
-
-				<div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center project_container'>
-					<img class="img-circle python_trigger" src="img/livre_python.png" alt="Generic placeholder image">
-					<h3 class="python_trigger">French book<br/><em>Le python en Prépa</em></h3>
-					<h4 class="python_trigger">2013</h4>
-					<p class="python_trigger">Python</p>
-					<div class="python_detail">
-						<p>With the help of our Physic professor, we wrote a book with my class about Python programming for French teachers of preparatory classes.</p>
-						<p>You can order the book <a href="http://web.isen-bretagne.fr/livres/python/index.php">here</a> and read a interview <a href="http://www.tech-brest-iroise.fr/Actualit%C3%A9s-398-941-0-0.html">here</a></p>
-					</div>
-				</div><!-- /.col-lg-4 -->
-			</div><!-- /.col-lg-4 -->
-		</div>
-
-
-		<div id="life" class="life">
-			<h2 class="text-center">In Real life</h2>
-			<div class="google_color text-center"></div>
-			<div class="row personal_line">
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://brest.startupweekend.org/"><img src="img/swbrest.jpg" class="center-block"></a>
-							<h3 class="text-center">Startup Week-end</h3>
-							<p>participant in 2014 and co-organizer in 2015/2016</p>
-						</header>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://www.lacantine-brest.net/"><img src="img/cantine.png" class="center-block"></a>
-							<h3 class="text-center">La cantine Brestoise</h3>
-							<p>Member</p>
-						</header>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://www.linuxfoundation.org/"><img src="img/linux.jpg" class="center-block"></a>
-							<h3 class="text-center">The Linux Foundation</h3>
-							<p>Member</p>
-
-						</header>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<a href="https://www.mozilla.org"><img src="https://upload.wikimedia.org/wikipedia/fr/thumb/3/3c/Mozilla_Foundation_Logo.svg/1097px-Mozilla_Foundation_Logo.svg.png" class="center-block" width="100px"></a>
-						<h3>Mozilla Foundation</h3>
-						<p>Monthly donator</p>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<a href="https://www.laquadrature.net/"><img src="https://www.laquadrature.net/files/logo_laquadrature-net_titre_carre_grand_cadre.png" class="center-block" width="100px"></a>
-						<h3>La Quadrature du Net</h3>
-						<p>Monthly donator</p>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://finistjug.fr"><img src="img/finistjug.png" class="center-block"></a>
-							<h3 class="text-center">FinistJUG</h3>
-							<p>Occasional speaker</p>
-							<p><b><a href="https://pierrez.github.io/docker-presentation-gdg-2014">Feedback about Docker</a></b></p>
-						</header>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://finistgdg.fr"><img src="img/finistgdg.png" class="center-block"></a>
-							<h3 class="text-center">GDG Finistère</h3>
-							<p>Occasional speaker</p>
-							<p><b><a href="https://go-talks.appspot.com/github.com/PierreZ/golang-intro-finistgdg2015/finistgdg.slide">Introduction to Go</a></b></p>
-						</header>
-					</article>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 text-center">
-					<article>
-						<header>
-							<a href="http://www.isen.fr/brest/"><img src="img/isen.png" class="center-block"></a>
-							<h3 class="text-center">ISEN Brest</h3>
-							<p>Occasional speaker</p>
-							<p><b><a href="http://pierrez.github.io/devops-isen/#/">Power of the cloud, explained to developers</a></b></p>
-							<p><b><a href="https://pierrez.github.io/intro-secu-isen/#/">Introduction to security</a></b></p>
-							<p><b><a href="https://go-talks.appspot.com/github.com/PierreZ/golang-intro-finistgdg2015/finistgdg.slide">Introduction to Go</a></b></p>
-							<p><b><a href="https://pierrez.github.io/angularjs-bootcamp-2014/#/">Bootcamp AngularJS</a></b></p>
-							<p><b><a href="https://pierrez.github.io/big-data-presentation-2014">Introduction to Hadoop</a></b></p>
-						</header>
-					</article>
+			</div>
+			<div class="footer-copyright">
+				<div class="container">
+					© 2016
+					<a class="grey-text text-lighten-4 right" href="https://github.com/PierreZ/portfolio">The code is available on GitHub on MIT licence</a>
 				</div>
 			</div>
-		</div>
-		<footer>
-			<p>This awesome website is powered by Docker and CoreOS</p>
-			<p><b><a href="#home">Go on top</a></b></p>
-			<h2 class="text-center">&copy; Pierre Zemb 2015</h2>
 		</footer>
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+		<!-- LAYOUT END -->
+	</div>
 
-		<script src="js/vendor/bootstrap.min.js"></script>
-		<script src="js/classie.js"></script>
-		<script src="js/gnmenu.js"></script>
-		<script src="js/carrousel.js"></script>
-		<script>
-			new gnMenu( document.getElementById( 'gn-menu' ) );
-		</script>
-
-		<script src="js/skills.js"></script>
-		<script src="js/main.js"></script>
-	</body>
-	</html>
+	<!--Import jQuery before materialize.js-->
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="js/materialize.min.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(../fonts/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+@media only screen and (min-width: 993px) {
+  .out {
+    display: none ;
+  }
+  .pad {
+  	padding-left: 240px;
+  }
+  .profile {
+    transform: translate(0px, -280px);
+    position:absolute;
+    width: 80%;
+    min-width: 300px;
+    max-width: 700px;
+    left:240px;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  section.timeline-outer {
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
+@media only screen and (max-width: 993px) {
+
+  .profile {
+    transform: translate(0px, -280px);
+    position:absolute;
+    width: 80%;
+    min-width: 300px;
+    max-width: 700px;
+    left:0px;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  section.timeline-outer {
+    width: 100%;
+
+  }
+}
+
+#projects h1{
+  margin-top: 50px;
+}
+.bottom{
+  position: absolute;
+  bottom: 65px;
+}
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1 0 auto;
+}
+
+.entry {
+	height: 300px;
+}
+
+#projects {
+  padding-top: 40px;
+  padding-bottom: 75px;
+}
+
+#projects > h1 {
+  margin-bottom: 40px;
+}
+
+#skills{
+  padding-top: 100px;
+}
+.profile h1 {
+	margin-top: 10px;
+  font-weight: 600;
+  letter-spacing: -2px;
+  font-size: 3em;
+  color: #222;
+}
+
+.profile_img {
+	margin-top: 0px;
+	width: 150px;
+
+}
+
+.profile h2 {
+	margin-top: -20px;
+  margin-bottom: 0px;
+  font-size: 20px;
+  font-weight: 300;
+  color: #AAA;
+}
+
+.socials_icons {
+	width: 30px;
+}
+
+/*——————————————
+TimeLine CSS
+———————————————*/
+/* Base */
+
+#content {
+  margin-top: 50px;
+  text-align: center;
+}
+
+h1.header {
+  font-size: 50px;
+  line-height: 70px;
+}
+/* Timeline */
+
+.timeline {
+  border-left: 8px solid #26a69a;
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  color: #333;
+  margin: 50px auto;
+  letter-spacing: 0.5px;
+  position: relative;
+  line-height: 1.4em;
+  padding: 20px;
+  list-style: none;
+  text-align: left;
+}
+
+.timeline h1,
+.timeline h2,
+.timeline h3 {
+  font-size: 1.4em;
+}
+
+.timeline .event {
+  border-bottom: 1px solid rgba(160, 160, 160, 0.2);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.timeline .event:last-of-type {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border: none;
+}
+
+.timeline .event:before,
+.timeline .event:after {
+  position: absolute;
+  display: block;
+  top: 0;
+}
+
+.timeline .event:before {
+  left: -177.5px;
+  color: #212121;
+  content: attr(data-date);
+  text-align: right;
+  /*  font-weight: 100;*/
+  
+  font-size: 16px;
+  min-width: 120px;
+}
+
+.timeline .event:after {
+  box-shadow: 0 0 0 8px #26a69a;
+  left: -30px;
+  background: white;
+  border-radius: 50%;
+  height: 11px;
+  width: 11px;
+  content: "";
+  top: 5px;
+}
+/**/
+/*——————————————
+Responsive Stuff
+———————————————*/
+
+@media (max-width: 945px) {
+  
+ .icones_timeline{
+   margin-top: 50px;
+ }
+ .timeline .event::before {
+  left: 0.5px;
+  top: 0px;
+  min-width: 0;
+  font-size: 13px;
+}
+.timeline h3 {
+  font-size: 16px;
+}
+.timeline p {
+  padding-top: 20px;
+}
+section.lab h3.card-title {
+  padding: 5px;
+  font-size: 16px
+}
+}
+
+@media (max-width: 768px) {
+  .timeline .event::before {
+    left: 0.5px;
+    min-width: 0;
+    font-size: 13px;
+  }
+
+  .timeline h3 {
+    font-size: 16px;
+  }
+  .timeline p {
+    padding-top: 20px;
+  }
+}
+/*——————————————
+others
+———————————————*/
+
+a.portfolio-link {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}
