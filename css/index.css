@@ -1,3 +1,26 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(../fonts/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 @media only screen and (min-width: 993px) {
   .out {
     display: none ;
@@ -18,10 +41,9 @@
   }
 
   section.timeline-outer {
-  width: 80%;
-  margin: 0 auto;
-}
-
+    width: 80%;
+    margin: 0 auto;
+  }
 }
 
 @media only screen and (max-width: 993px) {
@@ -38,9 +60,9 @@
     margin-right:auto;
   }
   section.timeline-outer {
-  width: 100%;
+    width: 100%;
 
-}
+  }
 }
 
 #projects h1{
@@ -186,36 +208,35 @@ Responsive Stuff
 ———————————————*/
 
 @media (max-width: 945px) {
-  .timeline .event::before {
-    left: 0.5px;
-    top: 20px;
-    min-width: 0;
-    font-size: 13px;
-  }
-  .timeline h3 {
-    font-size: 16px;
-  }
-  .timeline p {
-    padding-top: 20px;
-  }
-  section.lab h3.card-title {
-    padding: 5px;
-    font-size: 16px
-  }
+  
+ .icones_timeline{
+   margin-top: 50px;
+ }
+ .timeline .event::before {
+  left: 0.5px;
+  top: 0px;
+  min-width: 0;
+  font-size: 13px;
+}
+.timeline h3 {
+  font-size: 16px;
+}
+.timeline p {
+  padding-top: 20px;
+}
+section.lab h3.card-title {
+  padding: 5px;
+  font-size: 16px
+}
 }
 
 @media (max-width: 768px) {
   .timeline .event::before {
     left: 0.5px;
-    top: 40px;
     min-width: 0;
     font-size: 13px;
   }
-  .timeline .event:nth-child(1)::before,
-  .timeline .event:nth-child(3)::before,
-  .timeline .event:nth-child(5)::before {
-    top: 38px;
-  }
+
   .timeline h3 {
     font-size: 16px;
   }
