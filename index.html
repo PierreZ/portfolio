@@ -6,7 +6,7 @@
 	<link type="text/css" rel="stylesheet" href="css/index.css"  media="screen,projection"/>
 	<!--Let browser know website is optimized for mobile-->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<meta charset="utf-8"/> 
+	<meta charset="utf-8"/>
     <title>Pierre Zemb portfolio - Software Engineer</title>
 </head>
 
@@ -57,12 +57,12 @@
 				<div class="col s12 m6 l6">
 					<i class="large material-icons teal-text text-lighten-2">code</i>
 					<h4 class="blue-grey-text text-darken-1">Server-side coding</h4>
-					<p>This is my main skill. I love working around distributed systems with specific performance goals. My favorite languages at the moment are <b>Go and Java</b> but I know also  <b>C, C++, Node, Perl and some Python</b>. Previous work experience are including experiences with <b>Kafka, Thrift, Hadoop, HBase, HAProxy</b>.</p>
+					<p>This is my main skill. I love working around distributed systems with specific performance goals. My favorite languages at the moment are <b>Go, Rust and Java</b> but I know also <b>C, C++, Node, Perl and some Python</b>. Previous work experience are including playing with <b>Kafka, Thrift, gRPC</b>.</p>
 				</div>
 				<div class="col s12 m6 l6">
 					<i class="large material-icons teal-text text-lighten-2">dns</i>
 					<h4 class="blue-grey-text text-darken-1">Ops-side</h4>
-					<p>I'm a advanded user of Linux and I'm not afraid of the command-line interface. I have <b>automatisation issues, so Chef, Puppet, Fleet and Ansible are known</b>. I'm fully capable of using <b>ArchLinux</b>, <b>Debian</b> or <b>CoreOS</b> as Operating System and <b>Docker, OpenStack on the virtualization side.</b> I also have a <b>Kubernetes cluster made of Raspberry Pis!</b></p>
+					<p>I'm a advanded user of Linux and I'm not afraid of the command-line interface. I've been using several ditributions over the year such as <b>Ubuntu, CoreOS, Debian or Archlinux</b>. I'm currently playing with a source-based distribution called <b><a href="http://exherbo.org">Exherbo</a></b>. I have <b>automatisation issues, so Chef, Puppet, Fleet and Ansible are known</b>.  I also worked on <b>OpenStack, Hadoop, HBase</b> at work, and played a lot with <b>Docker/Kubernetes</b> at home.</p>
 				</div>
 			</div>
 			<div class="row">
@@ -137,6 +137,34 @@
 					<li>
 						<div class="collapsible-header"><i class="material-icons blue-text text-lighten-1">code</i>Programming Projects</div>
 						<div class="collapsible-body">
+							<div class="row">
+								<div class="col s12 m12 l12">
+									<div class="card">
+										<div class="card-content">
+											<span class="badge">Bash</span>
+											<span class="card-title">Exherbo utils<br/>ISO generator for KVM</span>
+											<p>
+												<b><a href="http://exherbo.org">Exherbo</a></b> is a source-based distribution. I wanted to play with it without messing up my laptop(and I'm used to develop through ssh). So I created a bash script that is creating a KVM-based ISO of Exherbo to boot it on OpenStack. This script is including:
+											</p>
+											<ul>
+												<li>Fetching exherbo tarball</li>
+												<li>Creating a single btrfs partition</li>
+												<li>Compile latest kernel with KVM options</li>
+												<li>Generate initramfs</li>
+												<li>COnfiguring sshd and other stuffs</li>
+												<li>Adding my ssh key to authorized hosts</li>
+												<li>Generate a ISO of all the above</li>
+											</ul>
+										</div>
+										<div class="card-action center-align">
+											<span class="badge">2016</span>
+											<ul>
+												<li><a href="https://github.com/PierreZ/exherbo-openstack" class="waves-effect waves-light btn">View on GitHub</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="row">
 								<div class="col s12 m12 l6">
 									<div class="card">
@@ -216,10 +244,11 @@
 										<div class="card-content">
 											<span class="badge">Go</span>
 											<span class="card-title">YouCode<br/>Learn to code using Youtube</span>
-											<p> <a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
+											<p><a href="http://youcode.io">YouCode</a> is a open-source plateform where a developer can find talks and tutorials about everything he wants to get started.</p>
+											<p>We are working on a new version!</p>
 										</div>
 										<div class="card-action center-align">
-											<span class="badge">2015</span>
+											<span class="badge">V1: 2015<br/>V2: 2016</span>
 											<a href="https://github.com/youcodeio" class="waves-effect waves-light btn">View on GitHub</a>
 										</div>
 									</div>
@@ -329,7 +358,7 @@
 							<h1 class="blue-text text-lighten-2">When, Where, What</h1>
 							<ul class="timeline">
 								<li class="event" data-date="2015/Present">
-									
+
 									<div class="center-align"><b>
 										<a href="https://www.ovh.com/"><img src="images/ovh.png" class="align-center responsive-img icones_timeline"></a>
 										<p>Internship at OVH Wrocław (Poland)<br>Part-time internship at OVH Brest</p></b>
@@ -346,12 +375,12 @@
 									<p>Google is offering a free, online MOOC style course on ‘Making Sense of Data‘ from March 18 to April 4 taught by Amit Deutsch (Google) and Joe Hellerstein (Berkeley). More info <a href="https://datasense.withgoogle.com/course">here.</a></p>
 								</li>
 								<li class="event" data-date="2013/2014">
-									
+
 									<div class="center-align">
 										<a href="http://arkea.com/"><img src="images/arkea.png" class="center-align responsive-img icones_timeline icones_timeline"></a>
 										<b><p>Internship at Crédit Mutuel Arkéa<br>Part-time internship at Crédit Mutuel Arkéa</p></b>
 									</div>
-									
+
 									<p>I worked as a <strong>junior DevOps</strong> (developer and sysadmin) at the Systems team at the headquarters of Crédit Mutuel Arkea.</p>
 									<p>My work was focused on <strong>Arkea Realtime Monitoring Infrastructure</strong> (Artimon for short) which is involving technologies like<strong> Hadoop, Flume, Kafka, Zookeeper, or ElasticSearch</strong>.</p>
 									<p>My <strong>biggest achievement</strong> was the creation of a Restful Web Service to brings data stored in Hadoop to Arkea's vizualization apps in Java. I also enhanced the vizualization apps written with AngularJS and D3.JS, and wrote a kafka consumer to feed OpenTSDB over HTTP, and some minor tasks about Flume, Powershell scripts for VSphere, etc...</p>
@@ -366,7 +395,7 @@
 									<p>My goal was to <strong>optimize it</strong> to make it more useable.</p>
 								</li>
 								<li class="event" data-date="2010/2016">
-									
+
 									<div class="center-align">
 										<a href="http://http://www.isen.fr"><img src="images/isen.jpg" class="center-align responsive-img icones_timeline"></a>
 										<h3>ISEN Brest</h3>
