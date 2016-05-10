@@ -1,5 +1,5 @@
-.DS_Store
-# ignoring sass-cache...
-**/.sass-cache
-**/.sass-cache/*
-**/main.css.map
+node_modules
+dist
+bower_components
+.tmp
+.publish/
