@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <ul>
       <template is="dom-repeat" items="{{items}}">
-        <li><span>{{item}}</span></li>
+        <li><span><a href="{{item.link}}">{{item.description}}</a></span></li>
       </template>
     </ul>
   </template>
@@ -46,12 +46,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         ready: function() {
           this.items = [
-            'Responsive Web App boilerplate',
-            'Iron Elements and Paper Elements',
-            'End-to-end Build Tooling (including Vulcanize)',
-            'Unit testing with Web Component Tester',
-            'Routing with Page.js',
-            'Offline support with the Platinum Service Worker Elements'
+            {"link":"http://pierrez.github.io/devops-isen/#/", "description":"ISEN Brest - 2016: The cloud, explained to developers"},
+            {"link":"https://pierrez.github.io/intro-secu-isen/", "description":"ISEN Brest - 2015: Introduction to security"},
+            {"link":"hhttps://go-talks.appspot.com/github.com/PierreZ/golang-intro-finistgdg2015/finistgdg.slide", "description":"GDG Finistère - 2015: Introduction to Go"},
+            {"link":"https://pierrez.github.io/docker-presentation-gdg-2014", "description":"FinistJUG - 2014: Feedback about Docker"},
+            {"link":"https://pierrez.github.io/angularjs-bootcamp-2014/#/", "description":"ISEN Brest - 2014: Bootcamp AngularJS"},
+            {"link":"https://pierrez.github.io/big-data-presentation-2014", "description":"ISEN Brest - 2014: Introduction to Hadoop"},
           ];
         }
       });

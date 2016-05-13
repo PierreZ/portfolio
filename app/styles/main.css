@@ -16,3 +16,7 @@ body {
 .page-title {
   outline: none;
 }
+a {
+  color: rgb(86, 148, 241);
+  font-weight: bold;
+}
