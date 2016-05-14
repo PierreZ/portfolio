@@ -17,6 +17,9 @@ body {
   text-align: center;
 }
 
+#mainToolbar{
+  background: #455a64;
+}
 .page-title {
   outline: none;
 }

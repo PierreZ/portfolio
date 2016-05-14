@@ -73,7 +73,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
           <p class="text-center">
-          <span class="menu-name"><iron-icon src="images/fav.png"></iron-icon> Pierre Zemb</span>
+            <span class="menu-name"><iron-icon src="images/fav.png"></iron-icon> Pierre Zemb</span>
           </p>
 
         </paper-toolbar>
@@ -85,23 +85,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <span>Home</span>
           </a>
 
-          <a data-route="code" href="{{baseUrl}}code">
+          <a target="_blank" href="https://github.com/PierreZ">
             <iron-icon icon="code"></iron-icon>
             <span>View my code</span>
           </a>
-
-          <a data-route="talks" href="{{baseUrl}}talks">
-            <iron-icon icon="speaker-notes"></iron-icon>
-            <span>View my talks</span>
-          </a>
-
 
           <a target="_blank" href="https://medium.com/@PierreZ">
             <iron-icon icon="create"></iron-icon>
             <span>View my blog</span>
           </a>
-
-
 
           <a target="_blank" target="_blank" href="CV.pdf">
             <iron-icon icon="file-download"></iron-icon>
@@ -134,48 +126,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="Home">
               <my-greeting></my-greeting>
             </section>
-
-            <section data-route="Talks">
-              <my-list></my-list>
-            </section>
-
-            <section data-route="Code">
-              <github-user-element user="PierreZ"></github-user-element>
-            </section>
           </iron-pages>
 
-          <footer style="witdh:100%" class="center">
+            <footer style="witdh:100%" class="center">
 
-            <p class="text-footer">
-              <iron-icon icon="code"></iron-icon> with <iron-icon icon="favorite"></iron-icon> using <a href="https://www.polymer-project.org/"><iron-icon icon="polymer"></iron-icon></a>
-            </p>
-            <p class="copyright">
-              © 2016 - Pierre Zemb
-            </p>
-          </footer>
-        </div>
+              <p class="text-footer">
+                <iron-icon icon="code"></iron-icon> with <iron-icon icon="favorite"></iron-icon> using <a href="https://www.polymer-project.org/"><iron-icon icon="polymer"></iron-icon></a>
+              </p>
+              <p class="copyright">
+                © 2016 - Pierre Zemb
+              </p>
+            </footer>
+          </div>
 
-      </paper-scroll-header-panel>
-    </paper-drawer-panel>
-    <paper-toast id="toast">
-      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+        </paper-scroll-header-panel>
+      </paper-drawer-panel>
+      <paper-toast id="toast">
+        <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+      </paper-toast>
+
+      <!-- Uncomment next block to enable Service Worker support (1/2) -->
+      <!--
+      <paper-toast id="caching-complete"
+      duration="6000"
+      text="Caching complete! This app will work offline.">
     </paper-toast>
 
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-    duration="6000"
-    text="Caching complete! This app will work offline.">
-  </paper-toast>
-
-  <platinum-sw-register auto-register
-  clients-claim
-  skip-waiting
-  base-uri="bower_components/platinum-sw/bootstrap"
-  on-service-worker-installed="displayInstalledToast">
-  <platinum-sw-cache default-cache-strategy="fastest"
-  cache-config-file="cache-config.json">
-</platinum-sw-cache>
+    <platinum-sw-register auto-register
+    clients-claim
+    skip-waiting
+    base-uri="bower_components/platinum-sw/bootstrap"
+    on-service-worker-installed="displayInstalledToast">
+    <platinum-sw-cache default-cache-strategy="fastest"
+    cache-config-file="cache-config.json">
+  </platinum-sw-cache>
 </platinum-sw-register>
 -->
 

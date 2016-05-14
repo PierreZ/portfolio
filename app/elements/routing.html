@@ -51,16 +51,6 @@ window.addEventListener('WebComponentsReady', function() {
     setFocus(app.route);
   });
 
-  page('/code', function() {
-    app.route = 'Code';
-    setFocus(app.route);
-  });
-
-  page('/talks', function() {
-    app.route = 'Talks';
-    setFocus(app.route);
-  });
-
   // 404
   page('*', function() {
     app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
