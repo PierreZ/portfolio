@@ -13,10 +13,29 @@ body {
   color: #333;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .page-title {
   outline: none;
 }
 a {
   color: rgb(86, 148, 241);
   font-weight: bold;
+}
+
+footer {
+  padding-top: 30px;
+  padding-bottom: 20px;
+  background: #455a64;
+  color: white;
+  text-align: center;
+}
+
+.go_up {
+  margin-left: 80%;
+}
+
+.copyright {
 }
