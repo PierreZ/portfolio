@@ -1,0 +1,254 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="my-greeting">
+  <template>
+  <style is="custom-style">
+
+  :root {
+  --iron-icon-width: 80px;
+  --iron-icon-height: 80px;
+}
+
+  .details{
+    margin-top: 30px;
+    background: #eceff1;
+  }
+  .bold{
+    font-weight: 600;
+    letter-spacing: -2px;
+    font-size: 3em;
+    color: #222;
+  }
+
+  .subtitle{
+    margin-top: -35px;
+    margin-bottom: 0px;
+    font-size: 20px;
+    font-weight: 300;
+    color: #AAA;
+  }
+
+  .flex-center-justified {
+    @apply(--layout-horizontal);
+    @apply(--layout-center-justified);
+  }
+  .flex-horizontal {
+    @apply(--layout-horizontal);
+  }
+  .card-about{
+    width: 80%;
+    max-width: 600px;
+    /*transform: translate(0px, -110px);*/
+  }
+  .img-circle {
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-bottom: -60px;
+  }
+  .center {
+    text-align: center;
+  }
+  .socials_icons {
+    width: 30px;
+    padding: 15px;
+  }
+
+  .li-element-image{
+      margin-top: auto;
+      margin-bottom: auto;
+        margin-right: 40px;
+  }
+
+  .li-element{
+    margin-bottom: 40px;
+  }
+
+  .li-element-detail{
+    @apply(--layout-flex);
+    color: rgb(102, 102, 102);
+    max-width: 500px;
+    margin-right: 20px;
+  }
+  </style>
+
+  <div class="container flex-center-justified">
+    <paper-card class="page-title card-about center" elevation=2>
+      <div class="card-content center"><iron-image class="img-circle" src="https://pierrezemb.fr/images/myself.png"></iron-image></div>
+      <div class="card-content center">
+        <h1 class="bold">Pierre Zemb</h1>
+        <h2 class="subtitle">I'm a <span class="txt-rotate" data-period="2000"
+          data-rotate='[ "Software Engineer",
+          "DevOps at OVH",
+          "GNU/Linux enthusiast",
+          "Speaker",
+          "Vim User",
+          "Geek" ]'></span></h2>
+        </div>
+        <div class="card-actions">
+          <a href="http://twitter.com/PierreZ"><img class="socials_icons" src="../../images/twitter.png" alt="Twitter" /></a>
+          <a href="https://github.com/PierreZ"><img class="socials_icons"  src="../../images/github.png" alt="git" /></a>
+          <a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="../../images/linkedin.png" alt="Youtube" /></a>
+          <a href="https://medium.com/@PierreZ"><img class="socials_icons" src="../../images/medium.png"></a>
+          <a href="mailto:contact@pierrezemb.fr"><img class="socials_icons" src="../../images/email.png" alt="mail" /></a>
+          <a href="https://keybase.io/PierreZ/key.asc"><img class="socials_icons" src="../../images/email-secure.png" alt="Keybase" /></a>
+        </div>
+      </paper-card>
+
+    </div>
+    <div class="container flex-center-justified" style="margin-top:30px">
+      <ul style="list-style-type:none">
+        <li>
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="code"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Polyglot developer</h3>
+              <p style="line-height: 1.7;">
+                <b>I love picking the right tool(and language) to get my job done</b>. My favorite languages at the moment are <b>Go, Rust and Java</b> but I know also <b>C, C++, Node, Perl and some Python</b>.
+              </p>
+            </div>
+          </div>
+        </li>
+        <li style="display: block;">
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="work"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I'm working on</h3>
+              <p style="line-height: 1.7;">
+                I'm working on the <b>internal monitoring system</b> at <a href="https://ovh.com">OVH</a>. This is including <b>TimeSeries metrics, metadatas and CVE monitoring</b>.
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="check"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I've worked with</h3>
+              <p style="line-height: 1.7;">
+                Previous work experience are including working with <b>Kafka, Thrift, Flink, gRPC, OpenStack, Hadoop, HBase</b>.
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="hardware:devices-other"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I've made at home</h3>
+              <p style="line-height: 1.7;">
+                <a href="https://github.com/PierreZ/exherbo-openstack">Exherbo ISO generator</a>, <a href="http://youcode.io">YouCode</a>, <a href="https://github.com/PierreZ/gostatic">GoStatic</a> are some of my personal projects. You can find more <a data-route="code" href="{{baseUrl}}code"><span>here</span></a>.
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="speaker-notes"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Talks I've given</h3>
+              <p style="line-height: 1.7;">
+                When I was <b>vice-president of IT-Electronics club</b> of my engineering school, I discovered another passion: <b>sharing my knowledge</b>. I became a <strong>new-tech speaker and I love it!</strong>
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="li-element container flex-horizontal">
+            <div class="li-element-image">
+              <iron-icon icon="supervisor-account"></iron-icon>
+            </div>
+            <div class="li-element-detail">
+              <h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Involved in local community</h3>
+              <p style="line-height: 1.7;">
+                <b>I am committed to many local meetings and events</b> such as the <b><a href="http://gdgfinistere.org/">GDG Finistère</a></b>, <b><a href="http://finistjug.fr/">FinistJUG</a></b>, <b><a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a></b>, <b><a href="http://www.lacantine-brest.net/event/devoxx4kids-brest/">Devoxx4Kids</a></b>, <b><a href="http://brest.startupweekend.org/">Brest Startup Weekend</a></b> as a participant in 2014 and as an <b>co-organizer in 2015 and 2016</b>.
+              </p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <script>
+    var TxtRotate = function(el, toRotate, period) {
+      this.toRotate = toRotate;
+      this.el = el;
+      this.loopNum = 0;
+      this.period = parseInt(period, 10) || 2000;
+      this.txt = '';
+      this.tick();
+      this.isDeleting = false;
+    };
+
+    TxtRotate.prototype.tick = function() {
+      var i = this.loopNum % this.toRotate.length;
+      var fullTxt = this.toRotate[i];
+
+      if (this.isDeleting) {
+        this.txt = fullTxt.substring(0, this.txt.length - 1);
+      } else {
+        this.txt = fullTxt.substring(0, this.txt.length + 1);
+      }
+
+      this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+      var that = this;
+      var delta = 150 - Math.random() * 100;
+
+      if (this.isDeleting) { delta /= 2; }
+
+      if (!this.isDeleting && this.txt === fullTxt) {
+        delta = this.period;
+        this.isDeleting = true;
+      } else if (this.isDeleting && this.txt === '') {
+        this.isDeleting = false;
+        this.loopNum++;
+        delta = 500;
+      }
+
+      setTimeout(function() {
+        that.tick();
+      }, delta);
+    };
+
+    var elements = document.getElementsByClassName('txt-rotate');
+    for (var i=0; i<elements.length; i++) {
+      var toRotate = elements[i].getAttribute('data-rotate');
+      var period = elements[i].getAttribute('data-period');
+      if (toRotate) {
+        new TxtRotate(elements[i], JSON.parse(toRotate), period);
+      }
+    }
+
+    </script>
+  </template>
+
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'my-greeting',
+    });
+  })();
+  </script>
+</dom-module>
