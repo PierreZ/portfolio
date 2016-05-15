@@ -11,4 +11,4 @@ git config user.email "travis"
 
 git add -A
 git commit -m "deployed to github pages"
-git push --force --quiet $FULL_REPO prod
+git push --force --quiet $FULL_REPO HEAD:prod
