@@ -4,6 +4,7 @@ GH_REPO="@github.com/PierreZ/portfolio.git"
 
 FULL_REPO="https://$GH_TOKEN$GH_REPO"
 
+cp .travis.yml dist/
 cd dist
 git init
 git config user.name "travis-auto"
