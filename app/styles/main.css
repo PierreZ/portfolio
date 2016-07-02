@@ -18,7 +18,7 @@ body {
 }
 
 #mainToolbar{
-  background: #455a64;
+  background: #0085a1;
 }
 .page-title {
   outline: none;
@@ -31,7 +31,7 @@ a {
 footer {
   padding-top: 30px;
   padding-bottom: 20px;
-  background: #455a64;
+  background: #0085a1;
   color: white;
   text-align: center;
 }
