@@ -1,0 +1,216 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="pierrezemb-me">
+	<template>
+		<style include="shared-styles">
+			:root {
+				--iron-icon-width: 80px;
+				--iron-icon-height: 80px;
+			}
+			
+			.details {
+				margin-top: 30px;
+				background: #eceff1;
+			}
+			
+			.bold {
+				font-weight: 600;
+				letter-spacing: -2px;
+				font-size: 3em;
+				color: #222;
+			}
+			
+			.subtitle {
+				margin-top: -35px;
+				margin-bottom: 0px;
+				font-size: 20px;
+				font-weight: 300;
+				color: #AAA;
+			}
+			
+			.flex-center-justified {
+				@apply(--layout-horizontal);
+				@apply(--layout-center-justified);
+			}
+			
+			.flex-horizontal {
+				@apply(--layout-horizontal);
+			}
+			
+			.card-about {
+				margin-top: 50px;
+				width: 80%;
+				max-width: 600px;
+				/*transform: translate(0px, -110px);*/
+			}
+			
+			.img-circle {
+				border-radius: 50%;
+				margin-top: 10px;
+				margin-bottom: -60px;
+			}
+			
+			.center {
+				text-align: center;
+			}
+			
+			.socials_icons {
+				width: 30px;
+				padding: 15px;
+			}
+			
+			.li-element-image {
+				color: var(--app-secondary-color);
+				margin-top: auto;
+				margin-bottom: auto;
+				margin-right: 40px;
+			}
+			
+			.li-element {
+				margin-bottom: 40px;
+			}
+			
+			.li-element-detail {
+				@apply(--layout-flex);
+				color: rgb(102, 102, 102);
+				max-width: 500px;
+				margin-right: 20px;
+			}
+			
+			.subtitle {
+				margin-top: 10px;
+				margin-bottom: 5px;
+			}
+			
+			a,
+			a:link,
+			a:visited,
+			a:active {
+				color: #d64937;
+				text-decoration: none;
+				font-weight: bold;
+			}
+			
+			.color-main {
+				color: var(--app-secondary-color);
+			}
+		</style>
+
+		<div class="container flex-center-justified">
+			<paper-card class="page-title card-about center" elevation=2>
+				<div class="card-content center">
+					<iron-image class="img-circle" src="https://pierrezemb.fr/images/myself.png"></iron-image>
+				</div>
+				<div class="card-content center">
+					<h1 class="bold">Pierre Zemb</h1>
+					<h2 class="subtitle">Software Engineer at OVH working on <span class="color-main"><b>Metrics Data Platform</b></span></h2>
+					<h2 class="subtitle">Co-leader of <span class="color-main"><b>FinistJUG / GDG Finistère</b></span></h2>
+				</div>
+				<div class="card-actions">
+					<a href="http://twitter.com/PierreZ"><img class="socials_icons" src="../../images/twitter.png" alt="Twitter" /></a>
+					<a href="https://github.com/PierreZ"><img class="socials_icons" src="../../images/github.png" alt="git" /></a>
+					<a href="http://www.linkedin.com/pub/pierre-zemb/5b/412/800"><img class="socials_icons" src="../../images/linkedin.png" alt="Youtube" /></a>
+					<a href="mailto:contact@pierrezemb.fr"><img class="socials_icons" src="../../images/email.png" alt="mail" /></a>
+					<a href="https://keybase.io/PierreZ/key.asc"><img class="socials_icons" src="../../images/email-secure.png" alt="Keybase" /></a>
+				</div>
+			</paper-card>
+
+		</div>
+		<div class="container flex-center-justified" style="margin-top:30px">
+			<ul style="list-style-type:none">
+				<li style="display: block;">
+					<div class="li-element container flex-horizontal">
+						<div class="li-element-image">
+							<iron-icon icon="work"></iron-icon>
+						</div>
+						<div class="li-element-detail">
+							<h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I'm working on</h3>
+							<p style="line-height: 1.7;">
+								I'm spending my days playing with <a target="_blank" href="http://www.warp10.io/">Warp 10 Platform</a> and numerous
+								projects from <a target="_blank" href="https://www.apache.org/">The Apache Software Foundation</a>.
+							</p>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="li-element container flex-horizontal">
+						<div class="li-element-image">
+							<iron-icon icon="check"></iron-icon>
+						</div>
+						<div class="li-element-detail">
+							<h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I've worked with</h3>
+							<p style="line-height: 1.7;">Previous work experience are including working with:</p>
+							<ul>
+								<li>Apache ecosystem:
+									<ul>
+										<li>Hadoop</li>
+										<li>HBase</li>
+										<li>Kafka</li>
+										<li>Thrift</li>
+										<li>Flink</li>
+										<li>Phoenix</li>
+									</ul>
+								</li>
+								<li>gRPC</li>
+								<li>Warp10</li>
+								<li>Docker</li>
+								<li>OpenStack</li>
+							</ul>
+							</p>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="li-element container flex-horizontal">
+						<div class="li-element-image">
+							<iron-icon icon="hardware:devices-other"></iron-icon>
+						</div>
+						<div class="li-element-detail">
+							<h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Things I've made at home</h3>
+							<p style="line-height: 1.7;">
+								<a href="https://github.com/PierreZ/exherbo-openstack">Exherbo ISO generator</a>, <a href="http://youcode.io">YouCode</a>,
+								<a href="https://github.com/PierreZ/gostatic">GoStatic</a> are some of my personal projects. You can find more on
+								my <a target="_blank" href="https://github.com/PierreZ/"><span>Github</span></a>.
+							</p>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="li-element container flex-horizontal">
+						<div class="li-element-image">
+							<iron-icon icon="speaker-notes"></iron-icon>
+						</div>
+						<div class="li-element-detail">
+							<h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Talks I've given</h3>
+							<p style="line-height: 1.7;">
+								I like to <strong>share my knowledge through talks</strong> during events, or as a <strong>teaching assistant</strong>								in my former school ISEN Brest.</strong>
+							</p>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="li-element container flex-horizontal">
+						<div class="li-element-image">
+							<iron-icon icon="supervisor-account"></iron-icon>
+						</div>
+						<div class="li-element-detail">
+							<h3 style="font-size: 20px;font-weight: 400;color:rgb(51, 51, 51);">Involved in local community</h3>
+							<p style="line-height: 1.7;">
+								<b>I am the co-leader</b> of the local <a href="http://gdgfinistere.org/">Google Developer Group</a>, <a href="http://finistjug.fr/">Java User Group</a>.
+								I'm also involved in <a href="http://www.lacantine-brest.net/">La Cantine Brestoise</a>, <a href="http://www.lacantine-brest.net/event/devoxx4kids-brest/">Devoxx4Kids</a>,
+								<a href="http://brest.startupweekend.org/">Brest Startup Weekend</a>.
+							</p>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</template>
+
+	<script>
+    Polymer({
+      is: 'pierrezemb-me'
+    });
+  </script>
+</dom-module>
