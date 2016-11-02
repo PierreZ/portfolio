@@ -5,6 +5,7 @@ before_script:
 - export PATH=$PWD/node_modules/.bin:$PATH
 - polymer build
 script:
+- chmod 751 ./travis.sh
 - ./travis.sh
 env:
   global:
