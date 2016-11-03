@@ -5,6 +5,7 @@ GH_REPO="@github.com/PierreZ/portfolio.git"
 FULL_REPO="https://$GH_TOKEN$GH_REPO"
 
 cp .travis.yml build/bundled/
+cp -r bower_components/* build/bundled/bower_components
 cd build/bundled/
 git init
 git config user.name "travis-auto"
