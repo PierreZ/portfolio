@@ -1,8 +1,9 @@
 language: node_js
 node_js: stable
 before_script:
-- npm install polymer-cli
+- npm install polymer-cli bower
 - export PATH=$PWD/node_modules/.bin:$PATH
+- bower install
 - polymer build
 script:
 - ./travis.sh
