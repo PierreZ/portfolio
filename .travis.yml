@@ -6,6 +6,7 @@ before_script:
 - bower install
 - polymer build
 script:
+- chmod 751 ./travis.sh
 - ./travis.sh
 env:
   global:
