@@ -1,112 +1,129 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <!doctype html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>Pierre Zemb's portfolio - Software Engineer</title>
-    <meta name="description" content="My App description">
+<head>
+	<meta charset="utf-8">
 
-    <link rel="icon" href="/images/favicon.ico">
+	<title>Pierre Zemb's Portfolio</title>
+	<meta name="robots" content="index, follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="description" content="Pierre Zemb's Portfolio'">
+	<meta name="author" content="https://pierrezemb.fr/" />
 
-    <!-- See https://goo.gl/OOhYW5 -->
-    <link rel="manifest" href="/manifest.json">
+	<link rel="stylesheet" href="node_modules/spectre.css/dist/spectre.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
 
-    <!-- See https://goo.gl/qRE0vM -->
-    <meta name="theme-color" content="#1565c0">
+<body>
+	<section class="section section-hero bg-gray">
+		<section id="overview" class="grid-hero container grid-960 text-center">
+			<h1>Pierre Zemb</h1>
+			<div class="centered"><img src="myself.png" class="img-profile img-round" alt="" /></div>
 
-    <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="My App">
+			<h2>
+				<u>Software Engineer</u> at
+				<u>OVH</u> working on <a target="_blank" href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a>
+			</h2>
+			<h2>
+				<u>Co-leader</u> of <a target="_blank" href="http://finistjug.fr/">FinistJUG</a> / <a target="_blank" href="https://gdgfinistere.org/">GDG Finistère</a></b>
+			</h2>
+			</div>
+			<div class="divider"></div>
+			<div class="columns">
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="https://twitter.com/PierreZ">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img cl src="twitter.png"/></span>
+							</div>
+							<div class="card-body">
+								Twitter
+							</div>
+						</div>
+					</a>
+				</div>
 
-    <!-- Add to homescreen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="My App">
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="https://github.com/PierreZ">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img cl src="github.png"/></span>
+							</div>
+							<div class="card-body">
+								Github
+							</div>
+						</div>
+					</a>
+				</div>
 
-    <!-- Homescreen icons -->
-    <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="https://pierrez.github.io">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img class="img-icon-card-rss" src="code.png"/></span>
+							</div>
+							<div class="card-body img-card-rss-text">
+								Technical blog
+							</div>
+						</div>
+					</a>
+				</div>
 
-    <!-- Tile icon for Windows 8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
-    <meta name="msapplication-TileColor" content="#1565c0">
-    <meta name="msapplication-tap-highlight" content="no">
-    
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="https://pierrez.github.io">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img cl src="linkedin.png"/></span>
+							</div>
+							<div class="card-body">
+								LinkedIn
+							</div>
+						</div>
+					</a>
+				</div>
 
-    <script>
-      // Setup Polymer options
-      window.Polymer = {
-        dom: 'shadow',
-        lazyRegister: true
-      };
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="mailto:contact@pierrezemb.fr">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img cl src="email.png"/></span>
+							</div>
+							<div class="card-body">
+								Mail
+							</div>
+						</div>
+					</a>
+				</div>
 
-      // Load webcomponentsjs polyfill if browser does not support native Web Components
-      (function() {
-        'use strict';
+				<div class="column col-2 col-md-4 col-xs-6">
+					<a target="_blank" href="https://pierrez.github.io">
+						<div class="card text-center">
+							<div class="card-header">
+								<span class="card-title"><img cl src="email-secure.png"/></span>
+							</div>
+							<div class="card-body">
+								Keybase
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</section>
+	</section>
+	      <div class="docs-content column col-9 col-sm-12">
+        <section class="container">
+					dsq
+        </section>
+	      </div>
 
-        var onload = function() {
-          // For native Imports, manually fire WebComponentsReady so user code
-          // can use the same code path for native and polyfill'd imports.
-          if (!window.HTMLImports) {
-            document.dispatchEvent(
-              new CustomEvent('WebComponentsReady', {bubbles: true})
-            );
-          }
-        };
+	<footer class="bg-gray text-center">
+		<section class="grid-footer container grid-960">
+			<p>Built with ♥ thanks to <a href="ttps://picturepan2.github.io/spectre" target="_blank">Spectre.css</a></p>
+			<p>© 2017 - Pierre Zemb</p>
+		</section>
+	</footer>
+</body>
 
-        var webComponentsSupported = (
-          'registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')
-        );
-
-        if (!webComponentsSupported) {
-          var script = document.createElement('script');
-          script.async = true;
-          script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
-          script.onload = onload;
-          document.head.appendChild(script);
-        } else {
-          onload();
-        }
-      })();
-
-      // Load pre-caching Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js');
-        });
-      }
-    </script>
-
-    <link rel="import" href="/src/my-portfolio.html">
-
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Roboto', 'Noto', sans-serif;
-        line-height: 1.5;
-        min-height: 100vh;
-        background-color: #f7f7f7;
-      }
-    </style>
-  </head>
-  <body>
-    <my-portfolio></my-portfolio>
-    <!-- Built with love using Polymer Starter Kit -->
-  </body>
 </html>
