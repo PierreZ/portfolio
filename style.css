@@ -1,5 +1,7 @@
-.bg-gray {
+body {
   background: #f8f9fa;
+}
+.bg-gray {
   color: #667189;
   padding: 1rem;
 }
@@ -82,8 +84,8 @@
 }
 
 .img-profile {
-  padding-top: 1em;
-  padding-bottom: 2em;
+  margin-top: 3em;
+  margin-bottom: 5em;
 }
 
 .img-icon-card {
@@ -94,7 +96,24 @@
   width: 37px;
   margin-top: 5px;
 }
+.img-icon-card-cv {
+  width: 50px;
+}
 
 .img-card-rss-text {
   margin-top: 6px;
+}
+
+.card-info {
+  padding-bottom: 20px;
+}
+
+.card-info > h1 {
+  font-size: 5.2rem;
+}
+
+.card  {
+  margin-left: 10px;
+  background: #f8f9fa;
+  border: 0;
 }
