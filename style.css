@@ -1,0 +1,119 @@
+body {
+  background: #f8f9fa;
+}
+.bg-gray {
+  color: #667189;
+  padding: 1rem;
+}
+.bg-dark {
+  background: #50596c;
+  color: #fff;
+  padding: 1rem;
+}
+.bg-primary {
+  background: #5764c6;
+  color: #fff;
+  padding: 1rem;
+}
+.section-header {
+  padding: 1rem .5rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 200;
+}
+.section-hero {
+  position: relative;
+  z-index: 300;
+}
+.grid-header .navbar {
+  height: 4rem;
+}
+.grid-header .navbar-section {
+  padding: 0;
+}
+.grid-header .navbar-brand {
+  color: #50596c;
+}
+.grid-header .btn-link {
+  color: #667189;
+  padding-left: .6rem;
+  padding-right: .6rem;
+}
+.grid-header .btn-link:focus,
+.grid-header .btn-link:hover,
+.grid-header .btn-link:active {
+  color: #50596c;
+  opacity: .75;
+}
+.grid-hero {
+  margin-bottom: 4rem;
+  margin-top: 10rem;
+}
+.grid-hero h1 {
+  color: #50596c;
+  font-size: 3.2rem;
+  font-weight: 400;
+}
+.grid-hero h2 {
+  color: #5b657a;
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 3rem;
+  margin-bottom: 3rem;
+}
+.grid-hero h2 u {
+  border-bottom: .2rem solid currentColor;
+  padding-bottom: .1rem;
+  text-decoration: none;
+}
+.grid-hero .card {
+  background: none;
+  border: 0;
+  color: #667189;
+  padding: 1rem;
+}
+.grid-hero .card .card-title {
+  color: #5764c6;
+  font-size: 1.8rem;
+  margin-bottom: 0;
+}
+
+.img-round {
+  border-radius: 50%;
+}
+
+.img-profile {
+  margin-top: 3em;
+  margin-bottom: 5em;
+}
+
+.img-icon-card {
+  width: 48px;
+}
+
+.img-icon-card-rss {
+  width: 37px;
+  margin-top: 5px;
+}
+.img-icon-card-cv {
+  width: 50px;
+}
+
+.img-card-rss-text {
+  margin-top: 6px;
+}
+
+.card-info {
+  padding-bottom: 20px;
+}
+
+.card-info > h1 {
+  font-size: 5.2rem;
+}
+
+.card  {
+  margin-left: 10px;
+  background: #f8f9fa;
+  border: 0;
+}
