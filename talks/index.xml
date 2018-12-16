@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Talks on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/talks/</link>
+    <description>Recent content in Talks on Pierre Zemb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 15 Dec 2018 19:11:11 +0100</lastBuildDate>
+    
+	<atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Rediscover the known data universe with NASA dataset</title>
+      <link>https://pierrezemb.fr/talks/nasa-datasets/</link>
+      <pubDate>Sat, 15 Dec 2018 19:11:11 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/nasa-datasets/</guid>
+      <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?
+It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.
+During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
+    </item>
+    
+    <item>
+      <title>Metrics Experience beyond protocols</title>
+      <link>https://pierrezemb.fr/talks/metrics-experience/</link>
+      <pubDate>Sat, 16 Dec 2017 15:38:52 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/metrics-experience/</guid>
+      <description> Occurences  Paris Open Source Summit, 2017  Ressources The slides are available here.
+Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW
+&amp;mdash; Collignon Rémi (@miton1810) December 7, 2017  </description>
+    </item>
+    
+  </channel>
+</rss>

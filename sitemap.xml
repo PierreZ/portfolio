@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/nasa-datasets/</loc>
+    <lastmod>2018-12-15T19:11:11+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/about/</loc>
+    <lastmod>2018-12-15T18:34:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/metrics-experience/</loc>
+    <lastmod>2017-12-16T15:38:52+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2018-12-15T19:11:11+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/</loc>
+    <lastmod>2018-12-15T19:11:11+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>
