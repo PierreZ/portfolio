@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Pierre Zemb">
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb">
+
+<base href="https://pierrezemb.fr">
+
+<title>Pierre Zemb</title>
+
+<meta name="generator" content="Hugo 0.53" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+<link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Let’s talk about containers</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON JAN 4, 2016 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/operating">OPERATING</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@pierrez/let-s-talk-about-containers-1f11ee68c470">medium</a>.</p>
+
+<hr />
+
+<p><em>English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)</em></p>
+
+<p>In the last two years, there’s been a technology that became really hype. It was the graal for easy deployments, easy applications management. Let’s talk about containers.</p>
+
+<h3 id="write-once-run-everywhere">“Write once, run everywhere”</h3>
+
+<p><img src="/posts/lets-talk-about-containers/images/1.jpeg" alt="image" /></p>
+
+<p>When I first heard about containers, I was working as a part-time internship for a french bank as a developer in a Ops team. I was working around <a href="https://hadoop.apache.org/">Hadoop</a> and monitoring systems, and I was wondering “How should I properly deploy my work?”. It was a java app, running into the official Java version provided by my company. <strong>I couldn’t just give it to my colleagues</strong> <strong>and leave them do some vaudou stuff because they are the Ops team</strong>. I remembered saying to myself ”fortunately, all the features that I need are in this official java version, I don’t need the latest JRE. I just need to bundle everything into a jar and done”. But what if it wasn’t? What if I had to explain to my colleagues that I need the new JRE for a really small app written by an intern? Or I needed another non-standard library during runtime?</p>
+
+<p>The important thing here at the time was that, at any time, <strong>I could deploy it on another server that had Java, because everything is bundled into that big fat jar file</strong>. After all, “<strong>write once, run everywhere</strong>” was the slogan created by Sun Microsystems to illustrate the cross-platform benefits of the Java language. That is a real commodity, and this is the first thing that strike me with Docker.</p>
+
+<h3 id="docker-hype">Docker hype</h3>
+
+<p>I will always remember my chat with my colleagues about it. I was like this:</p>
+
+<p><img src="/posts/lets-talk-about-containers/images/2.jpeg" alt="image" /></p>
+
+<h2 id="and-they-were-more-like">And they were more like:</h2>
+
+<p><img src="/posts/lets-talk-about-containers/images/3.jpeg" alt="image" /></p>
+
+<p>Ops knew about containers since the dawn of time, so why such hype now? I think that “write once, run everywhere” is the true slogan of Docker, because you can run docker containers in any environments that has Docker. <strong>You want to try the latest datastore/SaaS app that you found on Hacker News or Reddit? There’s a Dockerfile for that</strong>. And that is super cool. So everyone started to get interested in Docker, myself included. But the real benefit is that many huge companies like Google admits that containers are the way they are deploying apps. <strong>They don’t care what type of applications they are deploying or where it’s running, it’s just running somewhere.</strong> That’s all that matters. By unifying the packages, you can automatize and deliver whatever you want somewhere. Do you really care if it’s on a specific machine? No you don’t. That’s a powerful way to think infrastructure more like a bunch of compute or storage power, and not individual machines.</p>
+
+<h3 id="let-s-create-a-container">Let’s create a container!</h3>
+
+<p>That’s not a secret: I love <a href="https://golang.org/">Go</a>. It’s in my opinion a very nice programming language <a href="https://medium.com/@PierreZ/why-you-really-should-give-golang-a-try-6b577092d725">that you should really try</a>. So let’s say that I’m creating a go app, and then ship it with Docker. So I’ll use the officiel Docker image right? <strong>Then I end up with a 700MB container to ship a 10MB app</strong>… I thought that containers were supposed to be small… Why? because it’s based on a full OS, with go compiler and so on. To run a single binary, there’s no need to have the whole Go compiler stack.</p>
+
+<p>That was really bothering me. At this point, if the container is holding everything, why not use a VM? Why do we need to bundle Ubuntu into the container? From a outside point-of-view, running a container in interactive mode is much like a virtual machines right? <strong>At the time of writing, Docker’s official image for Ubuntu was pulled more than 36,000,000 time</strong>. That’s huge! And disturbing. Do you really need for example “ls, chmod, chown, sudo” into a container?</p>
+
+<p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;amp;loop=false#slide=id.ge614ec624_2_70">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability">Ghost</a>, and 80% to <a href="http://heartbleed.com/">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>
+
+<h3 id="so-what-should-i-put-into-my-container">So what should I put into my container?</h3>
+
+<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine">docker-alpine</a> or <a href="https://github.com/phusion/baseimage-docker">baseimage-docker</a>which are cool, but in fact, the answer was on Docker’s website… Here’s the <a href="https://www.docker.com/what-docker">official sentence</a>that explains the difference between containers and virtual machines:</p>
+
+<blockquote>
+<p>“Containers include the application and all of its dependencies, but share the kernel with other containers.”</p>
+</blockquote>
+
+<p>This specific sentence triggers something in my head. When you execute a program on your UNIX system, the system creates a special environment for that program. This environment contains everything needed for the system to run the program as if no other program were running on the system. It’s exactly the same! <strong>So a container should be abstract not as a Virtual machines, but as a UNIX process!</strong></p>
+
+<ul>
+<li>application + dependencies represent the image</li>
+<li>Runtime environment like token/password will be passed through env vars for example</li>
+</ul>
+
+<h3 id="static-compilation">Static compilation</h3>
+
+<p><img src="/posts/lets-talk-about-containers/images/4.png" alt="image" /></p>
+
+<p>Meet Go</p>
+
+<p>Here’s an interesting fact: Go, the open-source programming language pushed by Google <strong>supports statically apps</strong>, what a coincidence! That means that this statically app will be directly talking to the kernel. <strong>Our Docker image can be empty</strong>, except for the binary and needed files like configuration. There’s a strange image on Docker that you might have seen, which is called “scratch”:</p>
+
+<blockquote>
+<p>You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.</p>
+</blockquote>
+
+<p>That means that our Dockerfile now looks like this:</p>
+
+<pre><code class="language-docker">FROM scratch  
+ADD hello /  
+CMD [/hello]
+</code></pre>
+
+<p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
+
+<blockquote>
+<p>Borg programs are statically linked to reduce dependencies on their runtime environment, and structured as packages of binaries and data files, whose installation is orchestrated by Borg.</p>
+</blockquote>
+
+<p>Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So <strong>the role of Docker would be more like a Operating System builder</strong> (nice name found by <a href="https://medium.com/u/58ea5a89aaae">Quentin ADAM</a>).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.Please, feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ">Twitter</a>, Or visite my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  
+  <span><a class="menu-item" href="/posts">posts</a></span>
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

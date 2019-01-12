@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Pierre Zemb">
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb">
+
+<base href="https://pierrezemb.fr">
+
+<title>Pierre Zemb</title>
+
+<meta name="generator" content="Hugo 0.53" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+<link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Event-driven architecture 101</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAY 13, 2016 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/programming">PROGRAMMING</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656">medium</a>.</p>
+
+<hr />
+
+<p><img src="/posts/eventdriven-architecture-101/images/1.png" alt="image" /></p>
+
+<p>Do your own cover on <a href="http://dev.to/rly">http://dev.to/rly</a></p>
+
+<p><em>I’m still a student, so my point of view could be far from reality, be gentle ;)</em></p>
+
+<p><strong><em>tl;dr: Queue messaging are cool. Use them at the core of your architecture.</em></strong>I’m currently playing a lot around <a href="https://kafka.apache.org/">Kafka</a> and <a href="https://flink.apache.org/">Flink</a> at work. I also discovered <a href="http://vertx.io/">Vert.x</a> at my local JUG. All three have a common word: <strong>events</strong>. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.</p>
+
+<h1 id="the-unix-philosophy">the Unix philosophy</h1>
+
+<p><img src="/posts/eventdriven-architecture-101/images/2.gif" alt="image" /></p>
+
+<p>I’m a huge fan of GNU/Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? <strong>Pipes or |</strong>. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:</p>
+
+<ul>
+<li><strong>list files</strong> in a folder</li>
+<li>From this list, <strong>manipulate/filter</strong> it. One line must correspond to one file, things like folder are omitted</li>
+<li>And then <strong>count</strong> the line!</li>
+</ul>
+
+<p>In the UNIX world, it should give you something like “<strong><em>ls -l | grep ^- | wc -l”.</em></strong> it might feels like chinese. For me, it’s just feels logical. <strong>3 operations mapped into 3 commands.</strong> You declare a set a commands that, in the end, give you the result. It’s simple and also very fast (in fact, you can find funny articles like this one: <a href="http://aadrake.com/command-line-tools-can-be-235x-faster-than-your-hadoop-cluster.html">Command-line tools can be 235x faster than your Hadoop cluster</a>). This is only possible thanks to the <strong>UNIX philosophy</strong>, greatly describe by Doug McIlroy, Elliot Pinson and Berk Tague in 1978:</p>
+
+<blockquote>
+<p>Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&gt; Expect the output of every program to become the input to another, as yet unknown, program.</p>
+</blockquote>
+
+<p>Why should I care? It’s 2016, not 1978! Well…</p>
+
+<h1 id="back-in-2016">Back in 2016</h1>
+
+<p><img src="/posts/eventdriven-architecture-101/images/3.gif" alt="image" /></p>
+
+<p>Cloud changed everything in terms of software engineering. <strong>We can now deploy applications without thinking about the underlying server</strong>. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, <strong>Why should I deploy only one huge app ?</strong> why can’t I deploy multiples applications instead of one? <strong>Let’s call theses applications micro services</strong> because we are in 2016.</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/4.png" alt="image" /></p>
+
+<p>OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? <strong>How can they communicate? How can we simulate UNIX pipes?</strong> Before answering, let’s answer to another question first: <strong>What do we really need to send through our network?</strong> Don’t forget the  <a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing"><strong>Fallacies of distributed computing</strong></a><strong>…</strong></p>
+
+<p>Let’s take an example. We are a new startup, and we are building our plateform. We’ll certainly need to handle our customers. Let’s say that for each new customer, <strong>we need to make two actions</strong>: add it to our database, and then to our mailing-list. <strong>A simple and classical way would be to just call two functions</strong> (whether on the same applications or not), and then say to the customer: “You’re successfully registered”. Like this:</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/5.png" alt="image" /></p>
+
+<p>Classic approach</p>
+
+<p>Is there another approach? Let’s use an <strong>event-based architecture</strong>:</p>
+
+<h1 id="let-s-talk-events"><strong>Let’s talk events</strong></h1>
+
+<p>Let’s ask Google, what’s an event?</p>
+
+<blockquote>
+<p>a thing that happens, especially one of importance.</p>
+</blockquote>
+
+<p>Well, handling a new customer is a thing that happens (hopefully). For this, we’ll be using a <strong>Queue messaging system or Broker</strong>. It’s a <strong>middleware</strong> that will <strong>receive events, and making them available for another application or groups of applications.</strong></p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/6.gif" alt="image" /></p>
+
+<p>Queue messaging architecture with 2 producers and 4 consumers</p>
+
+<p>So let’s rethink our architecture. Pay attention to the words: our Register page will <strong>produce</strong> an event that will contains all the information about our client. This event will be <strong>queued</strong>, waiting to be <strong>consumed</strong> by the associated micro services.</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/7.png" alt="image" /></p>
+
+<p>Simple event-driven architecture</p>
+
+<p>We didn’t changed much, but we enable many things over here:</p>
+
+<ul>
+<li><strong>Simplicity</strong>. Remember, the first rule ! “Make each program do one thing well”. Like this, your <strong>code base for each app will be simple</strong> <strong>as hell</strong>, and you’ll be able to easily replace your software if needed.</li>
+<li><strong>Modularity</strong>. You need to add another action to the event, for example CreateProfile ? Easy, <strong>just plug another app on the same queue</strong>. You need to test a new version of your program? Easy, <strong>just plug it on the same queue</strong>.</li>
+<li><strong>Scalability</strong>. One of your micro services is taking too much time? <strong>Just start a new instance of it</strong>. Huge traffic? Add new instances. With this approach, you can start really small and become giant.</li>
+<li><strong>Big-data friendly.</strong> This type of architecture is often used to handle a lot of data. With plateform like <a href="http://flink.apache.org">Apache Flink</a>, you can do some <strong>stream processing directly</strong>. <a href="https://ci.apache.org/projects/flink/flink-docs-master/apis/streaming/index.html#example-program">Look how easy it is</a>.</li>
+<li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
+</ul>
+
+<h1 id="what-about-serverless"><strong>What about serverless?</strong></h1>
+
+<p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Software jargon, recycled. <a href="https://twitter.com/hashtag/serverless?src=hash&amp;ref_src=twsrc%5Etfw">#serverless</a> <a href="https://t.co/SUrCCKKNPb">pic.twitter.com/SUrCCKKNPb</a></p>&mdash; Kiyoto Tamura (@kiyototamura) <a href="https://twitter.com/kiyototamura/status/717420657655418880?ref_src=twsrc%5Etfw">April 5, 2016</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Serverless is so 2016</p>
+
+<p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> and quickly followed by <a href="https://cloud.google.com/functions/docs">Google</a>, <a href="https://azure.microsoft.com/en-us/services/functions/">Microsoft</a>, <a href="https://new-console.ng.bluemix.net/openwhisk/">IBM</a> and <a href="https://www.iron.io/introducing-aws-lambda-support">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
+
+<h1 id="additional-links-and-talks-about-this-topic">Additional links and talks about this topic</h1>
+
+<ul>
+<li><a href="http://www.confluent.io/blog/apache-kafka-samza-and-the-unix-philosophy-of-distributed-data">Apache Kafka, Samza, and the Unix Philosophy of Distributed Data</a> by <a href="https://medium.com/u/13be457aed12">Martin Kleppmann</a></li>
+<li><a href="http://blog.cloudera.com/blog/2014/09/apache-kafka-for-beginners/">Apache Kafka for Beginners</a> by Cloudera Engineering Blog</li>
+<li><a href="https://www.voxxed.com/blog/2016/04/introduction-apache-kafka/">Introduction to Apache Kafka</a> by Guglielmo Iozza</li>
+<li><a href="http://dataartisans.github.io/flink-training/">Apache Flink Training</a>by data-artisans</li>
+<li>Meetup LeboncoinTech — AMQP 101 by <a href="https://medium.com/u/58ea5a89aaae">Quentin ADAM</a> (French sorry)</li>
+<li>vert.x 3 — be reactive on the JVM but not only in Java by Clement Escoffier/Paulo Lopes DEVOXX 2015</li>
+</ul>
+
+<p>Please, feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ">Twitter</a>, or have a look on my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/posts/lets-talk-about-containers/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/posts">posts</a></span>
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

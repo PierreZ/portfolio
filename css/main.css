@@ -260,3 +260,10 @@ pre > code {
     word-wrap: initial;
     word-break: initial;
 }
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}

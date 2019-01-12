@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Pierre Zemb">
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb">
+
+<base href="https://pierrezemb.fr">
+
+<title>Pierre Zemb</title>
+
+<meta name="generator" content="Hugo 0.53" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+<link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON OCT 11, 2017 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/timeseries">TIMESERIES</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/helloexoworld/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow-e50f6e669915">medium</a>.</p>
+
+<hr />
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/1.jpeg" alt="image" />
+<em>Artist’s impression of the super-Earth exoplanet LHS 1140b By <a href="https://www.eso.org/public/images/eso1712a/">ESO/spaceengine.org</a> — <a href="http://creativecommons.org/licenses/by/4.0">CC BY 4.0</a></em></p>
+
+<p>My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a <strong>passion</strong>, something I’m willing to do at work, on my free-time, at night or the week-end. But before discovering C and other languages, I had another passion: <strong>astronomy</strong>. Every summer, I was participating at the <a href="https://www.afastronomie.fr/les-nuits-des-etoiles"><strong>Nuit des Etoiles</strong></a>, a <strong>global french event</strong> organized by numerous clubs of astronomers offering several hundreds (between 300 and 500 depending on the year) of free animation sites for the general public.</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/2.png" alt="image" />
+*As you can see below, I was <strong>kind of young at the time</strong>!*</p>
+
+<p>But the sad truth is that I didn’t do any astronomy during my studies. But now, <strong>I want to get back to it and look at the sky again</strong>. There were two obstacles:</p>
+
+<ul>
+<li>The price of equipments</li>
+<li>The local weather</li>
+</ul>
+
+<p><strong>I was looking for something that would unit my two passions: computer and astronomy</strong>. So I started googling:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/3.png" alt="image" /></p>
+
+<p>I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would <strong>motivate me</strong> over the time. So I started typing over keywords, more work-related, such as <strong><em>time series</em></strong> or <strong><em>analytics</em></strong>. I found many papers related to astrophysics, but there was two keywords that were coming back: <strong>exoplanet detection</strong>.</p>
+
+<h3 id="what-is-an-exoplanet-and-how-to-detect-it">What is an exoplanet and how to detect it?</h3>
+
+<p>Let’s quote our good old friend <a href="https://en.wikipedia.org/wiki/Exoplanet"><strong>Wikipedia</strong></a>:
+&gt; <em>An exoplanet or extrasolar planet is a planet outside of our solar system that orbits a star.</em></p>
+
+<p>do you know how many exoplanets that have been discovered? <a href="https://exoplanetarchive.ipac.caltech.edu/"><strong>3,529 confirmed planets</strong> as of 10/09/2017</a>. I was amazed by the number of them. I started digging into the <a href="https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets"><strong>detection methods</strong></a>. Turns out there is one method heavily used, called <strong>the transit method</strong>. It’s like a eclipse: when the exoplanet is passing in front of the star, the photometry is varying during the transit, as shown below:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/4.gif" alt="image" /></p>
+
+<p>animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. <strong><em>Credits: NASA’s Goddard Space Flight Center</em></strong></p>
+
+<p>To recap, exoplanet detection using the transit method are in reality a <strong>time series analysis problem</strong>. As I’m starting to be familiar with that type of analytics thanks to my current work at OVH in <a href="https://www.ovh.com/fr/data-platforms/metrics/"><strong>Metrics Data Platform</strong></a>, I wanted to give it a try.</p>
+
+<h3 id="kepler-k2-mission">Kepler/K2 mission</h3>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/5.jpeg" alt="image" /></p>
+
+<p><em>Image Credit: NASA Ames/W. Stenzel</em></p>
+
+<p>Kepler is a <strong>space observatory</strong> launched by NASA in March 2009 to <strong>discover Earth-sized planets orbiting other stars</strong>. <a href="https://www.nasa.gov/feature/ames/nasas-k2-mission-the-kepler-space-telescopes-second-chance-to-shine">The loss of a second of the four reaction wheels during May 2013</a> put an end to the original mission. Fortunately, scientists decided to create an <strong>entirely community-driven mission</strong> called K2, to <strong>reuse the Kepler spacecraft and its assets</strong>. But furthermore, the community is also encouraged to exploit the mission’s unique <strong>open</strong> data archive. Every image taken by the satellite can be <strong>downloaded and analyzed by anyone</strong>.</p>
+
+<p>More information about the telescope itself can be found <a href="https://keplerscience.arc.nasa.gov/the-kepler-space-telescope.html"><strong>here</strong></a>.</p>
+
+<h3 id="where-i-m-going">Where I’m going</h3>
+
+<p>The goal of my project is to see if <strong>I can contribute to the exoplanets search</strong> using new tools such as <a href="http://www.warp10.io"><strong>Warp10</strong></a> and <a href="https://tensorflow.org/"><strong>TensorFlow</strong></a>. Using <strong>Deep Learning to search for anomalies could be much more effective</strong> than writing WarpScript, because it is the <strong>neural network&#39;s job to learn</strong> by itself <strong>how</strong> to detect the exoplanets.</p>
+
+<p>As I’m currently following <a href="https://www.coursera.org/learn/neural-networks-deep-learning"><strong>Andrew Ng courses about Deep Learning</strong></a>, it is also a great opportunity for me to play with <strong>Tensorflow</strong> in a personal project. The project can be divided into several steps:</p>
+
+<ul>
+<li><strong>Import</strong> the data</li>
+<li><strong>Analyze</strong> the data using WarpScript</li>
+<li><strong>Build</strong> a neural network to search for exoplanets</li>
+</ul>
+
+<p>Let&#39;s see how the import was done!</p>
+
+<h3 id="importing-kepler-and-k2-dataset">Importing Kepler and K2 dataset</h3>
+
+<h4 id="step-0-find-the-data">Step 0: Find the data</h4>
+
+<p>As mentioned previously, data are available from The Mikulski Archive for Space Telescopes or <a href="https://archive.stsci.edu/">MAST</a>. It’s a <strong>NASA funded project</strong> to support and provide the astronomical community with a variety of astronomical data archives. Both Kepler and K2 dataset are <strong>available</strong> through <strong>campaigns</strong>. Each campaign has a collection of tar files, which are containing the FITS files associated. A <a href="https://en.wikipedia.org/wiki/FITS"><strong>FITS</strong></a> file is an <strong>open format</strong> for images which is also <strong>containing scientific data</strong>.</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/6.png" alt="image" /></p>
+
+<p><em>FITS file representation.</em> <a href="https://keplerscience.arc.nasa.gov/k2-observing.html"><em>Image Credit: KEPLER &amp; K2 Science Center</em></a></p>
+
+<h4 id="step-1-etl-extract-transform-and-load-into-warp10">Step 1: ETL (Extract, Transform and Load) into Warp10</h4>
+
+<p>To speed-up acquisition, I developed <a href="https://github.com/PierreZ/kepler-lens"><strong>kepler-lens</strong></a> to <strong>automatically</strong> <strong>download Kepler/K2 datasets and extract the needed time series</strong> into a CSV format. <strong>Kepler-lens</strong> is using two awesome libraries:</p>
+
+<ul>
+<li><a href="https://github.com/KeplerGO/PyKE"><strong>pyKe</strong></a> to export the data from the <a href="https://en.wikipedia.org/wiki/FITS"><strong>FITS</strong></a> files to CSV (<a href="https://github.com/KeplerGO/PyKE/pull/69"><strong>#PR69</strong></a> and <a href="https://github.com/KeplerGO/PyKE/pull/76"><strong>#PR76</strong></a>  have been merged).</li>
+<li><a href="https://github.com/dfm/kplr"><strong>kplr</strong></a> is used to <strong>tag</strong> the dataset. With it, I can easily <strong>find stars</strong> with <strong>confirmed</strong> exoplanets or <strong>candidates</strong>.</li>
+</ul>
+
+<p>Then <a href="https://github.com/PierreZ/kepler2warp10"><strong>Kepler2Warp10</strong></a> is used to <strong>push the CSV files generated by kepler-lens to Warp10</strong>.</p>
+
+<p>To ease importation, an <a href="https://github.com/PierreZ/kepler2warp10-ansible"><strong>Ansible role</strong></a>  has been made, to spread the work across multiples small <strong>virtual machines</strong>.</p>
+
+<p>Principles of transaction-oriented database recovery</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The import of <a href="https://twitter.com/NASAKepler?ref_src=twsrc%5Etfw">@NASAKepler</a>  dataset has been spread on 16 machines, just because I can 😎 <a href="https://t.co/qa49tAgdzz">pic.twitter.com/qa49tAgdzz</a></p>&mdash; Pierre Zemb (@PierreZ) <a href="https://twitter.com/PierreZ/status/908784580450295808?ref_src=twsrc%5Etfw">September 15, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<ul>
+<li><strong>550k distincts stars</strong></li>
+<li>around <strong>50k datapoints per star</strong></li>
+</ul>
+
+<p>That&#39;s around <strong>27,5 billions of measures</strong> (300GB of LevelDB files), imported on a <strong>standalone</strong> instance. The Warp10 instance is <strong>self-hosted</strong> on a dedicated <a href="https://www.kimsufi.com/"><strong>Kimsufi</strong></a> server at OVH. Here’s the full specifications for the curious ones:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/7.png" alt="image" /></p>
+
+<p>Now that the data are <strong>available</strong>, we are ready to <strong>dive into the dataset</strong> and <strong>look for exoplanets</strong>! Let&#39;s use WarpScript</p>
+
+<p>!### Let&#39;s see a transit using WarpScript</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/8.png" alt="image" /></p>
+
+<p>WarpScript logo</p>
+
+<p>For those who don’t know WarpScript, I recommend reading my previous blogpost “<a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016"><strong>Engage maximum warp speed in time series analysis with WarpScript</strong></a>”.</p>
+
+<p>Let’s first plot the data! We are going to take a well-known star called <a href="https://en.wikipedia.org/wiki/Kepler-11"><strong>Kepler-11</strong></a>. It has (at least) 6 confirmed exoplanets. Let&#39;s write our first WarpScript:</p>
+
+<p>The <a href="http://www.warp10.io/reference/functions/function_FETCH">FETCH</a> function retrieves <strong>raw datapoints</strong> from Warp10. Let’s plot the result of our script:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/9.png" alt="image" /></p>
+
+<p>Mmmmh, the straight lines are representing <strong>empties period with no datapoints</strong>; they correspond to <strong>different observations</strong>. <strong>Let&#39;s divide the data</strong> and generate <strong>one time series per observation</strong> using <a href="http://www.warp10.io/reference/functions/function_TIMESPLIT/">TIMESPLIT</a>:</p>
+
+<p>To ease the display, 0 GET is used to <strong>get only the first observation</strong>. Let&#39;s see the result:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/10.png" alt="image" /></p>
+
+<p>Much better. Do you see the dropouts? <strong>Those are transiting exoplanets!</strong> Now we’ll need to <strong>write a WarpScript to automatically detect transits.</strong> But that was enough for today, so we’ll cover this <strong>in the next blogpost!</strong>Thank you for reading! Feel free to <strong>comment</strong> and to <strong>subscribe</strong> to the <a href="https://twitter.com/helloexoworld">twitter account</a>!</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/11.jpeg" alt="image" /></p>
+
+<p><strong>Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets</strong>. Image Credit: By <a href="http://www.eso.org/public/images/eso1615b/">ESO/M. Kornmesser</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/posts">posts</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
