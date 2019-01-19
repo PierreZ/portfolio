@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Streaming on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/categories/streaming/</link>
+    <description>Recent content in Streaming on Pierre Zemb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 12 Jan 2019 19:54:31 +0100</lastBuildDate>
+    
+	<atom:link href="https://pierrezemb.fr/categories/streaming/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Handling alerts at OVH-Scale with Apache Flink</title>
+      <link>https://pierrezemb.fr/posts/handling-alerts-at-ovhscale-with-apache-flink/</link>
+      <pubDate>Sat, 12 Jan 2019 19:54:31 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/handling-alerts-at-ovhscale-with-apache-flink/</guid>
+      <description>OVH relies extensively on metrics to effectively monitor its entire stack. Whenever **** they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to handle the load: Metrics Data Platform. By relying on Apache Hbase, Apache Kafka and Warp 10, we succeeded in creating a fully distributed platform that is handling all our metrics and yours!</description>
+    </item>
+    
+  </channel>
+</rss>
