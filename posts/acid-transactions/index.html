@@ -108,7 +108,7 @@
 
 <h3 id="isolation-by-the-theory">Isolation by the theory</h3>
 
-<p>The SQL standard defines four isolation levels that can be sum-up like this:</p>
+<p>The SQL standard defines four isolation levels: <code>Serializable</code>, <code>Repeatable Read</code>, <code>Read Commited</code> and <code>Read Uncommited</code>. The strongest isolation is <code>Serializable</code> where transaction are <strong>not runned in parallel</strong>. As you may have guessed, it is also the slowest. <strong>Weaker isolation level are trading speed against anomalies</strong> that can be sum-up like this:</p>
 
 <table>
 <thead>
