@@ -15,7 +15,6 @@ a:hover,
 a:visited,
 a:link
 {
-    text-decoration: none;
 
     color: #526d7a;
 }
@@ -62,7 +61,7 @@ html
 {
     overflow: auto;
 
-    max-width: 680px;
+    max-width: 880px;
     padding: 0 15px;
 }
 .content
