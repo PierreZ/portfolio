@@ -15,7 +15,8 @@ a:hover,
 a:visited,
 a:link
 {
-
+    text-decoration: underline;
+    font-weight: 400;
     color: #526d7a;
 }
 body
@@ -153,6 +154,7 @@ h3.intro
 
     margin-top: 50px;
 }
+
 .list li
 {
     list-style: none;
@@ -209,9 +211,6 @@ h6.meta
     font-weight: 200;
 
     color: #8b8b8b;
-}
-section.meta {
-    margin-top:
 }
 .powered
 {
@@ -290,4 +289,30 @@ table tr {
 
 table tr:nth-child(2n) {
   background-color: #f6f8fa;
+}
+
+p {
+    line-height: 1.7;
+}
+
+ul {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+li {
+    margin-top: 10px;
+}
+a.list-entry-link, a.menu-item {
+    text-decoration: none;
+}
+
+section#main-menu-pane>h4{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
