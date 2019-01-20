@@ -90,7 +90,7 @@
 <li>A column is divided between a <strong>Column Family</strong> and a <strong>Column Qualifier</strong>. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is <strong>static</strong>, you need to create at creation, whereas Column Qualifiers can be created on the fly.</li>
 </ul>
 
-<p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page addres as the row key</strong>, and and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
+<p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page addres as the row key</strong>, and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
 
 <pre><code class="language-json">{
   &quot;fr.pierrezemb.www&quot;: {          // Row key
