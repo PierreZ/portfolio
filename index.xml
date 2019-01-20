@@ -6,9 +6,13 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 15 Dec 2018 19:11:11 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 12 Jan 2019 19:54:31 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    
     
     
     
@@ -101,6 +105,8 @@ tl;dr: Queue messaging are cool. Use them at the core of your architecture.I’m
 English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype.</description>
     </item>
+    
+    
     
     
   </channel>

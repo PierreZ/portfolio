@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Distributed Systems on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/categories/distributed-systems/</link>
+    <description>Recent content in Distributed Systems on Pierre Zemb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 11 Jan 2019 23:24:27 +0100</lastBuildDate>
+    
+        <atom:link href="https://pierrezemb.fr/categories/distributed-systems/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    
+    
+    
+  </channel>
+</rss>

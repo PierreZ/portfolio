@@ -8,7 +8,8 @@
     <language>en-US</language>
     <lastBuildDate>Wed, 11 Oct 2017 10:23:11 +0000</lastBuildDate>
     
-	<atom:link href="https://pierrezemb.fr/categories/timeseries/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://pierrezemb.fr/categories/timeseries/index.xml" rel="self" type="application/rss+xml" />
+    
     
     
     <item>
@@ -22,6 +23,8 @@ Artist’s impression of the super-Earth exoplanet LHS 1140b By ESO/spaceengine.
 My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a passion, something I’m willing to do at work, on my free-time, at night or the week-end.</description>
     </item>
     
+    
+    
     <item>
       <title>Engage maximum warp speed in time series analysis with WarpScript</title>
       <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
@@ -31,6 +34,7 @@ My passion for programming was kind of late, I typed my first line of code at my
       <description>update 2019: this is a repost on my own blog. original article can be read on medium.
 We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.</description>
     </item>
+    
     
   </channel>
 </rss>

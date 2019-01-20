@@ -8,7 +8,8 @@
     <language>en-US</language>
     <lastBuildDate>Sat, 15 Dec 2018 19:11:11 +0100</lastBuildDate>
     
-	<atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    
     
     
     <item>
@@ -22,6 +23,8 @@ It turns out that NASA has a great public dataset, especially one that is used t
 During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
     </item>
     
+    
+    
     <item>
       <title>Metrics Experience beyond protocols</title>
       <link>https://pierrezemb.fr/talks/metrics-experience/</link>
@@ -32,6 +35,7 @@ During this Hands-on, we will guide you through the different stages of rediscov
 Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW
 &amp;mdash; Collignon Rémi (@miton1810) December 7, 2017  </description>
     </item>
+    
     
   </channel>
 </rss>

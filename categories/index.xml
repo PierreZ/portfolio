@@ -7,7 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     
-	<atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Distributed Systems</title>
+      <link>https://pierrezemb.fr/categories/distributed-systems/</link>
+      <pubDate>Fri, 11 Jan 2019 23:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/distributed-systems/</guid>
+      <description></description>
+    </item>
+    
     
     
     <item>
@@ -19,6 +31,8 @@
       <description></description>
     </item>
     
+    
+    
     <item>
       <title>Programming</title>
       <link>https://pierrezemb.fr/categories/programming/</link>
@@ -28,6 +42,19 @@
       <description></description>
     </item>
     
+    
+    
+    <item>
+      <title>Streaming</title>
+      <link>https://pierrezemb.fr/categories/streaming/</link>
+      <pubDate>Sat, 12 Jan 2019 19:54:31 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/streaming/</guid>
+      <description></description>
+    </item>
+    
+    
+    
     <item>
       <title>Timeseries</title>
       <link>https://pierrezemb.fr/categories/timeseries/</link>
@@ -36,6 +63,7 @@
       <guid>https://pierrezemb.fr/categories/timeseries/</guid>
       <description></description>
     </item>
+    
     
   </channel>
 </rss>
