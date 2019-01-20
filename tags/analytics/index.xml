@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Analytics on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/analytics/</link>
+    <description>Recent content in Analytics on Pierre Zemb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 08 Oct 2017 20:43:05 +0000</lastBuildDate>
+    
+        <atom:link href="https://pierrezemb.fr/tags/analytics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Engage maximum warp speed in time series analysis with WarpScript</title>
+      <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
+      <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
+      <description>update 2019: this is a repost on my own blog. original article can be read on medium.
+We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.</description>
+    </item>
+    
+    
+  </channel>
+</rss>
