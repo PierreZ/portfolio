@@ -6,11 +6,21 @@
     <description>Recent content in Hbase on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 11 Jan 2019 23:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 27 Jan 2019 20:24:27 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/tags/hbase/index.xml" rel="self" type="application/rss+xml" />
     
     
+    
+    <item>
+      <title>Hbase Data Model</title>
+      <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
+      <pubDate>Sun, 27 Jan 2019 20:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
+      <description>HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
+ &amp;ndash; Hbase architecture overview</description>
+    </item>
     
     
   </channel>

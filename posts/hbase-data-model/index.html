@@ -41,13 +41,13 @@
 
 
 <header class="row text-left title">
-  <h1 class="title">Hbase data model</h1>
+  <h1 class="title">Hbase Data Model</h1>
 </header>
 <section id="category-pane" class="row meta">
   
   <div class="col-md-12">
     <h6 class="text-left meta">
-        PUBLISHED ON JAN 11, 2019 
+        PUBLISHED ON JAN 27, 2019 
       
       
       
@@ -102,7 +102,8 @@
           &quot;&lt;html&gt;...&quot;             // Another cell
       },
       &quot;content:pdf&quot;: {            // Another Column qualifier
-        &quot;2015-01-01&quot;: &quot;&lt;pdf&gt;...&quot;  // my website may only contained a pdf in 2015
+        &quot;2015-01-01&quot;: 
+          &quot;&lt;pdf&gt;...&quot;  // my website may only contained a pdf in 2015
       }
     }
   }
@@ -128,7 +129,7 @@
 
 <p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
 
-<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is the proprietary version of Hbase.</p>
+<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
 
 <h1 id="be-warned">Be warned</h1>
 
