@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Talks on Pierre Zemb</title>
+    <title>Talks on website</title>
     <link>https://pierrezemb.fr/talks/</link>
-    <description>Recent content in Talks on Pierre Zemb</description>
+    <description>Recent content in Talks on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sat, 15 Dec 2018 19:11:11 +0100</lastBuildDate>
