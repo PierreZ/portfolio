@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  <meta name="description" content="Pierre Zemb">
+  
+  <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez">
+
+  <base href="https://pierrezemb.fr">
+
+  
+  <title>"Handling OVH&#39;s alerts with Apache Flink" by PierreZ</title>
+  
+  <link href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" rel="canonical" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.54.0" />
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+  
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+  
+  
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+
+</head>
+
+<body lang="en-US">
+  <div class="container">
+
+<header class="row text-left title">
+  <h1 class="title">Handling OVH&#39;s alerts with Apache Flink</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON FEB 3, 2019 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/flink">FLINK</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH's alerts with Apache Flink">OVH&rsquo;s official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+
+<h1 id="handling-ovh-s-alerts-with-apache-flink">Handling OVH&rsquo;s alerts with Apache Flink</h1>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472" alt="OVH &amp; Apache Flink" /></p>
+
+<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/">**Metrics Data Platform</a>.** By relying on <a href="https://hbase.apache.org/">**Apache Hbase</a>, <a href="https://kafka.apache.org/">Apache Kafka</a>** and <a href="https://www.warp10.io/"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
+
+<p>After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the <strong>Alerting.</strong></p>
+
+<h2 id="meet-omni-our-alerting-layer">Meet OMNI, our alerting layer</h2>
+
+<p>OMNI is our code name for a <strong>fully distributed</strong>, <strong>as-code</strong>, <strong>alerting</strong> system that we developed on top of Metrics. It is split into components:</p>
+
+<ul>
+<li><strong>The management part</strong>, taking your alerts definitions defined in a Git repository, and represent them as continuous queries,</li>
+<li><strong>The query executor</strong>, scheduling your queries in a distributed way.</li>
+</ul>
+
+<p>The query executor is pushing the query results into Kafka, ready to be handled! We now need to perform all the tasks that an alerting system does:</p>
+
+<ul>
+<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a href="https://en.wikipedia.org/wiki/Alarm_fatigue">alert fatigue. </a></li>
+<li>Handling <strong>escalation</strong> steps, **acknowledgement **or <strong>snooze</strong>.</li>
+<li><strong>Notify</strong> the end user, through differents <strong>channels</strong>: SMS, mail, Push notifications, …</li>
+</ul>
+
+<p>To handle that, we looked at open-source projects, such as <a href="https://github.com/prometheus/alertmanager">Prometheus AlertManager,</a> <a href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
+
+<blockquote>
+<p>Handling alerts as streams of data,<br />
+moving from operators to another.</p>
+</blockquote>
+
+<p>We embraced it, and decided to leverage <a href="https://flink.apache.org/">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
+
+<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a href="https://flink.apache.org/flink-architecture.html">What is Apache Flink?</a></p>
+
+<h2 id="beacon-architecture"><strong>Beacon architecture</strong></h2>
+
+<p>At his core, Beacon is reading events from <strong>Kafka</strong>. Everything is represented as a <strong>message</strong>, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:</p>
+
+<ul>
+<li>One that is running the <strong>aggregations</strong>, and triggering notifications based on customer&rsquo;s rules.</li>
+<li>One that is handling the <strong>escalation steps</strong>.</li>
+</ul>
+
+<p>Then everything is merged to <strong>generate</strong> <strong>a</strong> <strong>notification</strong>, that is going to be forward to the right person. A notification message is pushed into Kafka, that will be consumed by another component called <strong>beacon-notifier.</strong></p>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/002.png?x70472" alt="Beacon architecture" /></p>
+
+<p>Beacon architecture</p>
+
+<h2 id="handling-states">Handling States</h2>
+
+<p>If you are new to streaming architecture, I recommend reading <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html">Dataflow Programming Model</a> from Flink official documentation.</p>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/003.png?x70472" alt="Handling state" /></p>
+
+<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state">keyed by </a>in Flink API) by users. Here&rsquo;s an example:</p>
+
+<pre><code class="language-java">    final DataStream&gt; alertStream =
+    
+      // Partitioning Stream per AlertIdentifier
+      cleanedAlertsStream.keyBy(0)
+      // Applying a Map Operation which is setting since when an alert is triggered
+      .map(new SetSinceOnSelector())
+      .name(&quot;setting-since-on-selector&quot;).uid(&quot;setting-since-on-selector&quot;)
+    
+      // Partitioning again Stream per AlertIdentifier
+      .keyBy(0)
+      // Applying another Map Operation which is setting State and Trend
+      .map(new SetStateAndTrend())
+      .name(&quot;setting-state&quot;).uid(&quot;setting-state&quot;);
+</code></pre>
+
+<p>In the example above, we are chaining two keyed operations:</p>
+
+<ul>
+<li><strong>SetSinceOnSelector</strong>, which is setting <strong>since</strong> when the alert is triggered</li>
+<li><strong>SetStateAndTrend</strong>, which is setting the <strong>state</strong>(ONGOING, RECOVERY or OK) and the <strong>trend</strong>(do we have more or less metrics in errors).</li>
+</ul>
+
+<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/">Map, FlatMap, Reduce</a>, including their <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions">Rich</a> and <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state">Keyed</a> version. We have a few <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
+
+<h2 id="integration-tests">Integration tests</h2>
+
+<p>As the number of classes was growing, we needed to test our pipeline. Because it is only wired to Kafka, we wrapped consumer and producer to create what we call **scenari: **a series of integration tests running different scenarios.</p>
+
+<h2 id="queryable-state">Queryable state</h2>
+
+<p>One killer feature of Apache Flink is the <strong>capabilities of [</strong><strong>querying the internal state</strong>]<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html">19</a>** of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
+
+<ul>
+<li>at which escalation steps are we on</li>
+<li>is it snoozed or <em>ack</em>-ed</li>
+<li>Which alert is ongoing</li>
+<li>and so on.</li>
+</ul>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/004-1.png?x70472" alt="Queryable state overview" />Queryable state overview</p>
+
+<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
+
+<h3 id="apache-flink-deployment">Apache Flink deployment</h3>
+
+<p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper&rsquo;s cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
+
+<p>We are using <strong>RockDB</strong> as a state backend, backed by OpenStack **Swift storage **provided by OVH Public Cloud.</p>
+
+<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium">Beamium</a> to gain <strong>observability</strong> over job&rsquo;s health.</p>
+
+<h3 id="in-short-we-love-apache-flink">In short, we love Apache Flink!</h3>
+
+<p>If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.</p>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472" alt="Apache Flink" /></p>
+
+<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/distributed-systems">DISTRIBUTED-SYSTEMS</a>, 
+      
+      <a class="meta" href="/tags/flink">FLINK</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/posts/hbase-data-model/">&lt; prev | </a></span>
+  
+  
+  
+  <span><a class="menu-item" href="/posts">posts</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
