@@ -6,9 +6,20 @@
     <description>Recent content in Talks on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 10 Feb 2019 22:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 06 Mar 2019 22:22:36 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>What we learned as DevOps @OVH</title>
+      <link>https://pierrezemb.fr/talks/devops-ovh/</link>
+      <pubDate>Wed, 06 Mar 2019 22:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
+      <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
+    </item>
     
     
     
@@ -32,6 +43,18 @@
       <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?
 It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.
 During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>One day into the Time Series&#39;s world</title>
+      <link>https://pierrezemb.fr/talks/one-day-timeseries/</link>
+      <pubDate>Sun, 11 Nov 2018 22:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/one-day-timeseries/</guid>
+      <description> Abstract This is a one-day course I&amp;rsquo;m giving at my former engineering school ISEN Brest.
+Schedule  Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets  Ressources  slides  </description>
     </item>
     
     

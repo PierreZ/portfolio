@@ -4,11 +4,23 @@
   
   
   <url>
+    <loc>https://pierrezemb.fr/talks/devops-ovh/</loc>
+    <lastmod>2019-03-06T22:22:36+01:00</lastmod>
+  </url>
+  
+  
+  
+  <url>
     <loc>https://pierrezemb.fr/talks/ovh-alerts-flink/</loc>
     <lastmod>2019-02-10T22:22:36+01:00</lastmod>
   </url>
   
   
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/ovh-alerts-flink/</loc>
+    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
+  </url>
   
   
   
@@ -36,6 +48,13 @@
   <url>
     <loc>https://pierrezemb.fr/about/</loc>
     <lastmod>2018-12-15T18:34:45+01:00</lastmod>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/one-day-timeseries/</loc>
+    <lastmod>2018-11-11T22:22:36+01:00</lastmod>
   </url>
   
   
@@ -172,7 +191,7 @@
   
   <url>
     <loc>https://pierrezemb.fr/talks/</loc>
-    <lastmod>2019-02-10T22:22:36+01:00</lastmod>
+    <lastmod>2019-03-06T22:22:36+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -212,7 +231,7 @@
   
   <url>
     <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2019-02-10T22:22:36+01:00</lastmod>
+    <lastmod>2019-03-06T22:22:36+01:00</lastmod>
     <priority>0</priority>
   </url>
   

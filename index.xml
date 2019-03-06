@@ -6,9 +6,20 @@
     <description>Recent content on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 10 Feb 2019 22:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 06 Mar 2019 22:22:36 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>What we learned as DevOps @OVH</title>
+      <link>https://pierrezemb.fr/talks/devops-ovh/</link>
+      <pubDate>Wed, 06 Mar 2019 22:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
+      <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
+    </item>
     
     
     
@@ -22,6 +33,16 @@
     </item>
     
     
+    
+    <item>
+      <title>Handling OVH&#39;s alerts with Apache Flink</title>
+      <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
+      <description>This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.</description>
+    </item>
     
     
     
@@ -72,6 +93,18 @@ During this Hands-on, we will guide you through the different stages of rediscov
 I have a passion for distributed systems, specifically when it comes with scalability and performance issues.
 I&amp;rsquo;m the deep-dive&amp;rsquo;s type of guy, i.e. I&amp;rsquo;m not scared of having to optimize components like the JVM or the Linux Kernel to reach my goal, or read Hbase basecode to understand how it internally works.
 I&amp;rsquo;m developing software using Go, Rust and Java, as well as performing on-call duty on more than 500 servers, including several Hadoop clusters.</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>One day into the Time Series&#39;s world</title>
+      <link>https://pierrezemb.fr/talks/one-day-timeseries/</link>
+      <pubDate>Sun, 11 Nov 2018 22:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/one-day-timeseries/</guid>
+      <description> Abstract This is a one-day course I&amp;rsquo;m giving at my former engineering school ISEN Brest.
+Schedule  Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets  Ressources  slides  </description>
     </item>
     
     
