@@ -90,7 +90,7 @@ During this Hands-on, we will guide you through the different stages of rediscov
       
       <guid>https://pierrezemb.fr/about/</guid>
       <description>$ whoami I&amp;rsquo;m an Infrastructure Engineer at OVH.
-I have a passion for distributed systems, specifically when it comes with scalability and performance issues.
+I have a passion for distributed systems problems, specifically when it comes with scalability and performance issues.
 I&amp;rsquo;m the deep-dive&amp;rsquo;s type of guy, i.e. I&amp;rsquo;m not scared of having to optimize components like the JVM or the Linux Kernel to reach my goal, or read Hbase basecode to understand how it internally works.
 I&amp;rsquo;m developing software using Go, Rust and Java, as well as performing on-call duty on more than 500 servers, including several Hadoop clusters.</description>
     </item>
