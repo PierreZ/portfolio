@@ -6,9 +6,20 @@
     <description>Recent content in Talks on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 06 Mar 2019 22:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 18 Apr 2019 22:22:36 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Handling alerts at OVH-Scale with Apache Flink</title>
+      <link>https://pierrezemb.fr/talks/ovh-alerts-flink/</link>
+      <pubDate>Thu, 18 Apr 2019 22:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/ovh-alerts-flink/</guid>
+      <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
+    </item>
     
     
     
@@ -19,17 +30,6 @@
       
       <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
       <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Handling alerts at OVH-Scale with Apache Flink</title>
-      <link>https://pierrezemb.fr/talks/ovh-alerts-flink/</link>
-      <pubDate>Sun, 10 Feb 2019 22:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/ovh-alerts-flink/</guid>
-      <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
     </item>
     
     
