@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Programming on website</title>
+    <title>programming on website</title>
     <link>https://pierrezemb.fr/categories/programming/</link>
-    <description>Recent content in Programming on website</description>
+    <description>Recent content in programming on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Fri, 13 May 2016 17:19:23 +0000</lastBuildDate>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on website</title>
@@ -6,13 +5,14 @@
     <description>Recent content in Categories on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
+    <lastBuildDate>Wed, 03 Apr 2019 15:37:27 +0100</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     
     <item>
-      <title>Distributed Systems</title>
+      <title>distributed-systems</title>
       <link>https://pierrezemb.fr/categories/distributed-systems/</link>
       <pubDate>Wed, 03 Apr 2019 15:37:27 +0100</pubDate>
       
@@ -23,7 +23,7 @@
     
     
     <item>
-      <title>Flink</title>
+      <title>flink</title>
       <link>https://pierrezemb.fr/categories/flink/</link>
       <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
       
@@ -34,22 +34,11 @@
     
     
     <item>
-      <title>Operating</title>
-      <link>https://pierrezemb.fr/categories/operating/</link>
-      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
+      <title>transaction</title>
+      <link>https://pierrezemb.fr/categories/transaction/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
       
-      <guid>https://pierrezemb.fr/categories/operating/</guid>
-      <description></description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Programming</title>
-      <link>https://pierrezemb.fr/categories/programming/</link>
-      <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/categories/programming/</guid>
+      <guid>https://pierrezemb.fr/categories/transaction/</guid>
       <description></description>
     </item>
     
@@ -67,11 +56,22 @@
     
     
     <item>
-      <title>Transaction</title>
-      <link>https://pierrezemb.fr/categories/transaction/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      <title>programming</title>
+      <link>https://pierrezemb.fr/categories/programming/</link>
+      <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
       
-      <guid>https://pierrezemb.fr/categories/transaction/</guid>
+      <guid>https://pierrezemb.fr/categories/programming/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
+      <title>operating</title>
+      <link>https://pierrezemb.fr/categories/operating/</link>
+      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/operating/</guid>
       <description></description>
     </item>
     

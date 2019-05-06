@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Distributed Systems on website</title>
+    <title>distributed-systems on website</title>
     <link>https://pierrezemb.fr/categories/distributed-systems/</link>
-    <description>Recent content in Distributed Systems on website</description>
+    <description>Recent content in distributed-systems on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 03 Apr 2019 15:37:27 +0100</lastBuildDate>
