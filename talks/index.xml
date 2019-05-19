@@ -5,9 +5,21 @@
     <description>Recent content in Talks on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 06 May 2019 22:18:13 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 19 May 2019 17:24:34 +0200</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Monitoring OVH: 300k servers, 27 DCs and one metrics platform</title>
+      <link>https://pierrezemb.fr/talks/one-monitoring-platform/</link>
+      <pubDate>Sun, 19 May 2019 17:24:34 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/one-monitoring-platform/</guid>
+      <description>Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?
+In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure.</description>
+    </item>
     
     
     

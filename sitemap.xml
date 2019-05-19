@@ -3,15 +3,15 @@
   
   
   <url>
-    <loc>https://pierrezemb.fr/talks/handling-jvm-scale/</loc>
-    <lastmod>2019-05-06T22:18:13+02:00</lastmod>
+    <loc>https://pierrezemb.fr/talks/one-monitoring-platform/</loc>
+    <lastmod>2019-05-19T17:24:34+02:00</lastmod>
   </url>
   
   
   
   <url>
     <loc>https://pierrezemb.fr/talks/</loc>
-    <lastmod>2019-05-06T22:18:13+02:00</lastmod>
+    <lastmod>2019-05-19T17:24:34+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -19,8 +19,15 @@
   
   <url>
     <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2019-05-06T22:18:13+02:00</lastmod>
+    <lastmod>2019-05-19T17:24:34+02:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/handling-jvm-scale/</loc>
+    <lastmod>2019-05-06T22:18:13+02:00</lastmod>
   </url>
   
   

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  <meta name="description" content="Pierre Zemb">
+  
+  <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez">
+
+  <base href="https://pierrezemb.fr">
+
+  
+  <title>"Monitoring OVH: 300k servers, 27 DCs and one metrics platform" by PierreZ</title>
+  
+  
+
+  <meta name="generator" content="Hugo 0.55.5" />
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+  
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+  
+  
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+
+</head>
+
+<body lang="en-US">
+  <div class="container">
+
+<header class="row text-left title">
+  <h1 class="title">Monitoring OVH: 300k servers, 27 DCs and one metrics platform</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAY 19, 2019 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<h1 id="abstract">Abstract</h1>
+
+<p>What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?</p>
+
+<p>In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure. We needed to go to places where most monitoring solutions hadn’t gone before, it needed to operate at the scale of the biggest European hosting and cloud providers: 27 data centers, more than 300k servers (bare metal!), and hundreds of products to fulfill our mission to host 1.3 million customers.</p>
+
+<p>You will hear about time series, about open source solutions pushed to the limit, about HBase clusters operated at the extreme, and how about a small team leveraged the power of a handful of open source solution and lots of coding glue to build one of the most performant monitoring solutions ever.</p>
+
+<h1 id="occurences">Occurences</h1>
+
+<ul>
+<li>RivieraDev, 2019</li>
+</ul>
+
+<h1 id="ressources">Ressources</h1>
+
+<ul>
+<li><a href="https://docs.google.com/presentation/d/16mpieQKSzjqS6s33ee2-_ewVEnlZXG68xNUITgFyIng/edit?usp=sharing">slides</a></li>
+</ul>
+
+<h1 id="photos-and-tweets">Photos and tweets</h1>
+
+<p><blockquote class="twitter-tweet"><p lang="fr" dir="ltr"><a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> et <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> nous raconte leur « histoire sans fin » pour créer la plateforme metrics 👏🏻 <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a> <a href="https://t.co/iVwKjJ2BnR">pic.twitter.com/iVwKjJ2BnR</a></p>&mdash; Cecile (@CecileHbh) <a href="https://twitter.com/CecileHbh/status/1128967524152946688?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> speaking about Wap 10 @ <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a>. Awesome presentation guys! <a href="https://t.co/q0bdJ0m2mw">pic.twitter.com/q0bdJ0m2mw</a></p>&mdash; Nikita Rousseau (@nirousseau) <a href="https://twitter.com/nirousseau/status/1128967131062767616?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="fr" dir="ltr">Ceci n&#39;est pas du placement de produit 😜<a href="https://twitter.com/SenXHQ?ref_src=twsrc%5Etfw">@SenXHQ</a> <a href="https://twitter.com/warp10io?ref_src=twsrc%5Etfw">@warp10io</a> à l&#39;honneur 😎<a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> <a href="https://twitter.com/SylvainLareyre?ref_src=twsrc%5Etfw">@SylvainLareyre</a> Ok pour le câlin 😊 <a href="https://t.co/M60jw7Wmyv">pic.twitter.com/M60jw7Wmyv</a></p>&mdash; JobOpportunIT (@JobOpportunIT_) <a href="https://twitter.com/JobOpportunIT_/status/1128960579346030594?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Great talk <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a> from <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> and <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> on Monitoring <a href="https://twitter.com/OVH?ref_src=twsrc%5Etfw">@OVH</a> <a href="https://twitter.com/hashtag/SenX?src=hash&amp;ref_src=twsrc%5Etfw">#SenX</a> <a href="https://t.co/Voxwa4KyIf">pic.twitter.com/Voxwa4KyIf</a></p>&mdash; Tiffany Souterre (@TiffanySouterre) <a href="https://twitter.com/TiffanySouterre/status/1128960166781771776?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="fr" dir="ltr">On part sur Monitoring OVH: 300k serveurs, 27 DCs une plateforme de métriques avec <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> et <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://t.co/GB5CsLoz6m">pic.twitter.com/GB5CsLoz6m</a></p>&mdash; RivieraDEV (@RivieraDEV) <a href="https://twitter.com/RivieraDEV/status/1128956775124918272?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  
+  <span><a class="menu-item" href="https://pierrezemb.fr/talks/handling-jvm-scale/">&lt; prev | </a></span>
+  
+  
+  
+  <span><a class="menu-item" href="/talks">talks</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
