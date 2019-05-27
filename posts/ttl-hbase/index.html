@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  <meta name="description" content="Pierre Zemb">
+  
+  <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez">
+
+  <base href="https://pierrezemb.fr">
+
+  
+  <title>"Playing with TTL in HBase" by PierreZ</title>
+  
+  
+
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+  
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+
+  
+  
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+
+</head>
+
+<body lang="en-US">
+  <div class="container">
+
+<header class="row text-left title">
+  <h1 class="title">Playing with TTL in HBase</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAY 27, 2019 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/distributed-systems">DISTRIBUTED-SYSTEMS</a>, 
+      
+      <a class="meta" href="/categories/hbase">HBASE</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+<p>Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let&rsquo;s dive into the feature!</p>
+
+<h1 id="time-to-live-ttl">Time To Live (TTL)</h1>
+
+<p>Let&rsquo;s read the doc first!</p>
+
+<blockquote>
+<p>ColumnFamilies can set a TTL length in seconds, and <strong>HBase will automatically delete rows once the expiration time is reached</strong>.</p>
+</blockquote>
+
+<p><a href="https://hbase.apache.org/book.html#ttl">HBase Book: Time To Live (TTL)</a></p>
+
+<p>Let&rsquo;s play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
+
+<pre><code class="language-bash">./bin/hbase shell
+
+hbase(main):001:0&gt; create 'test_table', {'NAME' =&gt; 'cf1','TTL' =&gt; 30} # 30 sec
+</code></pre>
+
+<p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
+
+<pre><code class="language-bash">hbase(main):002:0&gt; put 'test_table','row123','cf1:desc', 'TTL Demo'
+</code></pre>
+
+<p>And you can <code>get</code> it with:</p>
+
+<pre><code class="language-bash">hbase(main):003:0&gt; get 'test_table','row123','cf1:desc'
+COLUMN                             CELL
+ cf1:desc                          timestamp=1558366581134, value=TTL Demo
+1 row(s) in 0.0080 seconds
+</code></pre>
+
+<p>Here&rsquo;s our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
+
+<pre><code class="language-bash">hbase(main):004:0&gt; get 'test_table','row123','cf1:desc'
+COLUMN                             CELL
+0 row(s) in 0.0220 seconds
+</code></pre>
+
+<p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
+
+<pre><code class="language-bash">hbase(main):002:0&gt; scan 'test_table', {RAW =&gt; true}
+ROW                                COLUMN+CELL
+ row123                            column=cf1:desc, timestamp=1558366581134, value=TTL Demo
+1 row(s) in 0.3280 seconds
+</code></pre>
+
+<p>It will be removed only when a <strong>major-compaction</strong> will occur. As we are playing, we can:</p>
+
+<ul>
+<li>force the memstore to be <strong>flushed as HFiles</strong></li>
+<li>force the <strong>compaction</strong>:</li>
+</ul>
+
+<div class="bs-callout bs-callout-info">
+You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion</a></b>, the new feature in HBase 2. If you are playing with HBase 2, you can enable it by following <a target="_blank" href="https://hbase.apache.org/book.html#inmemory_compaction">this link</a> and run <b>compactions directly in the MemStore</b>s
+</div>
+
+<pre><code class="language-bash">hbase(main):014:0&gt; flush 'test_table'
+Took 0.4456 seconds    
+hbase(main):015:0&gt; compact 'test_table'
+Took 0.0468 seconds
+# wait a bit
+hbase(main):016:0&gt; scan 'test_table', {RAW =&gt; true}
+ROW                            COLUMN+CELL
+0 row(s)
+Took 0.0060 seconds
+</code></pre>
+
+<h1 id="how-does-it-works">How does it works?</h1>
+
+<p>As always, the truth is held by the documentation:</p>
+
+<blockquote>
+<p>A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.</p>
+
+<p>While rows and column keys are expressed as bytes, <strong>the version is specified using a long integer</strong>. Typically <strong>this long contains time instances</strong> such as those returned by java.util.Date.getTime() or <strong>System.currentTimeMillis()</strong>,</p>
+</blockquote>
+
+<p><a href="https://hbase.apache.org/book.html#versions">HBase Book: Versions</a></p>
+
+<p>You may have seen it during our scan earlier, there is a <strong>timestamp associated</strong> with the version of the cell:</p>
+
+<pre><code class="language-bash">hbase(main):003:0&gt; get 'test_table','row123','cf1:desc'
+COLUMN                             CELL
+ cf1:desc                          timestamp=1558366581134, value=TTL Demo
+ #                           here  ^^^^^^^^^^^^^^^^^^^^^^^ 
+</code></pre>
+
+<p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
+
+<p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
+
+<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
+
+<blockquote>
+<p><em>Caution:</em> the version timestamp is used internally by HBase for things like <strong>time-to-live calculations</strong>. It’s usually best to avoid setting this timestamp yourself. Prefer using a separate timestamp attribute of the row, or have the timestamp as a part of the row key, or both.</p>
+</blockquote>
+
+<p>Let&rsquo;s try it:</p>
+
+<pre><code class="language-bash">date +%s -d &quot;+2 min&quot;
+1558472441  # don't forget to add 3 zeroes as the time need to be in millisecond!
+
+./bin/hbase shell
+hbase(main):001:0&gt; put 'test_table','row1234','cf1:desc', 'timestamp Demo', 1558472441000  
+hbase(main):044:0&gt; scan 'test_table'
+ROW                            COLUMN+CELL
+ row1234                       column=cf1:desc, timestamp=1558473315, value=timestamp Demo
+1 row(s)
+Took 0.0031 seconds
+</code></pre>
+
+<p>Notice that we are using a timestamp at the end of the <code>put</code> method? This will <strong>add the desired timestamp to the version</strong>. Which means that <strong>your application can control when your version will be removed, even with a TTL on your column-qualifier.</strong> You just need to compute a timestamp like this:</p>
+
+<blockquote>
+<p><code>ts = now - ttlCF + desiredTTL</code>.</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  
+  
+  
+  <span><a class="menu-item" href="/posts">posts</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
+</section>
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

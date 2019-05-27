@@ -3,6 +3,53 @@
   
   
   <url>
+    <loc>https://pierrezemb.fr/categories/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/ttl-hbase/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/distributed-systems/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/hbase/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  
+  
+  <url>
     <loc>https://pierrezemb.fr/talks/one-monitoring-platform/</loc>
     <lastmod>2019-05-19T17:24:34+02:00</lastmod>
   </url>
@@ -11,14 +58,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/talks/</loc>
-    <lastmod>2019-05-19T17:24:34+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
-    <loc>https://pierrezemb.fr/</loc>
     <lastmod>2019-05-19T17:24:34+02:00</lastmod>
     <priority>0</priority>
   </url>
@@ -39,34 +78,10 @@
   
   
   
-  <url>
-    <loc>https://pierrezemb.fr/categories/</loc>
-    <lastmod>2019-04-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2019-04-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
   
   
   <url>
     <loc>https://pierrezemb.fr/tags/</loc>
-    <lastmod>2019-04-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
-    <loc>https://pierrezemb.fr/categories/distributed-systems/</loc>
     <lastmod>2019-04-03T15:37:27+01:00</lastmod>
     <priority>0</priority>
   </url>
@@ -103,22 +118,6 @@
   
   
   <url>
-    <loc>https://pierrezemb.fr/tags/acid/</loc>
-    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
-    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
     <loc>https://pierrezemb.fr/categories/flink/</loc>
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
     <priority>0</priority>
@@ -127,23 +126,7 @@
   
   
   <url>
-    <loc>https://pierrezemb.fr/tags/flink/</loc>
-    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
     <loc>https://pierrezemb.fr/categories/transaction/</loc>
-    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/transaction/</loc>
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
     <priority>0</priority>
   </url>
@@ -216,7 +199,7 @@
   
   
   <url>
-    <loc>https://pierrezemb.fr/tags/analytics/</loc>
+    <loc>https://pierrezemb.fr/categories/analytics/</loc>
     <lastmod>2019-01-10T21:57:19+01:00</lastmod>
     <priority>0</priority>
   </url>
@@ -224,7 +207,7 @@
   
   
   <url>
-    <loc>https://pierrezemb.fr/tags/warp10/</loc>
+    <loc>https://pierrezemb.fr/categories/warp10/</loc>
     <lastmod>2019-01-10T21:57:19+01:00</lastmod>
     <priority>0</priority>
   </url>
@@ -234,6 +217,14 @@
   <url>
     <loc>https://pierrezemb.fr/posts/eventdriven-architecture-101/</loc>
     <lastmod>2019-01-10T21:57:01+01:00</lastmod>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/event/</loc>
+    <lastmod>2019-01-10T21:57:01+01:00</lastmod>
+    <priority>0</priority>
   </url>
   
   
@@ -249,6 +240,14 @@
   <url>
     <loc>https://pierrezemb.fr/posts/lets-talk-about-containers/</loc>
     <lastmod>2019-01-10T21:56:50+01:00</lastmod>
+  </url>
+  
+  
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/containers/</loc>
+    <lastmod>2019-01-10T21:56:50+01:00</lastmod>
+    <priority>0</priority>
   </url>
   
   

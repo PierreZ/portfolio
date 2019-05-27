@@ -1,0 +1,28 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hbase on website</title>
+    <link>https://pierrezemb.fr/categories/hbase/</link>
+    <description>Recent content in hbase on website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 27 May 2019 22:07:11 +0200</lastBuildDate>
+    
+        <atom:link href="https://pierrezemb.fr/categories/hbase/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Playing with TTL in HBase</title>
+      <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
+      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
+      <description>Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
+Time To Live (TTL) Let&amp;rsquo;s read the doc first!
+ ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
+ HBase Book: Time To Live (TTL)</description>
+    </item>
+    
+    
+  </channel>
+</rss>

@@ -5,7 +5,7 @@
     <description>Recent content in Categories on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 03 Apr 2019 15:37:27 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 27 May 2019 22:07:11 +0200</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,20 @@
     <item>
       <title>distributed-systems</title>
       <link>https://pierrezemb.fr/categories/distributed-systems/</link>
-      <pubDate>Wed, 03 Apr 2019 15:37:27 +0100</pubDate>
+      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
       
       <guid>https://pierrezemb.fr/categories/distributed-systems/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
+      <title>hbase</title>
+      <link>https://pierrezemb.fr/categories/hbase/</link>
+      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/hbase/</guid>
       <description></description>
     </item>
     
@@ -56,11 +67,55 @@
     
     
     <item>
+      <title>analytics</title>
+      <link>https://pierrezemb.fr/categories/analytics/</link>
+      <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/analytics/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
+      <title>warp10</title>
+      <link>https://pierrezemb.fr/categories/warp10/</link>
+      <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/warp10/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
+      <title>event</title>
+      <link>https://pierrezemb.fr/categories/event/</link>
+      <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/event/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
       <title>programming</title>
       <link>https://pierrezemb.fr/categories/programming/</link>
       <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
       
       <guid>https://pierrezemb.fr/categories/programming/</guid>
+      <description></description>
+    </item>
+    
+    
+    
+    <item>
+      <title>containers</title>
+      <link>https://pierrezemb.fr/categories/containers/</link>
+      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/categories/containers/</guid>
       <description></description>
     </item>
     

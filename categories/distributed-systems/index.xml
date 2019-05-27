@@ -5,11 +5,37 @@
     <description>Recent content in distributed-systems on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 03 Apr 2019 15:37:27 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 27 May 2019 22:07:11 +0200</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/categories/distributed-systems/index.xml" rel="self" type="application/rss+xml" />
     
     
+    
+    <item>
+      <title>Playing with TTL in HBase</title>
+      <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
+      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
+      <description>Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
+Time To Live (TTL) Let&amp;rsquo;s read the doc first!
+ ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
+ HBase Book: Time To Live (TTL)</description>
+    </item>
+    
+    
+    
+    
+    
+    <item>
+      <title>Handling OVH&#39;s alerts with Apache Flink</title>
+      <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
+      <description>This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.</description>
+    </item>
     
     
     

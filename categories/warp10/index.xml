@@ -1,13 +1,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>warp10 on website</title>
-    <link>https://pierrezemb.fr/tags/warp10/</link>
+    <link>https://pierrezemb.fr/categories/warp10/</link>
     <description>Recent content in warp10 on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Oct 2017 20:43:05 +0000</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/tags/warp10/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://pierrezemb.fr/categories/warp10/index.xml" rel="self" type="application/rss+xml" />
     
     
     
