@@ -5,9 +5,21 @@
     <description>Recent content in distributed-systems on website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 27 May 2019 22:07:11 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
     
         <atom:link href="https://pierrezemb.fr/categories/distributed-systems/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>What can be gleaned about GFS successor codenamed Colossus</title>
+      <link>https://pierrezemb.fr/posts/colossus-google/</link>
+      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
+      <description>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &amp;lsquo;What does the death of Hadoop mean for big data?&amp;rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</description>
+    </item>
     
     
     
