@@ -1,87 +1,147 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="Pierre Zemb ">
+<meta name="description"
+    content="HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
+ &amp;ndash; Hbase architecture overview" />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez" />
+<meta name="robots" content="noodp" />
 
-<head>
+<link rel="canonical" href="https://pierrezemb.fr/posts/hbase-data-model/" />
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  
-  <meta name="description" content="Pierre Zemb">
-  
-  <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez">
 
-  <base href="https://pierrezemb.fr">
-
-  
-  <title>"Hbase Data Model" by PierreZ</title>
-  
-  
-
-  <meta name="generator" content="Hugo 0.55.6" />
-
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
-  
-
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
-  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
-
-  
-  
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="theme-color" content="#ffffff">
-
-</head>
-
-<body lang="en-US">
-  <div class="container">
-
-<header class="row text-left title">
-  <h1 class="title">Hbase Data Model</h1>
-</header>
-<section id="category-pane" class="row meta">
-  
-  <div class="col-md-12">
-    <h6 class="text-left meta">
-        PUBLISHED ON JAN 27, 2019 
-      
-      
-      
-      —
-      
-      
-      <a class="meta" href="/categories/distributed-systems">DISTRIBUTED-SYSTEMS</a>
-      
-      
-      
-    </h6>
-  </div>
-  
-</section>
-<section id="content-pane" class="row">
-  <div class="col-md-12 text-justify content">
+<title>
     
+    Hbase Data Model :: Pierre Zemb 
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.0d47b4686e972122bd29f0c1e3dd024a2d541cd8b1b543622520822ea6f4238a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627"><meta itemprop="name" content="Hbase Data Model">
+<meta itemprop="description" content="HBase?  Apache HBase™ is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
+ &ndash; Hbase architecture overview">
+
+
+<meta itemprop="datePublished" content="2019-01-27T20:24:27&#43;01:00" />
+<meta itemprop="dateModified" content="2019-01-27T20:24:27&#43;01:00" />
+<meta itemprop="wordCount" content="731">
+
+
+
+<meta itemprop="keywords" content="hbase," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
+
+<meta name="twitter:title" content="Hbase Data Model"/>
+<meta name="twitter:description" content="HBase?  Apache HBase™ is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
+ &ndash; Hbase architecture overview"/>
+
+
+
+<meta property="article:section" content="distributed-systems" />
+
+<meta property="article:published_time" content="2019-01-27 20:24:27 &#43;0100 CET" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title"><a href="https://pierrezemb.fr/posts/hbase-data-model/">Hbase Data Model</a></h1>
+
+            
+
+            <div class="post-content">
+                
 
 <h1 id="hbase">HBase?</h1>
 
 <p><img src="/posts/hbase-data-model/images/hbase.jpg" alt="hbase image" /></p>
 
 <blockquote>
-<p><a href="https://hbase.apache.org/">Apache HBase™</a> is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
+<p><a href="https://hbase.apache.org/" target="_blank">Apache HBase™</a> is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
 </blockquote>
 
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql">Hbase architecture overview</a></p>
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">Hbase architecture overview</a></p>
 
 <h1 id="hbase-data-model">Hbase data model</h1>
 
@@ -98,25 +158,22 @@
 </ul>
 
 <p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
-
-<pre><code class="language-json">{
-  &quot;fr.pierrezemb.www&quot;: {          // Row key
-    &quot;contents&quot;: {                 // Column family
-      &quot;content:html&quot;: {	          // Column qualifier
-        &quot;2017-01-01&quot;:             // A timestamp
-          &quot;&lt;html&gt;...&quot;,            // The actual value
-        &quot;2016-01-01&quot;:             // Another timestamp
-          &quot;&lt;html&gt;...&quot;             // Another cell
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;fr.pierrezemb.www&#34;</span>: {          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Row</span> <span style="color:#960050;background-color:#1e0010">key</span>
+    <span style="color:#f92672">&#34;contents&#34;</span>: {                 <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">family</span>
+      <span style="color:#f92672">&#34;content:html&#34;</span>: {	          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
+        <span style="color:#f92672">&#34;2017-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">A</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>,            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">The</span> <span style="color:#960050;background-color:#1e0010">actual</span> <span style="color:#960050;background-color:#1e0010">value</span>
+        <span style="color:#f92672">&#34;2016-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">cell</span>
       },
-      &quot;content:pdf&quot;: {            // Another Column qualifier
-        &quot;2015-01-01&quot;: 
-          &quot;&lt;pdf&gt;...&quot;  // my website may only contained a pdf in 2015
+      <span style="color:#f92672">&#34;content:pdf&#34;</span>: {            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
+        <span style="color:#f92672">&#34;2015-01-01&#34;</span>: 
+          <span style="color:#e6db74">&#34;&lt;pdf&gt;...&#34;</span>  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">my</span> <span style="color:#960050;background-color:#1e0010">website</span> <span style="color:#960050;background-color:#1e0010">may</span> <span style="color:#960050;background-color:#1e0010">only</span> <span style="color:#960050;background-color:#1e0010">contained</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">pdf</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#ae81ff">2015</span>
       }
     }
   }
-}
-</code></pre>
-
+}</code></pre></div>
 <h1 id="key-design">Key design</h1>
 
 <p>Hbase is most efficient at queries when we&rsquo;re getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be &ldquo;near&rdquo;.</p>
@@ -128,7 +185,7 @@
 <li>If your data are too much collocate, you will also have poor performance.</li>
 </ul>
 
-<p>As stated by the official <a href="https://hbase.apache.org/book.html#rowkey.design">documentation</a>:</p>
+<p>As stated by the official <a href="https://hbase.apache.org/book.html#rowkey.design" target="_blank">documentation</a>:</p>
 
 <blockquote>
 <p>Hotspotting occurs when a <strong>large amount of client traffic is directed at one node, or only a few nodes, of a cluster</strong>. This traffic may represent reads, writes, or other operations. The traffic overwhelms the single machine responsible for hosting that region, causing performance degradation and potentially leading to region unavailability.</p>
@@ -136,7 +193,7 @@
 
 <p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
 
-<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
+<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design" target="_blank">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
 
 <h1 id="be-warned">Be warned</h1>
 
@@ -146,94 +203,103 @@
 <p>HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
 </blockquote>
 
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql">NoSQL?</a></p>
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">NoSQL?</a></p>
 
 <blockquote>
 <p>If you have hundreds of millions or billions of rows, then HBase is a good candidate. If you only have a few thousand/million rows, then using a traditional RDBMS might be a better choice due to the fact that all of your data might wind up on a single node (or two) and the rest of the cluster may be sitting idle.</p>
 </blockquote>
 
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.when">When Should I Use HBase?</a></p>
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.when" target="_blank">When Should I Use HBase?</a></p>
 
 <hr />
 
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
 
-  </div>
-</section>
-<section id="tag-pane" class="row meta">
-  
-  <div class="col-md-12">
-    <h6 class="text-right meta">
-      
-      
-      
-      TAGS:
-      
-      
-      <a class="meta" href="/tags/hbase">HBASE</a>
-      
-      
-      
-    </h6>
-  </div>
-  
-</section>
+            </div>
+        </article>
 
+        <hr />
 
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/hbase">hbase</a></span>
+                </p>
 
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>731 Words</p>
 
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-01-27 20:24 &#43;0100</p>
+        </div>
 
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
 
+                <div class="pagination__buttons">
+                    
+                        <span class="button previous">
+                            <a href="https://pierrezemb.fr/posts/acid-transactions/">
+                                <span class="button__icon">←</span>
+                                <span class="button__text">What are ACID transactions?</span>
+                            </a>
+                        </span>
+                    
 
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">
+                                <span class="button__text">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
 
-<section id="menu-pane" class="row menu text-center">
-  
-  
-  
-  <span><a class="menu-item" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">&lt; prev | </a></span>
-  
-  
-  
-  <span><a class="menu-item" href="/posts">posts</a></span>
-  
-  
-  
-  <span><a class="menu-item" href="https://pierrezemb.fr/posts/acid-transactions/"> | next &gt;</a></span>
-  
-  
-  
-  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
-</section>
+        
+    </main>
 
+            </div>
 
-<footer class="row text-center footer">
-  <hr />
-  
-  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
-  
-  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
-  
-  
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2019</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
 </footer>
 
-</div>
+            
+        </div>
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  
-
-<script type="text/javascript">
-hljs.initHighlightingOnLoad();
-</script>
+        
 
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
-</body>
+<script type="text/javascript" src="/bundle.min.4c3fb12a087ceed4a52cb5d57068a9795c7069617a01ca70f788052ad66e1791779e6c72686e1dc0ca13dc03b0203204b6566bb0dd1ee80de2b7ff4d8fe53db2.js" integrity="sha512-TD&#43;xKgh87tSlLLXVcGipeVxwaWF6Acpw94gFKtZuF5F3nmxyaG4dwMoT3AOwIDIEtlZrsN0e6A3it/9Nj&#43;U9sg=="></script>
+
+
+
+    </body>
 </html>
-
-

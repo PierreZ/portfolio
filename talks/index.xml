@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Talks on website</title>
+    <title>Talks on Pierre Zemb</title>
     <link>https://pierrezemb.fr/talks/</link>
-    <description>Recent content in Talks on website</description>
+    <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 19 May 2019 17:24:34 +0200</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -21,8 +21,6 @@
 In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure.</description>
     </item>
     
-    
-    
     <item>
       <title>Operate JVM at Scale</title>
       <link>https://pierrezemb.fr/talks/handling-jvm-scale/</link>
@@ -31,8 +29,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       <guid>https://pierrezemb.fr/talks/handling-jvm-scale/</guid>
       <description>Abstract OVH has 27 data centers, more than 300 000 servers and 1.3 million customers. We operate one of the world’s largest cloud infrastructures on a daily basis, running millions of applications. Those softwares manage millions of transactions every second. To monitor such an architecture, OVH has chosen to build a unified monitoring platform: OVH Metrics Data Platform. Such a platform uses complex distributed systems to operate, based mainly on open source tools running on the JVM (Apache Kafka, Apache HBase, Warp 10, …).</description>
     </item>
-    
-    
     
     <item>
       <title>Handling alerts at OVH-Scale with Apache Flink</title>
@@ -43,8 +39,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
     </item>
     
-    
-    
     <item>
       <title>What we learned as DevOps @OVH</title>
       <link>https://pierrezemb.fr/talks/devops-ovh/</link>
@@ -53,8 +47,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
       <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
     </item>
-    
-    
     
     <item>
       <title>Rediscover the known data universe with NASA dataset</title>
@@ -67,8 +59,6 @@ It turns out that NASA has a great public dataset, especially one that is used t
 During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
     </item>
     
-    
-    
     <item>
       <title>One day into the Time Series&#39;s world</title>
       <link>https://pierrezemb.fr/talks/one-day-timeseries/</link>
@@ -78,8 +68,6 @@ During this Hands-on, we will guide you through the different stages of rediscov
       <description> Abstract This is a one-day course I&amp;rsquo;m giving at my former engineering school ISEN Brest.
 Schedule  Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets  Ressources  slides  </description>
     </item>
-    
-    
     
     <item>
       <title>Metrics Experience beyond protocols</title>
@@ -91,7 +79,6 @@ Schedule  Introduction to Time Series Time Series in real life Code instrumentat
 Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW
 &amp;mdash; Collignon Rémi (@miton1810) December 7, 2017  </description>
     </item>
-    
     
   </channel>
 </rss>

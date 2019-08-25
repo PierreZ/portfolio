@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hbase on website</title>
+    <title>hbase on Pierre Zemb</title>
     <link>https://pierrezemb.fr/categories/hbase/</link>
-    <description>Recent content in hbase on website</description>
+    <description>Recent content in hbase on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 27 May 2019 22:07:11 +0200</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/categories/hbase/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/categories/hbase/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,7 +22,6 @@ Time To Live (TTL) Let&amp;rsquo;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)</description>
     </item>
-    
     
   </channel>
 </rss>

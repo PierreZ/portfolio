@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on website</title>
+    <title>Categories on Pierre Zemb</title>
     <link>https://pierrezemb.fr/categories/</link>
-    <description>Recent content in Categories on website</description>
+    <description>Recent content in Categories on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,8 +20,6 @@
       <description></description>
     </item>
     
-    
-    
     <item>
       <title>distributed-systems</title>
       <link>https://pierrezemb.fr/categories/distributed-systems/</link>
@@ -30,8 +28,6 @@
       <guid>https://pierrezemb.fr/categories/distributed-systems/</guid>
       <description></description>
     </item>
-    
-    
     
     <item>
       <title>hadoop</title>
@@ -42,8 +38,6 @@
       <description></description>
     </item>
     
-    
-    
     <item>
       <title>hbase</title>
       <link>https://pierrezemb.fr/categories/hbase/</link>
@@ -52,8 +46,6 @@
       <guid>https://pierrezemb.fr/categories/hbase/</guid>
       <description></description>
     </item>
-    
-    
     
     <item>
       <title>flink</title>
@@ -64,8 +56,6 @@
       <description></description>
     </item>
     
-    
-    
     <item>
       <title>transaction</title>
       <link>https://pierrezemb.fr/categories/transaction/</link>
@@ -74,8 +64,6 @@
       <guid>https://pierrezemb.fr/categories/transaction/</guid>
       <description></description>
     </item>
-    
-    
     
     <item>
       <title>Timeseries</title>
@@ -86,8 +74,6 @@
       <description></description>
     </item>
     
-    
-    
     <item>
       <title>analytics</title>
       <link>https://pierrezemb.fr/categories/analytics/</link>
@@ -96,8 +82,6 @@
       <guid>https://pierrezemb.fr/categories/analytics/</guid>
       <description></description>
     </item>
-    
-    
     
     <item>
       <title>warp10</title>
@@ -108,8 +92,6 @@
       <description></description>
     </item>
     
-    
-    
     <item>
       <title>event</title>
       <link>https://pierrezemb.fr/categories/event/</link>
@@ -118,40 +100,6 @@
       <guid>https://pierrezemb.fr/categories/event/</guid>
       <description></description>
     </item>
-    
-    
-    
-    <item>
-      <title>programming</title>
-      <link>https://pierrezemb.fr/categories/programming/</link>
-      <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/categories/programming/</guid>
-      <description></description>
-    </item>
-    
-    
-    
-    <item>
-      <title>containers</title>
-      <link>https://pierrezemb.fr/categories/containers/</link>
-      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/categories/containers/</guid>
-      <description></description>
-    </item>
-    
-    
-    
-    <item>
-      <title>operating</title>
-      <link>https://pierrezemb.fr/categories/operating/</link>
-      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/categories/operating/</guid>
-      <description></description>
-    </item>
-    
     
   </channel>
 </rss>

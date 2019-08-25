@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>containers on website</title>
+    <title>containers on Pierre Zemb</title>
     <link>https://pierrezemb.fr/categories/containers/</link>
-    <description>Recent content in containers on website</description>
+    <description>Recent content in containers on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 04 Jan 2016 18:52:19 +0000</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/categories/containers/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/categories/containers/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -21,7 +21,6 @@
 English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype.</description>
     </item>
-    
     
   </channel>
 </rss>

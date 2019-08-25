@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>event on website</title>
+    <title>event on Pierre Zemb</title>
     <link>https://pierrezemb.fr/categories/event/</link>
-    <description>Recent content in event on website</description>
+    <description>Recent content in event on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Fri, 13 May 2016 17:19:23 +0000</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/categories/event/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/categories/event/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,7 +22,6 @@ Do your own cover on http://dev.to/rly
 I’m still a student, so my point of view could be far from reality, be gentle ;)
 tl;dr: Queue messaging are cool. Use them at the core of your architecture.I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG.</description>
     </item>
-    
     
   </channel>
 </rss>

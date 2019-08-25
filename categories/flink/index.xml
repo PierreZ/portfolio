@@ -1,14 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>flink on website</title>
+    <title>flink on Pierre Zemb</title>
     <link>https://pierrezemb.fr/categories/flink/</link>
-    <description>Recent content in flink on website</description>
+    <description>Recent content in flink on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 03 Feb 2019 15:37:27 +0100</lastBuildDate>
     
-        <atom:link href="https://pierrezemb.fr/categories/flink/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://pierrezemb.fr/categories/flink/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,7 +20,6 @@
       <description>This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
 Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.</description>
     </item>
-    
     
   </channel>
 </rss>

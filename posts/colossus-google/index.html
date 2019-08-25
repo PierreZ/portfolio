@@ -1,102 +1,161 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="Pierre Zemb ">
+<meta name="description"
+    content="In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &amp;lsquo;What does the death of Hadoop mean for big data?&amp;rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google." />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez" />
+<meta name="robots" content="noodp" />
 
-<head>
+<link rel="canonical" href="https://pierrezemb.fr/posts/colossus-google/" />
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  
-  <meta name="description" content="Pierre Zemb">
-  
-  <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez">
 
-  <base href="https://pierrezemb.fr">
-
-  
-  <title>"What can be gleaned about GFS successor codenamed Colossus?" by PierreZ</title>
-  
-  
-
-  <meta name="generator" content="Hugo 0.55.6" />
-
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
-  
-
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
-  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
-
-  
-  
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="theme-color" content="#ffffff">
-
-</head>
-
-<body lang="en-US">
-  <div class="container">
-
-<header class="row text-left title">
-  <h1 class="title">What can be gleaned about GFS successor codenamed Colossus?</h1>
-</header>
-<section id="category-pane" class="row meta">
-  
-  <div class="col-md-12">
-    <h6 class="text-left meta">
-        PUBLISHED ON AUG 4, 2019 
-      
-      
-      
-      —
-      
-      
-      <a class="meta" href="/categories/colossus">COLOSSUS</a>, 
-      
-      <a class="meta" href="/categories/distributed-systems">DISTRIBUTED-SYSTEMS</a>, 
-      
-      <a class="meta" href="/categories/hadoop">HADOOP</a>
-      
-      
-      
-    </h6>
-  </div>
-  
-</section>
-<section id="content-pane" class="row">
-  <div class="col-md-12 text-justify content">
+<title>
     
+    What can be gleaned about GFS successor codenamed Colossus? :: Pierre Zemb 
+    
+</title>
 
-<header class="row text-center header">
-   <img src="/posts/colossus-google/hadoop-logo.jpg" alt="hadoop Image" class="text-center"> 
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.0d47b4686e972122bd29f0c1e3dd024a2d541cd8b1b543622520822ea6f4238a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627"><meta itemprop="name" content="What can be gleaned about GFS successor codenamed Colossus?">
+<meta itemprop="description" content="In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?&rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.">
+
+
+<meta itemprop="datePublished" content="2019-08-04T15:07:11&#43;02:00" />
+<meta itemprop="dateModified" content="2019-08-04T15:07:11&#43;02:00" />
+<meta itemprop="wordCount" content="1148">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
+
+<meta name="twitter:title" content="What can be gleaned about GFS successor codenamed Colossus?"/>
+<meta name="twitter:description" content="In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?&rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google."/>
+
+
+
+<meta property="article:section" content="distributed-systems" />
+<meta property="article:section" content="hadoop" />
+<meta property="article:section" content="colossus" />
+
+<meta property="article:published_time" content="2019-08-04 15:07:11 &#43;0200 CEST" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
 </header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>6 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title"><a href="https://pierrezemb.fr/posts/colossus-google/">What can be gleaned about GFS successor codenamed Colossus?</a></h1>
+
+            
+
+            <div class="post-content">
+                
+
+
+    <img src="/posts/colossus-google/hadoop-logo.jpg"  alt="Hello Friend"  class="center"  style="border-radius: 8px;"  />
+
+
 
 <p>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:</p>
 
 <ul>
-<li><a href="https://www.theregister.co.uk/2019/06/06/cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger/">Health of Hadoop-based companies are publicly bad</a></li>
-<li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/">&lsquo;What does the death of Hadoop mean for big data?&rsquo;</a></li>
+<li><a href="https://www.theregister.co.uk/2019/06/06/cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger/" target="_blank">Health of Hadoop-based companies are publicly bad</a></li>
+<li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/" target="_blank">&lsquo;What does the death of Hadoop mean for big data?&rsquo;</a></li>
 </ul>
 
 <p>Hadoop, as a distributed-system, <strong>is hard to operate, but can be essential for some type of workload</strong>. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</p>
 
 <h2 id="hadoop-s-story">Hadoop&rsquo;s story</h2>
 
-<p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
+<p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf" target="_blank">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 
 <ul>
-<li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
-<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&rdquo;, they:
+<li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438" target="_blank">Borg</a>,</li>
+<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank">simplify the overall design problem</a>&rdquo;, they:
 
 <ul>
 <li>implemented a single master architecture</li>
@@ -127,8 +186,8 @@
 <p>Despite all the issues, Hadoop is still relevant for some usecases, such as Map/Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:</p>
 
 <ul>
-<li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
-<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">&ldquo;Scaled to approximately 50M files, 10P&rdquo; to avoid &ldquo;added management overhead&rdquo; brought by the scaling.</a></li>
+<li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html" target="_blank">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
+<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank">&ldquo;Scaled to approximately 50M files, 10P&rdquo; to avoid &ldquo;added management overhead&rdquo; brought by the scaling.</a></li>
 </ul>
 
 <p>Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.</p>
@@ -140,7 +199,7 @@
 <ul>
 <li>How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?</li>
 <li>Should I be moving that persistent volume over my slow network?</li>
-<li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
+<li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698" target="_blank">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
 </ul>
 
 <h2 id="well-let-s-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes!</h2>
@@ -148,10 +207,10 @@
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 
 <ul>
-<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&rdquo;</a></li>
+<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop" target="_blank">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&rdquo;</a></li>
 <li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &ldquo;day-zero to day-two&rdquo; good experience,</li>
-<li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959">not be using the Operators design internally</a>.</li>
-<li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb">CouchDB developers</a> are saying that:
+<li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959" target="_blank">not be using the Operators design internally</a>.</li>
+<li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb" target="_blank">CouchDB developers</a> are saying that:
 
 <ul>
 <li>&ldquo;For certain workloads, the technology isn’t quite there yet&rdquo;</li>
@@ -164,15 +223,15 @@
 <p>As GFS&rsquo;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here&rsquo;s what can be found online:</p>
 
 <ul>
-<li><p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">Storage Architecture and Challenges(2010)</a>:</p>
+<li><p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank">Storage Architecture and Challenges(2010)</a>:</p>
 
 <ul>
-<li>They moved from full-replication to <a href="https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction">Reed-Salomon</a>. This feature is acually in <a href="https://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html">Hadoop 3</a>,</li>
+<li>They moved from full-replication to <a href="https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction" target="_blank">Reed-Salomon</a>. This feature is acually in <a href="https://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html" target="_blank">Hadoop 3</a>,</li>
 <li>replication is handled by the client, instead of the pipelining,</li>
 <li>the metadata layer is automatically sharded. We can find more informations about that in the next ressource!</li>
 </ul></li>
 
-<li><p>From <a href="http://www.pdsw.org/pdsw-discs17/slides/PDSW-DISCS-Google-Keynote.pdf">Cluster-Level Storage @ Google(2017)</a>:</p>
+<li><p>From <a href="http://www.pdsw.org/pdsw-discs17/slides/PDSW-DISCS-Google-Keynote.pdf" target="_blank">Cluster-Level Storage @ Google(2017)</a>:</p>
 
 <ul>
 <li>GFS master replaced by Colossus</li>
@@ -195,20 +254,20 @@
 <p>The funny part is that they now need a Colossus for Colossus. The only things saving them is that storing the metametametadata (the metadata of the metadata of the metadata) can be hold in Chubby.</p>
 
 <ul>
-<li><p>From <a href="https://queue.acm.org/detail.cfm?id=1594206">GFS: Evolution on Fast-forward(2009)</a></p>
+<li><p>From <a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank">GFS: Evolution on Fast-forward(2009)</a></p>
 
 <ul>
 <li>they moved to chunks of 1MB of files, as the limitations of the master disappeared. This is also allowing Colossus to support latency sensitive applications,</li>
 </ul></li>
 
-<li><p>From <a href="https://github.com/cockroachdb/cockroach/issues/243#issuecomment-91575792">a Github comment on Colossus</a>:</p>
+<li><p>From <a href="https://github.com/cockroachdb/cockroach/issues/243#issuecomment-91575792" target="_blank">a Github comment on Colossus</a>:</p>
 
 <ul>
 <li>File reconstruction from Reed-Salomnon was performed on both client-side and server-side</li>
 <li>on-the-fly recovery of data is greatly enhanced by this data layout(Reed Salomon)</li>
 </ul></li>
 
-<li><p>From a <a href="https://news.ycombinator.com/item?id=20135927">Hacker News comment</a>:</p>
+<li><p>From a <a href="https://news.ycombinator.com/item?id=20135927" target="_blank">Hacker News comment</a>:</p>
 
 <ul>
 <li>Colossus and D are two separate things.</li>
@@ -218,14 +277,14 @@
 <p>What is that &ldquo;D&rdquo;?</p>
 
 <ul>
-<li><p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/"> The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
+<li><p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/" target="_blank"> The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
 
 <ul>
 <li>D stands for <em>Disk</em>,</li>
 <li>D is a fileserver running on almost all machines in a cluster.</li>
 </ul></li>
 
-<li><p>From <a href="https://medium.com/@jerub/the-production-environment-at-google-8a1aaece3767">The Production Environment at Google</a>:</p>
+<li><p>From <a href="https://medium.com/@jerub/the-production-environment-at-google-8a1aaece3767" target="_blank">The Production Environment at Google</a>:</p>
 
 <ul>
 <li>D is more of a block server than a file server</li>
@@ -235,15 +294,15 @@
 
 <h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</h2>
 
-<p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
+<p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs" target="_blank">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
 
-<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes">some work to add colossus&rsquo;s features in Hadoop</a> but based on the bad publicity Hadoop has now, I don&rsquo;t think there will be a lot of money to power those efforts.</p>
+<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes" target="_blank">some work to add colossus&rsquo;s features in Hadoop</a> but based on the bad publicity Hadoop has now, I don&rsquo;t think there will be a lot of money to power those efforts.</p>
 
 <p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
 
 <ul>
-<li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums">OpenZFS checksums</a> seems pretty interesting.</li>
-<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/">Tikv</a> as a building block to provide an &ldquo;BigTable experience&rdquo; without the need of a distributed file-system underneath.</li>
+<li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums" target="_blank">OpenZFS checksums</a> seems pretty interesting.</li>
+<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/" target="_blank">Tikv</a> as a building block to provide an &ldquo;BigTable experience&rdquo; without the need of a distributed file-system underneath.</li>
 </ul>
 
 <p>But remember:</p>
@@ -254,71 +313,83 @@
 
 <hr />
 
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
 
-  </div>
-</section>
-<section id="tag-pane" class="row meta">
-  
-  <div class="col-md-12">
-    <h6 class="text-right meta">
-      
-    </h6>
-  </div>
-  
-</section>
+            </div>
+        </article>
 
+        <hr />
 
+        <div class="post-info">
 
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1148 Words</p>
 
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-08-04 15:07 &#43;0200</p>
+        </div>
 
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
 
+                <div class="pagination__buttons">
+                    
 
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/ttl-hbase/">
+                                <span class="button__text">Playing with TTL in HBase</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
 
-<section id="menu-pane" class="row menu text-center">
-  
-  
-  
-  <span><a class="menu-item" href="https://pierrezemb.fr/posts/ttl-hbase/">&lt; prev | </a></span>
-  
-  
-  
-  <span><a class="menu-item" href="/posts">posts</a></span>
-  
-  
-  
-  <h4 class="text-center"><a class="menu-item" href="https://pierrezemb.fr">home</a></h4>
-</section>
+        
+    </main>
 
+            </div>
 
-<footer class="row text-center footer">
-  <hr />
-  
-  <h6 class="text-center copyright">© 2019. Pierre Zemb. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
-  
-  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
-  
-  
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2019</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
 </footer>
 
-</div>
+            
+        </div>
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  
-
-<script type="text/javascript">
-hljs.initHighlightingOnLoad();
-</script>
+        
 
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
-</body>
+<script type="text/javascript" src="/bundle.min.4c3fb12a087ceed4a52cb5d57068a9795c7069617a01ca70f788052ad66e1791779e6c72686e1dc0ca13dc03b0203204b6566bb0dd1ee80de2b7ff4d8fe53db2.js" integrity="sha512-TD&#43;xKgh87tSlLLXVcGipeVxwaWF6Acpw94gFKtZuF5F3nmxyaG4dwMoT3AOwIDIEtlZrsN0e6A3it/9Nj&#43;U9sg=="></script>
+
+
+
+    </body>
 </html>
-
-

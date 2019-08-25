@@ -1,130 +1,1213 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Posts on website</title>
-    <link>https://pierrezemb.fr/posts/</link>
-    <description>Recent content in Posts on website</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
-    <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
-    
+    <channel>
+        <title>Posts on Pierre Zemb</title>
+        <link>https://pierrezemb.fr/posts/</link>
+        <description>Recent content in Posts on Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
+        <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    
-    <item>
-      <title>What can be gleaned about GFS successor codenamed Colossus?</title>
-      <link>https://pierrezemb.fr/posts/colossus-google/</link>
-      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
-      <description>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+        
+        <item>
+            <title>What can be gleaned about GFS successor codenamed Colossus?</title>
+            <link>https://pierrezemb.fr/posts/colossus-google/</link>
+            <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
+            <description>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
  Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &amp;lsquo;What does the death of Hadoop mean for big data?&amp;rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Playing with TTL in HBase</title>
-      <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
-      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
-      <description>Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
+            <content type="html"><![CDATA[
+
+
+    <img src="/posts/colossus-google/hadoop-logo.jpg"  alt="Hello Friend"  class="center"  style="border-radius: 8px;"  />
+
+
+
+<p>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:</p>
+
+<ul>
+<li><a href="https://www.theregister.co.uk/2019/06/06/cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger/" target="_blank">Health of Hadoop-based companies are publicly bad</a></li>
+<li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/" target="_blank">&lsquo;What does the death of Hadoop mean for big data?&rsquo;</a></li>
+</ul>
+
+<p>Hadoop, as a distributed-system, <strong>is hard to operate, but can be essential for some type of workload</strong>. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</p>
+
+<h2 id="hadoop-s-story">Hadoop&rsquo;s story</h2>
+
+<p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf" target="_blank">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
+
+<ul>
+<li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438" target="_blank">Borg</a>,</li>
+<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank">simplify the overall design problem</a>&rdquo;, they:
+
+<ul>
+<li>implemented a single master architecture</li>
+<li>dropped the idea of a full POSIX-compliant file system</li>
+</ul></li>
+<li>Metadatas are stored in RAM in the master,</li>
+<li>Datas are stored within chunkservers,</li>
+<li>There is no YARN or Map/Reduce or any kind of compute capabilities.</li>
+</ul>
+
+<h2 id="is-hadoop-still-revelant">Is Hadoop still revelant?</h2>
+
+<p>Google with GFS and the rest of the world with Hadoop hit some issues:</p>
+
+<ul>
+<li>One (Metadata) machine is not large enough for large FS,</li>
+<li>Single bottleneck for metadata operations,</li>
+<li>Not appropriate for latency sensitive applications,</li>
+<li>Fault tolerant not HA,</li>
+<li>Unpredictable performance,</li>
+<li>Replication&rsquo;s cost,</li>
+<li>HDFS Write-path pipelining,</li>
+<li>fixed-size of blocks,</li>
+<li>cost of operations,</li>
+<li>&hellip;</li>
+</ul>
+
+<p>Despite all the issues, Hadoop is still relevant for some usecases, such as Map/Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:</p>
+
+<ul>
+<li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html" target="_blank">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
+<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank">&ldquo;Scaled to approximately 50M files, 10P&rdquo; to avoid &ldquo;added management overhead&rdquo; brought by the scaling.</a></li>
+</ul>
+
+<p>Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.</p>
+
+<p>Google&rsquo;s developers were/are deploying applications into &ldquo;containers&rdquo;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don&rsquo;t need to worry about replication</strong> (like Bigtable/HBase).</p>
+
+<p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a &ldquo;file-system&rdquo; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
+
+<ul>
+<li>How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?</li>
+<li>Should I be moving that persistent volume over my slow network?</li>
+<li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698" target="_blank">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
+</ul>
+
+<h2 id="well-let-s-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes!</h2>
+
+<p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
+
+<ul>
+<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop" target="_blank">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&rdquo;</a></li>
+<li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &ldquo;day-zero to day-two&rdquo; good experience,</li>
+<li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959" target="_blank">not be using the Operators design internally</a>.</li>
+<li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb" target="_blank">CouchDB developers</a> are saying that:
+
+<ul>
+<li>&ldquo;For certain workloads, the technology isn’t quite there yet&rdquo;</li>
+<li>&ldquo;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&rdquo;</li>
+</ul></li>
+</ul>
+
+<h2 id="how-gfs-evolved-within-google">How GFS evolved within Google</h2>
+
+<p>As GFS&rsquo;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here&rsquo;s what can be found online:</p>
+
+<ul>
+<li><p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank">Storage Architecture and Challenges(2010)</a>:</p>
+
+<ul>
+<li>They moved from full-replication to <a href="https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction" target="_blank">Reed-Salomon</a>. This feature is acually in <a href="https://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html" target="_blank">Hadoop 3</a>,</li>
+<li>replication is handled by the client, instead of the pipelining,</li>
+<li>the metadata layer is automatically sharded. We can find more informations about that in the next ressource!</li>
+</ul></li>
+
+<li><p>From <a href="http://www.pdsw.org/pdsw-discs17/slides/PDSW-DISCS-Google-Keynote.pdf" target="_blank">Cluster-Level Storage @ Google(2017)</a>:</p>
+
+<ul>
+<li>GFS master replaced by Colossus</li>
+<li>GFS chunkserver replaced by D</li>
+<li>Colossus rebalances old, cold data</li>
+<li>distributes newly written data evenly across disks</li>
+<li>Metadatas are stored into BigTable. each Bigtable row corresponds to a single file.</li>
+</ul></li>
+</ul>
+
+<p>The &ldquo;all in RAM&rdquo; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&rsquo;t had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
+
+<ul>
+<li>automatic sharding of regions,</li>
+<li>scan capabilities for files in the same &ldquo;directory&rdquo;,</li>
+<li>lexical ordering,</li>
+<li>&hellip;</li>
+</ul>
+
+<p>The funny part is that they now need a Colossus for Colossus. The only things saving them is that storing the metametametadata (the metadata of the metadata of the metadata) can be hold in Chubby.</p>
+
+<ul>
+<li><p>From <a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank">GFS: Evolution on Fast-forward(2009)</a></p>
+
+<ul>
+<li>they moved to chunks of 1MB of files, as the limitations of the master disappeared. This is also allowing Colossus to support latency sensitive applications,</li>
+</ul></li>
+
+<li><p>From <a href="https://github.com/cockroachdb/cockroach/issues/243#issuecomment-91575792" target="_blank">a Github comment on Colossus</a>:</p>
+
+<ul>
+<li>File reconstruction from Reed-Salomnon was performed on both client-side and server-side</li>
+<li>on-the-fly recovery of data is greatly enhanced by this data layout(Reed Salomon)</li>
+</ul></li>
+
+<li><p>From a <a href="https://news.ycombinator.com/item?id=20135927" target="_blank">Hacker News comment</a>:</p>
+
+<ul>
+<li>Colossus and D are two separate things.</li>
+</ul></li>
+</ul>
+
+<p>What is that &ldquo;D&rdquo;?</p>
+
+<ul>
+<li><p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/" target="_blank"> The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
+
+<ul>
+<li>D stands for <em>Disk</em>,</li>
+<li>D is a fileserver running on almost all machines in a cluster.</li>
+</ul></li>
+
+<li><p>From <a href="https://medium.com/@jerub/the-production-environment-at-google-8a1aaece3767" target="_blank">The Production Environment at Google</a>:</p>
+
+<ul>
+<li>D is more of a block server than a file server</li>
+<li>It provides nothing apart from checksums.</li>
+</ul></li>
+</ul>
+
+<h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</h2>
+
+<p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs" target="_blank">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
+
+<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes" target="_blank">some work to add colossus&rsquo;s features in Hadoop</a> but based on the bad publicity Hadoop has now, I don&rsquo;t think there will be a lot of money to power those efforts.</p>
+
+<p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
+
+<ul>
+<li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums" target="_blank">OpenZFS checksums</a> seems pretty interesting.</li>
+<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/" target="_blank">Tikv</a> as a building block to provide an &ldquo;BigTable experience&rdquo; without the need of a distributed file-system underneath.</li>
+</ul>
+
+<p>But remember:</p>
+
+<blockquote>
+<p>Like crypto, Do not roll your own DFS!</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Playing with TTL in HBase</title>
+            <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
+            <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
+            <description>Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
 Time To Live (TTL) Let&amp;rsquo;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)</description>
-    </item>
-    
-    
-    
-    
-    
-    <item>
-      <title>Handling OVH&#39;s alerts with Apache Flink</title>
-      <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
-      <description>This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+            <content type="html"><![CDATA[
+
+<header class="row text-center header">
+   <img src="/posts/hbase-data-model/images/hbase.jpg" alt="HBase Image" class="text-center"> 
+</header>
+
+<p>Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let&rsquo;s dive into the feature!</p>
+
+<h1 id="time-to-live-ttl">Time To Live (TTL)</h1>
+
+<p>Let&rsquo;s read the doc first!</p>
+
+<blockquote>
+<p>ColumnFamilies can set a TTL length in seconds, and <strong>HBase will automatically delete rows once the expiration time is reached</strong>.</p>
+</blockquote>
+
+<p><a href="https://hbase.apache.org/book.html#ttl" target="_blank">HBase Book: Time To Live (TTL)</a></p>
+
+<p>Let&rsquo;s play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart" target="_blank">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">./bin/hbase shell
+
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:001:0&gt; create <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;NAME&#39;</span> <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;cf1&#39;</span>,<span style="color:#e6db74">&#39;TTL&#39;</span> <span style="color:#f92672">=</span>&gt; <span style="color:#ae81ff">30</span><span style="color:#f92672">}</span> <span style="color:#75715e"># 30 sec</span></code></pre></div>
+<p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:002:0&gt; put <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>, <span style="color:#e6db74">&#39;TTL Demo&#39;</span></code></pre></div>
+<p>And you can <code>get</code> it with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
+COLUMN                             CELL
+ cf1:desc                          timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
+<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.0080 seconds</code></pre></div>
+<p>Here&rsquo;s our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:004:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
+COLUMN                             CELL
+<span style="color:#ae81ff">0</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.0220 seconds</code></pre></div>
+<p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:002:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span>RAW <span style="color:#f92672">=</span>&gt; true<span style="color:#f92672">}</span>
+ROW                                COLUMN+CELL
+ row123                            column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
+<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.3280 seconds</code></pre></div>
+<p>It will be removed only when a <strong>major-compaction</strong> will occur. As we are playing, we can:</p>
+
+<ul>
+<li>force the memstore to be <strong>flushed as HFiles</strong></li>
+<li>force the <strong>compaction</strong>:</li>
+</ul>
+
+<div class="bs-callout bs-callout-info">
+You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion</a></b>, the new feature in HBase 2. If you are playing with HBase 2, you can enable it by following <a target="_blank" href="https://hbase.apache.org/book.html#inmemory_compaction">this link</a> and run <b>compactions directly in the MemStores.</b>
+</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:014:0&gt; flush <span style="color:#e6db74">&#39;test_table&#39;</span>
+Took <span style="color:#ae81ff">0</span>.4456 seconds    
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:015:0&gt; compact <span style="color:#e6db74">&#39;test_table&#39;</span>
+Took <span style="color:#ae81ff">0</span>.0468 seconds
+<span style="color:#75715e"># wait a bit</span>
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:016:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span>RAW <span style="color:#f92672">=</span>&gt; true<span style="color:#f92672">}</span>
+ROW                            COLUMN+CELL
+<span style="color:#ae81ff">0</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>
+Took <span style="color:#ae81ff">0</span>.0060 seconds</code></pre></div>
+<h1 id="how-does-it-works">How does it works?</h1>
+
+<p>As always, the truth is held by the documentation:</p>
+
+<blockquote>
+<p>A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.</p>
+
+<p>While rows and column keys are expressed as bytes, <strong>the version is specified using a long integer</strong>. Typically <strong>this long contains time instances</strong> such as those returned by java.util.Date.getTime() or <strong>System.currentTimeMillis()</strong>,</p>
+</blockquote>
+
+<p><a href="https://hbase.apache.org/book.html#versions" target="_blank">HBase Book: Versions</a></p>
+
+<p>You may have seen it during our scan earlier, there is a <strong>timestamp associated</strong> with the version of the cell:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
+COLUMN                             CELL
+ cf1:desc                          timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
+ <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^</span> </code></pre></div>
+<p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
+
+<p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
+
+<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example" target="_blank">below:</a></p>
+
+<blockquote>
+<p><em>Caution:</em> the version timestamp is used internally by HBase for things like <strong>time-to-live calculations</strong>. It’s usually best to avoid setting this timestamp yourself. Prefer using a separate timestamp attribute of the row, or have the timestamp as a part of the row key, or both.</p>
+</blockquote>
+
+<p>Let&rsquo;s try it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">date +%s -d <span style="color:#e6db74">&#34;+2 min&#34;</span>
+<span style="color:#ae81ff">1558472441</span>  <span style="color:#75715e"># don&#39;t forget to add 3 zeroes as the time need to be in millisecond!</span>
+
+./bin/hbase shell
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:001:0&gt; put <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row1234&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>, <span style="color:#e6db74">&#39;timestamp Demo&#39;</span>, <span style="color:#ae81ff">1558472441000</span>  
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:044:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>
+ROW                            COLUMN+CELL
+ row1234                       column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558473315</span>, value<span style="color:#f92672">=</span>timestamp Demo
+<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>
+Took <span style="color:#ae81ff">0</span>.0031 seconds</code></pre></div>
+<p>Notice that we are using a timestamp at the end of the <code>put</code> method? This will <strong>add the desired timestamp to the version</strong>. Which means that <strong>your application can control when your version will be removed, even with a TTL on your column-qualifier.</strong> You just need to compute a timestamp like this:</p>
+
+<blockquote>
+<p><code>ts = now - ttlCF + desiredTTL</code>.</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Handling OVH&#39;s alerts with Apache Flink</title>
+            <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
+            <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
+            <description>This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
 Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.</description>
-    </item>
+            <content type="html"><![CDATA[
+
+<p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH's alerts with Apache Flink" target="_blank">OVH&rsquo;s official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/" target="_blank">Horacio Gonzalez</a> for the awesome drawings!</p>
+
+<h1 id="handling-ovh-s-alerts-with-apache-flink">Handling OVH&rsquo;s alerts with Apache Flink</h1>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472" alt="OVH &amp; Apache Flink" /></p>
+
+<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">**Metrics Data Platform</a>.** By relying on <a href="https://hbase.apache.org/" target="_blank">**Apache Hbase</a>, <a href="https://kafka.apache.org/" target="_blank">Apache Kafka</a>** and <a href="https://www.warp10.io/" target="_blank"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
+
+<p>After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the <strong>Alerting.</strong></p>
+
+<h2 id="meet-omni-our-alerting-layer">Meet OMNI, our alerting layer</h2>
+
+<p>OMNI is our code name for a <strong>fully distributed</strong>, <strong>as-code</strong>, <strong>alerting</strong> system that we developed on top of Metrics. It is split into components:</p>
+
+<ul>
+<li><strong>The management part</strong>, taking your alerts definitions defined in a Git repository, and represent them as continuous queries,</li>
+<li><strong>The query executor</strong>, scheduling your queries in a distributed way.</li>
+</ul>
+
+<p>The query executor is pushing the query results into Kafka, ready to be handled! We now need to perform all the tasks that an alerting system does:</p>
+
+<ul>
+<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a href="https://en.wikipedia.org/wiki/Alarm_fatigue" target="_blank">alert fatigue. </a></li>
+<li>Handling <strong>escalation</strong> steps, **acknowledgement **or <strong>snooze</strong>.</li>
+<li><strong>Notify</strong> the end user, through differents <strong>channels</strong>: SMS, mail, Push notifications, …</li>
+</ul>
+
+<p>To handle that, we looked at open-source projects, such as <a href="https://github.com/prometheus/alertmanager" target="_blank">Prometheus AlertManager,</a> <a href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall" target="_blank">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
+
+<blockquote>
+<p>Handling alerts as streams of data,<br />
+moving from operators to another.</p>
+</blockquote>
+
+<p>We embraced it, and decided to leverage <a href="https://flink.apache.org/" target="_blank">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
+
+<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a href="https://flink.apache.org/flink-architecture.html" target="_blank">What is Apache Flink?</a></p>
+
+<h2 id="beacon-architecture"><strong>Beacon architecture</strong></h2>
+
+<p>At his core, Beacon is reading events from <strong>Kafka</strong>. Everything is represented as a <strong>message</strong>, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:</p>
+
+<ul>
+<li>One that is running the <strong>aggregations</strong>, and triggering notifications based on customer&rsquo;s rules.</li>
+<li>One that is handling the <strong>escalation steps</strong>.</li>
+</ul>
+
+<p>Then everything is merged to <strong>generate</strong> <strong>a</strong> <strong>notification</strong>, that is going to be forward to the right person. A notification message is pushed into Kafka, that will be consumed by another component called <strong>beacon-notifier.</strong></p>
+
+
+    <img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/002.png?x70472"  alt="Hello Friend"  class="center"  style="background: white"  />
+
+
+
+<h2 id="handling-states">Handling States</h2>
+
+<p>If you are new to streaming architecture, I recommend reading <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html" target="_blank">Dataflow Programming Model</a> from Flink official documentation.</p>
+
+
+    <img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/003.png?x70472"  alt="Hello Friend"  class="center"  style="background: white"  />
+
+
+
+<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state" target="_blank">keyed by </a>in Flink API) by users. Here&rsquo;s an example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">DataStream</span><span style="color:#f92672">&gt;</span> alertStream <span style="color:#f92672">=</span>
     
+      <span style="color:#75715e">// Partitioning Stream per AlertIdentifier
+</span><span style="color:#75715e"></span>      cleanedAlertsStream.<span style="color:#a6e22e">keyBy</span>(0)
+      <span style="color:#75715e">// Applying a Map Operation which is setting since when an alert is triggered
+</span><span style="color:#75715e"></span>      .<span style="color:#a6e22e">map</span>(<span style="color:#66d9ef">new</span> SetSinceOnSelector())
+      .<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;setting-since-on-selector&#34;</span>).<span style="color:#a6e22e">uid</span>(<span style="color:#e6db74">&#34;setting-since-on-selector&#34;</span>)
     
-    
-    <item>
-      <title>What are ACID transactions?</title>
-      <link>https://pierrezemb.fr/posts/acid-transactions/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/acid-transactions/</guid>
-      <description>Transaction? &amp;quot;Programming should be about transforming data&amp;quot;  &amp;mdash; Programming Elixir 1.3 by Dave Thomas
+      <span style="color:#75715e">// Partitioning again Stream per AlertIdentifier
+</span><span style="color:#75715e"></span>      .<span style="color:#a6e22e">keyBy</span>(0)
+      <span style="color:#75715e">// Applying another Map Operation which is setting State and Trend
+</span><span style="color:#75715e"></span>      .<span style="color:#a6e22e">map</span>(<span style="color:#66d9ef">new</span> SetStateAndTrend())
+      .<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;setting-state&#34;</span>).<span style="color:#a6e22e">uid</span>(<span style="color:#e6db74">&#34;setting-state&#34;</span>);</code></pre></div>
+<p>In the example above, we are chaining two keyed operations:</p>
+
+<ul>
+<li><strong>SetSinceOnSelector</strong>, which is setting <strong>since</strong> when the alert is triggered</li>
+<li><strong>SetStateAndTrend</strong>, which is setting the <strong>state</strong>(ONGOING, RECOVERY or OK) and the <strong>trend</strong>(do we have more or less metrics in errors).</li>
+</ul>
+
+<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/" target="_blank">Map, FlatMap, Reduce</a>, including their <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions" target="_blank">Rich</a> and <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state" target="_blank">Keyed</a> version. We have a few <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html" target="_blank">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
+
+<h2 id="integration-tests">Integration tests</h2>
+
+<p>As the number of classes was growing, we needed to test our pipeline. Because it is only wired to Kafka, we wrapped consumer and producer to create what we call **scenari: **a series of integration tests running different scenarios.</p>
+
+<h2 id="queryable-state">Queryable state</h2>
+
+<p>One killer feature of Apache Flink is the <strong>capabilities of [</strong><strong>querying the internal state</strong>]<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html" target="_blank">19</a>** of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
+
+<ul>
+<li>at which escalation steps are we on</li>
+<li>is it snoozed or <em>ack</em>-ed</li>
+<li>Which alert is ongoing</li>
+<li>and so on.</li>
+</ul>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/004-1.png?x70472" alt="Queryable state overview" />Queryable state overview</p>
+
+<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/" target="_blank">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
+
+<h3 id="apache-flink-deployment">Apache Flink deployment</h3>
+
+<p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper&rsquo;s cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
+
+<p>We are using <strong>RockDB</strong> as a state backend, backed by OpenStack **Swift storage **provided by OVH Public Cloud.</p>
+
+<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter" target="_blank">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium" target="_blank">Beamium</a> to gain <strong>observability</strong> over job&rsquo;s health.</p>
+
+<h3 id="in-short-we-love-apache-flink">In short, we love Apache Flink!</h3>
+
+<p>If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.</p>
+
+<p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472" alt="Apache Flink" /></p>
+
+<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F" target="_blank">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>What are ACID transactions?</title>
+            <link>https://pierrezemb.fr/posts/acid-transactions/</link>
+            <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/acid-transactions/</guid>
+            <description>Transaction? &amp;quot;Programming should be about transforming data&amp;quot;  &amp;mdash; Programming Elixir 1.3 by Dave Thomas
 As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Hbase Data Model</title>
-      <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
-      <pubDate>Sun, 27 Jan 2019 20:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
-      <description>HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
+            <content type="html"><![CDATA[
+
+<h1 id="transaction">Transaction?</h1>
+
+<pre><code>&quot;Programming should be about transforming data&quot;
+</code></pre>
+
+<p>&mdash; Programming Elixir 1.3 by Dave Thomas</p>
+
+<hr />
+
+<p>As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called <strong>relational database management system</strong> or <a href="https://en.wikipedia.org/wiki/Relational_database_management_system" target="_blank">RDBMS</a>. Thanks to them, we, as developers, can develop applications pretty easily, <strong>without the need to implement our own storage solution</strong>. Interacting with <a href="https://www.mysql.com/" target="_blank">mySQL</a> or <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> have now become a <strong>commodity</strong>. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:</p>
+
+<ul>
+<li>How can we interact with <strong>datastores that can fail?</strong></li>
+<li>What is happening if two users are  <strong>updating a value at the same time?</strong></li>
+</ul>
+
+<p>As a database user, we are using <code>transactions</code> to answer these questions. As a developer, a transaction is a <strong>single unit of logic or work</strong>, sometimes made up of multiple operations. It is mainly an <strong>abstraction</strong> that we are using to <strong>hide underlying problems</strong>, such as concurrency or hardware faults.</p>
+
+<p><code>ACID</code> appears in a paper published in 1983 called <a href="https://sites.fas.harvard.edu/~cs265/papers/haerder-1983.pdf" target="_blank">&ldquo;Principles of transaction-oriented database recovery&rdquo;</a> written by <em>Theo Haerder</em> and <em>Andreas Reuter</em>. This paper introduce a terminology of properties for a transaction:</p>
+
+<blockquote>
+<p><strong>A</strong>tomic, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability</p>
+</blockquote>
+
+<h2 id="atomic">Atomic</h2>
+
+<p>Atomic, as you may have guessed, <code>atomic</code> represents something that <strong>cannot be splitted</strong>. In the database transaction world, it means for example that if a transaction with several writes is <strong>started and failed</strong> at some point, <strong>none of the write will be committed</strong>. As stated by many, the word <code>atomic</code> could be reword as <code>abortability</code>.</p>
+
+<hr />
+
+<h2 id="consistency">Consistency</h2>
+
+<p>You will hear about <code>consistency</code> a lot of this serie. Unfortunately, this word can be used in a lot of context. In the ACID definition, it refers to the fact that a transaction will <strong>bring the database from one valid state to another.</strong></p>
+
+<hr />
+
+<h2 id="isolation">Isolation</h2>
+
+<p>Think back to your database. Were you the only user on it? I don&rsquo;t think so. Maybe they were concurrent transactions at the same time, beside yours. <strong>Isolation while keeping good performance is the most difficult item on the list.</strong> There&rsquo;s a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.</p>
+
+<h3 id="isolation-by-the-theory">Isolation by the theory</h3>
+
+<p>The SQL standard defines four isolation levels: <code>Serializable</code>, <code>Repeatable Read</code>, <code>Read Commited</code> and <code>Read Uncommited</code>. The strongest isolation is <code>Serializable</code> where transaction are <strong>not runned in parallel</strong>. As you may have guessed, it is also the slowest. <strong>Weaker isolation level are trading speed against anomalies</strong> that can be sum-up like this:</p>
+
+<table>
+<thead>
+<tr>
+<th>Isolation level</th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Dirty_reads" target="_blank">dirty reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads" target="_blank">Non-repeatable reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Phantom_reads" target="_blank">Phantom reads</a></th>
+<th>Performance</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Serializable</td>
+<td>😎</td>
+<td>😎</td>
+<td>😎</td>
+<td>👍</td>
+</tr>
+
+<tr>
+<td>Repeatable Read</td>
+<td>😎</td>
+<td>😎</td>
+<td>😱</td>
+<td>👍👍</td>
+</tr>
+
+<tr>
+<td>Read Commited</td>
+<td>😎</td>
+<td>😱</td>
+<td>😱</td>
+<td>👍👍👍</td>
+</tr>
+
+<tr>
+<td>Read uncommited</td>
+<td>😱</td>
+<td>😱</td>
+<td>😱</td>
+<td>👍👍👍👍</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>I encourage you to click on all the links within the table to <strong>see everything that could go wrong in a weak database!</strong></p>
+</blockquote>
+
+<h3 id="isolation-in-real-databases">Isolation in Real Databases</h3>
+
+<p>Now that we saw some theory, let&rsquo;s have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?</p>
+
+<blockquote>
+<p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
+</blockquote>
+
+<p>&mdash; <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank">Concurrency Control introduction</a></p>
+
+<p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC" target="_blank">a standard used by the industry</a>.</p>
+
+<hr />
+
+<h2 id="durability">Durability</h2>
+
+<p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
+
+<h1 id="that-s-it">That&rsquo;s it?</h1>
+
+<p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Hbase Data Model</title>
+            <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
+            <pubDate>Sun, 27 Jan 2019 20:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
+            <description>HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
  &amp;ndash; Hbase architecture overview</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
-      <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>
-      <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</guid>
-      <description>update 2019: this is a repost on my own blog. original article can be read on medium.
+            <content type="html"><![CDATA[
+
+<h1 id="hbase">HBase?</h1>
+
+<p><img src="/posts/hbase-data-model/images/hbase.jpg" alt="hbase image" /></p>
+
+<blockquote>
+<p><a href="https://hbase.apache.org/" target="_blank">Apache HBase™</a> is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
+</blockquote>
+
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">Hbase architecture overview</a></p>
+
+<h1 id="hbase-data-model">Hbase data model</h1>
+
+<p>The data model is simple: it&rsquo;s like a multi-dimensional map:</p>
+
+<ul>
+<li>Elements are stored as <strong>rows</strong> in a <strong>table</strong>.</li>
+<li>Each table has only <strong>one index, the row key</strong>. There are no secondary indices.</li>
+<li>Rows are <strong>sorted lexicographically by row key</strong>.</li>
+<li>A range of rows is called a <strong>region</strong>. It is similar to a shard.</li>
+<li>A row in HBase consists of a <strong>row key</strong> and <strong>one or more columns</strong>, which are holding the cells.</li>
+<li>Values are stored into what we call a <strong>cell</strong> and are versioned with a timestamp.</li>
+<li>A column is divided between a <strong>Column Family</strong> and a <strong>Column Qualifier</strong>. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is <strong>static</strong>, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.</li>
+</ul>
+
+<p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;fr.pierrezemb.www&#34;</span>: {          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Row</span> <span style="color:#960050;background-color:#1e0010">key</span>
+    <span style="color:#f92672">&#34;contents&#34;</span>: {                 <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">family</span>
+      <span style="color:#f92672">&#34;content:html&#34;</span>: {	          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
+        <span style="color:#f92672">&#34;2017-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">A</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>,            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">The</span> <span style="color:#960050;background-color:#1e0010">actual</span> <span style="color:#960050;background-color:#1e0010">value</span>
+        <span style="color:#f92672">&#34;2016-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">cell</span>
+      },
+      <span style="color:#f92672">&#34;content:pdf&#34;</span>: {            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
+        <span style="color:#f92672">&#34;2015-01-01&#34;</span>: 
+          <span style="color:#e6db74">&#34;&lt;pdf&gt;...&#34;</span>  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">my</span> <span style="color:#960050;background-color:#1e0010">website</span> <span style="color:#960050;background-color:#1e0010">may</span> <span style="color:#960050;background-color:#1e0010">only</span> <span style="color:#960050;background-color:#1e0010">contained</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">pdf</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#ae81ff">2015</span>
+      }
+    }
+  }
+}</code></pre></div>
+<h1 id="key-design">Key design</h1>
+
+<p>Hbase is most efficient at queries when we&rsquo;re getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be &ldquo;near&rdquo;.</p>
+
+<p>As such, the <strong>key design</strong> is really important:</p>
+
+<ul>
+<li>If your data are too spread, you will have poor performance.</li>
+<li>If your data are too much collocate, you will also have poor performance.</li>
+</ul>
+
+<p>As stated by the official <a href="https://hbase.apache.org/book.html#rowkey.design" target="_blank">documentation</a>:</p>
+
+<blockquote>
+<p>Hotspotting occurs when a <strong>large amount of client traffic is directed at one node, or only a few nodes, of a cluster</strong>. This traffic may represent reads, writes, or other operations. The traffic overwhelms the single machine responsible for hosting that region, causing performance degradation and potentially leading to region unavailability.</p>
+</blockquote>
+
+<p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
+
+<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design" target="_blank">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
+
+<h1 id="be-warned">Be warned</h1>
+
+<p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here&rsquo;s some warnings extracted from the well-written documentation:</p>
+
+<blockquote>
+<p>HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
+</blockquote>
+
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">NoSQL?</a></p>
+
+<blockquote>
+<p>If you have hundreds of millions or billions of rows, then HBase is a good candidate. If you only have a few thousand/million rows, then using a traditional RDBMS might be a better choice due to the fact that all of your data might wind up on a single node (or two) and the rest of the cluster may be sitting idle.</p>
+</blockquote>
+
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.when" target="_blank">When Should I Use HBase?</a></p>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
+            <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>
+            <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</guid>
+            <description>update 2019: this is a repost on my own blog. original article can be read on medium.
 Artist’s impression of the super-Earth exoplanet LHS 1140b By ESO/spaceengine.org — CC BY 4.0
 My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a passion, something I’m willing to do at work, on my free-time, at night or the week-end.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Engage maximum warp speed in time series analysis with WarpScript</title>
-      <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
-      <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
-      <description>update 2019: this is a repost on my own blog. original article can be read on medium.
+            <content type="html"><![CDATA[
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/helloexoworld/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow-e50f6e669915" target="_blank">medium</a>.</p>
+
+<hr />
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/1.jpeg" alt="image" />
+<em>Artist’s impression of the super-Earth exoplanet LHS 1140b By <a href="https://www.eso.org/public/images/eso1712a/" target="_blank">ESO/spaceengine.org</a> — <a href="http://creativecommons.org/licenses/by/4.0" target="_blank">CC BY 4.0</a></em></p>
+
+<p>My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a <strong>passion</strong>, something I’m willing to do at work, on my free-time, at night or the week-end. But before discovering C and other languages, I had another passion: <strong>astronomy</strong>. Every summer, I was participating at the <a href="https://www.afastronomie.fr/les-nuits-des-etoiles" target="_blank"><strong>Nuit des Etoiles</strong></a>, a <strong>global french event</strong> organized by numerous clubs of astronomers offering several hundreds (between 300 and 500 depending on the year) of free animation sites for the general public.</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/2.png" alt="image" />
+*As you can see below, I was <strong>kind of young at the time</strong>!*</p>
+
+<p>But the sad truth is that I didn’t do any astronomy during my studies. But now, <strong>I want to get back to it and look at the sky again</strong>. There were two obstacles:</p>
+
+<ul>
+<li>The price of equipments</li>
+<li>The local weather</li>
+</ul>
+
+<p><strong>I was looking for something that would unit my two passions: computer and astronomy</strong>. So I started googling:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/3.png" alt="image" /></p>
+
+<p>I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would <strong>motivate me</strong> over the time. So I started typing over keywords, more work-related, such as <strong><em>time series</em></strong> or <strong><em>analytics</em></strong>. I found many papers related to astrophysics, but there was two keywords that were coming back: <strong>exoplanet detection</strong>.</p>
+
+<h3 id="what-is-an-exoplanet-and-how-to-detect-it">What is an exoplanet and how to detect it?</h3>
+
+<p>Let’s quote our good old friend <a href="https://en.wikipedia.org/wiki/Exoplanet" target="_blank"><strong>Wikipedia</strong></a>:
+&gt; <em>An exoplanet or extrasolar planet is a planet outside of our solar system that orbits a star.</em></p>
+
+<p>do you know how many exoplanets that have been discovered? <a href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank"><strong>3,529 confirmed planets</strong> as of 10/09/2017</a>. I was amazed by the number of them. I started digging into the <a href="https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets" target="_blank"><strong>detection methods</strong></a>. Turns out there is one method heavily used, called <strong>the transit method</strong>. It’s like a eclipse: when the exoplanet is passing in front of the star, the photometry is varying during the transit, as shown below:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/4.gif" alt="image" /></p>
+
+<p>animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. <strong><em>Credits: NASA’s Goddard Space Flight Center</em></strong></p>
+
+<p>To recap, exoplanet detection using the transit method are in reality a <strong>time series analysis problem</strong>. As I’m starting to be familiar with that type of analytics thanks to my current work at OVH in <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank"><strong>Metrics Data Platform</strong></a>, I wanted to give it a try.</p>
+
+<h3 id="kepler-k2-mission">Kepler/K2 mission</h3>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/5.jpeg" alt="image" /></p>
+
+<p><em>Image Credit: NASA Ames/W. Stenzel</em></p>
+
+<p>Kepler is a <strong>space observatory</strong> launched by NASA in March 2009 to <strong>discover Earth-sized planets orbiting other stars</strong>. <a href="https://www.nasa.gov/feature/ames/nasas-k2-mission-the-kepler-space-telescopes-second-chance-to-shine" target="_blank">The loss of a second of the four reaction wheels during May 2013</a> put an end to the original mission. Fortunately, scientists decided to create an <strong>entirely community-driven mission</strong> called K2, to <strong>reuse the Kepler spacecraft and its assets</strong>. But furthermore, the community is also encouraged to exploit the mission’s unique <strong>open</strong> data archive. Every image taken by the satellite can be <strong>downloaded and analyzed by anyone</strong>.</p>
+
+<p>More information about the telescope itself can be found <a href="https://keplerscience.arc.nasa.gov/the-kepler-space-telescope.html" target="_blank"><strong>here</strong></a>.</p>
+
+<h3 id="where-i-m-going">Where I’m going</h3>
+
+<p>The goal of my project is to see if <strong>I can contribute to the exoplanets search</strong> using new tools such as <a href="http://www.warp10.io" target="_blank"><strong>Warp10</strong></a> and <a href="https://tensorflow.org/" target="_blank"><strong>TensorFlow</strong></a>. Using <strong>Deep Learning to search for anomalies could be much more effective</strong> than writing WarpScript, because it is the <strong>neural network&#39;s job to learn</strong> by itself <strong>how</strong> to detect the exoplanets.</p>
+
+<p>As I’m currently following <a href="https://www.coursera.org/learn/neural-networks-deep-learning" target="_blank"><strong>Andrew Ng courses about Deep Learning</strong></a>, it is also a great opportunity for me to play with <strong>Tensorflow</strong> in a personal project. The project can be divided into several steps:</p>
+
+<ul>
+<li><strong>Import</strong> the data</li>
+<li><strong>Analyze</strong> the data using WarpScript</li>
+<li><strong>Build</strong> a neural network to search for exoplanets</li>
+</ul>
+
+<p>Let&#39;s see how the import was done!</p>
+
+<h3 id="importing-kepler-and-k2-dataset">Importing Kepler and K2 dataset</h3>
+
+<h4 id="step-0-find-the-data">Step 0: Find the data</h4>
+
+<p>As mentioned previously, data are available from The Mikulski Archive for Space Telescopes or <a href="https://archive.stsci.edu/" target="_blank">MAST</a>. It’s a <strong>NASA funded project</strong> to support and provide the astronomical community with a variety of astronomical data archives. Both Kepler and K2 dataset are <strong>available</strong> through <strong>campaigns</strong>. Each campaign has a collection of tar files, which are containing the FITS files associated. A <a href="https://en.wikipedia.org/wiki/FITS" target="_blank"><strong>FITS</strong></a> file is an <strong>open format</strong> for images which is also <strong>containing scientific data</strong>.</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/6.png" alt="image" /></p>
+
+<p><em>FITS file representation.</em> <a href="https://keplerscience.arc.nasa.gov/k2-observing.html" target="_blank"><em>Image Credit: KEPLER &amp; K2 Science Center</em></a></p>
+
+<h4 id="step-1-etl-extract-transform-and-load-into-warp10">Step 1: ETL (Extract, Transform and Load) into Warp10</h4>
+
+<p>To speed-up acquisition, I developed <a href="https://github.com/PierreZ/kepler-lens" target="_blank"><strong>kepler-lens</strong></a> to <strong>automatically</strong> <strong>download Kepler/K2 datasets and extract the needed time series</strong> into a CSV format. <strong>Kepler-lens</strong> is using two awesome libraries:</p>
+
+<ul>
+<li><a href="https://github.com/KeplerGO/PyKE" target="_blank"><strong>pyKe</strong></a> to export the data from the <a href="https://en.wikipedia.org/wiki/FITS" target="_blank"><strong>FITS</strong></a> files to CSV (<a href="https://github.com/KeplerGO/PyKE/pull/69" target="_blank"><strong>#PR69</strong></a> and <a href="https://github.com/KeplerGO/PyKE/pull/76" target="_blank"><strong>#PR76</strong></a>  have been merged).</li>
+<li><a href="https://github.com/dfm/kplr" target="_blank"><strong>kplr</strong></a> is used to <strong>tag</strong> the dataset. With it, I can easily <strong>find stars</strong> with <strong>confirmed</strong> exoplanets or <strong>candidates</strong>.</li>
+</ul>
+
+<p>Then <a href="https://github.com/PierreZ/kepler2warp10" target="_blank"><strong>Kepler2Warp10</strong></a> is used to <strong>push the CSV files generated by kepler-lens to Warp10</strong>.</p>
+
+<p>To ease importation, an <a href="https://github.com/PierreZ/kepler2warp10-ansible" target="_blank"><strong>Ansible role</strong></a>  has been made, to spread the work across multiples small <strong>virtual machines</strong>.</p>
+
+<p>Principles of transaction-oriented database recovery</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The import of <a href="https://twitter.com/NASAKepler?ref_src=twsrc%5Etfw">@NASAKepler</a>  dataset has been spread on 16 machines, just because I can 😎 <a href="https://t.co/qa49tAgdzz">pic.twitter.com/qa49tAgdzz</a></p>&mdash; Pierre Zemb (@PierreZ) <a href="https://twitter.com/PierreZ/status/908784580450295808?ref_src=twsrc%5Etfw">September 15, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<ul>
+<li><strong>550k distincts stars</strong></li>
+<li>around <strong>50k datapoints per star</strong></li>
+</ul>
+
+<p>That&#39;s around <strong>27,5 billions of measures</strong> (300GB of LevelDB files), imported on a <strong>standalone</strong> instance. The Warp10 instance is <strong>self-hosted</strong> on a dedicated <a href="https://www.kimsufi.com/" target="_blank"><strong>Kimsufi</strong></a> server at OVH. Here’s the full specifications for the curious ones:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/7.png" alt="image" /></p>
+
+<p>Now that the data are <strong>available</strong>, we are ready to <strong>dive into the dataset</strong> and <strong>look for exoplanets</strong>! Let&#39;s use WarpScript</p>
+
+<p>!### Let&#39;s see a transit using WarpScript</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/8.png" alt="image" /></p>
+
+<p>WarpScript logo</p>
+
+<p>For those who don’t know WarpScript, I recommend reading my previous blogpost “<a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" target="_blank"><strong>Engage maximum warp speed in time series analysis with WarpScript</strong></a>”.</p>
+
+<p>Let’s first plot the data! We are going to take a well-known star called <a href="https://en.wikipedia.org/wiki/Kepler-11" target="_blank"><strong>Kepler-11</strong></a>. It has (at least) 6 confirmed exoplanets. Let&#39;s write our first WarpScript:</p>
+
+<p>The <a href="http://www.warp10.io/reference/functions/function_FETCH" target="_blank">FETCH</a> function retrieves <strong>raw datapoints</strong> from Warp10. Let’s plot the result of our script:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/9.png" alt="image" /></p>
+
+<p>Mmmmh, the straight lines are representing <strong>empties period with no datapoints</strong>; they correspond to <strong>different observations</strong>. <strong>Let&#39;s divide the data</strong> and generate <strong>one time series per observation</strong> using <a href="http://www.warp10.io/reference/functions/function_TIMESPLIT/" target="_blank">TIMESPLIT</a>:</p>
+
+<p>To ease the display, 0 GET is used to <strong>get only the first observation</strong>. Let&#39;s see the result:</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/10.png" alt="image" /></p>
+
+<p>Much better. Do you see the dropouts? <strong>Those are transiting exoplanets!</strong> Now we’ll need to <strong>write a WarpScript to automatically detect transits.</strong> But that was enough for today, so we’ll cover this <strong>in the next blogpost!</strong>Thank you for reading! Feel free to <strong>comment</strong> and to <strong>subscribe</strong> to the <a href="https://twitter.com/helloexoworld" target="_blank">twitter account</a>!</p>
+
+<p><img src="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/11.jpeg" alt="image" /></p>
+
+<p><strong>Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets</strong>. Image Credit: By <a href="http://www.eso.org/public/images/eso1615b/" target="_blank">ESO/M. Kornmesser</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank">CC BY-SA 4.0</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Engage maximum warp speed in time series analysis with WarpScript</title>
+            <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
+            <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
+            <description>update 2019: this is a repost on my own blog. original article can be read on medium.
 We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Event-driven architecture 101</title>
-      <link>https://pierrezemb.fr/posts/eventdriven-architecture-101/</link>
-      <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/eventdriven-architecture-101/</guid>
-      <description>update 2019: this is a repost on my own blog. original article can be read on medium.
+            <content type="html"><![CDATA[
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" target="_blank">medium</a>.</p>
+
+<hr />
+
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png" alt="image" /></p>
+
+<p>We, at <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a>, are working everyday with <a href="http://www.warp10.io/" target="_blank">Warp10 Platform</a>, an open source Time Series database. You may not know it because it’s not as famous as <a href="https://prometheus.io/" target="_blank">Prometheus</a> or <a href="https://docs.influxdata.com/influxdb/" target="_blank">InfluxDB</a> but Warp10 is the most <strong>powerful and generic solution</strong> to store and analyze sensor data. It’s the <strong>core</strong> of Metrics, and many internal teams from OVH are using <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a> to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24/7/365, as you can see below:</p>
+
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png" alt="image" /></p>
+
+<p>Not only Warp10 allows us to reach an unbelievable scalability but it also comes with his own language called <strong>WarpScript</strong>, to manipulate and perform heavy time series analysis. Before digging into the need of a new language, let’s talk a bit about the need of time series analysis.### What is a time serie ?</p>
+
+<p><strong>A time serie, or sensor data, is simply a sequence of measurements over time</strong>. The definition is quite generic, because many things can be represented as a time serie:</p>
+
+<ul>
+<li>the evolution of the stock exchange or a bank account</li>
+<li>the number of calls on a webserver</li>
+<li>the fuel consumption of a car</li>
+<li>the time to insert a value into a database</li>
+<li>the time a customer is taking to register on your website</li>
+<li>the heart rate of a person measured through a smartwatch</li>
+</ul>
+
+<p>From an historical point of view, time series appeared shortly after the creation of the Web, to <strong>help engineers monitor the networks</strong>. It quickly expands to also monitors servers. With the right monitoring system, you can have <strong>insights</strong> and <strong>KPIs</strong> about your service:</p>
+
+<p><strong>Analysis of long-term trend</strong></p>
+
+<ul>
+<li>How fast is my database growing?</li>
+<li>At what speed my number of active user accounts grows?</li>
+</ul>
+
+<p><strong>The comparison over time</strong></p>
+
+<ul>
+<li>My queries run faster with the new version of my library? Is my site slower than last week?</li>
+</ul>
+
+<p><strong>Alerts</strong></p>
+
+<ul>
+<li>Trigger alerts based on advanced queries</li>
+</ul>
+
+<p><strong>Displaying data through dashboards</strong></p>
+
+<ul>
+<li>Dashboards help answer basic questions on the service, and in particular the 4 indispensable metrics: <strong>latency, traffic, errors and service saturation</strong></li>
+</ul>
+
+<p><strong>The possibility of designing retrospective</strong></p>
+
+<ul>
+<li>Our latency is doubling, what’s going on?### Time series are complicated to handle</li>
+</ul>
+
+<p>Storage, retrieval and analysis of time series cannot be done through standard relational databases. Generally, highly scalable databases are used to support volumetry. For example, the <strong>300,000 Airbus A380 sensors on board can generate an average of 16 TB of data per flight</strong>. On a smaller scale, <strong>a single sensor that measures every second generates 31.5 million values per year</strong>. Handling time series at scale is difficult, because you’re running into advanced distributed systems issues, such as:</p>
+
+<ul>
+<li><strong>ingestion scalability</strong>, i.e. how to absorb all the datapoints <sup>24</sup>&frasl;<sub>7</sub></li>
+<li><strong>query scalability</strong>, i.e. how to query in a raisonnable amount of time</li>
+<li><strong>delete capability</strong>, i.e. how to handle deletes without stopping ingestion and query</li>
+</ul>
+
+<p>Frustration with existing open source monitoring tools like <strong>Nagios</strong> and <strong>Ganglia</strong> is why the giants created their own tools — <strong>Google has Borgmon</strong> and <strong>Facebook has</strong> <a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf" target="_blank"><strong>Gorilla</strong></a>, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the <strong>former Googlers who decided to rewrite Borgmon</strong> outside Google.### Why another time series database?</p>
+
+<p>Now the time series ecosystem is bigger than ever, here’s a short list of what you can find to handle time series data:</p>
+
+<ul>
+<li>InfluxDB.</li>
+<li>Prometheus.</li>
+<li>Riak TS.</li>
+<li>OpenTSDB.</li>
+</ul>
+
+<p>Then there’s <strong>Warp10</strong>. The difference is quite simple, Warp10 is <strong>a platform</strong> whereas all the time series listed above are <strong>stores</strong>. This is game changing, for multiples reasons.</p>
+
+<h4 id="security-first-design">Security-first design</h4>
+
+<p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html" target="_blank">Macaroons</a>.</p>
+
+<h4 id="high-level-analysis-capabilities">High level analysis capabilities</h4>
+
+<p>Using classical time series database, <strong>high level analysis must be done elsewhere</strong>, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just <strong>submit your script</strong> and <em>voilà</em>!</p>
+
+<h4 id="server-side-calculation">Server-side calculation</h4>
+
+<p>Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit <strong>limitations</strong> on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be <strong>scalable</strong>, analysis must be done <strong>server-side</strong>.### Meet WarpScript</p>
+
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png" alt="image" /></p>
+
+<p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language" target="_blank"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
+
+<p>Yes, you’ll be able to run that <strong>awesome query that is fetching millions of datapoints</strong> and only get the result. You need all the data, or just the timestamp of a weird datapoint? <strong>The result of the script is simply what’s left on the stack</strong>.</p>
+
+<h4 id="dataflow-language">Dataflow language</h4>
+
+<p>WarpScript is really easy to code, <strong>because of the stack design</strong>. You’ll be <strong>pushing elements into the stack and consume them</strong>. Coding became logical. First you need to <strong>fetch</strong> your points, then <strong>applying some downsampling</strong> and then <strong>aggregate</strong>. These 3 steps are translated into <strong>3 lines of WarpScript</strong>:</p>
+
+<ul>
+<li><strong>FETCH</strong> will push the needed Geo Time Series into the stack</li>
+<li><strong>BUCKETIZE</strong> will take the Geo Time Series from the stack, apply some downsampling, and push the result into the stack</li>
+<li><strong>REDUCE</strong> will take the Geo Time Series from the stack, aggregate them, and push them back into the stack</li>
+</ul>
+
+<p>Debugguing as never be that easy, just use the keyword <strong>STOP</strong> to see the stack at any moment.</p>
+
+<h4 id="rich-programming-capabilities">Rich programming capabilities</h4>
+
+<p>WarpScript is coming with more than <strong>800 functions</strong>, ready to use. Things like <strong>Patterns and outliers detections, rolling average, FFT, IDWT</strong> are built-in.</p>
+
+<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities</h4>
+
+<p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
+
+<h4 id="unified-language">Unified Language</h4>
+
+<p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
+
+<h3 id="geez-give-me-an-example">Geez, give me an example!</h3>
+
+<p>Here’s an example of a simple but advanced query:</p>
+
+<pre><code>// Fetching all values  
+[ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
+[ SWAP bucketizer.max	0 1 m 0 ] BUCKETIZE // Round to nearest long  
+[ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by 'buildingID'  
+[ SWAP [ 'buildingID' ] reducer.max ] REDUCE
+</code></pre>
+
+<p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
+
+<h3 id="what-about-a-more-complex-example">What about a more complex example?</h3>
+
+<p>You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:</p>
+
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png" alt="image" /></p>
+
+<p>I want to <strong>detect the green part</strong> of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a <strong>2 functions calls</strong>:</p>
+
+<ul>
+<li><strong>PATTERNS</strong> is generating a list of motifs.</li>
+<li><strong>PATTERNDETECTION</strong> is running the list of motifs on all the time series you have.</li>
+</ul>
+
+<p>Here’s the code</p>
+
+<pre><code>// defining some variables  
+32 'windowSize' STORE  
+8 'patternLength' STORE  
+16 'quantizationScale' STORE  
+
+// Generate patterns   
+$pattern.to.detect 0 GET   
+$windowSize $patternLength $quantizationScale PATTERNS  
+VALUES 'patterns' STORE  
+
+// Running the patterns through a list of GTS (Geo Time Series)  
+$list.of.gts $patterns   
+$windowSize $patternLength $quantizationScale  PATTERNDETECTION
+</code></pre>
+
+<p>Here’s the result:</p>
+
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png" alt="image" /></p>
+
+<p>As you can see, <strong>PATTERNDETECTION</strong> is working even with the increasing amplitude! You can discover this example by yourself by using <a href="https://home.cityzendata.net/quantum/preview/#/plot/TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU+IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=/eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=" target="_blank">Quantum</a>, the official web-based IDE for WarpScript. <strong>You need to switch X-axis scale to Timestamp in order to see the courbe</strong>.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:</p>
+
+<ul>
+<li><a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a>, our product</li>
+<li><a href="http://warp10.io/" target="_blank">Warp10 official documentation</a></li>
+<li><a href="http://tour.warp10.io/" target="_blank">Warp10 tour</a>, similar to “The Go Tour”</li>
+<li><a href="https://www.youtube.com/watch?v=mNkfBR9KofY" target="_blank">Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont</a></li>
+<li><a href="https://groups.google.com/forum/#!forum/warp10-users" target="_blank">Warp10 Google Groups</a></li>
+</ul>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Event-driven architecture 101</title>
+            <link>https://pierrezemb.fr/posts/eventdriven-architecture-101/</link>
+            <pubDate>Fri, 13 May 2016 17:19:23 +0000</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/eventdriven-architecture-101/</guid>
+            <description>update 2019: this is a repost on my own blog. original article can be read on medium.
 Do your own cover on http://dev.to/rly
 I’m still a student, so my point of view could be far from reality, be gentle ;)
 tl;dr: Queue messaging are cool. Use them at the core of your architecture.I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Let’s talk about containers</title>
-      <link>https://pierrezemb.fr/posts/lets-talk-about-containers/</link>
-      <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/lets-talk-about-containers/</guid>
-      <description>update 2019: this is a repost on my own blog. original article can be read on medium.
+            <content type="html"><![CDATA[
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656" target="_blank">medium</a>.</p>
+
+<hr />
+
+<p><img src="/posts/eventdriven-architecture-101/images/1.png" alt="image" /></p>
+
+<p>Do your own cover on <a href="http://dev.to/rly" target="_blank">http://dev.to/rly</a></p>
+
+<p><em>I’m still a student, so my point of view could be far from reality, be gentle ;)</em></p>
+
+<p><strong><em>tl;dr: Queue messaging are cool. Use them at the core of your architecture.</em></strong>I’m currently playing a lot around <a href="https://kafka.apache.org/" target="_blank">Kafka</a> and <a href="https://flink.apache.org/" target="_blank">Flink</a> at work. I also discovered <a href="http://vertx.io/" target="_blank">Vert.x</a> at my local JUG. All three have a common word: <strong>events</strong>. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.</p>
+
+<h1 id="the-unix-philosophy">the Unix philosophy</h1>
+
+<p><img src="/posts/eventdriven-architecture-101/images/2.gif" alt="image" /></p>
+
+<p>I’m a huge fan of GNU/Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? <strong>Pipes or |</strong>. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:</p>
+
+<ul>
+<li><strong>list files</strong> in a folder</li>
+<li>From this list, <strong>manipulate/filter</strong> it. One line must correspond to one file, things like folder are omitted</li>
+<li>And then <strong>count</strong> the line!</li>
+</ul>
+
+<p>In the UNIX world, it should give you something like “<strong><em>ls -l | grep ^- | wc -l”.</em></strong> it might feels like chinese. For me, it’s just feels logical. <strong>3 operations mapped into 3 commands.</strong> You declare a set a commands that, in the end, give you the result. It’s simple and also very fast (in fact, you can find funny articles like this one: <a href="http://aadrake.com/command-line-tools-can-be-235x-faster-than-your-hadoop-cluster.html" target="_blank">Command-line tools can be 235x faster than your Hadoop cluster</a>). This is only possible thanks to the <strong>UNIX philosophy</strong>, greatly describe by Doug McIlroy, Elliot Pinson and Berk Tague in 1978:</p>
+
+<blockquote>
+<p>Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&gt; Expect the output of every program to become the input to another, as yet unknown, program.</p>
+</blockquote>
+
+<p>Why should I care? It’s 2016, not 1978! Well…</p>
+
+<h1 id="back-in-2016">Back in 2016</h1>
+
+<p><img src="/posts/eventdriven-architecture-101/images/3.gif" alt="image" /></p>
+
+<p>Cloud changed everything in terms of software engineering. <strong>We can now deploy applications without thinking about the underlying server</strong>. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, <strong>Why should I deploy only one huge app ?</strong> why can’t I deploy multiples applications instead of one? <strong>Let’s call theses applications micro services</strong> because we are in 2016.</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/4.png" alt="image" /></p>
+
+<p>OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? <strong>How can they communicate? How can we simulate UNIX pipes?</strong> Before answering, let’s answer to another question first: <strong>What do we really need to send through our network?</strong> Don’t forget the  <a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing" target="_blank"><strong>Fallacies of distributed computing</strong></a><strong>…</strong></p>
+
+<p>Let’s take an example. We are a new startup, and we are building our plateform. We’ll certainly need to handle our customers. Let’s say that for each new customer, <strong>we need to make two actions</strong>: add it to our database, and then to our mailing-list. <strong>A simple and classical way would be to just call two functions</strong> (whether on the same applications or not), and then say to the customer: “You’re successfully registered”. Like this:</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/5.png" alt="image" /></p>
+
+<p>Classic approach</p>
+
+<p>Is there another approach? Let’s use an <strong>event-based architecture</strong>:</p>
+
+<h1 id="let-s-talk-events"><strong>Let’s talk events</strong></h1>
+
+<p>Let’s ask Google, what’s an event?</p>
+
+<blockquote>
+<p>a thing that happens, especially one of importance.</p>
+</blockquote>
+
+<p>Well, handling a new customer is a thing that happens (hopefully). For this, we’ll be using a <strong>Queue messaging system or Broker</strong>. It’s a <strong>middleware</strong> that will <strong>receive events, and making them available for another application or groups of applications.</strong></p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/6.gif" alt="image" /></p>
+
+<p>Queue messaging architecture with 2 producers and 4 consumers</p>
+
+<p>So let’s rethink our architecture. Pay attention to the words: our Register page will <strong>produce</strong> an event that will contains all the information about our client. This event will be <strong>queued</strong>, waiting to be <strong>consumed</strong> by the associated micro services.</p>
+
+<p><img src="/posts/eventdriven-architecture-101/images/7.png" alt="image" /></p>
+
+<p>Simple event-driven architecture</p>
+
+<p>We didn’t changed much, but we enable many things over here:</p>
+
+<ul>
+<li><strong>Simplicity</strong>. Remember, the first rule ! “Make each program do one thing well”. Like this, your <strong>code base for each app will be simple</strong> <strong>as hell</strong>, and you’ll be able to easily replace your software if needed.</li>
+<li><strong>Modularity</strong>. You need to add another action to the event, for example CreateProfile ? Easy, <strong>just plug another app on the same queue</strong>. You need to test a new version of your program? Easy, <strong>just plug it on the same queue</strong>.</li>
+<li><strong>Scalability</strong>. One of your micro services is taking too much time? <strong>Just start a new instance of it</strong>. Huge traffic? Add new instances. With this approach, you can start really small and become giant.</li>
+<li><strong>Big-data friendly.</strong> This type of architecture is often used to handle a lot of data. With plateform like <a href="http://flink.apache.org" target="_blank">Apache Flink</a>, you can do some <strong>stream processing directly</strong>. <a href="https://ci.apache.org/projects/flink/flink-docs-master/apis/streaming/index.html#example-program" target="_blank">Look how easy it is</a>.</li>
+<li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
+</ul>
+
+<h1 id="what-about-serverless"><strong>What about serverless?</strong></h1>
+
+<p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Software jargon, recycled. <a href="https://twitter.com/hashtag/serverless?src=hash&amp;ref_src=twsrc%5Etfw">#serverless</a> <a href="https://t.co/SUrCCKKNPb">pic.twitter.com/SUrCCKKNPb</a></p>&mdash; Outlook is my IDE (@kiyototamura) <a href="https://twitter.com/kiyototamura/status/717420657655418880?ref_src=twsrc%5Etfw">April 5, 2016</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Serverless is so 2016</p>
+
+<p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a href="https://aws.amazon.com/lambda/" target="_blank">AWS Lambda</a> and quickly followed by <a href="https://cloud.google.com/functions/docs" target="_blank">Google</a>, <a href="https://azure.microsoft.com/en-us/services/functions/" target="_blank">Microsoft</a>, <a href="https://new-console.ng.bluemix.net/openwhisk/" target="_blank">IBM</a> and <a href="https://www.iron.io/introducing-aws-lambda-support" target="_blank">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
+
+<h1 id="additional-links-and-talks-about-this-topic">Additional links and talks about this topic</h1>
+
+<ul>
+<li><a href="http://www.confluent.io/blog/apache-kafka-samza-and-the-unix-philosophy-of-distributed-data" target="_blank">Apache Kafka, Samza, and the Unix Philosophy of Distributed Data</a> by <a href="https://medium.com/u/13be457aed12" target="_blank">Martin Kleppmann</a></li>
+<li><a href="http://blog.cloudera.com/blog/2014/09/apache-kafka-for-beginners/" target="_blank">Apache Kafka for Beginners</a> by Cloudera Engineering Blog</li>
+<li><a href="https://www.voxxed.com/blog/2016/04/introduction-apache-kafka/" target="_blank">Introduction to Apache Kafka</a> by Guglielmo Iozza</li>
+<li><a href="http://dataartisans.github.io/flink-training/" target="_blank">Apache Flink Training</a>by data-artisans</li>
+<li>Meetup LeboncoinTech — AMQP 101 by <a href="https://medium.com/u/58ea5a89aaae" target="_blank">Quentin ADAM</a> (French sorry)</li>
+<li>vert.x 3 — be reactive on the JVM but not only in Java by Clement Escoffier/Paulo Lopes DEVOXX 2015</li>
+</ul>
+
+<p>Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a>, or have a look on my <a href="https://pierrezemb.fr" target="_blank">website</a>.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Let’s talk about containers</title>
+            <link>https://pierrezemb.fr/posts/lets-talk-about-containers/</link>
+            <pubDate>Mon, 04 Jan 2016 18:52:19 +0000</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/lets-talk-about-containers/</guid>
+            <description>update 2019: this is a repost on my own blog. original article can be read on medium.
 English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype.</description>
-    </item>
-    
-    
-  </channel>
+            <content type="html"><![CDATA[
+
+<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@pierrez/let-s-talk-about-containers-1f11ee68c470" target="_blank">medium</a>.</p>
+
+<hr />
+
+<p><em>English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)</em></p>
+
+<p>In the last two years, there’s been a technology that became really hype. It was the graal for easy deployments, easy applications management. Let’s talk about containers.</p>
+
+<h3 id="write-once-run-everywhere">“Write once, run everywhere”</h3>
+
+<p><img src="/posts/lets-talk-about-containers/images/1.jpeg" alt="image" /></p>
+
+<p>When I first heard about containers, I was working as a part-time internship for a french bank as a developer in a Ops team. I was working around <a href="https://hadoop.apache.org/" target="_blank">Hadoop</a> and monitoring systems, and I was wondering “How should I properly deploy my work?”. It was a java app, running into the official Java version provided by my company. <strong>I couldn’t just give it to my colleagues</strong> <strong>and leave them do some vaudou stuff because they are the Ops team</strong>. I remembered saying to myself ”fortunately, all the features that I need are in this official java version, I don’t need the latest JRE. I just need to bundle everything into a jar and done”. But what if it wasn’t? What if I had to explain to my colleagues that I need the new JRE for a really small app written by an intern? Or I needed another non-standard library during runtime?</p>
+
+<p>The important thing here at the time was that, at any time, <strong>I could deploy it on another server that had Java, because everything is bundled into that big fat jar file</strong>. After all, “<strong>write once, run everywhere</strong>” was the slogan created by Sun Microsystems to illustrate the cross-platform benefits of the Java language. That is a real commodity, and this is the first thing that strike me with Docker.</p>
+
+<h3 id="docker-hype">Docker hype</h3>
+
+<p>I will always remember my chat with my colleagues about it. I was like this:</p>
+
+<p><img src="/posts/lets-talk-about-containers/images/2.jpeg" alt="image" /></p>
+
+<h2 id="and-they-were-more-like">And they were more like:</h2>
+
+<p><img src="/posts/lets-talk-about-containers/images/3.jpeg" alt="image" /></p>
+
+<p>Ops knew about containers since the dawn of time, so why such hype now? I think that “write once, run everywhere” is the true slogan of Docker, because you can run docker containers in any environments that has Docker. <strong>You want to try the latest datastore/SaaS app that you found on Hacker News or Reddit? There’s a Dockerfile for that</strong>. And that is super cool. So everyone started to get interested in Docker, myself included. But the real benefit is that many huge companies like Google admits that containers are the way they are deploying apps. <strong>They don’t care what type of applications they are deploying or where it’s running, it’s just running somewhere.</strong> That’s all that matters. By unifying the packages, you can automatize and deliver whatever you want somewhere. Do you really care if it’s on a specific machine? No you don’t. That’s a powerful way to think infrastructure more like a bunch of compute or storage power, and not individual machines.</p>
+
+<h3 id="let-s-create-a-container">Let’s create a container!</h3>
+
+<p>That’s not a secret: I love <a href="https://golang.org/" target="_blank">Go</a>. It’s in my opinion a very nice programming language <a href="https://medium.com/@PierreZ/why-you-really-should-give-golang-a-try-6b577092d725" target="_blank">that you should really try</a>. So let’s say that I’m creating a go app, and then ship it with Docker. So I’ll use the officiel Docker image right? <strong>Then I end up with a 700MB container to ship a 10MB app</strong>… I thought that containers were supposed to be small… Why? because it’s based on a full OS, with go compiler and so on. To run a single binary, there’s no need to have the whole Go compiler stack.</p>
+
+<p>That was really bothering me. At this point, if the container is holding everything, why not use a VM? Why do we need to bundle Ubuntu into the container? From a outside point-of-view, running a container in interactive mode is much like a virtual machines right? <strong>At the time of writing, Docker’s official image for Ubuntu was pulled more than 36,000,000 time</strong>. That’s huge! And disturbing. Do you really need for example “ls, chmod, chown, sudo” into a container?</p>
+
+<p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;amp;loop=false#slide=id.ge614ec624_2_70" target="_blank">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability" target="_blank">Ghost</a>, and 80% to <a href="http://heartbleed.com/" target="_blank">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>
+
+<h3 id="so-what-should-i-put-into-my-container">So what should I put into my container?</h3>
+
+<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine" target="_blank">docker-alpine</a> or <a href="https://github.com/phusion/baseimage-docker" target="_blank">baseimage-docker</a>which are cool, but in fact, the answer was on Docker’s website… Here’s the <a href="https://www.docker.com/what-docker" target="_blank">official sentence</a>that explains the difference between containers and virtual machines:</p>
+
+<blockquote>
+<p>“Containers include the application and all of its dependencies, but share the kernel with other containers.”</p>
+</blockquote>
+
+<p>This specific sentence triggers something in my head. When you execute a program on your UNIX system, the system creates a special environment for that program. This environment contains everything needed for the system to run the program as if no other program were running on the system. It’s exactly the same! <strong>So a container should be abstract not as a Virtual machines, but as a UNIX process!</strong></p>
+
+<ul>
+<li>application + dependencies represent the image</li>
+<li>Runtime environment like token/password will be passed through env vars for example</li>
+</ul>
+
+<h3 id="static-compilation">Static compilation</h3>
+
+<p><img src="/posts/lets-talk-about-containers/images/4.png" alt="image" /></p>
+
+<p>Meet Go</p>
+
+<p>Here’s an interesting fact: Go, the open-source programming language pushed by Google <strong>supports statically apps</strong>, what a coincidence! That means that this statically app will be directly talking to the kernel. <strong>Our Docker image can be empty</strong>, except for the binary and needed files like configuration. There’s a strange image on Docker that you might have seen, which is called “scratch”:</p>
+
+<blockquote>
+<p>You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.</p>
+</blockquote>
+
+<p>That means that our Dockerfile now looks like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> scratch  </span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span><span style="color:#e6db74"> hello /  </span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span><span style="color:#e6db74"> [/hello]</span></code></pre></div>
+<p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf" target="_blank"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
+
+<blockquote>
+<p>Borg programs are statically linked to reduce dependencies on their runtime environment, and structured as packages of binaries and data files, whose installation is orchestrated by Borg.</p>
+</blockquote>
+
+<p>Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So <strong>the role of Docker would be more like a Operating System builder</strong> (nice name found by <a href="https://medium.com/u/58ea5a89aaae" target="_blank">Quentin ADAM</a>).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a>, Or visite my <a href="https://pierrezemb.fr" target="_blank">website</a>.</p>
+]]></content>
+        </item>
+        
+    </channel>
 </rss>
