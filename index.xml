@@ -6,10 +6,20 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 08 Oct 2019 12:22:36 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bookkeeper 101</title>
+      <link>https://pierrezemb.fr/talks/bookkeeper-101/</link>
+      <pubDate>Tue, 08 Oct 2019 12:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/bookkeeper-101/</guid>
+      <description>Abstract Apache Bookkeeper is the main datastore used by Apache Pulsar. This Top-Level Apache project is defined as « A scalable, fault-tolerant, and low-latency storage service optimized for real-time workloads ». BookKeeper is suitable for a wide variety of use cases, from WAL to storage. In this talk, we will dive into Bookkeeper’s concepts, the public API, deployments and how it is used within Pulsar.
+Occurences  HUG France: Special Apache Pulsar Meetup  Ressources  slides  Photos and tweets Soon!</description>
+    </item>
     
     <item>
       <title>What can be gleaned about GFS successor codenamed Colossus?</title>
@@ -98,17 +108,6 @@ As developers, we are interacting oftenly with data, whenever handling it from a
       <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
       <description>HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
  &amp;ndash; Hbase architecture overview</description>
-    </item>
-    
-    <item>
-      <title>Rediscover the known data universe with NASA dataset</title>
-      <link>https://pierrezemb.fr/talks/nasa-datasets/</link>
-      <pubDate>Sat, 15 Dec 2018 19:11:11 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/nasa-datasets/</guid>
-      <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?
-It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.
-During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
     </item>
     
   </channel>
