@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/tags/diving-into/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/tags/hbase/</loc>
     <lastmod>2019-11-17T10:24:27+01:00</lastmod>
   </url>
@@ -19,16 +29,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/tags/</loc>
-    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/under-the-hood/</loc>
-    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/hbase-memstore/</loc>
     <lastmod>2019-11-17T10:24:27+01:00</lastmod>
   </url>
   

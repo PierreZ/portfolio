@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb ">
-<meta name="description" content="Under the hood is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&amp;rsquo;s MemStore.
+<meta name="description" content="Diving into is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&amp;rsquo;s MemStore.
 tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
  As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys." />
@@ -13,14 +13,14 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
 
-<link rel="canonical" href="https://pierrezemb.fr/posts/hbase-memstore/" />
+<link rel="canonical" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" />
 
 
 
 
     <title>
         
-            Under the hood: Hbase&#39;s MemStore :: Pierre Zemb 
+            Diving into Hbase&#39;s MemStore :: Pierre Zemb 
         
     </title>
 
@@ -36,8 +36,8 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 
 
 
-<meta itemprop="name" content="Under the hood: Hbase&#39;s MemStore">
-<meta itemprop="description" content="Under the hood is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
+<meta itemprop="name" content="Diving into Hbase&#39;s MemStore">
+<meta itemprop="description" content="Diving into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
 tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
  As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys.">
@@ -45,16 +45,16 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 
 <meta itemprop="datePublished" content="2019-11-17T10:24:27&#43;01:00" />
 <meta itemprop="dateModified" content="2019-11-17T10:24:27&#43;01:00" />
-<meta itemprop="wordCount" content="543">
+<meta itemprop="wordCount" content="542">
 
 
 
-<meta itemprop="keywords" content="hbase,under the hood," />
+<meta itemprop="keywords" content="hbase,diving into," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
-<meta name="twitter:title" content="Under the hood: Hbase&#39;s MemStore"/>
-<meta name="twitter:description" content="Under the hood is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
+<meta name="twitter:title" content="Diving into Hbase&#39;s MemStore"/>
+<meta name="twitter:description" content="Diving into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
 tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
  As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys."/>
@@ -129,7 +129,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 
         <article>
             <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/hbase-memstore/">Under the hood: Hbase&rsquo;s MemStore</a>
+                <a href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">Diving into Hbase&rsquo;s MemStore</a>
             </h1>
 
             
@@ -137,7 +137,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
             <div class="post-content">
                 
 
-<p><code>Under the hood</code> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.</p>
+<p><code>Diving into</code> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.</p>
 
 <hr />
 
@@ -227,10 +227,10 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 
         <div class="post-info">
                 <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/hbase">hbase</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/under-the-hood">under the hood</a></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/hbase">hbase</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/diving-into">diving into</a></span>
                 </p>
 
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>543 Words</p>
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>542 Words</p>
 
             <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-11-17 10:24 &#43;0100</p>
         </div>
