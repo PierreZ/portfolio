@@ -5,8 +5,105 @@
         <description>Recent content in Posts on Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator>
         <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-        <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
+        <lastBuildDate>Sun, 17 Nov 2019 10:24:27 +0100</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Under the hood: Hbase&#39;s MemStore</title>
+            <link>https://pierrezemb.fr/posts/hbase-memstore/</link>
+            <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/hbase-memstore/</guid>
+            <description>Under the hood is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&amp;rsquo;s MemStore.
+tl;dr: Hbase is using the ConcurrentSkipListMap.
+What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
+ As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys.</description>
+            <content type="html"><![CDATA[
+
+<p><code>Under the hood</code> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.</p>
+
+<hr />
+
+<p><code>tl;dr:</code> Hbase is using the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentSkipListMap.html" target="_blank">ConcurrentSkipListMap</a>.</p>
+
+<h1 id="what-is-the-memstore">What is the MemStore?</h1>
+
+<blockquote>
+<p>The <code>memtable</code> from the official <a href="https://research.google.com/archive/bigtable-osdi06.pdf" target="_blank">BigTable paper</a> is the equivalent of the <code>MemStore</code> in Hbase.</p>
+</blockquote>
+
+<p>As rows are <strong>sorted lexicographically</strong> in Hbase, when data comes in, you need to have some kind of a <strong>in-memory buffer</strong> to order those keys. This is where the <code>MemStore</code> comes in. It absorbs the recent write (or put in Hbase semantics) operations. All the rest are immutable files called <code>HFile</code> stored in HDFS. There is one <code>MemStore</code> per <code>column family</code>.</p>
+
+<p>Let&rsquo;s dig into how the MemStore internally works in Hbase 1.X.</p>
+
+<h1 id="hbase-1">Hbase 1</h1>
+
+<p>All extract of code for this section are taken from <a href="https://github.com/apache/hbase/tree/rel/1.4.9" target="_blank">rel/1.4.9</a> tag.</p>
+
+<h2 id="in-memory-storage">in-memory storage</h2>
+
+<p>The <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L35" target="_blank">MemStore interface</a> is giving us insight on how it is working internally.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * Write an update
+</span><span style="color:#75715e">   * @param cell
+</span><span style="color:#75715e">   * @return approximate size of the passed cell.
+</span><span style="color:#75715e">   */</span>
+<span style="color:#960050;background-color:#1e0010">long add</span>(<span style="color:#960050;background-color:#1e0010">final Cell </span>cell);</code></pre></div>
+<p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L68-L73" target="_blank">add function on the MemStore</a></p>
+
+<p>The implementation is hold by <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/DefaultMemStore.java" target="_blank">DefaultMemStore</a>. <code>add</code> is wrapped by several functions, but in the end, we are arriving here:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#960050;background-color:#1e0010">private boolean </span>addToCellSet(<span style="color:#960050;background-color:#1e0010">Cell e</span>) {
+    <span style="color:#960050;background-color:#1e0010">boolean b </span><span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">activeSection</span>.<span style="color:#a6e22e">getCellSkipListSet</span>().<span style="color:#a6e22e">add</span>(e);</code></pre></div>
+<p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/DefaultMemStore.java#L202-L213" target="_blank">addToCellSet on the DefaultMemStore</a></p>
+
+<p><a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSkipListSet.java#L33-L48" target="_blank">CellSkipListSet class</a> is built on top of <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentSkipListMap.html" target="_blank">ConcurrentSkipListMap</a>, which provide nice features:</p>
+
+<ul>
+<li>concurrency</li>
+<li>sorted elements</li>
+</ul>
+
+<h2 id="flush-on-hdfs">Flush on HDFS</h2>
+
+<p>As we seen above, the <code>MemStore</code> is supporting all the puts. When asked to flush, the current memstore is <strong>moved to snapshot and is cleared</strong>. Flushed file are called (<a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/io/hfile/HFile.java" target="_blank">HFiles</a>) and they are similar to <code>SSTables</code> introduced by the official <a href="https://research.google.com/archive/bigtable-osdi06.pdf" target="_blank">BigTable paper</a>. HFiles are flushed on the Hadoop Distributed File System called <code>HDFS</code>.</p>
+
+<blockquote>
+<p>If you want deeper insight about SSTables, I recommend reading <a href="https://github.com/facebook/rocksdb/wiki/Rocksdb-BlockBasedTable-Format" target="_blank">Table Format from the awesome RocksDB wiki</a></p>
+</blockquote>
+
+<h2 id="compaction">Compaction</h2>
+
+<p>Compaction are only run on HFiles. It means that <strong>if hot data is continuously updated, we are overusing memory due to duplicate entries per row per MemStore</strong>. Accordion tends to solve this problem through <em>in-memory compactions</em>. Let&rsquo;s have a look to Hbase 2.X!</p>
+
+<h1 id="hbase-2">Hbase 2</h1>
+
+<h2 id="storing-data">storing data</h2>
+
+<p><strong>All extract of code starting from here are taken from <a href="https://github.com/apache/hbase/tree/rel/2.1.2" target="_blank">rel/2.1.2</a> tag.</strong></p>
+
+<p>Does <code>MemStore</code> interface changed?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * Write an update
+</span><span style="color:#75715e">   * @param cell
+</span><span style="color:#75715e">   * @param memstoreSizing The delta in memstore size will be passed back via this.
+</span><span style="color:#75715e">   *        This will include both data size and heap overhead delta.
+</span><span style="color:#75715e">   */</span>
+  <span style="color:#960050;background-color:#1e0010">void add</span>(<span style="color:#960050;background-color:#1e0010">final Cell </span>cell, <span style="color:#960050;background-color:#1e0010">MemStoreSizing memstoreSizing</span>);</code></pre></div>
+<p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L67-L73" target="_blank">add function in MemStore interface</a></p>
+
+<p>The signature changed a bit, to include passing a object instead of returning a long. Moving on.</p>
+
+<p>The new structure implementing MemStore is called <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/AbstractMemStore.java#L42" target="_blank">AbstractMemStore</a>. Again, we have some layers, where AbstractMemStore is writing to a <code>MutableSegment</code>, which itsef is wrapping <code>Segment</code>. If you dig far enough, you will find that data are stored into the <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSet.java#L35-L51" target="_blank">CellSet class</a> which is also things built on top of <strong>ConcurrentSkipListMap</strong>!</p>
+
+<h2 id="in-memory-compactions">in-memory Compactions</h2>
+
+<p>Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: <a href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in" target="_blank">Accordion: HBase Breathes with In-Memory Compaction</a> and the <a href="https://issues.apache.org/jira/secure/attachment/12709471/HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf" target="_blank">document design</a> is also available.</p>
+
+<hr />
+
+<p><strong>Thank you</strong> for reading my post! feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+]]></content>
+        </item>
         
         <item>
             <title>What can be gleaned about GFS successor codenamed Colossus?</title>
@@ -391,7 +488,7 @@ moving from operators to another.</p>
 
 
 <p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state" target="_blank">keyed by </a>in Flink API) by users. Here&rsquo;s an example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">DataStream</span><span style="color:#f92672">&gt;</span> alertStream <span style="color:#f92672">=</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#960050;background-color:#1e0010">final DataStream</span><span style="color:#f92672">&gt;</span> alertStream <span style="color:#f92672">=</span>
     
       <span style="color:#75715e">// Partitioning Stream per AlertIdentifier
 </span><span style="color:#75715e"></span>      cleanedAlertsStream.<span style="color:#a6e22e">keyBy</span>(0)
@@ -1197,8 +1294,8 @@ In the last two years, there’s been a technology that became really hype.</des
 
 <p>That means that our Dockerfile now looks like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> scratch  </span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span><span style="color:#e6db74"> hello /  </span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span><span style="color:#e6db74"> [/hello]</span></code></pre></div>
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> hello /  <span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#960050;background-color:#1e0010">/hello</span>]</code></pre></div>
 <p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf" target="_blank"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
 
 <blockquote>

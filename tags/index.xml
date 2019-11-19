@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Pierre Zemb</title>
@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 27 Jan 2019 20:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 17 Nov 2019 10:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,90 @@
     <item>
       <title>hbase</title>
       <link>https://pierrezemb.fr/tags/hbase/</link>
-      <pubDate>Sun, 27 Jan 2019 20:24:27 +0100</pubDate>
+      <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/hbase/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>under the hood</title>
+      <link>https://pierrezemb.fr/tags/under-the-hood/</link>
+      <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/under-the-hood/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>colossus</title>
+      <link>https://pierrezemb.fr/tags/colossus/</link>
+      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/colossus/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>distributed-systems</title>
+      <link>https://pierrezemb.fr/tags/distributed-systems/</link>
+      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/distributed-systems/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hadoop</title>
+      <link>https://pierrezemb.fr/tags/hadoop/</link>
+      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/hadoop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>flink</title>
+      <link>https://pierrezemb.fr/tags/flink/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/flink/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sql</title>
+      <link>https://pierrezemb.fr/tags/sql/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/sql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>transaction</title>
+      <link>https://pierrezemb.fr/tags/transaction/</link>
+      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/transaction/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>analytics</title>
+      <link>https://pierrezemb.fr/tags/analytics/</link>
+      <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/analytics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>helloexoworld</title>
+      <link>https://pierrezemb.fr/tags/helloexoworld/</link>
+      <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/helloexoworld/</guid>
       <description></description>
     </item>
     

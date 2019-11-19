@@ -1,14 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://pierrezemb.fr/talks/bookkeeper-101/</loc>
-    <lastmod>2019-10-08T12:22:36+01:00</lastmod>
+    <loc>https://pierrezemb.fr/tags/hbase/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/under-the-hood/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/hbase-memstore/</loc>
+    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/bookkeeper-101/</loc>
     <lastmod>2019-10-08T12:22:36+01:00</lastmod>
   </url>
   
@@ -18,38 +43,23 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/</loc>
+    <loc>https://pierrezemb.fr/tags/colossus/</loc>
     <lastmod>2019-08-04T15:07:11+02:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/colossus/</loc>
+    <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
     <lastmod>2019-08-04T15:07:11+02:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/distributed-systems/</loc>
-    <lastmod>2019-08-04T15:07:11+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/categories/hadoop/</loc>
-    <lastmod>2019-08-04T15:07:11+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
+    <loc>https://pierrezemb.fr/tags/hadoop/</loc>
     <lastmod>2019-08-04T15:07:11+02:00</lastmod>
   </url>
   
   <url>
     <loc>https://pierrezemb.fr/posts/colossus-google/</loc>
     <lastmod>2019-08-04T15:07:11+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/categories/hbase/</loc>
-    <lastmod>2019-05-27T22:07:11+02:00</lastmod>
   </url>
   
   <url>
@@ -78,7 +88,7 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/flink/</loc>
+    <loc>https://pierrezemb.fr/tags/flink/</loc>
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
   </url>
   
@@ -88,7 +98,12 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/transaction/</loc>
+    <loc>https://pierrezemb.fr/tags/sql/</loc>
+    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/transaction/</loc>
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
   </url>
   
@@ -98,17 +113,7 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/tags/hbase/</loc>
-    <lastmod>2019-01-27T20:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://pierrezemb.fr/posts/hbase-data-model/</loc>
-    <lastmod>2019-01-27T20:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2019-01-27T20:24:27+01:00</lastmod>
   </url>
   
@@ -133,18 +138,28 @@
   </url>
   
   <url>
+    <loc>https://pierrezemb.fr/tags/analytics/</loc>
+    <lastmod>2019-01-10T22:16:31+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/helloexoworld/</loc>
+    <lastmod>2019-01-10T22:16:31+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</loc>
     <lastmod>2019-01-10T22:16:31+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/timeseries/</loc>
+    <loc>https://pierrezemb.fr/tags/timeseries/</loc>
     <lastmod>2019-01-10T22:16:31+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/analytics/</loc>
-    <lastmod>2019-01-10T21:57:19+01:00</lastmod>
+    <loc>https://pierrezemb.fr/tags/warp10/</loc>
+    <lastmod>2019-01-10T22:16:31+01:00</lastmod>
   </url>
   
   <url>
@@ -153,12 +168,7 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/warp10/</loc>
-    <lastmod>2019-01-10T21:57:19+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/categories/event/</loc>
+    <loc>https://pierrezemb.fr/tags/event/</loc>
     <lastmod>2019-01-10T21:57:01+01:00</lastmod>
   </url>
   
@@ -168,12 +178,12 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/programming/</loc>
+    <loc>https://pierrezemb.fr/tags/programming/</loc>
     <lastmod>2019-01-10T21:57:01+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/containers/</loc>
+    <loc>https://pierrezemb.fr/tags/containers/</loc>
     <lastmod>2019-01-10T21:56:50+01:00</lastmod>
   </url>
   
@@ -183,8 +193,12 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/categories/operating/</loc>
+    <loc>https://pierrezemb.fr/tags/operating/</loc>
     <lastmod>2019-01-10T21:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/categories/</loc>
   </url>
   
 </urlset>

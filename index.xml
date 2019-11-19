@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pierre Zemb</title>
@@ -6,10 +6,22 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 08 Oct 2019 12:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 17 Nov 2019 10:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Under the hood: Hbase&#39;s MemStore</title>
+      <link>https://pierrezemb.fr/posts/hbase-memstore/</link>
+      <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/hbase-memstore/</guid>
+      <description>Under the hood is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&amp;rsquo;s MemStore.
+tl;dr: Hbase is using the ConcurrentSkipListMap.
+What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
+ As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys.</description>
+    </item>
     
     <item>
       <title>Bookkeeper 101</title>
@@ -98,16 +110,6 @@ Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metr
       <guid>https://pierrezemb.fr/posts/acid-transactions/</guid>
       <description>Transaction? &amp;quot;Programming should be about transforming data&amp;quot;  &amp;mdash; Programming Elixir 1.3 by Dave Thomas
 As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity.</description>
-    </item>
-    
-    <item>
-      <title>Hbase Data Model</title>
-      <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
-      <pubDate>Sun, 27 Jan 2019 20:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
-      <description>HBase?  Apache HBase™ is a type of &amp;ldquo;NoSQL&amp;rdquo; database. &amp;ldquo;NoSQL&amp;rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;ldquo;Data Store&amp;rdquo; than &amp;ldquo;Data Base&amp;rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
- &amp;ndash; Hbase architecture overview</description>
     </item>
     
   </channel>
