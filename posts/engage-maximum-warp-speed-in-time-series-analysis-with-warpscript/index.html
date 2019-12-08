@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb">
 <meta name="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure." />
+ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure." />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -27,31 +27,31 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
     type="text/css">
 
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
 
 
-<link rel="stylesheet" href="/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
 
 
 
 
 <meta itemprop="name" content="Engage maximum warp speed in time series analysis with WarpScript">
 <meta itemprop="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.">
-
-
+ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.">
 <meta itemprop="datePublished" content="2017-10-08T20:43:05&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-10T21:57:19&#43;01:00" />
 <meta itemprop="wordCount" content="1403">
+<meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="timeseries,warp10,analytics," />
-<meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="timeseries,warp10,analytics," /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Engage maximum warp speed in time series analysis with WarpScript"/>
 <meta name="twitter:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure."/>
+ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure."/>
 
 
 
@@ -129,22 +129,13 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
             
 
             <div class="post-content">
-                
-
-<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" target="_blank">medium</a>.</p>
-
-<hr />
-
-<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png" alt="image" /></p>
-
-<p>We, at <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a>, are working everyday with <a href="http://www.warp10.io/" target="_blank">Warp10 Platform</a>, an open source Time Series database. You may not know it because it’s not as famous as <a href="https://prometheus.io/" target="_blank">Prometheus</a> or <a href="https://docs.influxdata.com/influxdb/" target="_blank">InfluxDB</a> but Warp10 is the most <strong>powerful and generic solution</strong> to store and analyze sensor data. It’s the <strong>core</strong> of Metrics, and many internal teams from OVH are using <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a> to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24/7/365, as you can see below:</p>
-
-<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png" alt="image" /></p>
-
+                <p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016">medium</a>.</p>
+<hr>
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png" alt="image"></p>
+<p>We, at <a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a>, are working everyday with <a href="http://www.warp10.io/">Warp10 Platform</a>, an open source Time Series database. You may not know it because it’s not as famous as <a href="https://prometheus.io/">Prometheus</a> or <a href="https://docs.influxdata.com/influxdb/">InfluxDB</a> but Warp10 is the most <strong>powerful and generic solution</strong> to store and analyze sensor data. It’s the <strong>core</strong> of Metrics, and many internal teams from OVH are using <a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a> to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24/7/365, as you can see below:</p>
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png" alt="image"></p>
 <p>Not only Warp10 allows us to reach an unbelievable scalability but it also comes with his own language called <strong>WarpScript</strong>, to manipulate and perform heavy time series analysis. Before digging into the need of a new language, let’s talk a bit about the need of time series analysis.### What is a time serie ?</p>
-
 <p><strong>A time serie, or sensor data, is simply a sequence of measurements over time</strong>. The definition is quite generic, because many things can be represented as a time serie:</p>
-
 <ul>
 <li>the evolution of the stock exchange or a bank account</li>
 <li>the number of calls on a webserver</li>
@@ -153,131 +144,83 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <li>the time a customer is taking to register on your website</li>
 <li>the heart rate of a person measured through a smartwatch</li>
 </ul>
-
 <p>From an historical point of view, time series appeared shortly after the creation of the Web, to <strong>help engineers monitor the networks</strong>. It quickly expands to also monitors servers. With the right monitoring system, you can have <strong>insights</strong> and <strong>KPIs</strong> about your service:</p>
-
 <p><strong>Analysis of long-term trend</strong></p>
-
 <ul>
 <li>How fast is my database growing?</li>
 <li>At what speed my number of active user accounts grows?</li>
 </ul>
-
 <p><strong>The comparison over time</strong></p>
-
 <ul>
 <li>My queries run faster with the new version of my library? Is my site slower than last week?</li>
 </ul>
-
 <p><strong>Alerts</strong></p>
-
 <ul>
 <li>Trigger alerts based on advanced queries</li>
 </ul>
-
 <p><strong>Displaying data through dashboards</strong></p>
-
 <ul>
 <li>Dashboards help answer basic questions on the service, and in particular the 4 indispensable metrics: <strong>latency, traffic, errors and service saturation</strong></li>
 </ul>
-
 <p><strong>The possibility of designing retrospective</strong></p>
-
 <ul>
 <li>Our latency is doubling, what’s going on?### Time series are complicated to handle</li>
 </ul>
-
 <p>Storage, retrieval and analysis of time series cannot be done through standard relational databases. Generally, highly scalable databases are used to support volumetry. For example, the <strong>300,000 Airbus A380 sensors on board can generate an average of 16 TB of data per flight</strong>. On a smaller scale, <strong>a single sensor that measures every second generates 31.5 million values per year</strong>. Handling time series at scale is difficult, because you’re running into advanced distributed systems issues, such as:</p>
-
 <ul>
-<li><strong>ingestion scalability</strong>, i.e. how to absorb all the datapoints <sup>24</sup>&frasl;<sub>7</sub></li>
+<li><strong>ingestion scalability</strong>, i.e. how to absorb all the datapoints 24⁄7</li>
 <li><strong>query scalability</strong>, i.e. how to query in a raisonnable amount of time</li>
 <li><strong>delete capability</strong>, i.e. how to handle deletes without stopping ingestion and query</li>
 </ul>
-
-<p>Frustration with existing open source monitoring tools like <strong>Nagios</strong> and <strong>Ganglia</strong> is why the giants created their own tools — <strong>Google has Borgmon</strong> and <strong>Facebook has</strong> <a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf" target="_blank"><strong>Gorilla</strong></a>, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the <strong>former Googlers who decided to rewrite Borgmon</strong> outside Google.### Why another time series database?</p>
-
+<p>Frustration with existing open source monitoring tools like <strong>Nagios</strong> and <strong>Ganglia</strong> is why the giants created their own tools — <strong>Google has Borgmon</strong> and <strong>Facebook has</strong> <a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf"><strong>Gorilla</strong></a>, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the <strong>former Googlers who decided to rewrite Borgmon</strong> outside Google.### Why another time series database?</p>
 <p>Now the time series ecosystem is bigger than ever, here’s a short list of what you can find to handle time series data:</p>
-
 <ul>
 <li>InfluxDB.</li>
 <li>Prometheus.</li>
 <li>Riak TS.</li>
 <li>OpenTSDB.</li>
 </ul>
-
 <p>Then there’s <strong>Warp10</strong>. The difference is quite simple, Warp10 is <strong>a platform</strong> whereas all the time series listed above are <strong>stores</strong>. This is game changing, for multiples reasons.</p>
-
-<h4 id="security-first-design">Security-first design</h4>
-
-<p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html" target="_blank">Macaroons</a>.</p>
-
+<h4 id="securityfirst-design">Security-first design</h4>
+<p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html">Macaroons</a>.</p>
 <h4 id="high-level-analysis-capabilities">High level analysis capabilities</h4>
-
 <p>Using classical time series database, <strong>high level analysis must be done elsewhere</strong>, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just <strong>submit your script</strong> and <em>voilà</em>!</p>
-
-<h4 id="server-side-calculation">Server-side calculation</h4>
-
+<h4 id="serverside-calculation">Server-side calculation</h4>
 <p>Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit <strong>limitations</strong> on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be <strong>scalable</strong>, analysis must be done <strong>server-side</strong>.### Meet WarpScript</p>
-
-<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png" alt="image" /></p>
-
-<p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language" target="_blank"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
-
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png" alt="image"></p>
+<p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
 <p>Yes, you’ll be able to run that <strong>awesome query that is fetching millions of datapoints</strong> and only get the result. You need all the data, or just the timestamp of a weird datapoint? <strong>The result of the script is simply what’s left on the stack</strong>.</p>
-
 <h4 id="dataflow-language">Dataflow language</h4>
-
 <p>WarpScript is really easy to code, <strong>because of the stack design</strong>. You’ll be <strong>pushing elements into the stack and consume them</strong>. Coding became logical. First you need to <strong>fetch</strong> your points, then <strong>applying some downsampling</strong> and then <strong>aggregate</strong>. These 3 steps are translated into <strong>3 lines of WarpScript</strong>:</p>
-
 <ul>
 <li><strong>FETCH</strong> will push the needed Geo Time Series into the stack</li>
 <li><strong>BUCKETIZE</strong> will take the Geo Time Series from the stack, apply some downsampling, and push the result into the stack</li>
 <li><strong>REDUCE</strong> will take the Geo Time Series from the stack, aggregate them, and push them back into the stack</li>
 </ul>
-
 <p>Debugguing as never be that easy, just use the keyword <strong>STOP</strong> to see the stack at any moment.</p>
-
 <h4 id="rich-programming-capabilities">Rich programming capabilities</h4>
-
 <p>WarpScript is coming with more than <strong>800 functions</strong>, ready to use. Things like <strong>Patterns and outliers detections, rolling average, FFT, IDWT</strong> are built-in.</p>
-
-<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities</h4>
-
+<h4 id="geofencing-capabilities">Geo-Fencing capabilities</h4>
 <p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
-
 <h4 id="unified-language">Unified Language</h4>
-
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
-
 <h3 id="geez-give-me-an-example">Geez, give me an example!</h3>
-
 <p>Here’s an example of a simple but advanced query:</p>
-
 <pre><code>// Fetching all values  
 [ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
 [ SWAP bucketizer.max	0 1 m 0 ] BUCKETIZE // Round to nearest long  
 [ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by 'buildingID'  
 [ SWAP [ 'buildingID' ] reducer.max ] REDUCE
-</code></pre>
-
-<p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
-
+</code></pre><p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
 <h3 id="what-about-a-more-complex-example">What about a more complex example?</h3>
-
 <p>You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:</p>
-
-<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png" alt="image" /></p>
-
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png" alt="image"></p>
 <p>I want to <strong>detect the green part</strong> of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a <strong>2 functions calls</strong>:</p>
-
 <ul>
 <li><strong>PATTERNS</strong> is generating a list of motifs.</li>
 <li><strong>PATTERNDETECTION</strong> is running the list of motifs on all the time series you have.</li>
 </ul>
-
 <p>Here’s the code</p>
-
 <pre><code>// defining some variables  
 32 'windowSize' STORE  
 8 'patternLength' STORE  
@@ -291,20 +234,15 @@ VALUES 'patterns' STORE
 // Running the patterns through a list of GTS (Geo Time Series)  
 $list.of.gts $patterns   
 $windowSize $patternLength $quantizationScale  PATTERNDETECTION
-</code></pre>
-
-<p>Here’s the result:</p>
-
-<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png" alt="image" /></p>
-
-<p>As you can see, <strong>PATTERNDETECTION</strong> is working even with the increasing amplitude! You can discover this example by yourself by using <a href="https://home.cityzendata.net/quantum/preview/#/plot/TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU+IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=/eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=" target="_blank">Quantum</a>, the official web-based IDE for WarpScript. <strong>You need to switch X-axis scale to Timestamp in order to see the courbe</strong>.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:</p>
-
+</code></pre><p>Here’s the result:</p>
+<p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png" alt="image"></p>
+<p>As you can see, <strong>PATTERNDETECTION</strong> is working even with the increasing amplitude! You can discover this example by yourself by using <a href="https://home.cityzendata.net/quantum/preview/#/plot/TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU+IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=/eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=">Quantum</a>, the official web-based IDE for WarpScript. <strong>You need to switch X-axis scale to Timestamp in order to see the courbe</strong>.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:</p>
 <ul>
-<li><a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank">Metrics Data Platform</a>, our product</li>
-<li><a href="http://warp10.io/" target="_blank">Warp10 official documentation</a></li>
-<li><a href="http://tour.warp10.io/" target="_blank">Warp10 tour</a>, similar to “The Go Tour”</li>
-<li><a href="https://www.youtube.com/watch?v=mNkfBR9KofY" target="_blank">Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont</a></li>
-<li><a href="https://groups.google.com/forum/#!forum/warp10-users" target="_blank">Warp10 Google Groups</a></li>
+<li><a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a>, our product</li>
+<li><a href="http://warp10.io/">Warp10 official documentation</a></li>
+<li><a href="http://tour.warp10.io/">Warp10 tour</a>, similar to “The Go Tour”</li>
+<li><a href="https://www.youtube.com/watch?v=mNkfBR9KofY">Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont</a></li>
+<li><a href="https://groups.google.com/forum/#!forum/warp10-users">Warp10 Google Groups</a></li>
 </ul>
 
             </div>
@@ -384,7 +322,7 @@ $windowSize $patternLength $quantizationScale  PATTERNDETECTION
 
 
 
-<script type="text/javascript" src="/bundle.min.2d5469329143160ae2456a69c3c76dc2d0a3b212b46afe291a51bd68650ed6f8697e001dab54f1c272c77ce08092a8c55e5bb4314e0ee334aab4b927ec896638.js" integrity="sha512-LVRpMpFDFgriRWppw8dtwtCjshK0av4pGlG9aGUO1vhpfgAdq1TxwnLHfOCAkqjFXlu0MU4O4zSqtLkn7IlmOA=="></script>
+<script type="text/javascript" src="/bundle.min.a8d89ddfbe4e22ccb95d2102bca57f7cfcd8be8494b55add5156c9eb77d32d016e00148274f59dc1f9264496e774345f4654c2a8f4a8688c0fa1360c3914f46c.js" integrity="sha512-qNid375OIsy5XSECvKV/fPzYvoSUtVrdUVbJ63fTLQFuABSCdPWdwfkmRJbndDRfRlTCqPSoaIwPoTYMORT0bA=="></script>
 
 
 

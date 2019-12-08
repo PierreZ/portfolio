@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 17 Nov 2019 10:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 08 Dec 2019 15:00:00 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,18 @@
     <item>
       <title>diving into</title>
       <link>https://pierrezemb.fr/tags/diving-into/</link>
-      <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
+      <pubDate>Sun, 08 Dec 2019 15:00:00 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/diving-into/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kafka</title>
+      <link>https://pierrezemb.fr/tags/kafka/</link>
+      <pubDate>Sun, 08 Dec 2019 15:00:00 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/kafka/</guid>
       <description></description>
     </item>
     
@@ -89,15 +98,6 @@
       <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
       
       <guid>https://pierrezemb.fr/tags/analytics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>helloexoworld</title>
-      <link>https://pierrezemb.fr/tags/helloexoworld/</link>
-      <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/helloexoworld/</guid>
       <description></description>
     </item>
     

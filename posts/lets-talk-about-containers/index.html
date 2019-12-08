@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb">
 <meta name="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
+ English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype." />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
 <meta name="robots" content="noodp" />
@@ -28,32 +28,32 @@ In the last two years, there’s been a technology that became really hype." />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
     type="text/css">
 
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
 
 
-<link rel="stylesheet" href="/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
 
 
 
 
 <meta itemprop="name" content="Let’s talk about containers">
 <meta itemprop="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
+ English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype.">
-
-
 <meta itemprop="datePublished" content="2016-01-04T18:52:19&#43;00:00" />
 <meta itemprop="dateModified" content="2019-01-10T21:56:50&#43;01:00" />
-<meta itemprop="wordCount" content="1213">
+<meta itemprop="wordCount" content="1214">
+<meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="operating,containers," />
-<meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="operating,containers," /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Let’s talk about containers"/>
 <meta name="twitter:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
+ English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype."/>
 
 
@@ -132,82 +132,50 @@ In the last two years, there’s been a technology that became really hype."/>
             
 
             <div class="post-content">
-                
-
-<p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@pierrez/let-s-talk-about-containers-1f11ee68c470" target="_blank">medium</a>.</p>
-
-<hr />
-
+                <p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@pierrez/let-s-talk-about-containers-1f11ee68c470">medium</a>.</p>
+<hr>
 <p><em>English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)</em></p>
-
 <p>In the last two years, there’s been a technology that became really hype. It was the graal for easy deployments, easy applications management. Let’s talk about containers.</p>
-
 <h3 id="write-once-run-everywhere">“Write once, run everywhere”</h3>
-
-<p><img src="/posts/lets-talk-about-containers/images/1.jpeg" alt="image" /></p>
-
-<p>When I first heard about containers, I was working as a part-time internship for a french bank as a developer in a Ops team. I was working around <a href="https://hadoop.apache.org/" target="_blank">Hadoop</a> and monitoring systems, and I was wondering “How should I properly deploy my work?”. It was a java app, running into the official Java version provided by my company. <strong>I couldn’t just give it to my colleagues</strong> <strong>and leave them do some vaudou stuff because they are the Ops team</strong>. I remembered saying to myself ”fortunately, all the features that I need are in this official java version, I don’t need the latest JRE. I just need to bundle everything into a jar and done”. But what if it wasn’t? What if I had to explain to my colleagues that I need the new JRE for a really small app written by an intern? Or I needed another non-standard library during runtime?</p>
-
+<p><img src="/posts/lets-talk-about-containers/images/1.jpeg" alt="image"></p>
+<p>When I first heard about containers, I was working as a part-time internship for a french bank as a developer in a Ops team. I was working around <a href="https://hadoop.apache.org/">Hadoop</a> and monitoring systems, and I was wondering “How should I properly deploy my work?”. It was a java app, running into the official Java version provided by my company. <strong>I couldn’t just give it to my colleagues</strong> <strong>and leave them do some vaudou stuff because they are the Ops team</strong>. I remembered saying to myself ”fortunately, all the features that I need are in this official java version, I don’t need the latest JRE. I just need to bundle everything into a jar and done”. But what if it wasn’t? What if I had to explain to my colleagues that I need the new JRE for a really small app written by an intern? Or I needed another non-standard library during runtime?</p>
 <p>The important thing here at the time was that, at any time, <strong>I could deploy it on another server that had Java, because everything is bundled into that big fat jar file</strong>. After all, “<strong>write once, run everywhere</strong>” was the slogan created by Sun Microsystems to illustrate the cross-platform benefits of the Java language. That is a real commodity, and this is the first thing that strike me with Docker.</p>
-
 <h3 id="docker-hype">Docker hype</h3>
-
 <p>I will always remember my chat with my colleagues about it. I was like this:</p>
-
-<p><img src="/posts/lets-talk-about-containers/images/2.jpeg" alt="image" /></p>
-
+<p><img src="/posts/lets-talk-about-containers/images/2.jpeg" alt="image"></p>
 <h2 id="and-they-were-more-like">And they were more like:</h2>
-
-<p><img src="/posts/lets-talk-about-containers/images/3.jpeg" alt="image" /></p>
-
+<p><img src="/posts/lets-talk-about-containers/images/3.jpeg" alt="image"></p>
 <p>Ops knew about containers since the dawn of time, so why such hype now? I think that “write once, run everywhere” is the true slogan of Docker, because you can run docker containers in any environments that has Docker. <strong>You want to try the latest datastore/SaaS app that you found on Hacker News or Reddit? There’s a Dockerfile for that</strong>. And that is super cool. So everyone started to get interested in Docker, myself included. But the real benefit is that many huge companies like Google admits that containers are the way they are deploying apps. <strong>They don’t care what type of applications they are deploying or where it’s running, it’s just running somewhere.</strong> That’s all that matters. By unifying the packages, you can automatize and deliver whatever you want somewhere. Do you really care if it’s on a specific machine? No you don’t. That’s a powerful way to think infrastructure more like a bunch of compute or storage power, and not individual machines.</p>
-
-<h3 id="let-s-create-a-container">Let’s create a container!</h3>
-
-<p>That’s not a secret: I love <a href="https://golang.org/" target="_blank">Go</a>. It’s in my opinion a very nice programming language <a href="https://medium.com/@PierreZ/why-you-really-should-give-golang-a-try-6b577092d725" target="_blank">that you should really try</a>. So let’s say that I’m creating a go app, and then ship it with Docker. So I’ll use the officiel Docker image right? <strong>Then I end up with a 700MB container to ship a 10MB app</strong>… I thought that containers were supposed to be small… Why? because it’s based on a full OS, with go compiler and so on. To run a single binary, there’s no need to have the whole Go compiler stack.</p>
-
+<h3 id="lets-create-a-container">Let’s create a container!</h3>
+<p>That’s not a secret: I love <a href="https://golang.org/">Go</a>. It’s in my opinion a very nice programming language <a href="https://medium.com/@PierreZ/why-you-really-should-give-golang-a-try-6b577092d725">that you should really try</a>. So let’s say that I’m creating a go app, and then ship it with Docker. So I’ll use the officiel Docker image right? <strong>Then I end up with a 700MB container to ship a 10MB app</strong>… I thought that containers were supposed to be small… Why? because it’s based on a full OS, with go compiler and so on. To run a single binary, there’s no need to have the whole Go compiler stack.</p>
 <p>That was really bothering me. At this point, if the container is holding everything, why not use a VM? Why do we need to bundle Ubuntu into the container? From a outside point-of-view, running a container in interactive mode is much like a virtual machines right? <strong>At the time of writing, Docker’s official image for Ubuntu was pulled more than 36,000,000 time</strong>. That’s huge! And disturbing. Do you really need for example “ls, chmod, chown, sudo” into a container?</p>
-
-<p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;amp;loop=false#slide=id.ge614ec624_2_70" target="_blank">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability" target="_blank">Ghost</a>, and 80% to <a href="http://heartbleed.com/" target="_blank">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>
-
+<p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;loop=false#slide=id.ge614ec624_2_70">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability">Ghost</a>, and 80% to <a href="http://heartbleed.com/">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>
 <h3 id="so-what-should-i-put-into-my-container">So what should I put into my container?</h3>
-
-<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine" target="_blank">docker-alpine</a> or <a href="https://github.com/phusion/baseimage-docker" target="_blank">baseimage-docker</a>which are cool, but in fact, the answer was on Docker’s website… Here’s the <a href="https://www.docker.com/what-docker" target="_blank">official sentence</a>that explains the difference between containers and virtual machines:</p>
-
+<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine">docker-alpine</a> or [baseimage-docker] (<a href="https://github.com/phusion/baseimage-docker)which">https://github.com/phusion/baseimage-docker)which</a> are cool, but in fact, the answer was on Docker’s website… Here’s the [official sentence] (<a href="https://www.docker.com/what-docker)that">https://www.docker.com/what-docker)that</a> explains the difference between containers and virtual machines:</p>
 <blockquote>
 <p>“Containers include the application and all of its dependencies, but share the kernel with other containers.”</p>
 </blockquote>
-
 <p>This specific sentence triggers something in my head. When you execute a program on your UNIX system, the system creates a special environment for that program. This environment contains everything needed for the system to run the program as if no other program were running on the system. It’s exactly the same! <strong>So a container should be abstract not as a Virtual machines, but as a UNIX process!</strong></p>
-
 <ul>
 <li>application + dependencies represent the image</li>
 <li>Runtime environment like token/password will be passed through env vars for example</li>
 </ul>
-
 <h3 id="static-compilation">Static compilation</h3>
-
-<p><img src="/posts/lets-talk-about-containers/images/4.png" alt="image" /></p>
-
+<p><img src="/posts/lets-talk-about-containers/images/4.png" alt="image"></p>
 <p>Meet Go</p>
-
 <p>Here’s an interesting fact: Go, the open-source programming language pushed by Google <strong>supports statically apps</strong>, what a coincidence! That means that this statically app will be directly talking to the kernel. <strong>Our Docker image can be empty</strong>, except for the binary and needed files like configuration. There’s a strange image on Docker that you might have seen, which is called “scratch”:</p>
-
 <blockquote>
 <p>You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.</p>
 </blockquote>
-
 <p>That means that our Dockerfile now looks like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> scratch  </span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> hello /  <span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#960050;background-color:#1e0010">/hello</span>]</code></pre></div>
-<p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf" target="_blank"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
-
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">o</span>]<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
 <blockquote>
 <p>Borg programs are statically linked to reduce dependencies on their runtime environment, and structured as packages of binaries and data files, whose installation is orchestrated by Borg.</p>
 </blockquote>
-
-<p>Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So <strong>the role of Docker would be more like a Operating System builder</strong> (nice name found by <a href="https://medium.com/u/58ea5a89aaae" target="_blank">Quentin ADAM</a>).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a>, Or visite my <a href="https://pierrezemb.fr" target="_blank">website</a>.</p>
+<p>Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So <strong>the role of Docker would be more like a Operating System builder</strong> (nice name found by <a href="https://medium.com/u/58ea5a89aaae">Quentin ADAM</a>).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ">Twitter</a>, Or visite my <a href="https://pierrezemb.fr">website</a>.</p>
 
             </div>
         </article>
@@ -219,7 +187,7 @@ In the last two years, there’s been a technology that became really hype."/>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/operating">operating</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/containers">containers</a></span>
                 </p>
 
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1213 Words</p>
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1214 Words</p>
 
             <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2016-01-04 19:52 &#43;0100</p>
         </div>
@@ -279,7 +247,7 @@ In the last two years, there’s been a technology that became really hype."/>
 
 
 
-<script type="text/javascript" src="/bundle.min.2d5469329143160ae2456a69c3c76dc2d0a3b212b46afe291a51bd68650ed6f8697e001dab54f1c272c77ce08092a8c55e5bb4314e0ee334aab4b927ec896638.js" integrity="sha512-LVRpMpFDFgriRWppw8dtwtCjshK0av4pGlG9aGUO1vhpfgAdq1TxwnLHfOCAkqjFXlu0MU4O4zSqtLkn7IlmOA=="></script>
+<script type="text/javascript" src="/bundle.min.a8d89ddfbe4e22ccb95d2102bca57f7cfcd8be8494b55add5156c9eb77d32d016e00148274f59dc1f9264496e774345f4654c2a8f4a8688c0fa1360c3914f46c.js" integrity="sha512-qNid375OIsy5XSECvKV/fPzYvoSUtVrdUVbJ63fTLQFuABSCdPWdwfkmRJbndDRfRlTCqPSoaIwPoTYMORT0bA=="></script>
 
 
 

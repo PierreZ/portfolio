@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb ">
-<meta name="description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
-Time To Live (TTL) Let&amp;rsquo;s read the doc first!
+<meta name="description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&#39;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&#39;s dive into the feature!
+Time To Live (TTL) Let&#39;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)" />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
@@ -29,33 +29,33 @@ Time To Live (TTL) Let&amp;rsquo;s read the doc first!
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
     type="text/css">
 
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
 
 
-<link rel="stylesheet" href="/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
 
 
 
 
 <meta itemprop="name" content="Playing with TTL in HBase">
-<meta itemprop="description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&rsquo;s dive into the feature!
-Time To Live (TTL) Let&rsquo;s read the doc first!
+<meta itemprop="description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&#39;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&#39;s dive into the feature!
+Time To Live (TTL) Let&#39;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)">
-
-
 <meta itemprop="datePublished" content="2019-05-27T22:07:11&#43;02:00" />
 <meta itemprop="dateModified" content="2019-05-27T22:07:11&#43;02:00" />
-<meta itemprop="wordCount" content="660">
+<meta itemprop="wordCount" content="626">
+<meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="distributed-systems,hbase," />
-<meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="distributed-systems,hbase," /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Playing with TTL in HBase"/>
-<meta name="twitter:description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&rsquo;s dive into the feature!
-Time To Live (TTL) Let&rsquo;s read the doc first!
+<meta name="twitter:description" content="Among all features provided by HBase, there is one that is pretty handy to deal with your data&#39;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&#39;s dive into the feature!
+Time To Live (TTL) Let&#39;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)"/>
 
@@ -120,7 +120,7 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
     <main class="post">
 
         <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 minutes
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>3 minutes
 
             
 
@@ -135,91 +135,70 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
             
 
             <div class="post-content">
-                
-
-<header class="row text-center header">
-   <img src="/posts/hbase-data-model/images/hbase.jpg" alt="HBase Image" class="text-center"> 
-</header>
-
-<p>Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let&rsquo;s dive into the feature!</p>
-
+                <!-- raw HTML omitted -->
+<p>Among all features provided by HBase, there is one that is pretty handy to deal with your data's lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let's dive into the feature!</p>
 <h1 id="time-to-live-ttl">Time To Live (TTL)</h1>
-
-<p>Let&rsquo;s read the doc first!</p>
-
+<p>Let's read the doc first!</p>
 <blockquote>
 <p>ColumnFamilies can set a TTL length in seconds, and <strong>HBase will automatically delete rows once the expiration time is reached</strong>.</p>
 </blockquote>
-
-<p><a href="https://hbase.apache.org/book.html#ttl" target="_blank">HBase Book: Time To Live (TTL)</a></p>
-
-<p>Let&rsquo;s play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart" target="_blank">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
+<p><a href="https://hbase.apache.org/book.html#ttl">HBase Book: Time To Live (TTL)</a></p>
+<p>Let's play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">./bin/hbase shell
 
-hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:001:0&gt; create <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;NAME&#39;</span> <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;cf1&#39;</span>,<span style="color:#e6db74">&#39;TTL&#39;</span> <span style="color:#f92672">=</span>&gt; <span style="color:#ae81ff">30</span><span style="color:#f92672">}</span> <span style="color:#75715e"># 30 sec</span></code></pre></div>
-<p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:002:0&gt; put <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>, <span style="color:#e6db74">&#39;TTL Demo&#39;</span></code></pre></div>
-<p>And you can <code>get</code> it with:</p>
+hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:001:0&gt; create <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;NAME&#39;</span> <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;cf1&#39;</span>,<span style="color:#e6db74">&#39;TTL&#39;</span> <span style="color:#f92672">=</span>&gt; 30<span style="color:#f92672">}</span> <span style="color:#75715e"># 30 sec</span>
+</code></pre></div><p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:002:0&gt; put <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>, <span style="color:#e6db74">&#39;TTL Demo&#39;</span>
+</code></pre></div><p>And you can <code>get</code> it with:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
- cf1:desc                          timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
-<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.0080 seconds</code></pre></div>
-<p>Here&rsquo;s our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
+ cf1:desc                          timestamp<span style="color:#f92672">=</span>1558366581134, value<span style="color:#f92672">=</span>TTL Demo
+<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in 0.0080 seconds
+</code></pre></div><p>Here's our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:004:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
-<span style="color:#ae81ff">0</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.0220 seconds</code></pre></div>
-<p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
+<span style="color:#ae81ff">0</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in 0.0220 seconds
+</code></pre></div><p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:002:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span>RAW <span style="color:#f92672">=</span>&gt; true<span style="color:#f92672">}</span>
 ROW                                COLUMN+CELL
- row123                            column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
-<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in <span style="color:#ae81ff">0</span>.3280 seconds</code></pre></div>
-<p>It will be removed only when a <strong>major-compaction</strong> will occur. As we are playing, we can:</p>
-
+ row123                            column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span>1558366581134, value<span style="color:#f92672">=</span>TTL Demo
+<span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in 0.3280 seconds
+</code></pre></div><p>It will be removed only when a <strong>major-compaction</strong> will occur. As we are playing, we can:</p>
 <ul>
 <li>force the memstore to be <strong>flushed as HFiles</strong></li>
 <li>force the <strong>compaction</strong>:</li>
 </ul>
-
-<div class="bs-callout bs-callout-info">
-You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion</a></b>, the new feature in HBase 2. If you are playing with HBase 2, you can enable it by following <a target="_blank" href="https://hbase.apache.org/book.html#inmemory_compaction">this link</a> and run <b>compactions directly in the MemStores.</b>
-</div>
+<!-- raw HTML omitted -->
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:014:0&gt; flush <span style="color:#e6db74">&#39;test_table&#39;</span>
-Took <span style="color:#ae81ff">0</span>.4456 seconds    
+Took 0.4456 seconds    
 hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:015:0&gt; compact <span style="color:#e6db74">&#39;test_table&#39;</span>
-Took <span style="color:#ae81ff">0</span>.0468 seconds
+Took 0.0468 seconds
 <span style="color:#75715e"># wait a bit</span>
 hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:016:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>, <span style="color:#f92672">{</span>RAW <span style="color:#f92672">=</span>&gt; true<span style="color:#f92672">}</span>
 ROW                            COLUMN+CELL
 <span style="color:#ae81ff">0</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>
-Took <span style="color:#ae81ff">0</span>.0060 seconds</code></pre></div>
-<h1 id="how-does-it-works">How does it works?</h1>
-
+Took 0.0060 seconds
+</code></pre></div><h1 id="how-does-it-works">How does it works?</h1>
 <p>As always, the truth is held by the documentation:</p>
-
 <blockquote>
 <p>A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.</p>
-
+</blockquote>
+<blockquote>
 <p>While rows and column keys are expressed as bytes, <strong>the version is specified using a long integer</strong>. Typically <strong>this long contains time instances</strong> such as those returned by java.util.Date.getTime() or <strong>System.currentTimeMillis()</strong>,</p>
 </blockquote>
-
-<p><a href="https://hbase.apache.org/book.html#versions" target="_blank">HBase Book: Versions</a></p>
-
+<p><a href="https://hbase.apache.org/book.html#versions">HBase Book: Versions</a></p>
 <p>You may have seen it during our scan earlier, there is a <strong>timestamp associated</strong> with the version of the cell:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
- cf1:desc                          timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558366581134</span>, value<span style="color:#f92672">=</span>TTL Demo
- <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^</span> </code></pre></div>
-<p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
-
+ cf1:desc                          timestamp<span style="color:#f92672">=</span>1558366581134, value<span style="color:#f92672">=</span>TTL Demo
+ <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^</span> 
+</code></pre></div><p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
 <p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
-
-<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example" target="_blank">below:</a></p>
-
+<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
 <blockquote>
 <p><em>Caution:</em> the version timestamp is used internally by HBase for things like <strong>time-to-live calculations</strong>. It’s usually best to avoid setting this timestamp yourself. Prefer using a separate timestamp attribute of the row, or have the timestamp as a part of the row key, or both.</p>
 </blockquote>
-
-<p>Let&rsquo;s try it:</p>
+<p>Let's try it:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">date +%s -d <span style="color:#e6db74">&#34;+2 min&#34;</span>
 <span style="color:#ae81ff">1558472441</span>  <span style="color:#75715e"># don&#39;t forget to add 3 zeroes as the time need to be in millisecond!</span>
 
@@ -227,18 +206,15 @@ COLUMN                             CELL
 hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:001:0&gt; put <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row1234&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>, <span style="color:#e6db74">&#39;timestamp Demo&#39;</span>, <span style="color:#ae81ff">1558472441000</span>  
 hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:044:0&gt; scan <span style="color:#e6db74">&#39;test_table&#39;</span>
 ROW                            COLUMN+CELL
- row1234                       column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span><span style="color:#ae81ff">1558473315</span>, value<span style="color:#f92672">=</span>timestamp Demo
+ row1234                       column<span style="color:#f92672">=</span>cf1:desc, timestamp<span style="color:#f92672">=</span>1558473315, value<span style="color:#f92672">=</span>timestamp Demo
 <span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>
-Took <span style="color:#ae81ff">0</span>.0031 seconds</code></pre></div>
-<p>Notice that we are using a timestamp at the end of the <code>put</code> method? This will <strong>add the desired timestamp to the version</strong>. Which means that <strong>your application can control when your version will be removed, even with a TTL on your column-qualifier.</strong> You just need to compute a timestamp like this:</p>
-
+Took 0.0031 seconds
+</code></pre></div><p>Notice that we are using a timestamp at the end of the <code>put</code> method? This will <strong>add the desired timestamp to the version</strong>. Which means that <strong>your application can control when your version will be removed, even with a TTL on your column-qualifier.</strong> You just need to compute a timestamp like this:</p>
 <blockquote>
 <p><code>ts = now - ttlCF + desiredTTL</code>.</p>
 </blockquote>
-
-<hr />
-
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
             </div>
         </article>
@@ -250,7 +226,7 @@ Took <span style="color:#ae81ff">0</span>.0031 seconds</code></pre></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/distributed-systems">distributed-systems</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/hbase">hbase</a></span>
                 </p>
 
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>660 Words</p>
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>626 Words</p>
 
             <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-05-27 22:07 &#43;0200</p>
         </div>
@@ -317,7 +293,7 @@ Took <span style="color:#ae81ff">0</span>.0031 seconds</code></pre></div>
 
 
 
-<script type="text/javascript" src="/bundle.min.2d5469329143160ae2456a69c3c76dc2d0a3b212b46afe291a51bd68650ed6f8697e001dab54f1c272c77ce08092a8c55e5bb4314e0ee334aab4b927ec896638.js" integrity="sha512-LVRpMpFDFgriRWppw8dtwtCjshK0av4pGlG9aGUO1vhpfgAdq1TxwnLHfOCAkqjFXlu0MU4O4zSqtLkn7IlmOA=="></script>
+<script type="text/javascript" src="/bundle.min.a8d89ddfbe4e22ccb95d2102bca57f7cfcd8be8494b55add5156c9eb77d32d016e00148274f59dc1f9264496e774345f4654c2a8f4a8688c0fa1360c3914f46c.js" integrity="sha512-qNid375OIsy5XSECvKV/fPzYvoSUtVrdUVbJ63fTLQFuABSCdPWdwfkmRJbndDRfRlTCqPSoaIwPoTYMORT0bA=="></script>
 
 
 

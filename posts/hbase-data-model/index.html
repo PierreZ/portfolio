@@ -27,9 +27,11 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
     type="text/css">
 
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
 
 
-<link rel="stylesheet" href="/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
 
 
 
@@ -37,16 +39,14 @@
 <meta itemprop="name" content="Hbase Data Model">
 <meta itemprop="description" content="HBase?  Apache HBase™ is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
  &ndash; Hbase architecture overview">
-
-
 <meta itemprop="datePublished" content="2019-01-27T20:24:27&#43;01:00" />
 <meta itemprop="dateModified" content="2019-01-27T20:24:27&#43;01:00" />
 <meta itemprop="wordCount" content="732">
+<meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="distributed-systems,hbase," />
-<meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="distributed-systems,hbase," /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Hbase Data Model"/>
@@ -129,22 +129,14 @@
             
 
             <div class="post-content">
-                
-
-<h1 id="hbase">HBase?</h1>
-
-<p><img src="/posts/hbase-data-model/images/hbase.jpg" alt="hbase image" /></p>
-
+                <h1 id="hbase">HBase?</h1>
+<p><img src="/posts/hbase-data-model/images/hbase.jpg" alt="hbase image"></p>
 <blockquote>
-<p><a href="https://hbase.apache.org/" target="_blank">Apache HBase™</a> is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
+<p><a href="https://hbase.apache.org/">Apache HBase™</a> is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
 </blockquote>
-
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">Hbase architecture overview</a></p>
-
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql">Hbase architecture overview</a></p>
 <h1 id="hbase-data-model">Hbase data model</h1>
-
-<p>The data model is simple: it&rsquo;s like a multi-dimensional map:</p>
-
+<p>The data model is simple: it's like a multi-dimensional map:</p>
 <ul>
 <li>Elements are stored as <strong>rows</strong> in a <strong>table</strong>.</li>
 <li>Each table has only <strong>one index, the row key</strong>. There are no secondary indices.</li>
@@ -154,64 +146,48 @@
 <li>Values are stored into what we call a <strong>cell</strong> and are versioned with a timestamp.</li>
 <li>A column is divided between a <strong>Column Family</strong> and a <strong>Column Qualifier</strong>. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is <strong>static</strong>, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.</li>
 </ul>
-
-<p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
+<p>Not as easy as you thought? Here's an example! Let's say that we're trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  <span style="color:#f92672">&#34;fr.pierrezemb.www&#34;</span>: {          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Row</span> <span style="color:#960050;background-color:#1e0010">key</span>
-    <span style="color:#f92672">&#34;contents&#34;</span>: {                 <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">family</span>
-      <span style="color:#f92672">&#34;content:html&#34;</span>: {	          <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
-        <span style="color:#f92672">&#34;2017-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">A</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
-          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>,            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">The</span> <span style="color:#960050;background-color:#1e0010">actual</span> <span style="color:#960050;background-color:#1e0010">value</span>
-        <span style="color:#f92672">&#34;2016-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">timestamp</span>
-          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>             <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">cell</span>
+  <span style="color:#f92672">&#34;fr.pierrezemb.www&#34;</span>: {          <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">R</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">w</span> <span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">y</span>
+    <span style="color:#f92672">&#34;contents&#34;</span>: {                 <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">C</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">n</span> <span style="color:#960050;background-color:#1e0010">f</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">y</span>
+      <span style="color:#f92672">&#34;content:html&#34;</span>: {	          <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">C</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">n</span> <span style="color:#960050;background-color:#1e0010">q</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">f</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span>
+        <span style="color:#f92672">&#34;2017-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">A</span> <span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>,            <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">T</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">e</span> <span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">l</span> <span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">e</span>
+        <span style="color:#f92672">&#34;2016-01-01&#34;</span>:             <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span> <span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span>
+          <span style="color:#e6db74">&#34;&lt;html&gt;...&#34;</span>             <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span> <span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">l</span>
       },
-      <span style="color:#f92672">&#34;content:pdf&#34;</span>: {            <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Another</span> <span style="color:#960050;background-color:#1e0010">Column</span> <span style="color:#960050;background-color:#1e0010">qualifier</span>
+      <span style="color:#f92672">&#34;content:pdf&#34;</span>: {            <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span> <span style="color:#960050;background-color:#1e0010">C</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">n</span> <span style="color:#960050;background-color:#1e0010">q</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">f</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span>
         <span style="color:#f92672">&#34;2015-01-01&#34;</span>: 
-          <span style="color:#e6db74">&#34;&lt;pdf&gt;...&#34;</span>  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">my</span> <span style="color:#960050;background-color:#1e0010">website</span> <span style="color:#960050;background-color:#1e0010">may</span> <span style="color:#960050;background-color:#1e0010">only</span> <span style="color:#960050;background-color:#1e0010">contained</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">pdf</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#ae81ff">2015</span>
+          <span style="color:#e6db74">&#34;&lt;pdf&gt;...&#34;</span>  <span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">y</span> <span style="color:#960050;background-color:#1e0010">w</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">e</span> <span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">y</span> <span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">y</span> <span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">d</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">f</span> <span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">n</span> <span style="color:#ae81ff">2015</span>
       }
     }
   }
-}</code></pre></div>
-<h1 id="key-design">Key design</h1>
-
-<p>Hbase is most efficient at queries when we&rsquo;re getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be &ldquo;near&rdquo;.</p>
-
+}
+</code></pre></div><h1 id="key-design">Key design</h1>
+<p>Hbase is most efficient at queries when we're getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be &ldquo;near&rdquo;.</p>
 <p>As such, the <strong>key design</strong> is really important:</p>
-
 <ul>
 <li>If your data are too spread, you will have poor performance.</li>
 <li>If your data are too much collocate, you will also have poor performance.</li>
 </ul>
-
-<p>As stated by the official <a href="https://hbase.apache.org/book.html#rowkey.design" target="_blank">documentation</a>:</p>
-
+<p>As stated by the official <a href="https://hbase.apache.org/book.html#rowkey.design">documentation</a>:</p>
 <blockquote>
 <p>Hotspotting occurs when a <strong>large amount of client traffic is directed at one node, or only a few nodes, of a cluster</strong>. This traffic may represent reads, writes, or other operations. The traffic overwhelms the single machine responsible for hosting that region, causing performance degradation and potentially leading to region unavailability.</p>
 </blockquote>
-
 <p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
-
-<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design" target="_blank">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
-
+<p>If you are curious about Hbase schema, you should have a look on <a href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
 <h1 id="be-warned">Be warned</h1>
-
-<p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here&rsquo;s some warnings extracted from the well-written documentation:</p>
-
+<p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here's some warnings extracted from the well-written documentation:</p>
 <blockquote>
 <p>HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
 </blockquote>
-
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql" target="_blank">NoSQL?</a></p>
-
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.nosql">NoSQL?</a></p>
 <blockquote>
 <p>If you have hundreds of millions or billions of rows, then HBase is a good candidate. If you only have a few thousand/million rows, then using a traditional RDBMS might be a better choice due to the fact that all of your data might wind up on a single node (or two) and the rest of the cluster may be sitting idle.</p>
 </blockquote>
-
-<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.when" target="_blank">When Should I Use HBase?</a></p>
-
-<hr />
-
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank">Twitter</a> if needed.</p>
+<p>&ndash; <a href="https://hbase.apache.org/book.html#arch.overview.when">When Should I Use HBase?</a></p>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
             </div>
         </article>
@@ -290,7 +266,7 @@
 
 
 
-<script type="text/javascript" src="/bundle.min.2d5469329143160ae2456a69c3c76dc2d0a3b212b46afe291a51bd68650ed6f8697e001dab54f1c272c77ce08092a8c55e5bb4314e0ee334aab4b927ec896638.js" integrity="sha512-LVRpMpFDFgriRWppw8dtwtCjshK0av4pGlG9aGUO1vhpfgAdq1TxwnLHfOCAkqjFXlu0MU4O4zSqtLkn7IlmOA=="></script>
+<script type="text/javascript" src="/bundle.min.a8d89ddfbe4e22ccb95d2102bca57f7cfcd8be8494b55add5156c9eb77d32d016e00148274f59dc1f9264496e774345f4654c2a8f4a8688c0fa1360c3914f46c.js" integrity="sha512-qNid375OIsy5XSECvKV/fPzYvoSUtVrdUVbJ63fTLQFuABSCdPWdwfkmRJbndDRfRlTCqPSoaIwPoTYMORT0bA=="></script>
 
 
 

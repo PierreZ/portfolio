@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Pierre Zemb ">
+<meta name="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange." />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+
+<link rel="canonical" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" />
+
+
+
+
+    <title>
+        
+            Diving into Kafka&#39;s Protocol :: Pierre Zemb 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
+
+
+
+<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
+
+
+
+
+<meta itemprop="name" content="Diving into Kafka&#39;s Protocol">
+<meta itemprop="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
+<meta itemprop="datePublished" content="2019-12-08T15:00:00&#43;01:00" />
+<meta itemprop="dateModified" content="2019-12-08T15:00:00&#43;01:00" />
+<meta itemprop="wordCount" content="877">
+<meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
+
+
+
+<meta itemprop="keywords" content="kafka,diving into," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
+
+<meta name="twitter:title" content="Diving into Kafka&#39;s Protocol"/>
+<meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange."/>
+
+
+
+
+
+    <meta property="article:published_time" content="2019-12-08 15:00:00 &#43;0100 CET" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>5 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title">
+                <a href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">Diving into Kafka's Protocol</a>
+            </h1>
+
+            
+
+            <div class="post-content">
+                <p><img src="/posts/diving-into-kafka-protocol/img/apache-kafka.png" alt="kafka image"></p>
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project's basecode. In this episode, we will digg into Kafka's protocol.</p>
+<hr>
+<h1 id="the-protocol-reference">The protocol reference</h1>
+<p>For the last few months, I worked a lot around Kafka's protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a href="https://kafka.apache.org/protocol.html">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let's dive in!</p>
+<h2 id="common-handshake">Common handshake</h2>
+<p>After a client established the TCP connection, there is a few common requests and responses that are almost always here.</p>
+<p>The common handhake can be divided in three parts:</p>
+<ul>
+<li>Being able to understand each other. For this, we are using <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_ApiVersions">API_VERSIONS</a></strong> to know which versions of which TCP frames can be uses,</li>
+<li>Establish Auth using <strong>SASL</strong> if needed, thanks to <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_SaslHandshake">SASL_HANDSHAKE</a></strong> and <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_SaslAuthenticate">SASL_AUTHENTICATE</a></strong>,</li>
+<li>Retrieve the topology of the cluster using <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Metadata">METADATA</a></strong>.</li>
+</ul>
+<blockquote>
+<p>All exchange are based between a Kafka 2.0 cluster and client.</p>
+</blockquote>
+<blockquote>
+<p>All the following diagrams are generated with <a href="https://mermaidjs.github.io/#/">MermaidJS</a>.</p>
+</blockquote>
+<div class="mermaid">
+    
+sequenceDiagram
+
+    Note left of KafkaClient: I'm speaking Kafka <br/> 2.3,but can the <br/> broker understand <br/> me?
+
+    KafkaClient ->>+ Broker0: API_VERSIONS request
+
+    Note right of Broker0: I can handle theses <br/> structures in theses <br/>versions: ...
+    Broker0 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Thanks!<br/> I see you can handle <br/> SASL, let's auth! <br/> can you handle <br/> SASL_PLAIN?
+    KafkaClient ->>+ Broker0: SASL_HANDSHAKE request
+
+    Note right of Broker0: Yes I can handle <br/> SASL_PLAIN <br/> among others
+    Broker0 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Awesome, here's <br/> my credentials!
+    KafkaClient ->>+ Broker0: SASL_AUTHENTICATE request
+
+    Note right of Broker0: Checking...
+    Note right of Broker0: You are <br/>authenticated!
+    Broker0 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Cool! <br/> Can you give <br/> the cluster topology?<br/> I want to <br/> use 'my-topic'
+    KafkaClient ->>+ Broker0: METADATA request
+
+    Note right of Broker0: There is one topic <br/> with one partition<br/> called 'my-topic'<br/>The partition's leader <br/> is Broker0
+    Broker0 ->>- KafkaClient: 
+
+Note left of KafkaClient: That is you, I don't <br/> need to handshake <br/> again with <br/> another broker
+
+
+</div>
+<h2 id="producing">Producing</h2>
+<p>The <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Produce">PRODUCE</a></strong> API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.</p>
+<div class="mermaid">
+    
+sequenceDiagram
+
+    Note over KafkaClient,Broker0: ...handshaking, see above...
+
+    loop pull msg
+        Note left of KafkaClient: I have a batch <br/> containing one <br/> message for the <br/> partition-0 <br/> of 'my-topic'
+        KafkaClient ->>+ Broker0: PRODUCE request
+
+        Note right of Broker0: Processing...<br/>
+        Note right of Broker0: Done!
+        Broker0 ->>- KafkaClient: 
+        
+        Note left of KafkaClient: Thanks
+    end
+
+
+</div>
+<h2 id="consuming">Consuming</h2>
+<p>Consuming is more complicated than producing. You can learn more in <a href="https://www.youtube.com/watch?v=maJulQ4ABNY">The Magical Group Coordination Protocol of Apache Kafka</a> By Gwen Shapira, Principal Data Architect @ Confluent and also in the <a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Client-side+Assignment+Proposal">Kafka Client-side Assignment Proposal</a>.</p>
+<p>Consuming can be divided in three parts:</p>
+<ul>
+<li>coordinating the consumers to assign them partitions, using:
+<ul>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_FindCoordinator">FIND_COORDINATOR</a></strong>,</li>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_JoinGroup">JOIN_GROUP</a></strong>,</li>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_SyncGroup">SYNC_GROUP</a></strong>,</li>
+</ul>
+</li>
+<li>then fetch messages using:
+<ul>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_OffsetFetch">OFFSET_FETCH</a></strong>,</li>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_ListOffsets">LIST_OFFSETS</a></strong>,</li>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Fetch">FETCH</a></strong>,</li>
+<li><strong><a href="https://kafka.apache.org/protocol.html#The_Messages_OffsetCommit">OFFSET_COMMIT</a></strong>,</li>
+</ul>
+</li>
+<li>Send lifeproof to the coordinator using <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Heartbeat">HEARTBEAT</a></strong>.</li>
+</ul>
+<p>For the sake of the explanation, we have now another Broker1 which is holding the coordinator for topic &lsquo;my-topic&rsquo;. In real-life, it would be the same.</p>
+<div class="mermaid">
+    
+sequenceDiagram
+
+    Note over KafkaClient,Broker0: ...handshaking, see above...
+
+    Note left of KafkaClient: Who is the <br/> coordinator for<br/> 'my-topic'?
+    KafkaClient ->>+ Broker0: FIND_COORDINATOR request
+
+    Note right of Broker0: It is Broker1!
+    Broker0 ->>- KafkaClient: 
+
+    Note left of KafkaClient: OK, let's connect<br/> to Broker1
+    Note over KafkaClient,Broker1: ...handshaking, see above...
+
+    Note left of KafkaClient: Hi, I want to join a <br/> consumption group <br/>for 'my-topic'
+    KafkaClient ->>+ Broker1: JOIN_GROUP request
+
+    Note right of Broker1: Welcome! I will be <br/> waiting a bit for any <br/>of your friends.
+    Note right of Broker1: You are now leader. <br/>Your group contains <br/> only one member.<br/> You now  need to <br/> assign partitions to <br/> them. 
+    Broker1 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Computing <br/>the assigment...
+    Note left of KafkaClient: Done! I will be <br/> in charge of handling <br/> partition-0 of <br/>'my-topic'
+    KafkaClient ->>+ Broker1: SYNC_GROUP request
+
+    Note right of Broker1: Thanks, I will <br/>broadcast the <br/>assigmnents to <br/>everyone
+    Broker1 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Can I get the <br/> committed offsets <br/> for partition-0<br/>for my consumer<br/>group?
+    KafkaClient ->>+ Broker1: OFFSET_FETCH request
+
+    Note right of Broker1: Found no <br/>committed offset<br/> for partition-0
+    Broker1 ->>- KafkaClient: 
+
+    Note left of KafkaClient: Thanks, I will now <br/>connect to Broker0
+
+    Note over KafkaClient,Broker0: ...handshaking again...
+
+    opt if new consumer-group
+        Note left of KafkaClient: Can you give me<br/> the earliest position<br/> for partition-0?
+        KafkaClient ->>+ Broker0: LIST_OFFSETS request
+        
+        Note right of Broker0: Here's the earliest <br/> position: ...
+        Broker0 ->>- KafkaClient: 
+    end 
+    loop pull msg
+
+        opt Consume
+            Note left of KafkaClient: Can you give me<br/> some messages <br/> starting  at offset X?
+            KafkaClient ->>+ Broker0: FETCH request
+
+            Note right of Broker0: Here some records...
+            Broker0 ->>- KafkaClient: 
+
+            Note left of KafkaClient: Processing...
+            Note left of KafkaClient: Can you commit <br/>offset X?
+            KafkaClient ->>+ Broker1: OFFSET_COMMIT request
+
+            Note right of Broker1: Committing...
+            Note right of Broker1: Done!
+            Broker1 ->>- KafkaClient: 
+        end
+
+        Note left of KafkaClient: I need to send <br/> some lifeness proof <br/> to the coordinator           
+        opt Healthcheck
+            Note left of KafkaClient: I am still alive!  
+            KafkaClient ->>+ Broker1: HEARTBEAT request
+            Note right of Broker1: I hear you
+            Broker1 ->>- KafkaClient: 
+        end
+    end 
+
+</div>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/kafka">kafka</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/diving-into">diving into</a></span>
+                </p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>877 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-12-08 15:00 &#43;0100</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">
+                                <span class="button__text">Diving into Hbase&#39;s MemStore</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2019</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.a8d89ddfbe4e22ccb95d2102bca57f7cfcd8be8494b55add5156c9eb77d32d016e00148274f59dc1f9264496e774345f4654c2a8f4a8688c0fa1360c3914f46c.js" integrity="sha512-qNid375OIsy5XSECvKV/fPzYvoSUtVrdUVbJ63fTLQFuABSCdPWdwfkmRJbndDRfRlTCqPSoaIwPoTYMORT0bA=="></script>
+
+
+
+    </body>
+</html>
