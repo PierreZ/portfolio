@@ -181,11 +181,11 @@
 <li>OpenTSDB.</li>
 </ul>
 <p>Then there’s <strong>Warp10</strong>. The difference is quite simple, Warp10 is <strong>a platform</strong> whereas all the time series listed above are <strong>stores</strong>. This is game changing, for multiples reasons.</p>
-<h4 id="securityfirst-design">Security-first design</h4>
+<h4 id="security-first-design">Security-first design</h4>
 <p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html">Macaroons</a>.</p>
 <h4 id="high-level-analysis-capabilities">High level analysis capabilities</h4>
 <p>Using classical time series database, <strong>high level analysis must be done elsewhere</strong>, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just <strong>submit your script</strong> and <em>voilà</em>!</p>
-<h4 id="serverside-calculation">Server-side calculation</h4>
+<h4 id="server-side-calculation">Server-side calculation</h4>
 <p>Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit <strong>limitations</strong> on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be <strong>scalable</strong>, analysis must be done <strong>server-side</strong>.### Meet WarpScript</p>
 <p><img src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png" alt="image"></p>
 <p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
@@ -200,7 +200,7 @@
 <p>Debugguing as never be that easy, just use the keyword <strong>STOP</strong> to see the stack at any moment.</p>
 <h4 id="rich-programming-capabilities">Rich programming capabilities</h4>
 <p>WarpScript is coming with more than <strong>800 functions</strong>, ready to use. Things like <strong>Patterns and outliers detections, rolling average, FFT, IDWT</strong> are built-in.</p>
-<h4 id="geofencing-capabilities">Geo-Fencing capabilities</h4>
+<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities</h4>
 <p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
 <h4 id="unified-language">Unified Language</h4>
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
@@ -298,7 +298,7 @@ $windowSize $patternLength $quantizationScale  PATTERNDETECTION
                 <footer class="footer">
     <div class="footer__inner">
         <div class="footer__content">
-            <span>&copy; 2019</span>
+            <span>&copy; 2020</span>
             
                 <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
             

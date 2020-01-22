@@ -3,6 +3,36 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/notes-about-foundationdb/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/notesabout/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2020-01-22T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/tags/diving-into/</loc>
     <lastmod>2019-12-08T15:00:00+01:00</lastmod>
   </url>
@@ -14,21 +44,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/tags/kafka/</loc>
-    <lastmod>2019-12-08T15:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2019-12-08T15:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2019-12-08T15:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2019-12-08T15:00:00+01:00</lastmod>
   </url>
   

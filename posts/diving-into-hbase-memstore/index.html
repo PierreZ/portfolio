@@ -147,7 +147,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 <p>Let's dig into how the MemStore internally works in Hbase 1.X.</p>
 <h1 id="hbase-1">Hbase 1</h1>
 <p>All extract of code for this section are taken from <a href="https://github.com/apache/hbase/tree/rel/1.4.9">rel/1.4.9</a> tag.</p>
-<h2 id="inmemory-storage">in-memory storage</h2>
+<h2 id="in-memory-storage">in-memory storage</h2>
 <p>The <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L35">MemStore interface</a> is giving us insight on how it is working internally.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">/**
 </span><span style="color:#75715e">   * Write an update
@@ -186,7 +186,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 </code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L67-L73">add function in MemStore interface</a></p>
 <p>The signature changed a bit, to include passing a object instead of returning a long. Moving on.</p>
 <p>The new structure implementing MemStore is called <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/AbstractMemStore.java#L42">AbstractMemStore</a>. Again, we have some layers, where AbstractMemStore is writing to a <code>MutableSegment</code>, which itsef is wrapping <code>Segment</code>. If you dig far enough, you will find that data are stored into the <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSet.java#L35-L51">CellSet class</a> which is also things built on top of <strong>ConcurrentSkipListMap</strong>!</p>
-<h2 id="inmemory-compactions">in-memory Compactions</h2>
+<h2 id="in-memory-compactions">in-memory Compactions</h2>
 <p>Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: <a href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion: HBase Breathes with In-Memory Compaction</a> and the <a href="https://issues.apache.org/jira/secure/attachment/12709471/HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf">document design</a> is also available.</p>
 <hr>
 <p><strong>Thank you</strong> for reading my post! feel free to react to this article, I'm also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
@@ -244,7 +244,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
                 <footer class="footer">
     <div class="footer__inner">
         <div class="footer__content">
-            <span>&copy; 2019</span>
+            <span>&copy; 2020</span>
             
                 <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
             

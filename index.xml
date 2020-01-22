@@ -6,10 +6,21 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 08 Dec 2019 15:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 22 Jan 2020 10:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Notes about FoundationDB</title>
+      <link>https://pierrezemb.fr/posts/notes-about-foundationdb/</link>
+      <pubDate>Wed, 22 Jan 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
+      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
+ Overview of FoundationDB As stated in the official documentation:
+ FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.</description>
+    </item>
     
     <item>
       <title>Diving into Kafka&#39;s Protocol</title>
@@ -100,16 +111,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       
       <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
       <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
-    </item>
-    
-    <item>
-      <title>Handling OVH&#39;s alerts with Apache Flink</title>
-      <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
-      <description>This is a repost from OVH&#39;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
-Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.</description>
     </item>
     
   </channel>
