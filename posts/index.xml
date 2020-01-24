@@ -17,7 +17,7 @@
             <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
  Overview of FoundationDB As stated in the official documentation:
  FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.</description>
-            <content type="html"><![CDATA[<p><img src="/posts/notes-about-foundationdb/images/fdb-logo.png" alt="fdb image"></p>
+            <content type="html"><![CDATA[<p><img src="/posts/notes-about-foundationdb/images/fdb-white.jpg" alt="fdb image"></p>
 <p><a href="/tags/notesabout/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover FoundationDB.</p>
 <hr>
 <h2 id="overview-of-foundationdb">Overview of FoundationDB</h2>
@@ -212,44 +212,15 @@
   <iframe src="https://www.youtube.com/embed/HLE8chgw6LI" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/extract-layer-1.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">FDB is resolving many distributed problems, but you still need things like <strong>security, multi-tenancy, query optimizations, schema, indexing</strong>.</td>
-</tr>
-</tbody>
-</table>
+<p>FDB is resolving many distributed problems, but you still need things like <strong>security, multi-tenancy, query optimizations, schema, indexing</strong>.</p>
 <hr>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/extract-layer-2.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">Layers are designed to develop features <strong>above FDB.</strong> The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></td>
-</tr>
-</tbody>
-</table>
+<p><img src="/posts/notes-about-foundationdb/images/extract-layer-1.png" alt="fdb image"></p>
 <hr>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/extract-layer-3.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></td>
-</tr>
-</tbody>
-</table>
+<p>Layers are designed to develop features <strong>above FDB.</strong> The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/extract-layer-2.png" alt="fdb image"></p>
+<hr>
+<p>The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></p>
 <hr>
 <p><img src="/posts/notes-about-foundationdb/images/extract-layer-3.png" alt="fdb image"></p>
 <h3 id="apples-record-layer">Apple's Record Layer</h3>
@@ -259,47 +230,22 @@
   <iframe src="https://www.youtube.com/embed/SvoUHHM9IKU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/record-extract-1.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">Record Layer was designed to solve CloudKit problem.</td>
-</tr>
-</tbody>
-</table>
+<p>Record Layer was designed to solve CloudKit problem.</p>
 <hr>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/record-extract-2.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center"><img src="/posts/notes-about-foundationdb/images/record-extract-3.png" alt="fdb image"></td>
-</tr>
-<tr>
-<td align="center">Record allow multi-tenancy with schema above FDB</td>
-</tr>
-</tbody>
-</table>
+<p><img src="/posts/notes-about-foundationdb/images/record-extract-1.png" alt="fdb image"></p>
 <hr>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/record-extract-4.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">Record Layers is providing stateless compute</td>
-</tr>
-</tbody>
-</table>
+<p>Record allow multi-tenancy with schema above FDB</p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/record-extract-2.png" alt="fdb image"></p>
+<p><img src="/posts/notes-about-foundationdb/images/record-extract-3.png" alt="fdb image"></p>
+<hr>
+<p>Record Layers is providing stateless compute</p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/record-extract-4.png" alt="fdb image"></p>
+<hr>
+<p>And streaming queries!</p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/record-extract-5.png" alt="fdb image"></p>
 <hr>
 <h2 id="kubernetes-operators">Kubernetes Operators</h2>
 <h3 id="overview-of-the-operator">Overview of the operator</h3>
@@ -308,37 +254,16 @@
   <iframe src="https://www.youtube.com/embed/A3U8M8pt3Ks" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/operator-extract-1.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center"><img src="/posts/notes-about-foundationdb/images/operator-extract-2.png" alt="fdb image"></td>
-</tr>
-<tr>
-<td align="center">implementation design of the Operator</td>
-</tr>
-</tbody>
-</table>
 <hr>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="/posts/notes-about-foundationdb/images/operator-extract-3.png" alt="fdb image"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center"><img src="/posts/notes-about-foundationdb/images/operator-extract-4.png" alt="fdb image"></td>
-</tr>
-<tr>
-<td align="center">Upgrade is done by <strong>bumping all processes at once</strong> 😱</td>
-</tr>
-</tbody>
-</table>
+<p><img src="/posts/notes-about-foundationdb/images/operator-extract-1.png" alt="fdb image"></p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/operator-extract-2.png" alt="fdb image"></p>
+<hr>
+<p>Upgrade is done by <strong>bumping all processes at once</strong> 😱</p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/operator-extract-3.png" alt="fdb image"></p>
+<hr>
+<p><img src="/posts/notes-about-foundationdb/images/operator-extract-4.png" alt="fdb image"></p>
 <h3 id="combining-chaos-mesh-and-the-operator">Combining chaos-mesh and the operator</h3>
 <p>I played a bit with the operator by combining:</p>
 <ul>
