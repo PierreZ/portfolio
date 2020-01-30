@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb ">
-<meta name="description" content="This is a repost from OVH&#39;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
-Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform." />
+<meta name="description" content="This is a repost from OVH&amp;rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+Handling OVH&amp;rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform." />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -37,8 +37,8 @@ Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to
 
 
 <meta itemprop="name" content="Handling OVH&#39;s alerts with Apache Flink">
-<meta itemprop="description" content="This is a repost from OVH&#39;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
-Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.">
+<meta itemprop="description" content="This is a repost from OVH&rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.">
 <meta itemprop="datePublished" content="2019-02-03T15:37:27&#43;01:00" />
 <meta itemprop="dateModified" content="2019-02-03T15:37:27&#43;01:00" />
 <meta itemprop="wordCount" content="950">
@@ -50,8 +50,8 @@ Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Handling OVH&#39;s alerts with Apache Flink"/>
-<meta name="twitter:description" content="This is a repost from OVH&#39;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
-Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform."/>
+<meta name="twitter:description" content="This is a repost from OVH&rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
+Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform."/>
 
 
 
@@ -123,14 +123,14 @@ Handling OVH&#39;s alerts with Apache Flink OVH relies extensively on metrics to
 
         <article>
             <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/">Handling OVH's alerts with Apache Flink</a>
+                <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/">Handling OVH&rsquo;s alerts with Apache Flink</a>
             </h1>
 
             
 
             <div class="post-content">
-                <p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH's alerts with Apache Flink">OVH's official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
-<h1 id="handling-ovhs-alerts-with-apache-flink">Handling OVH's alerts with Apache Flink</h1>
+                <p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH's alerts with Apache Flink">OVH&rsquo;s official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+<h1 id="handling-ovhs-alerts-with-apache-flink">Handling OVH&rsquo;s alerts with Apache Flink</h1>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472" alt="OVH & Apache Flink"></p>
 <p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/">**Metrics Data Platform</a>.** By relying on <a href="https://hbase.apache.org/">**Apache Hbase</a>, <a href="https://kafka.apache.org/">Apache Kafka</a>** and <a href="https://www.warp10.io/"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
 <p>After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the <strong>Alerting.</strong></p>
@@ -156,7 +156,7 @@ moving from operators to another.</p>
 <h2 id="beacon-architecture"><strong>Beacon architecture</strong></h2>
 <p>At his core, Beacon is reading events from <strong>Kafka</strong>. Everything is represented as a <strong>message</strong>, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:</p>
 <ul>
-<li>One that is running the <strong>aggregations</strong>, and triggering notifications based on customer's rules.</li>
+<li>One that is running the <strong>aggregations</strong>, and triggering notifications based on customer&rsquo;s rules.</li>
 <li>One that is handling the <strong>escalation steps</strong>.</li>
 </ul>
 <p>Then everything is merged to <strong>generate</strong> <strong>a</strong> <strong>notification</strong>, that is going to be forward to the right person. A notification message is pushed into Kafka, that will be consumed by another component called <strong>beacon-notifier.</strong></p>
@@ -170,7 +170,7 @@ moving from operators to another.</p>
     <img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/003.png?x70472"  alt="Hello Friend"  class="center"  style="background: white"  />
 
 
-<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state">keyed by </a>in Flink API) by users. Here's an example:</p>
+<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state">keyed by </a>in Flink API) by users. Here&rsquo;s an example:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">final</span> DataStream<span style="color:#f92672">&gt;</span> alertStream <span style="color:#f92672">=</span>
     
       <span style="color:#75715e">// Partitioning Stream per AlertIdentifier
@@ -203,9 +203,9 @@ moving from operators to another.</p>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/004-1.png?x70472" alt="Queryable state overview">Queryable state overview</p>
 <p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
 <h3 id="apache-flink-deployment">Apache Flink deployment</h3>
-<p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper's cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
+<p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper&rsquo;s cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
 <p>We are using <strong>RockDB</strong> as a state backend, backed by OpenStack **Swift storage **provided by OVH Public Cloud.</p>
-<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium">Beamium</a> to gain <strong>observability</strong> over job's health.</p>
+<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium">Beamium</a> to gain <strong>observability</strong> over job&rsquo;s health.</p>
 <h3 id="in-short-we-love-apache-flink">In short, we love Apache Flink!</h3>
 <p>If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.</p>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472" alt="Apache Flink"></p>

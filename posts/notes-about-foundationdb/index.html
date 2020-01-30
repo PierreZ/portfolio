@@ -151,7 +151,7 @@
     <li><a href="#fdb-one-more-things-layers">FDB One more things: Layers</a>
       <ul>
         <li><a href="#concept-of-layers">Concept of layers</a></li>
-        <li><a href="#apples-record-layer">Apple's Record Layer</a></li>
+        <li><a href="#apples-record-layer">Apple&rsquo;s Record Layer</a></li>
       </ul>
     </li>
     <li><a href="#kubernetes-operators">Kubernetes Operators</a>
@@ -202,7 +202,7 @@
 <blockquote>
 <p>Flow adds about 10 keywords to C++11 and is technically a trans-compiler: the Flow compiler reads Flow code and compiles it down to raw C++11, which is then compiled to a native binary with a traditional toolchain.</p>
 </blockquote>
-<p>Flow was developed before FDB, as stated in this <a href="https://news.ycombinator.com/item?id=5319163">2013's post</a>:</p>
+<p>Flow was developed before FDB, as stated in this <a href="https://news.ycombinator.com/item?id=5319163">2013&rsquo;s post</a>:</p>
 <blockquote>
 <p>FoundationDB founder here. Flow sounds crazy. What hubris to think that you need a new programming language for your project? Three years later: Best decision we ever made.</p>
 </blockquote>
@@ -210,10 +210,10 @@
 <p>We knew this was going to be a long project so we invested heavily in tools at the beginning. The first two weeks of FoundationDB were building this new programming language to give us the speed of C++ with high level tools for actor-model concurrency. But, the real magic is how Flow enables us to use our real code to do deterministic simulations of a cluster in a single thread. We have a white paper upcoming on this.</p>
 </blockquote>
 <blockquote>
-<p>We've had quite a bit of interest in Flow over the years and I've given several talks on it at meetups/conferences. We've always thought about open-sourcing it&hellip; It's not as elegant as some other actor-model languages like Scala or Erlang (see: C++) but it's nice and fast at run-time and really helps productivity vs. writing callbacks, etc.</p>
+<p>We&rsquo;ve had quite a bit of interest in Flow over the years and I&rsquo;ve given several talks on it at meetups/conferences. We&rsquo;ve always thought about open-sourcing it&hellip; It&rsquo;s not as elegant as some other actor-model languages like Scala or Erlang (see: C++) but it&rsquo;s nice and fast at run-time and really helps productivity vs. writing callbacks, etc.</p>
 </blockquote>
 <blockquote>
-<p>(Fun fact: We've only ever found two bugs in Flow. After the first, we decided that we never wanted a bug again in our programming language. So, we built a program in Python that generates random Flow code and independently-executes it to validate Flow's behavior. This fuzz tester found one more bug, and we've never found another.)</p>
+<p>(Fun fact: We&rsquo;ve only ever found two bugs in Flow. After the first, we decided that we never wanted a bug again in our programming language. So, we built a program in Python that generates random Flow code and independently-executes it to validate Flow&rsquo;s behavior. This fuzz tester found one more bug, and we&rsquo;ve never found another.)</p>
 </blockquote>
 <p>A very good overview of Flow is available <a href="https://apple.github.io/foundationdb/flow.html">here</a> and some details <a href="https://forums.foundationdb.org/t/why-was-flow-developed/1711/3">here</a>.</p>
 <h3 id="simulation-driven-development">Simulation-Driven development</h3>
@@ -227,7 +227,7 @@
   <iframe src="https://www.youtube.com/embed/4fFDFbi3toc" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<p>Here's an example of a <a href="https://github.com/apple/foundationdb/blob/master/tests/slow/SwizzledCycleTest.txt">testfile</a>:</p>
+<p>Here&rsquo;s an example of a <a href="https://github.com/apple/foundationdb/blob/master/tests/slow/SwizzledCycleTest.txt">testfile</a>:</p>
 <pre><code>testTitle=SwizzledCycleTest
     testName=Cycle
     transactionsPerSecond=5000.0
@@ -274,13 +274,13 @@
 <h3 id="recap">Recap</h3>
 <p>An awesome recap is available on the <a href="https://softwareengineeringdaily.com/2019/07/01/foundationdb-with-ryan-worl/">Software Engineering Daily podcast</a>:</p>
 <blockquote>
-<p>FoundationDB is tested in a very rigorous way using what's called <strong>a deterministic simulation</strong>. The reason they needed a new programming language to do this, is that to get a deterministic simulation, you have to make something that is deterministic. It's kind of obvious, but it's hard to do.</p>
+<p>FoundationDB is tested in a very rigorous way using what&rsquo;s called <strong>a deterministic simulation</strong>. The reason they needed a new programming language to do this, is that to get a deterministic simulation, you have to make something that is deterministic. It&rsquo;s kind of obvious, but it&rsquo;s hard to do.</p>
 </blockquote>
 <blockquote>
-<p>For example, if your process interacts with the network, or disks, or clocks, it's not deterministic. If you have multiple threads, not deterministic. So, they needed a way to write a concurrent program that could talk with networks and disks and that type of thing. They needed a way to write a concurrent program that does all of those things that you would think are non-deterministic in a deterministic way.</p>
+<p>For example, if your process interacts with the network, or disks, or clocks, it&rsquo;s not deterministic. If you have multiple threads, not deterministic. So, they needed a way to write a concurrent program that could talk with networks and disks and that type of thing. They needed a way to write a concurrent program that does all of those things that you would think are non-deterministic in a deterministic way.</p>
 </blockquote>
 <blockquote>
-<p>So, all FoundationDB processes, and FoundationDB, it's basically all written in Flow except a very small amount of it from the SQLite B-tree. The reason why that was useful is that when you use Flow, you get all of these higher level abstraction that let what you do what feels to you like asynchronous stuff, but under the hood, it's all implemented using callbacks in C++, which you can make deterministic by running it in a single thread. So, there's a scheduler that just calls these callbacks one after another and it's very crazy looking C++ code, like you wouldn't want to read it, but it's because of Flow they were able to implement that deterministic simulation.</p>
+<p>So, all FoundationDB processes, and FoundationDB, it&rsquo;s basically all written in Flow except a very small amount of it from the SQLite B-tree. The reason why that was useful is that when you use Flow, you get all of these higher level abstraction that let what you do what feels to you like asynchronous stuff, but under the hood, it&rsquo;s all implemented using callbacks in C++, which you can make deterministic by running it in a single thread. So, there&rsquo;s a scheduler that just calls these callbacks one after another and it&rsquo;s very crazy looking C++ code, like you wouldn&rsquo;t want to read it, but it&rsquo;s because of Flow they were able to implement that deterministic simulation.</p>
 </blockquote>
 <h2 id="the-architecture">The Architecture</h2>
 <p>According to the <a href="https://apple.github.io/foundationdb/administration.html#fdbmonitor-and-fdbserver">fdbmonitor and fdbserver</a>:</p>
@@ -375,7 +375,7 @@
 <p>The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></p>
 <hr>
 <p><img src="/posts/notes-about-foundationdb/images/extract-layer-3.png" alt="fdb image"></p>
-<h3 id="apples-record-layer">Apple's Record Layer</h3>
+<h3 id="apples-record-layer">Apple&rsquo;s Record Layer</h3>
 <p>The paper is located <a href="https://arxiv.org/pdf/1901.04452.pdf">FoundationDB Record Layer:A Multi-Tenant Structured Datastore</a></p>
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">

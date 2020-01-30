@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb ">
-<meta name="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
- The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange." />
+<meta name="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into Kafka&amp;rsquo;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&amp;rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange." />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -37,8 +37,8 @@
 
 
 <meta itemprop="name" content="Diving into Kafka&#39;s Protocol">
-<meta itemprop="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
- The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
+<meta itemprop="description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
 <meta itemprop="datePublished" content="2019-12-08T15:00:00&#43;01:00" />
 <meta itemprop="dateModified" content="2019-12-08T15:00:00&#43;01:00" />
 <meta itemprop="wordCount" content="877">
@@ -50,8 +50,8 @@
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Diving into Kafka&#39;s Protocol"/>
-<meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&#39;s basecode. In this episode, we will digg into Kafka&#39;s protocol.
- The protocol reference For the last few months, I worked a lot around Kafka&#39;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange."/>
+<meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.
+ The protocol reference For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange."/>
 
 
 
@@ -123,17 +123,17 @@
 
         <article>
             <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">Diving into Kafka's Protocol</a>
+                <a href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">Diving into Kafka&rsquo;s Protocol</a>
             </h1>
 
             
 
             <div class="post-content">
                 <p><img src="/posts/diving-into-kafka-protocol/img/apache-kafka.png" alt="kafka image"></p>
-<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project's basecode. In this episode, we will digg into Kafka's protocol.</p>
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.</p>
 <hr>
 <h1 id="the-protocol-reference">The protocol reference</h1>
-<p>For the last few months, I worked a lot around Kafka's protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a href="https://kafka.apache.org/protocol.html">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let's dive in!</p>
+<p>For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a href="https://kafka.apache.org/protocol.html">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let&rsquo;s dive in!</p>
 <h2 id="common-handshake">Common handshake</h2>
 <p>After a client established the TCP connection, there is a few common requests and responses that are almost always here.</p>
 <p>The common handhake can be divided in three parts:</p>

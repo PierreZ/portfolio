@@ -151,7 +151,7 @@
 <p>You will hear about <code>consistency</code> a lot of this serie. Unfortunately, this word can be used in a lot of context. In the ACID definition, it refers to the fact that a transaction will <strong>bring the database from one valid state to another.</strong></p>
 <hr>
 <h2 id="isolation">Isolation</h2>
-<p>Think back to your database. Were you the only user on it? I don't think so. Maybe they were concurrent transactions at the same time, beside yours. <strong>Isolation while keeping good performance is the most difficult item on the list.</strong> There's a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.</p>
+<p>Think back to your database. Were you the only user on it? I don&rsquo;t think so. Maybe they were concurrent transactions at the same time, beside yours. <strong>Isolation while keeping good performance is the most difficult item on the list.</strong> There&rsquo;s a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.</p>
 <h3 id="isolation-by-the-theory">Isolation by the theory</h3>
 <p>The SQL standard defines four isolation levels: <code>Serializable</code>, <code>Repeatable Read</code>, <code>Read Commited</code> and <code>Read Uncommited</code>. The strongest isolation is <code>Serializable</code> where transaction are <strong>not runned in parallel</strong>. As you may have guessed, it is also the slowest. <strong>Weaker isolation level are trading speed against anomalies</strong> that can be sum-up like this:</p>
 <table>
@@ -199,7 +199,7 @@
 <p>I encourage you to click on all the links within the table to <strong>see everything that could go wrong in a weak database!</strong></p>
 </blockquote>
 <h3 id="isolation-in-real-databases">Isolation in Real Databases</h3>
-<p>Now that we saw some theory, let's have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?</p>
+<p>Now that we saw some theory, let&rsquo;s have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?</p>
 <blockquote>
 <p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
 </blockquote>
@@ -208,7 +208,7 @@
 <hr>
 <h2 id="durability">Durability</h2>
 <p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
-<h1 id="thats-it">That's it?</h1>
+<h1 id="thats-it">That&rsquo;s it?</h1>
 <p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
 <hr>
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>

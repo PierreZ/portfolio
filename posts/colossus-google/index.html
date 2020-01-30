@@ -139,8 +139,8 @@
 <li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/">&lsquo;What does the death of Hadoop mean for big data?'</a></li>
 </ul>
 <p>Hadoop, as a distributed-system, <strong>is hard to operate, but can be essential for some type of workload</strong>. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</p>
-<h2 id="hadoops-story">Hadoop's story</h2>
-<p>Hadoop is based on a Google's paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
+<h2 id="hadoops-story">Hadoop&rsquo;s story</h2>
+<p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 <ul>
 <li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
 <li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&quot;, they:
@@ -161,7 +161,7 @@
 <li>Not appropriate for latency sensitive applications,</li>
 <li>Fault tolerant not HA,</li>
 <li>Unpredictable performance,</li>
-<li>Replication's cost,</li>
+<li>Replication&rsquo;s cost,</li>
 <li>HDFS Write-path pipelining,</li>
 <li>fixed-size of blocks,</li>
 <li>cost of operations,</li>
@@ -173,14 +173,14 @@
 <li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">&ldquo;Scaled to approximately 50M files, 10P&rdquo; to avoid &ldquo;added management overhead&rdquo; brought by the scaling.</a></li>
 </ul>
 <p>Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.</p>
-<p>Google's developers were/are deploying applications into &ldquo;containers&rdquo;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don't need to worry about replication</strong> (like Bigtable/HBase).</p>
+<p>Google&rsquo;s developers were/are deploying applications into &ldquo;containers&rdquo;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don&rsquo;t need to worry about replication</strong> (like Bigtable/HBase).</p>
 <p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a &ldquo;file-system&rdquo; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
 <ul>
 <li>How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?</li>
 <li>Should I be moving that persistent volume over my slow network?</li>
 <li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
 </ul>
-<h2 id="well-lets-put-hadoop-in-kubernetes">Well, let's put Hadoop in Kubernetes!</h2>
+<h2 id="well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes!</h2>
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 <ul>
 <li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;</a></li>
@@ -194,7 +194,7 @@
 </li>
 </ul>
 <h2 id="how-gfs-evolved-within-google">How GFS evolved within Google</h2>
-<p>As GFS's paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here's what can be found online:</p>
+<p>As GFS&rsquo;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here&rsquo;s what can be found online:</p>
 <ul>
 <li>
 <p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">Storage Architecture and Challenges(2010)</a>:</p>
@@ -215,7 +215,7 @@
 </ul>
 </li>
 </ul>
-<p>The &ldquo;all in RAM&rdquo; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn't had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
+<p>The &ldquo;all in RAM&rdquo; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&rsquo;t had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
 <ul>
 <li>automatic sharding of regions,</li>
 <li>scan capabilities for files in the same &ldquo;directory&rdquo;,</li>
@@ -263,7 +263,7 @@
 </ul>
 <h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</h2>
 <p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
-<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes">some work to add colossus's features in Hadoop</a> but based on the bad publicity Hadoop has now, I don't think there will be a lot of money to power those efforts.</p>
+<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes">some work to add colossus&rsquo;s features in Hadoop</a> but based on the bad publicity Hadoop has now, I don&rsquo;t think there will be a lot of money to power those efforts.</p>
 <p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
 <ul>
 <li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums">OpenZFS checksums</a> seems pretty interesting.</li>
