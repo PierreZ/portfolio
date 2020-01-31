@@ -37,6 +37,10 @@
 <li><a href="https://jepsen.io/consistency/models/strict-serializable">strict serializability</a>(operations appear to have occurred in some order),</li>
 <li><a href="https://cloud.google.com/spanner/docs/true-time-external-consistency">external consistency</a>(For any two transactions, T1 and T2, if T2 starts to commit after T1 finishes committing, then the timestamp for T2 is greater than the timestamp for T1).</li>
 </ul>
+<p><strong>And this is THE tweet that triggered a lot of curiosity on my side:</strong></p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/obfuscurity?ref_src=twsrc%5Etfw">@obfuscurity</a> haven&#39;t tested foundation in part because their testing appears to be waaaay more rigorous than mine.</p>&mdash; Yukon Whorenelius (@aphyr) <a href="https://twitter.com/aphyr/status/405017101804396546?ref_src=twsrc%5Etfw">November 25, 2013</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 <h2 id="the-story">The story</h2>
 <p>FoundationDB started as a company in 2009, and then <a href="https://techcrunch.com/2015/03/24/apple-acquires-durable-database-company-foundationdb/">has been acquired in 2015 by Apple</a>. It <a href="https://news.ycombinator.com/item?id=9259986">was a bad public publicity for the database as the download were removed.</a></p>
 <p>On April 19, 2018, Apple <a href="https://www.foundationdb.org/blog/foundationdb-is-open-source/">open sourced the software, releasing it under the Apache 2.0 license</a>.</p>
