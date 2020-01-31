@@ -185,7 +185,7 @@
 <li>Proxy is sending to the resolver. This will check if the data that you want to mutate has been changed between your <code>read Version</code> and your <code>Commit version</code>. They are sharded by key-range.</li>
 <li>Transaction is made durable within the <code>Transaction Logs</code> by <code>fsync</code>ing the data. Before the data is even written to disk it is forwarded to the <code>storage servers</code> responsible for that mutation. Internally, <code>Transactions Logs</code> are creating <strong>a stream per <code>Storage Server</code></strong>. Once the <code>storage servers</code> have made the mutation durable, they pop it from the log. This generally happens roughly 6 seconds after the mutation was originally committed to the log.</li>
 <li><code>Storage servers</code> are lazily updating data on disk from the <code>Transaction logs</code>. They are keeping new write in-memory.</li>
-<li><code>Transaction Logs</code> is responding OK to the Proxy and then to the client.</li>
+<li><code>Transaction Logs</code> is responding OK to the Proxy and then the proxy is replying OK to the client.</li>
 </ol>
 <p>You can find more diagrams about transactions <a href="https://forums.foundationdb.org/t/technical-overview-of-the-database/135/3">here</a>.</p>
 <h3 id="recovery">Recovery</h3>
