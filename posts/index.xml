@@ -215,6 +215,7 @@
 <h2 id="developer-experience">Developer experience</h2>
 <p>FoundationDB’s keys are ordered, making <code>tuples</code> a particularly useful tool for data modeling. FoundationDB provides a <strong>tuple layer</strong> (available in each language binding) that encodes tuples into keys. This layer lets you store data using a tuple like <code>(state, county)</code> as a key. Later, you can perform reads using a prefix like <code>(state,)</code>. The layer works by preserving the natural ordering of the tuples.</p>
 <p>Everything is wrapped into a transaction in FDB.</p>
+<p>You can have a nice overview by reading the README of <a href="https://github.com/richardartoul/tsdb-layer/blob/master/README.md">tsdb-layer</a>, an experiment combining Time Series and FoundationDB: Millions of writes/s and 10x compression in under 2,000 lines of Go.</p>
 <h2 id="fdb-one-more-things-layers">FDB One more things: Layers</h2>
 <h3 id="concept-of-layers">Concept of layers</h3>
 
