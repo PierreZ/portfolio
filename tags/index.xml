@@ -6,10 +6,28 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 30 Jan 2020 10:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 14 Feb 2020 10:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>contribution</title>
+      <link>https://pierrezemb.fr/tags/contribution/</link>
+      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/contribution/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hbase</title>
+      <link>https://pierrezemb.fr/tags/hbase/</link>
+      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/hbase/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>foundationdb</title>
@@ -48,15 +66,6 @@
     </item>
     
     <item>
-      <title>hbase</title>
-      <link>https://pierrezemb.fr/tags/hbase/</link>
-      <pubDate>Sun, 17 Nov 2019 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/hbase/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>colossus</title>
       <link>https://pierrezemb.fr/tags/colossus/</link>
       <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
@@ -89,15 +98,6 @@
       <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/flink/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>sql</title>
-      <link>https://pierrezemb.fr/tags/sql/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/sql/</guid>
       <description></description>
     </item>
     

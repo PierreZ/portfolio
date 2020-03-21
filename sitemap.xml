@@ -3,6 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</loc>
+    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/contribution/</loc>
+    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/hbase/</loc>
+    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
     <lastmod>2020-01-30T10:24:27+01:00</lastmod>
   </url>
@@ -14,21 +39,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/tags/notesabout/</loc>
-    <lastmod>2020-01-30T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2020-01-30T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2020-01-30T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2020-01-30T10:24:27+01:00</lastmod>
   </url>
   
@@ -49,11 +59,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</loc>
-    <lastmod>2019-11-17T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/hbase/</loc>
     <lastmod>2019-11-17T10:24:27+01:00</lastmod>
   </url>
   
@@ -149,6 +154,11 @@
   
   <url>
     <loc>https://pierrezemb.fr/about/</loc>
+    <lastmod>2018-12-15T18:34:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
     <lastmod>2018-12-15T18:34:45+01:00</lastmod>
   </url>
   

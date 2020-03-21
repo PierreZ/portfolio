@@ -6,10 +6,22 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 30 Jan 2020 10:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 15 Dec 2018 18:34:45 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Contributing to Apache HBase: custom data balancing</title>
+      <link>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</link>
+      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</guid>
+      <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
+ In today&amp;rsquo;s blogpost, we&amp;rsquo;re going to take a look at our upstream contribution to Apache HBase&amp;rsquo;s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud&amp;rsquo;s monitoring.
+The context Have you ever wondered how:
+ we generate the graphs for your OVHcloud server or web hosting package?</description>
+    </item>
     
     <item>
       <title>Notes about FoundationDB</title>
@@ -102,15 +114,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       
       <guid>https://pierrezemb.fr/talks/ovh-alerts-flink/</guid>
       <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
-    </item>
-    
-    <item>
-      <title>What we learned as DevOps @OVH</title>
-      <link>https://pierrezemb.fr/talks/devops-ovh/</link>
-      <pubDate>Wed, 06 Mar 2019 22:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
-      <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
     </item>
     
   </channel>
