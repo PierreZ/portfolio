@@ -6,10 +6,20 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 08 Oct 2019 12:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 31 Mar 2020 01:22:36 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
+      <link>https://pierrezemb.fr/talks/announcing-kop/</link>
+      <pubDate>Tue, 31 Mar 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/announcing-kop/</guid>
+      <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.
+In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
+    </item>
     
     <item>
       <title>Bookkeeper 101</title>

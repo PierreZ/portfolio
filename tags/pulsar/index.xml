@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>contribution on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/tags/contribution/</link>
-    <description>Recent content in contribution on Pierre Zemb</description>
+    <title>pulsar on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/pulsar/</link>
+    <description>Recent content in pulsar on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 24 Mar 2020 10:24:27 +0100</lastBuildDate>
     
-	<atom:link href="https://pierrezemb.fr/tags/contribution/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://pierrezemb.fr/tags/pulsar/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,18 +20,6 @@
       <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
  This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
 We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;ldquo;Kafka on Pulsar&amp;rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.</description>
-    </item>
-    
-    <item>
-      <title>Contributing to Apache HBase: custom data balancing</title>
-      <link>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</link>
-      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</guid>
-      <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
- In today&amp;rsquo;s blogpost, we&amp;rsquo;re going to take a look at our upstream contribution to Apache HBase&amp;rsquo;s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud&amp;rsquo;s monitoring.
-The context Have you ever wondered how:
- we generate the graphs for your OVHcloud server or web hosting package?</description>
     </item>
     
   </channel>

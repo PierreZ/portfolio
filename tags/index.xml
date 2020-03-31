@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 14 Feb 2020 10:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 24 Mar 2020 10:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,18 @@
     <item>
       <title>contribution</title>
       <link>https://pierrezemb.fr/tags/contribution/</link>
-      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
+      <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/contribution/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pulsar</title>
+      <link>https://pierrezemb.fr/tags/pulsar/</link>
+      <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/pulsar/</guid>
       <description></description>
     </item>
     
@@ -89,15 +98,6 @@
       <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
       
       <guid>https://pierrezemb.fr/tags/hadoop/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>flink</title>
-      <link>https://pierrezemb.fr/tags/flink/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/flink/</guid>
       <description></description>
     </item>
     

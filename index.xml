@@ -12,6 +12,27 @@
     
     
     <item>
+      <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
+      <link>https://pierrezemb.fr/talks/announcing-kop/</link>
+      <pubDate>Tue, 31 Mar 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/announcing-kop/</guid>
+      <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.
+In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
+    </item>
+    
+    <item>
+      <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
+      <link>https://pierrezemb.fr/posts/announcing-kop/</link>
+      <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/announcing-kop/</guid>
+      <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
+ This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
+We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;ldquo;Kafka on Pulsar&amp;rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.</description>
+    </item>
+    
+    <item>
       <title>Contributing to Apache HBase: custom data balancing</title>
       <link>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</link>
       <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
@@ -96,24 +117,6 @@ Time To Live (TTL) Let&amp;rsquo;s read the doc first!
       <guid>https://pierrezemb.fr/talks/one-monitoring-platform/</guid>
       <description>Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?
 In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure.</description>
-    </item>
-    
-    <item>
-      <title>Operate JVM at Scale</title>
-      <link>https://pierrezemb.fr/talks/handling-jvm-scale/</link>
-      <pubDate>Mon, 06 May 2019 22:18:13 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/handling-jvm-scale/</guid>
-      <description>Abstract OVH has 27 data centers, more than 300 000 servers and 1.3 million customers. We operate one of the world’s largest cloud infrastructures on a daily basis, running millions of applications. Those softwares manage millions of transactions every second. To monitor such an architecture, OVH has chosen to build a unified monitoring platform: OVH Metrics Data Platform. Such a platform uses complex distributed systems to operate, based mainly on open source tools running on the JVM (Apache Kafka, Apache HBase, Warp 10, …).</description>
-    </item>
-    
-    <item>
-      <title>Handling alerts at OVH-Scale with Apache Flink</title>
-      <link>https://pierrezemb.fr/talks/ovh-alerts-flink/</link>
-      <pubDate>Thu, 18 Apr 2019 22:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/ovh-alerts-flink/</guid>
-      <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
     </item>
     
   </channel>

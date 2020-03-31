@@ -3,27 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/talks/announcing-kop/</loc>
+    <lastmod>2020-03-31T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/</loc>
+    <lastmod>2020-03-31T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/announcing-kop/</loc>
+    <lastmod>2020-03-24T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/contribution/</loc>
+    <lastmod>2020-03-24T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2020-03-24T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/pulsar/</loc>
+    <lastmod>2020-03-24T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2020-03-24T10:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</loc>
     <lastmod>2020-02-14T10:24:27+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/tags/contribution/</loc>
-    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://pierrezemb.fr/tags/hbase/</loc>
-    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2020-02-14T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2020-02-14T10:24:27+01:00</lastmod>
   </url>
   
@@ -64,11 +84,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/talks/bookkeeper-101/</loc>
-    <lastmod>2019-10-08T12:22:36+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/talks/</loc>
     <lastmod>2019-10-08T12:22:36+01:00</lastmod>
   </url>
   

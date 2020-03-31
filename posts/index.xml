@@ -5,8 +5,86 @@
         <description>Recent content in Posts on Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator>
         <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-        <lastBuildDate>Fri, 14 Feb 2020 10:24:27 +0100</lastBuildDate>
+        <lastBuildDate>Tue, 24 Mar 2020 10:24:27 +0100</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
+            <link>https://pierrezemb.fr/posts/announcing-kop/</link>
+            <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/announcing-kop/</guid>
+            <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
+ This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
+We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;ldquo;Kafka on Pulsar&amp;rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.</description>
+            <content type="html"><![CDATA[<blockquote>
+<p>This is a repost from <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/" title="Permalink to announcing KoP">OVHcloud&rsquo;s official blogpost.</a>, please read it there to support my company. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+</blockquote>
+<p>This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by <a href="https://twitter.com/sijieg">Sijie Guo</a>, <a href="https://twitter.com/Jia_Zhai">Jia Zhai</a> and <a href="https://twitter.com/PierreZ">Pierre Zemb</a>. Thanks <a href="https://twitter.com/LostInBrittany">Horacio Gonzalez</a> for the illustrations!</p>
+<p><img src="/posts/announcing-kop/images/kop-1.png" alt="hbase image"></p>
+<p>We are excited to announce that StreamNative and OVHcloud are open-sourcing &ldquo;Kafka on Pulsar&rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&rsquo;s powerful features, such as:</p>
+<ul>
+<li>Streamlined operations with enterprise-grade multi-tenancy</li>
+<li>Simplified operations with a rebalance-free architecture</li>
+<li>Infinite event stream retention with Apache BookKeeper and tiered storage</li>
+<li>Serverless event processing with Pulsar Functions</li>
+</ul>
+<h2 id="what-is-apache-pulsar">What is Apache Pulsar?</h2>
+<p>Apache Pulsar is an event streaming platform designed from the ground up to be cloud-native- deploying a multi-layer and segment-centric architecture. The architecture separates serving and storage into different layers, making the system container-friendly. The cloud-native architecture provides scalability, availability and resiliency and enables companies to expand their offerings with real-time data-enabled solutions. Pulsar has gained wide adoption since it was open-sourced in 2016 and was designated an Apache Top-Level project in 2018.</p>
+<h2 id="the-need-behind-kop">The need behind KoP</h2>
+<p>Pulsar provides a unified messaging model for both queueing and streaming workloads. Pulsar implemented its own protobuf-based binary protocol to provide high performance and low latency. This choice of protobuf makes it convenient to implement Pulsar <a href="https://pulsar.apache.org/docs/en/client-libraries/">clients</a> and the project already supports Java, Go, Python and C++ languages alongside <a href="https://pulsar.apache.org/docs/en/client-libraries/#thirdparty-clients">thirdparty clients</a> provided by the community. However, existing applications written using other messaging protocols had to be rewritten to adopt Pulsar&rsquo;s new unified messaging protocol.</p>
+<p>To address this, the Pulsar community developed applications to facilitate the migration to Pulsar from other messaging systems. For example, Pulsar provides a [Kafka wrapper](http://(<a href="https://pulsar.apache.org/docs/en/adaptors-kafka">https://pulsar.apache.org/docs/en/adaptors-kafka</a>) on Kafka Java API, which allows existing applications that already use Kafka Java client switching from Kafka to Pulsar <a href="https://www.youtube.com/watch?v=Cy9ev9nAZpI">without code change</a>. Pulsar also has a rich connector ecosystem, connecting Pulsar with other data systems. Yet, there was still a strong demand from those looking to switch from other Kafka applications to Pulsar.</p>
+<h2 id="streamnative-and-ovhclouds-collaboration">StreamNative and OVHcloud&rsquo;s collaboration</h2>
+<p>StreamNative was receiving a lot of inbound requests for help migrating from other messaging systems to Pulsar and recognized the need to support other messaging protocols (such as AMQP and Kafka) natively on Pulsar. StreamNative began working on introducing a general protocol handler framework in Pulsar that would allow developers using other messaging protocols to use Pulsar.</p>
+<p>Internally, OVHcloud had been running Apache Kafka for years, but despite their experience operating multiple clusters with millions of messages per second on Kafka, there were painful operational challenges. For example, putting thousands of topics from thousands of users into a single cluster was difficult without multi-tenancy.</p>
+<p>As a result, OVHcloud decided to shift and build the foundation of their topic-as-a-service product, called ioStream, on Pulsar instead of Kafka. Pulsar&rsquo;s multi-tenancy and the overall architecture with Apache Bookkeeper simplified operations compared to Kafka.</p>
+<p>After spawning the first region, OVHcloud decided to implement it as a proof-of-concept proxy capable of transforming the Kafka protocol to Pulsar on the fly. During this process, OVHcloud discovered that StreamNative was working on bringing the Kafka protocol natively to Pulsar, and they joined forces to develop KoP.</p>
+<p><img src="/posts/announcing-kop/images/kop-2.png" alt="hbase image"></p>
+<p>KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&rsquo;s event stream storage infrastructure and Pulsar&rsquo;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &ldquo;kafka&rdquo;. It can be installed and configured to run as part of Pulsar brokers.</p>
+<h2 id="the-distributed-log">The distributed log</h2>
+<p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&rsquo;s <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
+<p>Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar&rsquo;s distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).</p>
+<h2 id="implementations">Implementations</h2>
+<p>The implementation is done by comparing the protocols between Pulsar and Kafka. We found that there are a lot of similarities between these two protocols. Both protocols are comprised of the following operations:</p>
+<ul>
+<li><strong>Topic Lookup</strong>: All the clients connect to any broker to lookup the metadata (i.e. the owner broker) of the topics. After fetching the metadata, the clients establish persistent TCP connections to the owner brokers.</li>
+<li><strong>Produce</strong>: The clients talk to the <strong>owner</strong> broker of a topic partition to append the messages to a distributed log.</li>
+<li><strong>Consume</strong>: The clients talk to the <strong>owner</strong> broker of a topic partition to read the messages from a distributed log.</li>
+<li><strong>Offset</strong>: The messages produced to a topic partition are assigned with an offset. The offset in Pulsar is called MessageId. Consumers can use <strong>offsets</strong> to seek to a given position within the log to read messages.</li>
+<li><strong>Consumption State</strong>: Both systems maintain the consumption state for consumers within a subscription (or a consumer group in Kafka). The consumption state is stored in __offsets topic in Kafka, while the consumption state is stored as cursors in Pulsar.</li>
+</ul>
+<p>As you can see, these are all the primitive operations provided by a scale-out distributed log storage such as Apache BookKeeper. The core capabilities of Pulsar are implemented on top of Apache BookKeeper. Thus it is pretty easy and straightforward to implement the Kafka concepts by using the existing components that Pulsar has developed on BookKeeper.<!-- raw HTML omitted -->
+The following figure illustrates how we add the Kafka protocol support within Pulsar. We are introducing a new <strong>Protocol Handler</strong>which implements the Kafka wire protocol by leveraging the existing components (such as topic discovery, the distributed log library – ManagedLedger, cursors and etc) that Pulsar already has.</p>
+<p><img src="/posts/announcing-kop/images/kop-3.png" alt="hbase image"></p>
+<h3 id="topics">Topics</h3>
+<p>In Kafka, all the topics are stored in one flat namespace. But in Pulsar, topics are organized in hierarchical multi-tenant namespaces. We introduce a setting <em>kafkaNamespace</em> in broker configuration to allow the administrator configuring to map Kafka topics to Pulsar topics.</p>
+<p>In order to let Kafka users leverage the multi-tenancy feature of Apache Pulsar, a Kafka user can specify a Pulsar tenant and namespace as its SASL username when it uses SASL authentication mechanism to authenticate a Kafka client.</p>
+<h3 id="message-id-and-offset">Message ID and offset</h3>
+<p>In Kafka, each message is assigned with an offset once it is successfully produced to a topic partition. In Pulsar, each message is assigned with a <code>MessageID</code>. The message id consists of 3 components, <em>ledger-id</em>, <em>entry-id</em>, and <em>batch-index</em>. We are using the same approach in Pulsar-Kafka wrapper to convert a Pulsar MessageID to an offset and vice versa.</p>
+<h3 id="messages">Messages</h3>
+<p>Both a Kafka message and a Pulsar message have key, value, timestamp, and headers (note: this is called &lsquo;properties&rsquo; in Pulsar). We convert these fields automatically between Kafka messages and Pulsar messages.</p>
+<h3 id="topic-lookup">Topic lookup</h3>
+<p>We use the same topic lookup approach for the Kafka request handler as the Pulsar request handler. The request handler does topic discovery to lookup all the ownerships for the requested topic partitions and responds with the ownership information as part of Kafka TopicMetadata back to Kafka clients.</p>
+<h3 id="produce-messages">Produce Messages</h3>
+<p>When the Kafka request handler receives produced messages from a Kafka client, it converts Kafka messages to Pulsar messages by mapping the fields (i.e. key, value, timestamp and headers) one by one, and uses the ManagedLedger append API to append those converted Pulsar messages to BookKeeper. Converting Kafka messages to Pulsar messages allows existing Pulsar applications to consume messages produced by Kafka clients.</p>
+<h3 id="consume-messages">Consume Messages</h3>
+<p>When the Kafka request handler receives a consumer request from a Kafka client, it opens a non-durable cursor to read the entries starting from the requested offset. The Kafka request handler converts the Pulsar messages back to Kafka messages to allow existing Kafka applications to consume the messages produced by Pulsar clients.</p>
+<h3 id="group-coordinator--offsets-management">Group coordinator &amp; offsets management</h3>
+<p>The most challenging part is to implement the group coordinator and offsets management. Because Pulsar doesn&rsquo;t have a centralized group coordinator for assigning partitions to consumers of a consumer group and managing offsets for each consumer group. In Pulsar, the partition assignment is managed by broker on a per-partition basis, and the offset management is done by storing the acknowledgements in cursors by the owner broker of that partition.</p>
+<p>It is difficult to align the Pulsar model with the Kafka model. Hence, for the sake of providing full compatibility with Kafka clients, we implemented the Kafka group coordinator by storing the coordinator group changes and offsets in a system topic called _public/kafka/_<em>offsets</em> in Pulsar.</p>
+<p>This allows us to bridge the gap between Pulsar and Kafka and allows people to use existing Pulsar tools and policies to manage subscriptions and monitor Kafka consumers. We add a background thread in the implemented group coordinator to periodically sync offset updates from the system topic to Pulsar cursors. Hence a Kafka consumer group is effectively treated as a Pulsar subscription. All the existing Pulsar toolings can be used for managing Kafka consumer groups as well.</p>
+<h2 id="bridge-two-popular-messaging-ecosystems">Bridge two popular messaging ecosystems</h2>
+<p>At both companies, we value customer success. We believe that providing a native Kafka protocol on Apache Pulsar will reduce the barriers for people adopting Pulsar to achieve their business success. By integrating two popular event streaming ecosystems, KoP unlocks new use cases. Customers can leverage advantages from each ecosystem and build a truly unified event streaming platform with Apache Pulsar to accelerate the development of real-time applications and services.</p>
+<p>With KoP, a log collector can continue collecting log data from its sources and producing messages to Apache Pulsar using existing Kafka integrations. The downstream applications can use Pulsar Functions to process the events arriving in the system to do serverless event streaming.</p>
+<h2 id="try-it-out">Try it out</h2>
+<p>KoP is open sourced under Apache License V2 in <a href="https://github.com/streamnative/kop">https://github.com/streamnative/kop</a>.</p>
+<p>We are looking forward to your issues, and PRs. You can also <a href="https://apache-pulsar.herokuapp.com/">join #kop channel in Pulsar Slack</a> to discuss all things about Kafka-on-Pulsar.</p>
+<p>StreamNative and OVHcloud are also hosting a webinar about KoP on March 31. If you are interested in learning more details about KoP,<a href="https://zoom.us/webinar/register/6515842602644/WN_l_i-3ekDSg6PwPFn7tqRvA">please sign up</a>. Looking forward to meeting you online.</p>
+<p><img src="/posts/announcing-kop/images/kop-4.png" alt="hbase image"></p>
+<h2 id="thanks">Thanks</h2>
+<p>The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!</p>
+]]></content>
+        </item>
         
         <item>
             <title>Contributing to Apache HBase: custom data balancing</title>
@@ -1416,7 +1494,7 @@ I’m still a student, so my point of view could be far from reality, be gentle 
 <li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
 </ul>
 <h1 id="what-about-serverless"><strong>What about serverless?</strong></h1>
-<p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Software jargon, recycled. <a href="https://twitter.com/hashtag/serverless?src=hash&amp;ref_src=twsrc%5Etfw">#serverless</a> <a href="https://t.co/SUrCCKKNPb">pic.twitter.com/SUrCCKKNPb</a></p>&mdash; Did you wash your hands? (@kiyototamura) <a href="https://twitter.com/kiyototamura/status/717420657655418880?ref_src=twsrc%5Etfw">April 5, 2016</a></blockquote>
+<p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Software jargon, recycled. <a href="https://twitter.com/hashtag/serverless?src=hash&amp;ref_src=twsrc%5Etfw">#serverless</a> <a href="https://t.co/SUrCCKKNPb">pic.twitter.com/SUrCCKKNPb</a></p>&mdash; I hope you are reading this at home! (@kiyototamura) <a href="https://twitter.com/kiyototamura/status/717420657655418880?ref_src=twsrc%5Etfw">April 5, 2016</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 Serverless is so 2016</p>
