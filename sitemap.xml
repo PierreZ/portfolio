@@ -38,6 +38,21 @@
   </url>
   
   <url>
+    <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
+    <lastmod>2020-02-17T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/podcasts/</loc>
+    <lastmod>2020-02-17T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/podcasts/bdh-93/</loc>
+    <lastmod>2020-02-17T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</loc>
     <lastmod>2020-02-14T10:24:27+01:00</lastmod>
   </url>
@@ -45,11 +60,6 @@
   <url>
     <loc>https://pierrezemb.fr/tags/hbase/</loc>
     <lastmod>2020-02-14T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
-    <lastmod>2020-01-30T10:24:27+01:00</lastmod>
   </url>
   
   <url>

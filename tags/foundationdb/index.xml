@@ -6,10 +6,19 @@
     <description>Recent content in foundationdb on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 30 Jan 2020 10:24:27 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 17 Feb 2020 01:22:36 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/tags/foundationdb/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>🇫🇷 BigData Hebdo 93 : FoundationDB</title>
+      <link>https://pierrezemb.fr/podcasts/bdh-93/</link>
+      <pubDate>Mon, 17 Feb 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/bdh-93/</guid>
+      <description> </description>
+    </item>
     
     <item>
       <title>Notes about FoundationDB</title>
