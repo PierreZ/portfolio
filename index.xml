@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
+      <link>https://pierrezemb.fr/podcasts/bdh-99/</link>
+      <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/bdh-99/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
       <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
       <link>https://pierrezemb.fr/talks/announcing-kop/</link>
       <pubDate>Tue, 31 Mar 2020 01:22:36 +0100</pubDate>
@@ -104,18 +113,6 @@ Occurences  HUG France: Special Apache Pulsar Meetup  Ressources  slides  Photos
       <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
       <description>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
  Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &amp;lsquo;What does the death of Hadoop mean for big data?&#39;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</description>
-    </item>
-    
-    <item>
-      <title>Playing with TTL in HBase</title>
-      <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
-      <pubDate>Mon, 27 May 2019 22:07:11 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
-      <description>Among all features provided by HBase, there is one that is pretty handy to deal with your data&amp;rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&amp;rsquo;s dive into the feature!
-Time To Live (TTL) Let&amp;rsquo;s read the doc first!
- ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
- HBase Book: Time To Live (TTL)</description>
     </item>
     
   </channel>
