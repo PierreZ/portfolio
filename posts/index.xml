@@ -739,7 +739,7 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
 <p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 <ul>
 <li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
-<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&quot;, they:
+<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&rdquo;, they:
 <ul>
 <li>implemented a single master architecture</li>
 <li>dropped the idea of a full POSIX-compliant file system</li>
