@@ -6,10 +6,20 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 06 May 2020 01:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jun 2020 01:22:36 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
+      <link>https://pierrezemb.fr/talks/messaging-solution-pulsar/</link>
+      <pubDate>Tue, 16 Jun 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
+      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
+Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;lsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
+    </item>
     
     <item>
       <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
@@ -103,16 +113,6 @@ What is the MemStore?  The memtable from the official BigTable paper is the equi
       <guid>https://pierrezemb.fr/talks/bookkeeper-101/</guid>
       <description>Abstract Apache Bookkeeper is the main datastore used by Apache Pulsar. This Top-Level Apache project is defined as « A scalable, fault-tolerant, and low-latency storage service optimized for real-time workloads ». BookKeeper is suitable for a wide variety of use cases, from WAL to storage. In this talk, we will dive into Bookkeeper’s concepts, the public API, deployments and how it is used within Pulsar.
 Occurences  HUG France: Special Apache Pulsar Meetup  Ressources  slides  Photos and tweets Si vous cherchez à organiser les MeetUP, nos bureaux à Paris, Nantes, Rennes, Lyon, Bordeaux, Brest, Wroclaw, Madrid, Milan, London, Montreal, Dallas, Reston sont dispo gratos.</description>
-    </item>
-    
-    <item>
-      <title>What can be gleaned about GFS successor codenamed Colossus?</title>
-      <link>https://pierrezemb.fr/posts/colossus-google/</link>
-      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
-      <description>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
- Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &amp;lsquo;What does the death of Hadoop mean for big data?&#39;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</description>
     </item>
     
   </channel>

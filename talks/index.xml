@@ -6,10 +6,20 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 31 Mar 2020 01:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jun 2020 01:22:36 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
+      <link>https://pierrezemb.fr/talks/messaging-solution-pulsar/</link>
+      <pubDate>Tue, 16 Jun 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
+      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
+Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;lsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
+    </item>
     
     <item>
       <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
