@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>Notes about &#39;In Search of an Understandable Consensus Algorithm&#39;</title>
+      <title>Notes about Raft&#39;s paper</title>
       <link>https://pierrezemb.fr/posts/notes-about-raft/</link>
       <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
-      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
+      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
  As I&amp;rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
     </item>
     
