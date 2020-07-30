@@ -33,7 +33,7 @@ Time To Live (TTL) Let&amp;rsquo;s read the doc first!
 
 
 
-<link rel="stylesheet" href="/main.min.5dcefbf8102eb536dd3e2de53ffebfa58599ab2435c241a0db81728a5e015f2e.css">
+<link rel="stylesheet" href="/main.min.4743541a2891bdaa4ee26c0df1b08a8d3fc531a5a7b7bb50209312ee6bd66a30.css">
 
 
 
@@ -45,7 +45,7 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
  HBase Book: Time To Live (TTL)">
 <meta itemprop="datePublished" content="2019-05-27T22:07:11&#43;02:00" />
 <meta itemprop="dateModified" content="2019-05-27T22:07:11&#43;02:00" />
-<meta itemprop="wordCount" content="626">
+<meta itemprop="wordCount" content="660">
 <meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
@@ -120,7 +120,7 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
     <main class="post">
 
         <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>3 minutes
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 minutes
 
             
 
@@ -135,7 +135,9 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
             
 
             <div class="post-content">
-                <!-- raw HTML omitted -->
+                <header class="row text-center header">
+   <img src="/posts/hbase-data-model/images/hbase.jpg" alt="HBase Image" class="text-center"> 
+</header>
 <p>Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let&rsquo;s dive into the feature!</p>
 <h1 id="time-to-live-ttl">Time To Live (TTL)</h1>
 <p>Let&rsquo;s read the doc first!</p>
@@ -168,7 +170,9 @@ ROW                                COLUMN+CELL
 <li>force the memstore to be <strong>flushed as HFiles</strong></li>
 <li>force the <strong>compaction</strong>:</li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="bs-callout bs-callout-info">
+You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion</a></b>, the new feature in HBase 2. If you are playing with HBase 2, you can enable it by following <a target="_blank" href="https://hbase.apache.org/book.html#inmemory_compaction">this link</a> and run <b>compactions directly in the MemStores.</b>
+</div>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:014:0&gt; flush <span style="color:#e6db74">&#39;test_table&#39;</span>
 Took 0.4456 seconds    
 hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:015:0&gt; compact <span style="color:#e6db74">&#39;test_table&#39;</span>
@@ -226,7 +230,7 @@ Took 0.0031 seconds
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/distributed-systems">distributed-systems</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/hbase">hbase</a></span>
                 </p>
 
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>626 Words</p>
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>660 Words</p>
 
             <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-05-27 22:07 &#43;0200</p>
         </div>

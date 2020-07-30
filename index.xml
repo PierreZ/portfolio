@@ -6,10 +6,20 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 16 Jun 2020 01:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2020 07:24:27 +0100</lastBuildDate>
     
 	<atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Notes about &#39;In Search of an Understandable Consensus Algorithm&#39;</title>
+      <link>https://pierrezemb.fr/posts/notes-about-raft/</link>
+      <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
+      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
+ As I&amp;rsquo;m digging on ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
+    </item>
     
     <item>
       <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
@@ -103,16 +113,6 @@ The context Have you ever wondered how:
  tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore?  The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
  As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys.</description>
-    </item>
-    
-    <item>
-      <title>Bookkeeper 101</title>
-      <link>https://pierrezemb.fr/talks/bookkeeper-101/</link>
-      <pubDate>Tue, 08 Oct 2019 12:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/bookkeeper-101/</guid>
-      <description>Abstract Apache Bookkeeper is the main datastore used by Apache Pulsar. This Top-Level Apache project is defined as « A scalable, fault-tolerant, and low-latency storage service optimized for real-time workloads ». BookKeeper is suitable for a wide variety of use cases, from WAL to storage. In this talk, we will dive into Bookkeeper’s concepts, the public API, deployments and how it is used within Pulsar.
-Occurences  HUG France: Special Apache Pulsar Meetup  Ressources  slides  Photos and tweets Si vous cherchez à organiser les MeetUP, nos bureaux à Paris, Nantes, Rennes, Lyon, Bordeaux, Brest, Wroclaw, Madrid, Milan, London, Montreal, Dallas, Reston sont dispo gratos.</description>
     </item>
     
   </channel>

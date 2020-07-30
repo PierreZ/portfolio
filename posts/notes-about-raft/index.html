@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Pierre Zemb ">
+<meta name="description" content="List of ressources gleaned about Raft" />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,technical,leader" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+
+<link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-raft/" />
+
+
+
+
+    <title>
+        
+            Notes about &#39;In Search of an Understandable Consensus Algorithm&#39; :: Pierre Zemb 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
+
+
+
+<link rel="stylesheet" href="/main.min.4743541a2891bdaa4ee26c0df1b08a8d3fc531a5a7b7bb50209312ee6bd66a30.css">
+
+
+
+
+<meta itemprop="name" content="Notes about &#39;In Search of an Understandable Consensus Algorithm&#39;">
+<meta itemprop="description" content="List of ressources gleaned about Raft">
+<meta itemprop="datePublished" content="2020-07-30T07:24:27&#43;01:00" />
+<meta itemprop="dateModified" content="2020-07-30T07:24:27&#43;01:00" />
+<meta itemprop="wordCount" content="1780">
+<meta itemprop="image" content="https://pierrezemb.fr/posts/notes-about-raft/images/raft.png">
+
+
+
+<meta itemprop="keywords" content="raft,notesabout," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-raft/images/raft.png"/>
+
+<meta name="twitter:title" content="Notes about &#39;In Search of an Understandable Consensus Algorithm&#39;"/>
+<meta name="twitter:description" content="List of ressources gleaned about Raft"/>
+
+
+
+
+
+    <meta property="article:published_time" content="2020-07-30 07:24:27 &#43;0100 &#43;0100" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>9 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title">
+                <a href="https://pierrezemb.fr/posts/notes-about-raft/">Notes about &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;</a>
+            </h1>
+                <hr />
+                <aside id="toc">
+                <div class="toc-title">Table of Contents</div>
+                    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#replicated-state-machines">Replicated state machines</a></li>
+    <li><a href="#whats-wrong-with-paxos">What’s wrong with Paxos?</a></li>
+    <li><a href="#designing-for-understandability">Designing for understandability</a></li>
+    <li><a href="#the-raft-consensus-algorithm">The Raft consensus algorithm</a>
+      <ul>
+        <li><a href="#raft-basics">Raft basics</a></li>
+        <li><a href="#leader-election">Leader election</a></li>
+        <li><a href="#log-replication">Log replication</a></li>
+      </ul>
+    </li>
+    <li><a href="#safety">Safety</a>
+      <ul>
+        <li><a href="#leader-election-1">Leader election</a></li>
+        <li><a href="#committing-entries-from-previous-terms">Committing entries from previous terms</a></li>
+        <li><a href="#follower-and-candidate-crashes">Follower and candidate crashes</a></li>
+      </ul>
+    </li>
+    <li><a href="#cluster-membership-changes">Cluster membership changes</a></li>
+    <li><a href="#log-compaction">Log compaction</a></li>
+    <li><a href="#client-interaction">Client interaction</a></li>
+  </ul>
+</nav>
+                </aside>
+                <hr />
+
+            
+
+            <div class="post-content">
+                <p><img src="/posts/notes-about-raft/images/raft.png" alt="raft_image"></p>
+<p><a href="/tags/notesabout/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover raft&rsquo;s paper called &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;.</p>
+<hr>
+<p>As I&rsquo;m digging on ETCD, I needed to refresh my memory about Raft. I started by reading the paper located <a href="https://raft.github.io/raft.pdf">here</a> and I&rsquo;m also playing with the amazing <a href="https://github.com/pingcap/talent-plan/tree/master/courses/dss/raft">Raft labs made by PingCAP</a>.</p>
+<blockquote>
+<p>These labs are derived from the <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html">lab2:raft</a> and <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html">lab3:kvraft</a> from the famous <a href="http://nil.csail.mit.edu/6.824/2018/index.html">MIT 6.824</a> course but rewritten in Rust.</p>
+</blockquote>
+<h2 id="abstract">Abstract</h2>
+<blockquote>
+<p>Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.</p>
+</blockquote>
+<blockquote>
+<p>Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+<p>Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.</p>
+</blockquote>
+<blockquote>
+<p>Paxos has dominated the discussion of consensus algorithms over the last decade.</p>
+</blockquote>
+<blockquote>
+<p>Unfortunately, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both systembuilders and students struggle with Paxos.</p>
+</blockquote>
+<blockquote>
+<p>Our approach was unusual in that our primary goal was <strong>understandability</strong>.</p>
+</blockquote>
+<blockquote>
+<p>We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.</p>
+</blockquote>
+<h2 id="replicated-state-machines">Replicated state machines</h2>
+<p>The main idea is to compute identical copies of the same state (i.e <code>x:3, y:9</code>) in case of machines&rsquo;s failure. Most of the time, an ordered <code>wal</code> (write-ahead log) is used in the implementation, to hold the mutation (<code>x:4</code>). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.</p>
+<p>Raft creates a true split between:</p>
+<ul>
+<li>the consensus module,</li>
+<li>the wal,</li>
+<li>the state machine.</li>
+</ul>
+<img src="/posts/notes-about-raft/images/fig_1.png" alt="fig1" class="center">
+<h2 id="whats-wrong-with-paxos">What’s wrong with Paxos?</h2>
+<p>The paper is listing the drawbacks of Paxos:</p>
+<ul>
+<li>difficult to understand, and <a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf">I can&rsquo;t blame them</a></li>
+<li>many details are missing from the paper to implement <code>Multi-Paxos</code> as the paper is mainly describing <code>single-decree Paxos</code></li>
+</ul>
+<blockquote>
+<p>It is simpler and more efficient to design a system around a log, where new entries are appended sequentially in a constrained order.</p>
+</blockquote>
+<blockquote>
+<p>As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf">Chubby</a> implementers is typical:</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>There are significant gaps between the description of the Paxos algorithm and the needs of a real-world system
+the final system will be based on an un-proven protocol [4].</p>
+</blockquote>
+</blockquote>
+<h2 id="designing-for-understandability">Designing for understandability</h2>
+<p>Beside all the others goals of Raft:</p>
+<ul>
+<li>a complete and practical foundation for system building,</li>
+<li>must be safe under all conditions and available under typical operating conditions,</li>
+<li>must be efficient for common operations,</li>
+</ul>
+<p><strong>understandability</strong> was the most difficult challenge:</p>
+<blockquote>
+<p>It must be possible for a large audience to understand the algorithm comfortably. In addition, it must be possible to develop intuitions about the algorithm, so that system builders can make the extensions that are inevitable in real-world implementations.</p>
+</blockquote>
+<blockquote>
+<p>we divided problems into separate pieces that could be solved, explained, and understood relatively independently. For example, in Raft we separated leader election, log replication, safety, and membership changes.</p>
+</blockquote>
+<blockquote>
+<p>Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.</p>
+</blockquote>
+<h2 id="the-raft-consensus-algorithm">The Raft consensus algorithm</h2>
+<p>Raft is heavily relying on the <code>leader</code> pattern:</p>
+<blockquote>
+<p>Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.</p>
+</blockquote>
+<blockquote>
+<p>The leader accepts log entries from clients, replicates them on other servers, and tells servers when it is safe to apply log entries to their state machines.</p>
+</blockquote>
+<p>Thanks to this pattern, Raft is splitting the consensus problem into 3:</p>
+<ul>
+<li>Leader election</li>
+<li>Log replication</li>
+<li>Safety</li>
+</ul>
+<h3 id="raft-basics">Raft basics</h3>
+<p>Each server can be in one of the three states:</p>
+<ul>
+<li><strong>Leader</strong> handle all requests,</li>
+<li><strong>Follower</strong> passive member, they issue no requests on their own but simply respond to requests from leaders and candidates,</li>
+<li><strong>Candidate</strong> is used to elect a new leader.</li>
+</ul>
+<p>Leader is elected through <code>election</code>: Each term (interval of time of arbitrary length packed with an number) begins with an election, in which one or more candidates attempt to become leader. If a candidate wins the election, then it serves as leader for the rest of the term. In the case of a split vote, the term will end with no leader; a new term (with a new election) will begin.</p>
+<blockquote>
+<p>Terms act as a logical clock [14] in Raft.</p>
+</blockquote>
+<blockquote>
+<p>Each server stores a current term number, which increases monotonically over time. Current terms are exchanged whenever servers communicate; if one server’s current term is smaller than the other’s, then it updates its current term to the larger value. If a candidate or leader discovers that its term is out of date, it immediately reverts to fol-lower state. If a server receives a request with a stale term number, it rejects the request.</p>
+</blockquote>
+<p><code>RPC</code> is used for communications:</p>
+<ul>
+<li><strong>RequestVote RPCs</strong> are initiated by candidates during elections,</li>
+<li><strong>Append-Entries RPCs</strong> are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.</li>
+</ul>
+<h3 id="leader-election">Leader election</h3>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#election">here</a>.</p>
+<p>The key-point of the election are the fact that:</p>
+<ul>
+<li>nodes vote for themselves,</li>
+<li>the term number is used to recover from failure,</li>
+<li>election timeouts are randomized.</li>
+</ul>
+<blockquote>
+<p>To begin an election, a follower increments its current term and transitions to candidate state. It then votes for itself and issues RequestVote RPCs in parallel to each of the other servers in the cluster. A candidate continues in this state until one of three things happens:</p>
+<ul>
+<li>(a) it wins the election,</li>
+<li>(b) another server establishes itself as leader,</li>
+<li>(c) a period of time goes by with no winner.</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).</p>
+</blockquote>
+<h3 id="log-replication">Log replication</h3>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#replication">here</a>.</p>
+<blockquote>
+<p>Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.</p>
+</blockquote>
+<blockquote>
+<p>The term numbers in log entries are used to detect inconsistencies between logs</p>
+</blockquote>
+<blockquote>
+<p>The leader decides when it is safe to apply a log entry to the state machines; such an entry is called committed. Raft guarantees that committed entries are durable and will eventually be executed by all of the available state machines.</p>
+</blockquote>
+<p>Raft is implementing a lot of safety inside the log:</p>
+<blockquote>
+<p>When sending an AppendEntries RPC, the leader includes the index and term of the entry in its log that immediately precedes the new entries. If the follower does not find an entry in its log with the same index and term, then it refuses the new entries</p>
+</blockquote>
+<p>This is really interesting to be leader-failure proof. And for follower&rsquo;s failure:</p>
+<blockquote>
+<p>In Raft, the leader handles inconsistencies by forcing the followers’ logs to duplicate its own.</p>
+</blockquote>
+<blockquote>
+<p>To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.</p>
+</blockquote>
+<h2 id="safety">Safety</h2>
+<h3 id="leader-election-1">Leader election</h3>
+<p>As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.</p>
+<blockquote>
+<p>Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.</p>
+</blockquote>
+<blockquote>
+<p>Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.</p>
+</blockquote>
+<h3 id="committing-entries-from-previous-terms">Committing entries from previous terms</h3>
+<blockquote>
+<p>Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.</p>
+</blockquote>
+<p>This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.</p>
+<h3 id="follower-and-candidate-crashes">Follower and candidate crashes</h3>
+<blockquote>
+<p>If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.</p>
+</blockquote>
+<h2 id="cluster-membership-changes">Cluster membership changes</h2>
+<p>This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:</p>
+<blockquote>
+<p>In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:</p>
+<ul>
+<li>Log entries are replicated to all servers in both con-figurations,</li>
+<li>Any server from either configuration may serve asleader,</li>
+<li>Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.</li>
+</ul>
+</blockquote>
+<h2 id="log-compaction">Log compaction</h2>
+<p>As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:</p>
+<img src="/posts/notes-about-raft/images/fig_3.png" alt="fig3" class="center">
+<blockquote>
+<p>the leader must occasionally send snapshots to followers that lag behind.</p>
+</blockquote>
+<p>This is useful for slow follower or a new server joining the cluster.</p>
+<blockquote>
+<p>The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.</p>
+</blockquote>
+<h2 id="client-interaction">Client interaction</h2>
+<blockquote>
+<p>Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.</p>
+</blockquote>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/raft">raft</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/notesabout">notesabout</a></span>
+                </p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1780 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-07-30 08:24 &#43;0200</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/announcing-kop/">
+                                <span class="button__text">Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2020</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.85fdb035ef4887ffbc86531f44a75cb889691d9ba5cb5c3eef56e2e20712e5f18f185a128775b4396af65b87c7ab50215cdfb655ca7dac62df44b2c5f8a6b389.js" integrity="sha512-hf2wNe9Ih/&#43;8hlMfRKdcuIlpHZuly1w&#43;71bi4gcS5fGPGFoSh3W0OWr2W4fHq1AhXN&#43;2Vcp9rGLfRLLF&#43;KaziQ=="></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-41090605-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+
+    </body>
+</html>

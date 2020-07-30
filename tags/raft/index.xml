@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>notesabout on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/tags/notesabout/</link>
-    <description>Recent content in notesabout on Pierre Zemb</description>
+    <title>raft on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/raft/</link>
+    <description>Recent content in raft on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 30 Jul 2020 07:24:27 +0100</lastBuildDate>
     
-	<atom:link href="https://pierrezemb.fr/tags/notesabout/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://pierrezemb.fr/tags/raft/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,17 +19,6 @@
       <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
       <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
  As I&amp;rsquo;m digging on ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
-    </item>
-    
-    <item>
-      <title>Notes about FoundationDB</title>
-      <link>https://pierrezemb.fr/posts/notes-about-foundationdb/</link>
-      <pubDate>Thu, 30 Jan 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
-      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
- Overview of FoundationDB As stated in the official documentation:
- FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.</description>
     </item>
     
   </channel>
