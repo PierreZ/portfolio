@@ -1147,7 +1147,7 @@ Took 0.0060 seconds
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
  cf1:desc                          timestamp<span style="color:#f92672">=</span>1558366581134, value<span style="color:#f92672">=</span>TTL Demo
- <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^</span> 
+ <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^ </span>
 </code></pre></div><p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
 <p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
 <p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
@@ -1701,10 +1701,6 @@ I’m still a student, so my point of view could be far from reality, be gentle 
 <li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
 </ul>
 <h1 id="what-about-serverless"><strong>What about serverless?</strong></h1>
-<p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Software jargon, recycled. <a href="https://twitter.com/hashtag/serverless?src=hash&amp;ref_src=twsrc%5Etfw">#serverless</a> <a href="https://t.co/SUrCCKKNPb">pic.twitter.com/SUrCCKKNPb</a></p>&mdash; Kiyoto Tamura (@kiyototamura) <a href="https://twitter.com/kiyototamura/status/717420657655418880?ref_src=twsrc%5Etfw">April 5, 2016</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-Serverless is so 2016</p>
 <p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> and quickly followed by <a href="https://cloud.google.com/functions/docs">Google</a>, <a href="https://azure.microsoft.com/en-us/services/functions/">Microsoft</a>, <a href="https://new-console.ng.bluemix.net/openwhisk/">IBM</a> and <a href="https://www.iron.io/introducing-aws-lambda-support">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
 <h1 id="additional-links-and-talks-about-this-topic">Additional links and talks about this topic</h1>
 <ul>

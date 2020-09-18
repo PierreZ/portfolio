@@ -6,11 +6,7 @@
     <description>Recent content in programming on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 13 May 2016 17:19:23 +0000</lastBuildDate>
-    
-	<atom:link href="https://pierrezemb.fr/tags/programming/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 13 May 2016 17:19:23 +0000</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/programming/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Event-driven architecture 101</title>
       <link>https://pierrezemb.fr/posts/eventdriven-architecture-101/</link>

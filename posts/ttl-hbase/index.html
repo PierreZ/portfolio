@@ -43,14 +43,15 @@ Time To Live (TTL) Let&amp;rsquo;s read the doc first!
 Time To Live (TTL) Let&rsquo;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)">
-<meta itemprop="datePublished" content="2019-05-27T22:07:11&#43;02:00" />
-<meta itemprop="dateModified" content="2019-05-27T22:07:11&#43;02:00" />
+<meta itemprop="datePublished" content="2019-05-27T22:07:11+02:00" />
+<meta itemprop="dateModified" content="2019-05-27T22:07:11+02:00" />
 <meta itemprop="wordCount" content="660">
 <meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="distributed-systems,hbase," /><meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="distributed-systems,hbase," />
+<meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
 <meta name="twitter:title" content="Playing with TTL in HBase"/>
@@ -195,7 +196,7 @@ Took 0.0060 seconds
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hbase<span style="color:#f92672">(</span>main<span style="color:#f92672">)</span>:003:0&gt; get <span style="color:#e6db74">&#39;test_table&#39;</span>,<span style="color:#e6db74">&#39;row123&#39;</span>,<span style="color:#e6db74">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
  cf1:desc                          timestamp<span style="color:#f92672">=</span>1558366581134, value<span style="color:#f92672">=</span>TTL Demo
- <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^</span> 
+ <span style="color:#75715e">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^ </span>
 </code></pre></div><p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
 <p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
 <p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
