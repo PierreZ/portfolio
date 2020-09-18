@@ -5,8 +5,212 @@
         <description>Recent content in Posts on Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator>
         <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-        <lastBuildDate>Thu, 30 Jul 2020 07:24:27 +0100</lastBuildDate>
+        <lastBuildDate>Fri, 18 Sep 2020 05:24:27 +0100</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Diving into ETCD&#39;s linearizable reads</title>
+            <link>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</link>
+            <pubDate>Fri, 18 Sep 2020 05:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</guid>
+            <description>Diving Into is a blogpost serie where we are digging a specific part of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind ETCD&amp;rsquo;s Linearizable reads.
+ What is ETCD? From the official website:
+ etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</description>
+            <content type="html"><![CDATA[<p><img src="/posts/diving-into-etcd-linearizable/etcd.png" alt="etcd image"></p>
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind ETCD&rsquo;s Linearizable reads.</p>
+<hr>
+<h2 id="what-is-etcd">What is ETCD?</h2>
+<p>From <a href="https://etcd.io/">the official website</a>:</p>
+<blockquote>
+<p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
+</blockquote>
+<p>ETCD is well-known to be Kubernetes&rsquo;s datastore, and a CNCF incubating project.</p>
+<h2 id="linea-what">Linea-what?</h2>
+<p><a href="https://jepsen.io/consistency/models/linearizable">Let&rsquo;s quote Kyle Kingsbury, a.k.a &ldquo;Aphyr&rdquo;</a>, for this one:</p>
+<blockquote>
+<p>Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.</p>
+</blockquote>
+<h2 id="why">Why?</h2>
+<p>ETCD is using <a href="https://raft.github.io/">Raft</a>, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here&rsquo;s an example:</p>
+<ol>
+<li><code>node1</code> is <code>leader</code> and heartbeating properly to <code>node2</code> and <code>node3</code>,</li>
+<li>network partition is happening, and <code>node1</code> is isolated from the others.</li>
+</ol>
+<p>At this moment, all the actions are depending on timeouts and settings. In a (close) future, all nodes will go into <strong>election mode</strong> and node 2 and 3 will be able to create a quorum. This can lead to this situation:</p>
+<ul>
+<li><code>node1</code> thinks he is a leader as heartbeat timeouts and retry are not yet reached, so he can serve reads 😱</li>
+<li><code>node2</code> and <code>node3</code> have elected a new leader and are working again, accepting writes.</li>
+</ul>
+<p>This situation is violating Linearizable reads, as reads going through <code>node1</code> will not see the last updates from the current leader.</p>
+<p>How can we solve this? One way is to use <code>ReadIndex</code>!</p>
+<h2 id="readindex">ReadIndex</h2>
+<p>The basic idea behind this is to confirm that the <strong>leader is true leader or not</strong> by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&rsquo;s dive into the implementation!</p>
+<p>All codes are from the current latest release <a href="https://github.com/etcd-io/etcd/releases/tag/v3.4.13">v3.4.13</a>.</p>
+<p><a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L114-L120">Let&rsquo;s take a Range operation</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Serializable</span> {
+		<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">linearizableReadNotify</span>(<span style="color:#a6e22e">ctx</span>)
+		<span style="color:#a6e22e">trace</span>.<span style="color:#a6e22e">Step</span>(<span style="color:#e6db74">&#34;agreement among raft nodes before linearized reading&#34;</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+		}
+	}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">EtcdServer</span>) <span style="color:#a6e22e">linearizableReadNotify</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">readMu</span>.<span style="color:#a6e22e">RLock</span>()
+	<span style="color:#a6e22e">nc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">readNotifier</span>
+	<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">readMu</span>.<span style="color:#a6e22e">RUnlock</span>()
+
+	<span style="color:#75715e">// signal linearizable loop for current notify if it hasn&#39;t been already
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">select</span> {
+	<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">readwaitc</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">struct</span>{}{}:
+	<span style="color:#66d9ef">default</span>:
+	}
+
+	<span style="color:#75715e">// wait for read state notification
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">select</span> {
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">nc</span>.<span style="color:#a6e22e">c</span>:
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">nc</span>.<span style="color:#a6e22e">err</span>
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Done</span>():
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Err</span>()
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">done</span>:
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ErrStopped</span>
+	}
+}
+</code></pre></div><p>So in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L773-L793">linearizableReadNotify</a>, we are waiting for a signal. <code>readwaitc</code> is used in another goroutine called <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771">linearizableReadLoop</a>. This goroutines will call this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">node</span>) <span style="color:#a6e22e">ReadIndex</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">rctx</span> []<span style="color:#66d9ef">byte</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">step</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Message</span>{<span style="color:#a6e22e">Type</span>: <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgReadIndex</span>, <span style="color:#a6e22e">Entries</span>: []<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Entry</span>{{<span style="color:#a6e22e">Data</span>: <span style="color:#a6e22e">rctx</span>}}})
+}
+
+</code></pre></div><p>that will create a <code>MsgReadIndex</code> message that will be handled in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/raft/raft.go#L994">stepLeader</a>, who will send the message to the followers, like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgReadIndex</span>:
+		<span style="color:#75715e">// If more than the local vote is needed, go through a full broadcast,
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// otherwise optimize.
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">prs</span>.<span style="color:#a6e22e">IsSingleton</span>() {
+		    <span style="color:#75715e">// PZ: omitting some code here
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readOnly</span>.<span style="color:#a6e22e">option</span> {
+			<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">ReadOnlySafe</span>:
+				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readOnly</span>.<span style="color:#a6e22e">addRequest</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">raftLog</span>.<span style="color:#a6e22e">committed</span>, <span style="color:#a6e22e">m</span>)
+				<span style="color:#75715e">// The local node automatically acks the request.
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readOnly</span>.<span style="color:#a6e22e">recvAck</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Entries</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Data</span>)
+				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">bcastHeartbeatWithCtx</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Entries</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Data</span>)
+			<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">ReadOnlyLeaseBased</span>:
+				<span style="color:#a6e22e">ri</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">raftLog</span>.<span style="color:#a6e22e">committed</span>
+				<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">From</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">None</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">From</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">id</span> { <span style="color:#75715e">// from local member
+</span><span style="color:#75715e"></span>					<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStates</span> = append(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStates</span>, <span style="color:#a6e22e">ReadState</span>{<span style="color:#a6e22e">Index</span>: <span style="color:#a6e22e">ri</span>, <span style="color:#a6e22e">RequestCtx</span>: <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Entries</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Data</span>})
+				} <span style="color:#66d9ef">else</span> {
+					<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Message</span>{<span style="color:#a6e22e">To</span>: <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">From</span>, <span style="color:#a6e22e">Type</span>: <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgReadIndexResp</span>, <span style="color:#a6e22e">Index</span>: <span style="color:#a6e22e">ri</span>, <span style="color:#a6e22e">Entries</span>: <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Entries</span>})
+				}
+			}
+</code></pre></div><p>So, the <code>leader</code> is sending a heartbeat in <code>ReadOnlySafe</code> mode. Turns out there is two modes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
+	<span style="color:#75715e">// ReadOnlySafe guarantees the linearizability of the read only request by
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// communicating with the quorum. It is the default and suggested option.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ReadOnlySafe</span> <span style="color:#a6e22e">ReadOnlyOption</span> = <span style="color:#66d9ef">iota</span>
+	<span style="color:#75715e">// ReadOnlyLeaseBased ensures linearizability of the read only request by
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// relying on the leader lease. It can be affected by clock drift.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// If the clock drift is unbounded, leader might keep the lease longer than it
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// should (clock can move backward/pause without any bound). ReadIndex is not safe
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// in that case.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ReadOnlyLeaseBased</span>
+)
+</code></pre></div><p>Responses from the followers will be handled here:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgHeartbeatResp</span>:
+		<span style="color:#75715e">// PZ: omitting some code here
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">rss</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readOnly</span>.<span style="color:#a6e22e">advance</span>(<span style="color:#a6e22e">m</span>)
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">rs</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">rss</span> {
+			<span style="color:#a6e22e">req</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">req</span>
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">From</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">None</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">From</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">id</span> { <span style="color:#75715e">// from local member
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStates</span> = append(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStates</span>, <span style="color:#a6e22e">ReadState</span>{<span style="color:#a6e22e">Index</span>: <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">RequestCtx</span>: <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">Entries</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">Data</span>})
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Message</span>{<span style="color:#a6e22e">To</span>: <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">From</span>, <span style="color:#a6e22e">Type</span>: <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgReadIndexResp</span>, <span style="color:#a6e22e">Index</span>: <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">Entries</span>: <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">Entries</span>})
+			}
+		}
+</code></pre></div><p>We are storing things into a <code>ReadState</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// ReadState provides state for read only query.
+</span><span style="color:#75715e">// It&#39;s caller&#39;s responsibility to call ReadIndex first before getting
+</span><span style="color:#75715e">// this state from ready, it&#39;s also caller&#39;s duty to differentiate if this
+</span><span style="color:#75715e">// state is what it requests through RequestCtx, eg. given a unique id as
+</span><span style="color:#75715e">// RequestCtx
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ReadState</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Index</span>      <span style="color:#66d9ef">uint64</span>
+	<span style="color:#a6e22e">RequestCtx</span> []<span style="color:#66d9ef">byte</span>
+}
+</code></pre></div><p>Now that the state has been updated, we need to unblock our <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771">linearizableReadLoop</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">		<span style="color:#66d9ef">for</span> !<span style="color:#a6e22e">timeout</span> <span style="color:#f92672">&amp;&amp;</span> !<span style="color:#a6e22e">done</span> {
+			<span style="color:#66d9ef">select</span> {
+			<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">rs</span> = <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStateC</span>:
+</code></pre></div><p>Cool, another channel! Turns out, <code>readStateC</code> is updated in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/raft.go#L162">one of the main goroutine</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// start prepares and starts raftNode in a new goroutine. It is no longer safe
+</span><span style="color:#75715e">// to modify the fields after it has been started.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">raftNode</span>) <span style="color:#a6e22e">start</span>(<span style="color:#a6e22e">rh</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">raftReadyHandler</span>) {
+	<span style="color:#a6e22e">internalTimeout</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>
+
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">onStop</span>()
+		<span style="color:#a6e22e">islead</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">false</span>
+
+		<span style="color:#66d9ef">for</span> {
+			<span style="color:#66d9ef">select</span> {
+			<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ticker</span>.<span style="color:#a6e22e">C</span>:
+				<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">tick</span>()
+			<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">rd</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Ready</span>():
+				<span style="color:#75715e">// PZ: omitting some code here
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">rd</span>.<span style="color:#a6e22e">ReadStates</span>) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> {
+					<span style="color:#66d9ef">select</span> {
+					<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">readStateC</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rd</span>.<span style="color:#a6e22e">ReadStates</span>[len(<span style="color:#a6e22e">rd</span>.<span style="color:#a6e22e">ReadStates</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+				}
+</code></pre></div><p>Perfect, now <code>readStateC</code> is notified, and we can continue on <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771">linearizableReadLoop</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ai</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">getAppliedIndex</span>(); <span style="color:#a6e22e">ai</span> &lt; <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Index</span> {
+			<span style="color:#66d9ef">select</span> {
+			<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">applyWait</span>.<span style="color:#a6e22e">Wait</span>(<span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Index</span>):
+			<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">stopping</span>:
+				<span style="color:#66d9ef">return</span>
+			}
+		}
+		<span style="color:#75715e">// unblock all l-reads requested at indices before rs.Index
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">nr</span>.<span style="color:#a6e22e">notify</span>(<span style="color:#66d9ef">nil</span>)
+</code></pre></div><p>The first part is a safety measure to makes sure the applied index is lower that the index stored in <code>ReadState</code>. And then finally we are unlocking all pending reads 🤩</p>
+<h2 id="one-more-thing-follower-read">One more thing: Follower read</h2>
+<p>We went through <code>stepLeader</code> a lot, be there is something interesting in <a href="https://github.com/etcd-io/etcd/blob/v4.3.13/raft/raft.go#L1320"><code>stepFollower</code></a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">MsgReadIndex</span>:
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">lead</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">None</span> {
+			<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;%x no leader at term %d; dropping index reading msg&#34;</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Term</span>)
+			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+		}
+		<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">To</span> = <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">lead</span>
+		<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">m</span>)
+</code></pre></div><p>This means that a follower can send a <code>MsgReadIndex</code> message to perform the same kind of checks than a leader. This small features is in fact enabling <strong>follower-reads</strong> on ETCD 🤩 That is why you can see <code>Range</code> requests from a <code>follower</code>.</p>
+<h2 id="operational-tips">operational tips</h2>
+<ul>
+<li>If you are running etcd &lt;= 3.4, make sure <strong>logger=zap</strong> is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;level&#34;</span>: <span style="color:#e6db74">&#34;info&#34;</span>,
+  <span style="color:#f92672">&#34;ts&#34;</span>: <span style="color:#e6db74">&#34;2020-08-12T08:24:56.181Z&#34;</span>,
+  <span style="color:#f92672">&#34;caller&#34;</span>: <span style="color:#e6db74">&#34;traceutil/trace.go:145&#34;</span>,
+  <span style="color:#f92672">&#34;msg&#34;</span>: <span style="color:#e6db74">&#34;trace[677217921] range&#34;</span>,
+  <span style="color:#f92672">&#34;detail&#34;</span>: <span style="color:#e6db74">&#34;{range_begin:/...redacted...; range_end:; response_count:1; response_revision:2725080604; }&#34;</span>,
+  <span style="color:#f92672">&#34;duration&#34;</span>: <span style="color:#e6db74">&#34;1.553047811s&#34;</span>,
+  <span style="color:#f92672">&#34;start&#34;</span>: <span style="color:#e6db74">&#34;2020-08-12T08:24:54.628Z&#34;</span>,
+  <span style="color:#f92672">&#34;end&#34;</span>: <span style="color:#e6db74">&#34;2020-08-12T08:24:56.181Z&#34;</span>,
+  <span style="color:#f92672">&#34;steps&#34;</span>: [
+    <span style="color:#e6db74">&#34;trace[677217921] &#39;agreement among raft nodes before linearized reading&#39;  (duration: 1.534322015s)&#34;</span> 
+  ]
+}
+</code></pre></div><ul>
+<li>there is <a href="https://github.com/etcd-io/etcd/issues/11884">a random performance issue on etcd 3.4</a></li>
+<li>there is some metrics than you can watch for ReadIndex issues:
+<ul>
+<li><code>etcd_server_read_indexes_failed_total</code></li>
+<li><code>etcd_server_slow_read_indexes_total</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Thank you</strong> for reading my post! feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Notes about Raft&#39;s paper</title>

@@ -3,6 +3,36 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/tags/diving-into/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/etcd/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2020-09-18T05:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/notes-about-raft/</loc>
     <lastmod>2020-07-30T07:24:27+01:00</lastmod>
   </url>
@@ -13,22 +43,7 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2020-07-30T07:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2020-07-30T07:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://pierrezemb.fr/tags/raft/</loc>
-    <lastmod>2020-07-30T07:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2020-07-30T07:24:27+01:00</lastmod>
   </url>
   
@@ -100,11 +115,6 @@
   <url>
     <loc>https://pierrezemb.fr/posts/notes-about-foundationdb/</loc>
     <lastmod>2020-01-30T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/diving-into/</loc>
-    <lastmod>2019-12-08T15:00:00+01:00</lastmod>
   </url>
   
   <url>

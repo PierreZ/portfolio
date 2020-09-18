@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 30 Jul 2020 07:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 18 Sep 2020 05:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>diving into</title>
+      <link>https://pierrezemb.fr/tags/diving-into/</link>
+      <pubDate>Fri, 18 Sep 2020 05:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/diving-into/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>etcd</title>
+      <link>https://pierrezemb.fr/tags/etcd/</link>
+      <pubDate>Fri, 18 Sep 2020 05:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/etcd/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>notesabout</title>
       <link>https://pierrezemb.fr/tags/notesabout/</link>
@@ -71,29 +89,11 @@
     </item>
     
     <item>
-      <title>diving into</title>
-      <link>https://pierrezemb.fr/tags/diving-into/</link>
-      <pubDate>Sun, 08 Dec 2019 15:00:00 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/diving-into/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>kafka</title>
       <link>https://pierrezemb.fr/tags/kafka/</link>
       <pubDate>Sun, 08 Dec 2019 15:00:00 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/kafka/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>colossus</title>
-      <link>https://pierrezemb.fr/tags/colossus/</link>
-      <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/colossus/</guid>
       <description></description>
     </item>
     
