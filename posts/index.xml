@@ -5,8 +5,71 @@
         <description>Recent content in Posts on Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator>
         <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-        <lastBuildDate>Fri, 18 Sep 2020 05:24:27 +0100</lastBuildDate>
+        <lastBuildDate>Wed, 23 Sep 2020 10:24:27 +0100</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Announcing Record-Store, a new (experimental) place for your data</title>
+            <link>https://pierrezemb.fr/posts/announcing-record-store/</link>
+            <pubDate>Wed, 23 Sep 2020 10:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/announcing-record-store/</guid>
+            <description>TL;DR: I&amp;rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on https://pierrez.github.io/record-store.
+What? Record-Store is a layer running on top of FoundationDB. It provides abstractions to create, load and deletes customer-defined data called records, which are hold into a RecordSpace. We would like to have this kind of flow for developers:
+ Opening KeySpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
+            <content type="html"><![CDATA[<p>TL;DR: I&rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on <a href="https://pierrez.github.io/record-store">https://pierrez.github.io/record-store</a>.</p>
+<h2 id="what">What?</h2>
+<p><code>Record-Store</code> is a <a href="https://apple.github.io/foundationdb/layer-concept.html">layer</a> running on top of <a href="https://foundationdb.org">FoundationDB</a>. It provides abstractions to create, load and deletes customer-defined data called <code>records</code>, which are hold into a <code>RecordSpace</code>. We would like to have this kind of flow for developers:</p>
+<ol>
+<li>Opening KeySpace, for example <code>prod/users</code></li>
+<li>Create a protobuf definition which will be used as schema</li>
+<li>Upsert schema</li>
+<li>Push records</li>
+<li>Query records</li>
+<li>delete records</li>
+</ol>
+<p>You need another <code>KeySpace</code> to store another type of data, or maybe a <code>KeySpace</code> dedicated to production env? Juste create it and you are good to go!</p>
+<h2 id="features">Features</h2>
+<p>It is currently an experiment, but it already has some strong features:</p>
+<ul>
+<li>
+<p><strong>Multi-tenant</strong> A <code>tenant</code> can create as many <code>RecordSpace</code> as we want, and we can have many <code>tenants</code>.</p>
+</li>
+<li>
+<p><strong>Standard API</strong> We are exposing the record-store with standard technologies:</p>
+<ul>
+<li><a href="https://grpc.io">gRPC</a></li>
+<li><em>very experimental</em> <a href="https://graphql.org">GraphQL</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Scalable</strong> We are based on the same tech behind <a href="https://www.foundationdb.org/files/record-layer-paper.pdf">CloudKit</a> called the <a href="https://github.com/foundationdb/fdb-record-layer/">Record Layer</a>,</p>
+</li>
+<li>
+<p><strong>Transactional</strong> We are running on top of <a href="https://www.foundationdb.org/">FoundationDB</a>. FoundationDB gives you the power of ACID transactions in a distributed database.</p>
+</li>
+<li>
+<p><strong>Encrypted</strong> Data are encrypted by default.</p>
+</li>
+<li>
+<p><strong>Multi-model</strong> For each <code>RecordSpace</code>, you can define a <code>schema</code>, which is in-fact only a <code>Protobuf</code> definition. You need to store some <code>users</code>, or a more complicated structure? If you can represent it as <a href="https://developers.google.com/protocol-buffers">Protobuf</a>, you are good to go!</p>
+</li>
+<li>
+<p><strong>Index-defined queries</strong> Your queries&rsquo;s capabilities are defined by the indexes you put on your schema.</p>
+</li>
+<li>
+<p><strong>Secured</strong> We are using <a href="https://github.com/CleverCloud/biscuit">Biscuit</a>, a mix of <code>JWT</code> and <code>Macaroons</code> to ensure auth{entication, orization}.</p>
+</li>
+</ul>
+<h2 id="why">Why?</h2>
+<p>Lately, I have been playing a lot with my <a href="https://github.com/PierreZ/fdb-etcd">ETCD-Layer</a> that is using the <a href="https://github.com/foundationdb/fdb-record-layer/">Record-Layer</a>. Thanks to it, I was able to bootstrap my ETCD-layer very quickly, but I was not using a tenth of the capacities of this library. So I decided to go deeper. <strong>What would a gRPC abstraction of the Record-Layer look like?</strong></p>
+<p>The name of this project itself is a tribute to the Record Layer as we are exposing the layer within a gRPC interface.</p>
+<h2 id="try-it-out">Try it out!</h2>
+<p>Record-Store is open sourced under Apache License V2 in <a href="https://github.com/PierreZ/record-store">https://github.com/PierreZ/record-store</a> and the documentation can be found <a href="https://pierrez.github.io/record-store">https://pierrez.github.io/record-store</a>.</p>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Diving into ETCD&#39;s linearizable reads</title>

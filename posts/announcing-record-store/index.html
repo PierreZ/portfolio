@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Pierre Zemb ">
+<meta name="description" content="Opensourcing Record-Store" />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,technical,leader" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+
+<link rel="canonical" href="https://pierrezemb.fr/posts/announcing-record-store/" />
+
+
+
+
+    <title>
+        
+            Announcing Record-Store, a new (experimental) place for your data :: Pierre Zemb 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
+
+
+
+<link rel="stylesheet" href="/main.min.4743541a2891bdaa4ee26c0df1b08a8d3fc531a5a7b7bb50209312ee6bd66a30.css">
+
+
+
+
+<meta itemprop="name" content="Announcing Record-Store, a new (experimental) place for your data">
+<meta itemprop="description" content="Opensourcing Record-Store">
+<meta itemprop="datePublished" content="2020-09-23T10:24:27+01:00" />
+<meta itemprop="dateModified" content="2020-09-23T10:24:27+01:00" />
+<meta itemprop="wordCount" content="382">
+<meta itemprop="image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg">
+
+
+
+<meta itemprop="keywords" content="foundationdb,oss," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg"/>
+
+<meta name="twitter:title" content="Announcing Record-Store, a new (experimental) place for your data"/>
+<meta name="twitter:description" content="Opensourcing Record-Store"/>
+
+
+
+
+
+    <meta property="article:published_time" content="2020-09-23 10:24:27 &#43;0100 &#43;0100" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>2 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title">
+                <a href="https://pierrezemb.fr/posts/announcing-record-store/">Announcing Record-Store, a new (experimental) place for your data</a>
+            </h1>
+
+            
+
+            <div class="post-content">
+                <p>TL;DR: I&rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on <a href="https://pierrez.github.io/record-store">https://pierrez.github.io/record-store</a>.</p>
+<h2 id="what">What?</h2>
+<p><code>Record-Store</code> is a <a href="https://apple.github.io/foundationdb/layer-concept.html">layer</a> running on top of <a href="https://foundationdb.org">FoundationDB</a>. It provides abstractions to create, load and deletes customer-defined data called <code>records</code>, which are hold into a <code>RecordSpace</code>. We would like to have this kind of flow for developers:</p>
+<ol>
+<li>Opening KeySpace, for example <code>prod/users</code></li>
+<li>Create a protobuf definition which will be used as schema</li>
+<li>Upsert schema</li>
+<li>Push records</li>
+<li>Query records</li>
+<li>delete records</li>
+</ol>
+<p>You need another <code>KeySpace</code> to store another type of data, or maybe a <code>KeySpace</code> dedicated to production env? Juste create it and you are good to go!</p>
+<h2 id="features">Features</h2>
+<p>It is currently an experiment, but it already has some strong features:</p>
+<ul>
+<li>
+<p><strong>Multi-tenant</strong> A <code>tenant</code> can create as many <code>RecordSpace</code> as we want, and we can have many <code>tenants</code>.</p>
+</li>
+<li>
+<p><strong>Standard API</strong> We are exposing the record-store with standard technologies:</p>
+<ul>
+<li><a href="https://grpc.io">gRPC</a></li>
+<li><em>very experimental</em> <a href="https://graphql.org">GraphQL</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Scalable</strong> We are based on the same tech behind <a href="https://www.foundationdb.org/files/record-layer-paper.pdf">CloudKit</a> called the <a href="https://github.com/foundationdb/fdb-record-layer/">Record Layer</a>,</p>
+</li>
+<li>
+<p><strong>Transactional</strong> We are running on top of <a href="https://www.foundationdb.org/">FoundationDB</a>. FoundationDB gives you the power of ACID transactions in a distributed database.</p>
+</li>
+<li>
+<p><strong>Encrypted</strong> Data are encrypted by default.</p>
+</li>
+<li>
+<p><strong>Multi-model</strong> For each <code>RecordSpace</code>, you can define a <code>schema</code>, which is in-fact only a <code>Protobuf</code> definition. You need to store some <code>users</code>, or a more complicated structure? If you can represent it as <a href="https://developers.google.com/protocol-buffers">Protobuf</a>, you are good to go!</p>
+</li>
+<li>
+<p><strong>Index-defined queries</strong> Your queries&rsquo;s capabilities are defined by the indexes you put on your schema.</p>
+</li>
+<li>
+<p><strong>Secured</strong> We are using <a href="https://github.com/CleverCloud/biscuit">Biscuit</a>, a mix of <code>JWT</code> and <code>Macaroons</code> to ensure auth{entication, orization}.</p>
+</li>
+</ul>
+<h2 id="why">Why?</h2>
+<p>Lately, I have been playing a lot with my <a href="https://github.com/PierreZ/fdb-etcd">ETCD-Layer</a> that is using the <a href="https://github.com/foundationdb/fdb-record-layer/">Record-Layer</a>. Thanks to it, I was able to bootstrap my ETCD-layer very quickly, but I was not using a tenth of the capacities of this library. So I decided to go deeper. <strong>What would a gRPC abstraction of the Record-Layer look like?</strong></p>
+<p>The name of this project itself is a tribute to the Record Layer as we are exposing the layer within a gRPC interface.</p>
+<h2 id="try-it-out">Try it out!</h2>
+<p>Record-Store is open sourced under Apache License V2 in <a href="https://github.com/PierreZ/record-store">https://github.com/PierreZ/record-store</a> and the documentation can be found <a href="https://pierrez.github.io/record-store">https://pierrez.github.io/record-store</a>.</p>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/foundationdb">foundationdb</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/oss">oss</a></span>
+                </p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>382 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-09-23 11:24 &#43;0200</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">
+                                <span class="button__text">Diving into ETCD&#39;s linearizable reads</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2020</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.85fdb035ef4887ffbc86531f44a75cb889691d9ba5cb5c3eef56e2e20712e5f18f185a128775b4396af65b87c7ab50215cdfb655ca7dac62df44b2c5f8a6b389.js" integrity="sha512-hf2wNe9Ih/&#43;8hlMfRKdcuIlpHZuly1w&#43;71bi4gcS5fGPGFoSh3W0OWr2W4fHq1AhXN&#43;2Vcp9rGLfRLLF&#43;KaziQ=="></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-41090605-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+
+    </body>
+</html>

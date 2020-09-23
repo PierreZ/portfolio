@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 18 Sep 2020 05:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Sep 2020 10:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>foundationdb</title>
+      <link>https://pierrezemb.fr/tags/foundationdb/</link>
+      <pubDate>Wed, 23 Sep 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/foundationdb/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>oss</title>
+      <link>https://pierrezemb.fr/tags/oss/</link>
+      <pubDate>Wed, 23 Sep 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/oss/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>diving into</title>
       <link>https://pierrezemb.fr/tags/diving-into/</link>
@@ -71,29 +89,11 @@
     </item>
     
     <item>
-      <title>foundationdb</title>
-      <link>https://pierrezemb.fr/tags/foundationdb/</link>
-      <pubDate>Mon, 17 Feb 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/foundationdb/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>hbase</title>
       <link>https://pierrezemb.fr/tags/hbase/</link>
       <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/hbase/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kafka</title>
-      <link>https://pierrezemb.fr/tags/kafka/</link>
-      <pubDate>Sun, 08 Dec 2019 15:00:00 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/kafka/</guid>
       <description></description>
     </item>
     

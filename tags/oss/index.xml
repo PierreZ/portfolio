@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>oss on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/oss/</link>
+    <description>Recent content in oss on Pierre Zemb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 23 Sep 2020 10:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/oss/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Announcing Record-Store, a new (experimental) place for your data</title>
+      <link>https://pierrezemb.fr/posts/announcing-record-store/</link>
+      <pubDate>Wed, 23 Sep 2020 10:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/announcing-record-store/</guid>
+      <description>TL;DR: I&amp;rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on https://pierrez.github.io/record-store.
+What? Record-Store is a layer running on top of FoundationDB. It provides abstractions to create, load and deletes customer-defined data called records, which are hold into a RecordSpace. We would like to have this kind of flow for developers:
+ Opening KeySpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
+    </item>
+    
+  </channel>
+</rss>
