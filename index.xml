@@ -6,7 +6,17 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 23 Sep 2020 10:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Sep 2020 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>10 years of programming and counting 🚀</title>
+      <link>https://pierrezemb.fr/posts/ten-years-programming/</link>
+      <pubDate>Wed, 30 Sep 2020 00:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/ten-years-programming/</guid>
+      <description>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓
+Learning to program 👨🏻‍💻 I wrote my first Hello, world program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory.</description>
+    </item>
+    
     <item>
       <title>Announcing Record-Store, a new (experimental) place for your data</title>
       <link>https://pierrezemb.fr/posts/announcing-record-store/</link>
@@ -15,7 +25,7 @@
       <guid>https://pierrezemb.fr/posts/announcing-record-store/</guid>
       <description>TL;DR: I&amp;rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on https://pierrez.github.io/record-store.
 What? Record-Store is a layer running on top of FoundationDB. It provides abstractions to create, load and deletes customer-defined data called records, which are hold into a RecordSpace. We would like to have this kind of flow for developers:
- Opening KeySpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
+ Opening RecordSpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
     </item>
     
     <item>
@@ -98,17 +108,6 @@ We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp
  In today&amp;rsquo;s blogpost, we&amp;rsquo;re going to take a look at our upstream contribution to Apache HBase&amp;rsquo;s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud&amp;rsquo;s monitoring.
 The context Have you ever wondered how:
  we generate the graphs for your OVHcloud server or web hosting package?</description>
-    </item>
-    
-    <item>
-      <title>Notes about FoundationDB</title>
-      <link>https://pierrezemb.fr/posts/notes-about-foundationdb/</link>
-      <pubDate>Thu, 30 Jan 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
-      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
- Overview of FoundationDB As stated in the official documentation:
- FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.</description>
     </item>
     
   </channel>

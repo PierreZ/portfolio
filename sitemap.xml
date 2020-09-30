@@ -3,6 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/posts/ten-years-programming/</loc>
+    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/personal/</loc>
+    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/posts/</loc>
+    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/announcing-record-store/</loc>
     <lastmod>2020-09-23T10:24:27+01:00</lastmod>
   </url>
@@ -14,21 +39,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/tags/oss/</loc>
-    <lastmod>2020-09-23T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2020-09-23T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2020-09-23T10:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2020-09-23T10:24:27+01:00</lastmod>
   </url>
   

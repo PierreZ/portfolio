@@ -15,7 +15,7 @@
       <guid>https://pierrezemb.fr/posts/announcing-record-store/</guid>
       <description>TL;DR: I&amp;rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on https://pierrez.github.io/record-store.
 What? Record-Store is a layer running on top of FoundationDB. It provides abstractions to create, load and deletes customer-defined data called records, which are hold into a RecordSpace. We would like to have this kind of flow for developers:
- Opening KeySpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
+ Opening RecordSpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?</description>
     </item>
     
   </channel>
