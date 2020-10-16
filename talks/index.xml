@@ -6,7 +6,17 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 16 Jun 2020 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Oct 2020 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Record-Layer 101</title>
+      <link>https://pierrezemb.fr/talks/record-layer-101/</link>
+      <pubDate>Fri, 16 Oct 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/record-layer-101/</guid>
+      <description>Abstract The FoundationDB Record Layer is an open source library that provides a record-oriented datastore with semantic similar to a relational database, implemented on top of FoundationDB. It is highly used within Apple by CloudKit, Apple’s cloud backend service to host billions of independent databases, many with a common schema.
+In this talk, we will dig into the paper and the library&amp;rsquo;s concepts and feature. You will also discover how to use the library from a developer&amp;rsquo;s point-of-view, with examples taken from ETCD-Layer and Record-Store.</description>
+    </item>
+    
     <item>
       <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
       <link>https://pierrezemb.fr/talks/messaging-solution-pulsar/</link>
@@ -93,17 +103,6 @@ During this Hands-on, we will guide you through the different stages of rediscov
       <guid>https://pierrezemb.fr/talks/one-day-timeseries/</guid>
       <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
 Schedule  Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets  Ressources  slides  </description>
-    </item>
-    
-    <item>
-      <title>Metrics Experience beyond protocols</title>
-      <link>https://pierrezemb.fr/talks/metrics-experience/</link>
-      <pubDate>Sat, 16 Dec 2017 15:38:52 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/metrics-experience/</guid>
-      <description>Occurences  Paris Open Source Summit, 2017  Ressources The slides are available here.
-Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW
-&amp;mdash; Collignon Rémi (@miton1810) December 7, 2017  </description>
     </item>
     
   </channel>

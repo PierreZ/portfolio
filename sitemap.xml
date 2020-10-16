@@ -3,17 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2020-10-16T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/record-layer-101/</loc>
+    <lastmod>2020-10-16T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/talks/</loc>
+    <lastmod>2020-10-16T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/posts/ten-years-programming/</loc>
     <lastmod>2020-09-30T00:24:27+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://pierrezemb.fr/tags/personal/</loc>
-    <lastmod>2020-09-30T00:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/</loc>
     <lastmod>2020-09-30T00:24:27+01:00</lastmod>
   </url>
   
@@ -74,11 +84,6 @@
   
   <url>
     <loc>https://pierrezemb.fr/talks/messaging-solution-pulsar/</loc>
-    <lastmod>2020-06-16T01:22:36+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/talks/</loc>
     <lastmod>2020-06-16T01:22:36+01:00</lastmod>
   </url>
   

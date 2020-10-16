@@ -6,7 +6,17 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 30 Sep 2020 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Oct 2020 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Record-Layer 101</title>
+      <link>https://pierrezemb.fr/talks/record-layer-101/</link>
+      <pubDate>Fri, 16 Oct 2020 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/record-layer-101/</guid>
+      <description>Abstract The FoundationDB Record Layer is an open source library that provides a record-oriented datastore with semantic similar to a relational database, implemented on top of FoundationDB. It is highly used within Apple by CloudKit, Apple’s cloud backend service to host billions of independent databases, many with a common schema.
+In this talk, we will dig into the paper and the library&amp;rsquo;s concepts and feature. You will also discover how to use the library from a developer&amp;rsquo;s point-of-view, with examples taken from ETCD-Layer and Record-Store.</description>
+    </item>
+    
     <item>
       <title>10 years of programming and counting 🚀</title>
       <link>https://pierrezemb.fr/posts/ten-years-programming/</link>
@@ -96,18 +106,6 @@ We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp
       
       <guid>https://pierrezemb.fr/podcasts/bdh-93/</guid>
       <description> </description>
-    </item>
-    
-    <item>
-      <title>Contributing to Apache HBase: custom data balancing</title>
-      <link>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</link>
-      <pubDate>Fri, 14 Feb 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</guid>
-      <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
- In today&amp;rsquo;s blogpost, we&amp;rsquo;re going to take a look at our upstream contribution to Apache HBase&amp;rsquo;s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud&amp;rsquo;s monitoring.
-The context Have you ever wondered how:
- we generate the graphs for your OVHcloud server or web hosting package?</description>
     </item>
     
   </channel>
