@@ -6,7 +6,18 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 16 Oct 2020 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Jan 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes about ETCD</title>
+      <link>https://pierrezemb.fr/posts/notes-about-etcd/</link>
+      <pubDate>Mon, 11 Jan 2021 00:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/notes-about-etcd/</guid>
+      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover ETCD.
+Overview of ETCD As stated in the official documentation:
+ etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</description>
+    </item>
+    
     <item>
       <title>Record-Layer 101</title>
       <link>https://pierrezemb.fr/talks/record-layer-101/</link>
@@ -97,15 +108,6 @@ In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, w
       <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
  This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
 We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;ldquo;Kafka on Pulsar&amp;rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.</description>
-    </item>
-    
-    <item>
-      <title>🇫🇷 BigData Hebdo 93 : FoundationDB</title>
-      <link>https://pierrezemb.fr/podcasts/bdh-93/</link>
-      <pubDate>Mon, 17 Feb 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/podcasts/bdh-93/</guid>
-      <description> </description>
     </item>
     
   </channel>

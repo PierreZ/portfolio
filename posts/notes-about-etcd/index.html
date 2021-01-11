@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Pierre Zemb ">
+<meta name="description" content="List of ressources gleaned about ETCD" />
+<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,technical,leader" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+
+<link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-etcd/" />
+
+
+
+
+    <title>
+        
+            Notes about ETCD :: Pierre Zemb 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
+
+
+
+<link rel="stylesheet" href="/main.min.4743541a2891bdaa4ee26c0df1b08a8d3fc531a5a7b7bb50209312ee6bd66a30.css">
+
+
+
+
+<meta itemprop="name" content="Notes about ETCD">
+<meta itemprop="description" content="List of ressources gleaned about ETCD">
+<meta itemprop="datePublished" content="2021-01-11T00:24:27+01:00" />
+<meta itemprop="dateModified" content="2021-01-11T00:24:27+01:00" />
+<meta itemprop="wordCount" content="2028">
+<meta itemprop="image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png">
+
+
+
+<meta itemprop="keywords" content="etcd,notesabout," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png"/>
+
+<meta name="twitter:title" content="Notes about ETCD"/>
+<meta name="twitter:description" content="List of ressources gleaned about ETCD"/>
+
+
+
+
+
+    <meta property="article:published_time" content="2021-01-11 00:24:27 &#43;0100 CET" />
+
+
+
+
+
+
+
+
+<script async defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+
+    <body class="">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/blog</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>10 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title">
+                <a href="https://pierrezemb.fr/posts/notes-about-etcd/">Notes about ETCD</a>
+            </h1>
+                <hr />
+                <aside id="toc">
+                <div class="toc-title">Table of Contents</div>
+                    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#overview-of-etcd">Overview of ETCD</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#overall-architecture">Overall architecture</a>
+      <ul>
+        <li><a href="#consensus-raft">Consensus? Raft?</a></li>
+        <li><a href="#exposed-api">Exposed API</a></li>
+        <li><a href="#transactions">Transactions</a></li>
+        <li><a href="#versioned-data">Versioned data</a></li>
+        <li><a href="#lease">Lease</a></li>
+        <li><a href="#watches">Watches</a></li>
+        <li><a href="#linearizable-reads">Linearizable reads</a></li>
+        <li><a href="#how-etcd-is-using-bbolt">How ETCD is using bbolt</a></li>
+      </ul>
+    </li>
+    <li><a href="#etcd-in-k8s">ETCD in K8S</a></li>
+    <li><a href="#jepsen">Jepsen</a></li>
+    <li><a href="#operation-notes">Operation notes</a>
+      <ul>
+        <li><a href="#deployements-tips">Deployements tips</a></li>
+        <li><a href="#defrag">Defrag</a></li>
+        <li><a href="#snapshot">Snapshot</a></li>
+        <li><a href="#lease-1">Lease</a></li>
+        <li><a href="#war-stories">War stories</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </aside>
+                <hr />
+
+            
+
+            <div class="post-content">
+                <p><img src="/posts/notes-about-etcd/images/etcd.png" alt="etcd image"></p>
+<p><a href="/tags/notesabout/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover ETCD.</p>
+<h2 id="overview-of-etcd">Overview of ETCD</h2>
+<p>As stated in the <a href="https://etcd.io/">official documentation</a>:</p>
+<blockquote>
+<p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
+</blockquote>
+<h2 id="history">History</h2>
+<p>ETCD was initially developed by CoreOS:</p>
+<blockquote>
+<p>CoreOS built etcd to solve the problem of shared configuration and service discovery.</p>
+</blockquote>
+<ul>
+<li>July 23, 2013 - announcement</li>
+<li>December 27, 2013 - etcd 0.2.0 - new API, new modules and tons of improvements</li>
+<li>February 07, 2014 - etcd 0.3.0 - Improved Cluster Discovery, API Enhancements and Windows Support</li>
+<li>January 28, 2015 - etcd 2.0 - First Major Stable Release</li>
+<li>June 30, 2016 - etcd3 - A New Version of etcd from CoreOS</li>
+<li>June 09, 2017 - etcd 3.2 - etcd 3.2 now with massive watch scaling and easy locks</li>
+<li>February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more</li>
+<li>August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member</li>
+</ul>
+<h2 id="overall-architecture">Overall architecture</h2>
+<blockquote>
+<p>The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.</p>
+</blockquote>
+<p>ETCD is:</p>
+<ul>
+<li>using <a href="/posts/notes-about-raft/">the raft consensus algorithm</a>,</li>
+<li>a single group raft,</li>
+<li>using <a href="https://grpc.io/">gRPC</a> for communication,</li>
+<li>using a self-made WAL implementation,</li>
+<li>storing key-values into bbolt,</li>
+<li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a href="https://en.wikipedia.org/wiki/PACELC_theorem">in terms of the PACELC theorem</a>).</li>
+</ul>
+<h3 id="consensus-raft">Consensus? Raft?</h3>
+<ul>
+<li>Raft is a consensus algorithm for managing a replicated log.</li>
+<li>consensus involves multiple servers agreeing on values.</li>
+<li>two common consensus algorithm are Paxos and Raft</li>
+</ul>
+<blockquote>
+<p>, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both system builders and students struggle with Paxos.</p>
+</blockquote>
+<ul>
+<li>A common alternative to Paxos/Raft is a non-consensus (aka peer-to-peer) replication protocol.</li>
+</ul>
+<blockquote>
+<p>Raft separates the key elements of consensus, such asleader election, log replication, and safety</p>
+</blockquote>
+<p>ETCD contains several raft optimizations:</p>
+<ul>
+<li>Read Index,</li>
+<li>Follower reads,</li>
+<li>Transfer leader,</li>
+<li>Learner role,</li>
+<li>Client-side load-balancing.</li>
+</ul>
+<h3 id="exposed-api">Exposed API</h3>
+<p>ETCD is exposing several APIs through different gRPC services:</p>
+<ul>
+<li>Put(key, value),</li>
+<li>Delete(key, Optional(keyRangeEnd)),</li>
+<li>Get(key, Optional(keyRangeEnd)),</li>
+<li>Watch(key, Optional(keyRangeEnd)),</li>
+<li>Transaction(if/then/else ops),</li>
+<li>Compact(revision),</li>
+<li>Lease:
+<ul>
+<li>Grant,</li>
+<li>Revoke,</li>
+<li>KeepAlive</li>
+</ul>
+</li>
+</ul>
+<p>Key and values are bytes-oriented but ordered.</p>
+<h3 id="transactions">Transactions</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-proto" data-lang="proto"><span style="color:#75715e">// From google paxosdb paper:
+</span><span style="color:#75715e">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
+</span><span style="color:#75715e">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
+</span><span style="color:#75715e">// and consists of three components:
+</span><span style="color:#75715e">// 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
+</span><span style="color:#75715e">// for the absence or presence of a value, or compare with a given value. Two different tests in the guard
+</span><span style="color:#75715e">// may apply to the same or different entries in the database. All tests in the guard are applied and
+</span><span style="color:#75715e">// MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
+</span><span style="color:#75715e">// it executes f op (see item 3 below).
+</span><span style="color:#75715e">// 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
+</span><span style="color:#75715e">// lookup operation, and applies to a single database entry. Two different operations in the list may apply
+</span><span style="color:#75715e">// to the same or different entries in the database. These operations are executed
+</span><span style="color:#75715e">// if guard evaluates to
+</span><span style="color:#75715e">// true.
+</span><span style="color:#75715e">// 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">TxnRequest</span> {<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// compare is a list of predicates representing a conjunction of terms.
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// If the comparisons succeed, then the success requests will be processed in order,
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// and the response will contain their respective responses in order.
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// If the comparisons fail, then the failure requests will be processed in order,
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// and the response will contain their respective responses in order.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">repeated</span> Compare compare <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// success is a list of requests which will be applied when compare evaluates to true.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">repeated</span> RequestOp success <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// failure is a list of requests which will be applied when compare evaluates to false.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">repeated</span> RequestOp failure <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><h3 id="versioned-data">Versioned data</h3>
+<p>Each Key/Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.</p>
+<p>In order to avoid having a growing keySpace, one can issue the <code>Compact</code> gRPC service:</p>
+<blockquote>
+<p>Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision</p>
+</blockquote>
+<h3 id="lease">Lease</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-proto" data-lang="proto"><span style="color:#75715e">// this message represent a Lease
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">Lease</span> {<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int64</span> TTL <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int64</span> ID <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#66d9ef">int64</span> insert_timestamp <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><h3 id="watches">Watches</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-proto" data-lang="proto"><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">Watch</span> {<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// key is the key to register for watching.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">bytes</span> key <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// range_end is the end of the range [key, range_end) to watch. If range_end is not given,
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// or equal to the key argument are watched.
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// If the range_end is one bit larger than the given key,
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// then all keys with the prefix (the given key) will be watched.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">bytes</span> range_end <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#75715e">// If watch_id is provided and non-zero, it will be assigned to this watcher.
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// Since creating a watcher in etcd is not a synchronous operation,
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// this can be used ensure that ordering is correct when creating multiple
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// watchers on the same stream. Creating a watcher with an ID already in
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// use on the stream will cause an error to be returned.
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int64</span> watch_id <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><h3 id="linearizable-reads">Linearizable reads</h3>
+<p>Section 8 of the raft paper explains the issue:</p>
+<blockquote>
+<p>Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.</p>
+</blockquote>
+<p>ETCD implements <code>ReadIndex</code> read(more info on <a href="/posts/diving-into-etcd-linearizable/">Diving into ETCD’s linearizable reads</a>).</p>
+<h3 id="how-etcd-is-using-bbolt">How ETCD is using bbolt</h3>
+<p><a href="https://github.com/etcd-io/bbolt">bbolt</a> is the underlying kv used in etcd. <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68">a B-Tree is used</a>.</p>
+<blockquote>
+<ul>
+<li>Bolt allows only one read-write transaction at a time but allows as many read-only transactions as you want at a time.</li>
+<li>Each transaction has a consistent view of the data as it existed when the transaction started.</li>
+<li>Bolt uses a B+tree internally and only a single file. Both approaches have trade-offs.</li>
+<li>If you require a high random write throughput (&gt;10,000 w/sec) or you need to use spinning disks then LevelDB could be a good choice. If your application is read-heavy or does a lot of range scans then Bolt could be a good choice.</li>
+<li>Try to avoid long running read transactions. Bolt uses copy-on-write so old pages cannot be reclaimed while an old transaction is using them.</li>
+<li>Bolt uses a memory-mapped file so the underlying operating system handles the caching of the data. Typically, the OS will cache as much of the file as it can in memory and will release memory as needed to other processes. This means that Bolt can show very high memory usage when working with large databases.</li>
+<li>Etcd implements multi-version-concurrency-control (MVCC) on top of Boltdb</li>
+</ul>
+</blockquote>
+<p><a href="https://github.com/etcd-io/etcd/issues/12169#issuecomment-673292122">From an Github issue</a>:</p>
+<blockquote>
+<p>Note that the underlying <code>bbolt</code> mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.</p>
+</blockquote>
+<h2 id="etcd-in-k8s">ETCD in K8S</h2>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">We built Kubernetes upon Etcd due to its similarities to Chubby and to the Omega store. When we exposed Etcd&#39;s watch (<a href="https://t.co/7rdNCKHjbO">https://t.co/7rdNCKHjbO</a>) through the K8s API, we let more Etcd details bleed through than originally intended. We need to clean up some of those details soon</p>&mdash; Brian Grant (@bgrant0607) <a href="https://twitter.com/bgrant0607/status/1118273986956120064?ref_src=twsrc%5Etfw">April 16, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p><a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159">The interface can be found here</a>.</p>
+<ul>
+<li>Create use TTL and Txn</li>
+<li>Get use KV.Get</li>
+<li>Delete use Get and then for with a Txn</li>
+<li>GuaranteedUpdate uses Txn</li>
+<li>List uses Get</li>
+<li>Watch uses Watch with a channel</li>
+</ul>
+<h2 id="jepsen">Jepsen</h2>
+<p>The Jepsen team tested <a href="https://jepsen.io/analyses/etcd-3.4.3">etcd-3.4.3</a>, here&rsquo;s some quotes:</p>
+<blockquote>
+<p>In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.</p>
+</blockquote>
+<blockquote>
+<p>Watches appear correct, at least over single keys. So long as compaction does not destroy historical data while a watch isn’t running, watches appear to deliver every update to a key in order.</p>
+</blockquote>
+<blockquote>
+<p>However, etcd locks (like all distributed locks) do not provide mutual exclusion. Multiple processes can hold an etcd lock concurrently, even in healthy clusters with perfectly synchronized clocks.</p>
+</blockquote>
+<blockquote>
+<p>If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.</p>
+</blockquote>
+<h2 id="operation-notes">Operation notes</h2>
+<h3 id="deployements-tips">Deployements tips</h3>
+<p><a href="https://etcd.io/docs/v3.4.0/faq/">From the official documentation</a>:</p>
+<blockquote>
+<p>Since etcd writes data to disk, SSD is highly recommended.
+To prevent performance degradation or unintentionally overloading the key-value store, etcd enforces a configurable storage size quota set to 2GB by default.
+To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
+8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.</p>
+</blockquote>
+<h3 id="defrag">Defrag</h3>
+<blockquote>
+<p>After compacting the keyspace, the backend database may exhibit internal fragmentation.
+Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.</p>
+</blockquote>
+<p>Defrag is basically <a href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349">dumping the bbolt tree on disk and reopening it</a>.</p>
+<h3 id="snapshot">Snapshot</h3>
+<p>An ETCD snapshot is related to Raft&rsquo;s snapshot:</p>
+<blockquote>
+<p>Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded</p>
+</blockquote>
+<p>Snapshot can be saved using <code>etcdctl</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">etcdctl snapshot save backup.db
+</code></pre></div><h3 id="lease-1">Lease</h3>
+<p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497">create some issues</a>:</p>
+<blockquote>
+<p>The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.</p>
+</blockquote>
+<h3 id="war-stories">War stories</h3>
+<ul>
+<li><a href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
+<li><a href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/">How a production outage in Grafana Cloud&rsquo;s Hosted Prometheus service was caused by a bad etcd client setup</a></li>
+<li><a href="https://github.com/etcd-io/etcd/issues/11884">Random performance issue on etcd 3.4</a></li>
+<li><a href="https://arxiv.org/pdf/2004.00372.pdf">Impact of etcd deployment on Kubernetes, Istio, and application performance</a></li>
+</ul>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/etcd">etcd</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/notesabout">notesabout</a></span>
+                </p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2028 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-01-11 00:24 &#43;0100</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h"></span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+
+                    
+                        <span class="button next">
+                            <a href="https://pierrezemb.fr/posts/ten-years-programming/">
+                                <span class="button__text">10 years of programming and counting 🚀</span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2021</span>
+            
+                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
+            
+            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
+            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.85fdb035ef4887ffbc86531f44a75cb889691d9ba5cb5c3eef56e2e20712e5f18f185a128775b4396af65b87c7ab50215cdfb655ca7dac62df44b2c5f8a6b389.js" integrity="sha512-hf2wNe9Ih/&#43;8hlMfRKdcuIlpHZuly1w&#43;71bi4gcS5fGPGFoSh3W0OWr2W4fHq1AhXN&#43;2Vcp9rGLfRLLF&#43;KaziQ=="></script>
+
+
+
+    </body>
+</html>
