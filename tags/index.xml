@@ -6,13 +6,31 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Mon, 11 Jan 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>electro-monkeys</title>
+      <link>https://pierrezemb.fr/tags/electro-monkeys/</link>
+      <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/electro-monkeys/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>etcd</title>
       <link>https://pierrezemb.fr/tags/etcd/</link>
-      <pubDate>Mon, 11 Jan 2021 00:24:27 +0100</pubDate>
+      <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/etcd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>raft</title>
+      <link>https://pierrezemb.fr/tags/raft/</link>
+      <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/raft/</guid>
       <description></description>
     </item>
     
@@ -62,15 +80,6 @@
     </item>
     
     <item>
-      <title>raft</title>
-      <link>https://pierrezemb.fr/tags/raft/</link>
-      <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/raft/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>big-data-hebdo</title>
       <link>https://pierrezemb.fr/tags/big-data-hebdo/</link>
       <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
@@ -85,15 +94,6 @@
       <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/pulsar/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>contribution</title>
-      <link>https://pierrezemb.fr/tags/contribution/</link>
-      <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/contribution/</guid>
       <description></description>
     </item>
     

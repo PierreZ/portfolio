@@ -6,7 +6,17 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Mon, 11 Jan 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
+      <link>https://pierrezemb.fr/podcasts/em-62/</link>
+      <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
+      <description>Episode You can listen to the episode here.
+Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
+    </item>
+    
     <item>
       <title>Notes about ETCD</title>
       <link>https://pierrezemb.fr/posts/notes-about-etcd/</link>
@@ -97,17 +107,6 @@ Internally, we have been running Apache Kafka for years, and despite all the ski
       <guid>https://pierrezemb.fr/talks/announcing-kop/</guid>
       <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.
 In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
-    </item>
-    
-    <item>
-      <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
-      <link>https://pierrezemb.fr/posts/announcing-kop/</link>
-      <pubDate>Tue, 24 Mar 2020 10:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/announcing-kop/</guid>
-      <description>This is a repost from OVHcloud&amp;rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
- This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
-We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;ldquo;Kafka on Pulsar&amp;rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.</description>
     </item>
     
   </channel>

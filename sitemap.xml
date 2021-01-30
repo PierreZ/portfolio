@@ -3,8 +3,38 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pierrezemb.fr/tags/electro-monkeys/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pierrezemb.fr/tags/etcd/</loc>
-    <lastmod>2021-01-11T00:24:27+01:00</lastmod>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/podcasts/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/raft/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pierrezemb.fr/podcasts/em-62/</loc>
+    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
   </url>
   
   <url>
@@ -18,17 +48,7 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/</loc>
-    <lastmod>2021-01-11T00:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://pierrezemb.fr/posts/</loc>
-    <lastmod>2021-01-11T00:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/tags/</loc>
     <lastmod>2021-01-11T00:24:27+01:00</lastmod>
   </url>
   
@@ -83,22 +103,12 @@
   </url>
   
   <url>
-    <loc>https://pierrezemb.fr/tags/raft/</loc>
-    <lastmod>2020-07-30T07:24:27+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://pierrezemb.fr/talks/messaging-solution-pulsar/</loc>
     <lastmod>2020-06-16T01:22:36+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://pierrezemb.fr/tags/big-data-hebdo/</loc>
-    <lastmod>2020-05-06T01:22:36+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pierrezemb.fr/podcasts/</loc>
     <lastmod>2020-05-06T01:22:36+01:00</lastmod>
   </url>
   

@@ -6,7 +6,17 @@
     <description>Recent content in etcd on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Mon, 11 Jan 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
+      <link>https://pierrezemb.fr/podcasts/em-62/</link>
+      <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
+      <description>Episode You can listen to the episode here.
+Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
+    </item>
+    
     <item>
       <title>Notes about ETCD</title>
       <link>https://pierrezemb.fr/posts/notes-about-etcd/</link>

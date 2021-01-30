@@ -5,19 +5,20 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="Pierre Zemb ">
-<meta name="description" content=" Notes  Notes about FoundationDB  " />
+<meta name="description" content="Episode You can listen to the episode here.
+Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien." />
 <meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,technical,leader" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
 
-<link rel="canonical" href="https://pierrezemb.fr/podcasts/bdh-93/" />
+<link rel="canonical" href="https://pierrezemb.fr/podcasts/em-62/" />
 
 
 
 
     <title>
         
-            🇫🇷 BigData Hebdo 93 : FoundationDB :: Pierre Zemb 
+            🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb :: Pierre Zemb 
         
     </title>
 
@@ -35,27 +36,29 @@
 
 
 
-<meta itemprop="name" content="🇫🇷 BigData Hebdo 93 : FoundationDB">
-<meta itemprop="description" content=" Notes  Notes about FoundationDB  ">
-<meta itemprop="datePublished" content="2020-02-17T01:22:36+01:00" />
-<meta itemprop="dateModified" content="2020-02-17T01:22:36+01:00" />
-<meta itemprop="wordCount" content="4">
+<meta itemprop="name" content="🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb">
+<meta itemprop="description" content="Episode You can listen to the episode here.
+Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&rsquo;est une base de données sur laquelle il n&rsquo;existe aucune littérature. Et c&rsquo;est une chose que j&rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.">
+<meta itemprop="datePublished" content="2021-01-20T01:22:36+01:00" />
+<meta itemprop="dateModified" content="2021-01-20T01:22:36+01:00" />
+<meta itemprop="wordCount" content="181">
 <meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
 
 
 
-<meta itemprop="keywords" content="foundationdb,big-data-hebdo," />
+<meta itemprop="keywords" content="etcd,raft,electro-monkeys," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
 
-<meta name="twitter:title" content="🇫🇷 BigData Hebdo 93 : FoundationDB"/>
-<meta name="twitter:description" content=" Notes  Notes about FoundationDB  "/>
+<meta name="twitter:title" content="🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb"/>
+<meta name="twitter:description" content="Episode You can listen to the episode here.
+Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&rsquo;est une base de données sur laquelle il n&rsquo;existe aucune littérature. Et c&rsquo;est une chose que j&rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien."/>
 
 
 
 
 
-    <meta property="article:published_time" content="2020-02-17 01:22:36 &#43;0100 CET" />
+    <meta property="article:published_time" content="2021-01-20 01:22:36 &#43;0100 CET" />
 
 
 
@@ -118,15 +121,20 @@
         </div>
 
         <article>
-            <h2 class="post-title"><a href="https://pierrezemb.fr/podcasts/bdh-93/">🇫🇷 BigData Hebdo 93 : FoundationDB</a></h2>
+            <h2 class="post-title"><a href="https://pierrezemb.fr/podcasts/em-62/">🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</a></h2>
 
             
 
             <div class="post-content">
-                <a class="spreaker-player" href="https://www.spreaker.com/user/vhe74/episode-93-foundation-db" data-resource="episode_id=22870946" data-theme="light" data-autoplay="false" data-playlist="false" data-cover="https://d3wo5wojvuv7l.cloudfront.net/images.spreaker.com/original/a772fb5f61385670ce37a4657801b475.jpg" data-width="100%" data-height="400px"></a><script async src="https://widget.spreaker.com/widgets.js"></script>
+                <h2 id="episode">Episode</h2>
+<p>You can listen to the episode <a href="https://podcast.electro-monkeys.fr/926791/6564823">here</a>.</p>
+<h2 id="sum-up">Sum-up</h2>
+<p>etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&rsquo;est une base de données sur laquelle il n&rsquo;existe aucune littérature. Et c&rsquo;est une chose que j&rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</p>
+<p>Par chance, nous ne sommes pas les seuls à devoir opérer etcd. Qui plus est, certains cloud providers l&rsquo;utilisent à bien plus grande échelle que nous, ce qui est notamment le cas pour OVHcloud. Leur connaissance du modèle opérationnel d&rsquo;etcd et leurs retours d&rsquo;expérience nous sont d&rsquo;une aide précieuse.</p>
+<p>Dans cet épisode, je reçois Pierre Zemb. Pierre est leader technique des systèmes et du stockage distribués chez OVHcloud, donc la personne idéale pour parler d&rsquo;etcd. Dans cet échange, nous évoquons les bases de données de nouvelle génération et leur fonctionnement, les raisons pour lesquelles etcd a été choisie pour Kubernetes, mais aussi ses limites et ses alternatives.</p>
 <h2 id="notes">Notes</h2>
 <ul>
-<li><a href="/posts/notes-about-foundationdb/">Notes about FoundationDB</a></li>
+<li><a href="/posts/notes-about-etcd/">Notes about ETCD</a></li>
 </ul>
 
             </div>
@@ -136,7 +144,7 @@
 
         <div class="post-info">
   				<p>
-  					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/foundationdb">foundationdb</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/big-data-hebdo">big-data-hebdo</a></span>
+  					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/etcd">etcd</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/raft">raft</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/electro-monkeys">electro-monkeys</a></span>
   				</p>
   			</div>
 

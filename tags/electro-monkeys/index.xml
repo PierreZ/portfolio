@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>raft on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/tags/raft/</link>
-    <description>Recent content in raft on Pierre Zemb</description>
+    <title>electro-monkeys on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/electro-monkeys/</link>
+    <description>Recent content in electro-monkeys on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/raft/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/electro-monkeys/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
       <link>https://pierrezemb.fr/podcasts/em-62/</link>
@@ -15,16 +15,6 @@
       <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
       <description>Episode You can listen to the episode here.
 Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
-    </item>
-    
-    <item>
-      <title>Notes about Raft&#39;s paper</title>
-      <link>https://pierrezemb.fr/posts/notes-about-raft/</link>
-      <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
-      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
- As I&amp;rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
     </item>
     
   </channel>
