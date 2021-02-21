@@ -5,8 +5,196 @@
         <description>Recent content in Posts on Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator>
         <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-        <lastBuildDate>Mon, 11 Jan 2021 00:24:27 +0100</lastBuildDate>
+        <lastBuildDate>Sun, 21 Feb 2021 00:24:27 +0100</lastBuildDate>
         <atom:link href="https://pierrezemb.fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Crafting row keys in FoundationDB</title>
+            <link>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</link>
+            <pubDate>Sun, 21 Feb 2021 00:24:27 +0100</pubDate>
+            
+            <guid>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</guid>
+            <description>As I&amp;rsquo;m working on my latest contribution around FoundationDB and Rust, I had the chance to dig a bit into how FoundationDB&amp;rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎
+Row key? When you are using a key/value store, the design of the row key is extremely important, as this will define how well:
+ your scans will be optimized, your puts will be spread, you will avoid hot-spotting a shard/region.</description>
+            <content type="html"><![CDATA[<p><img src="/posts/notes-about-foundationdb/images/fdb-white.jpg" alt="fdb image"></p>
+<p>As I&rsquo;m working <a href="https://github.com/Clikengo/foundationdb-rs/issues/27">on my latest contribution around FoundationDB and Rust</a>, I had the chance to dig a bit into how FoundationDB&rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎</p>
+<h2 id="row-key">Row key?</h2>
+<p>When you are using a key/value store, the design of the <code>row key</code> is extremely important, as this will define how well:</p>
+<ul>
+<li>your scans will be optimized,</li>
+<li>your puts will be spread,</li>
+<li>you will avoid <code>hot-spotting</code> a shard/region.</li>
+</ul>
+<p>If you need more information on <code>row keys</code>, I recommend going through these links before moving on:</p>
+<ul>
+<li><a href="https://cloud.google.com/bigtable/docs/schema-design">&ldquo;Designing your schema&rdquo; BigTable documentation</a></li>
+<li><a href="https://hbase.apache.org/book.html#rowkey.design">&ldquo;Rowkey Design&rdquo; HBase documentation</a></li>
+</ul>
+<h2 id="hand-crafting-row-keys">Hand-crafting row keys</h2>
+<p>Most of the time, you will need to craft the <code>row key</code> &ldquo;by hand&rdquo;, like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase&rsquo;s app</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Prefix + classId + labelsId + timestamp
+</span><span style="color:#75715e">// 128 bits
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> rowkey <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">+</span> 8 <span style="color:#f92672">+</span> 8 <span style="color:#f92672">+</span> 8<span style="color:#f92672">];</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// Copy classId/labelsId
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Longs<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span>msg<span style="color:#f92672">.</span><span style="color:#a6e22e">getClassId</span><span style="color:#f92672">()),</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">,</span> 8<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Longs<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span>msg<span style="color:#f92672">.</span><span style="color:#a6e22e">getLabelsId</span><span style="color:#f92672">()),</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">+</span> 8<span style="color:#f92672">,</span> 8<span style="color:#f92672">);</span>
+</code></pre></div><p>Or maybe you will wrap things in a function <a href="https://github.com/pingcap/tidb/blob/ef57bdbbb04f60a8be744060a99207e08a37514a/tablecodec/tablecodec.go#L80-L86">like this in Go</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// EncodeRowKey encodes the table id and record handle into a kv.Key
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">EncodeRowKey</span>(<span style="color:#a6e22e">tableID</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">encodedHandle</span> []<span style="color:#66d9ef">byte</span>) <span style="color:#a6e22e">kv</span>.<span style="color:#a6e22e">Key</span> {
+	<span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">prefixLen</span><span style="color:#f92672">+</span>len(<span style="color:#a6e22e">encodedHandle</span>))
+	<span style="color:#a6e22e">buf</span> = <span style="color:#a6e22e">appendTableRecordPrefix</span>(<span style="color:#a6e22e">buf</span>, <span style="color:#a6e22e">tableID</span>)
+	<span style="color:#a6e22e">buf</span> = append(<span style="color:#a6e22e">buf</span>, <span style="color:#a6e22e">encodedHandle</span><span style="color:#f92672">...</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">buf</span>
+}
+</code></pre></div><p>Each time, you need to wrap the complexity of converting your objects to a row-key, by creating a buffer and write stuff in it.</p>
+<p>In our Java example, there is an interesting comment:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Prefix + classId + labelsId + timestamp
+</span></code></pre></div><p>If we are replacing some characters, we are not really far from:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// (Prefix, classId, labelsId, timestamp)
+</span></code></pre></div><p>Which looks like a <code>Tuple</code>(a collection of values of different types) and this is what FoundationDB is using as an abstraction to create keys 😍</p>
+<h2 id="fdbs-abstractions-and-helpers">FDB&rsquo;s abstractions and helpers</h2>
+<h3 id="the-tuple">The Tuple</h3>
+<p>Instead of crafting bytes by hand, we are <code>packing</code> a Tuple:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// create a Tuple&lt;String, i64&gt; with (&#34;tenant-1&#34;, 1)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> tuple <span style="color:#f92672">=</span> (String::from(<span style="color:#e6db74">&#34;tenant-1&#34;</span>), <span style="color:#ae81ff">1</span>);
+
+<span style="color:#75715e">// and compute a row-key from the Tuple
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> row_key <span style="color:#f92672">=</span> foundationdb::tuple::pack::<span style="color:#f92672">&lt;</span>(String, <span style="color:#66d9ef">i64</span>)<span style="color:#f92672">&gt;</span>(<span style="color:#f92672">&amp;</span>tuple);
+</code></pre></div><p>The generated row-key will be readable from any bindings, as it&rsquo;s construction is standardized. Let&rsquo;s print it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// and print-it in hexa
+</span><span style="color:#75715e"></span>println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{:#04X?}&#34;</span>, row_key);
+</code></pre></div><pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+[
+    0x02,
+    0x74, // t
+    0x65, // e 
+    0x6E, // n
+    0x61, // a
+    0x6E, // n
+    0x74, // t
+    0x2D, // -
+    0x31, // 1
+    0x00, 
+    0x15,
+    0x2A, // 42
+]
+</code></pre><p>As you can see, <code>pack</code> added some extra-characters. There are used to recognized the next type, a bit like when you are encoding/decoding some wire protocols. You can find the relevant documentation <a href="https://github.com/apple/foundationdb/blob/master/design/tuple.md">here</a>.</p>
+<p>Having this kind of standard means that we can easily decompose/<code>unpack</code> it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// retrieve the user and the magic number
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> from_row_key: (String, <span style="color:#66d9ef">i64</span>) <span style="color:#f92672">=</span> foundationdb::tuple::unpack::<span style="color:#f92672">&lt;</span>(String, <span style="color:#66d9ef">i64</span>)<span style="color:#f92672">&gt;</span>(<span style="color:#f92672">&amp;</span>row_key)<span style="color:#f92672">?</span>;
+
+println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;user=&#39;{}&#39;, magic_number={}&#34;</span>, from_row_key.<span style="color:#ae81ff">0</span>, from_row_key.<span style="color:#ae81ff">1</span>);
+<span style="color:#75715e">// user=&#39;tenant-1&#39;, magic_number=42
+</span></code></pre></div><p>Now that we saw <code>Tuples</code>, let&rsquo;s dig in the next abstraction: <code>subspaces</code></p>
+<h3 id="subspace">Subspace</h3>
+<p>When you are working with key-values store, we are oftenly playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">/users/tenant-1/...
+/users/tenant-2/...
+/users/tenant-3/...
+</code></pre></div><p>Here, <code>/users/tenant-1/</code> can be view like a prefix where we will put all the relevant keys. Instead of passing a simple prefix, FoundationDB is offering a dedicated structure called a <code>Subspace</code>:</p>
+<blockquote>
+<p>A Subspace represents a well-defined region of keyspace in a FoundationDB database</p>
+</blockquote>
+<blockquote>
+<p>It provides a convenient way to use FoundationDB tuples to define namespaces for different categories of data. The namespace is specified by a prefix tuple which is prepended to all tuples packed by the subspace. When unpacking a key with the subspace, the prefix tuple will be removed from the result.</p>
+</blockquote>
+<p>As you can see, the <code>Subspace</code> is heavily relying on FoundationDB&rsquo;s tuples, as we can <code>pack</code> and <code>unpack</code> it.</p>
+<blockquote>
+<p>As a best practice, API clients should use at least one subspace for application data.</p>
+</blockquote>
+<p>Well, as we have now the tools to handle keyspaces easily, it is now futile to craft keys by hand 🙃 Let&rsquo;s create a subspace!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">
+<span style="color:#75715e">// create a subspace from the Tuple (&#34;tenant-1&#34;, 42)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> subspace <span style="color:#f92672">=</span> Subspace::from((String::from(<span style="color:#e6db74">&#34;tenant-1&#34;</span>), <span style="color:#ae81ff">42</span>));
+
+<span style="color:#75715e">// let&#39;s print the range
+</span><span style="color:#75715e"></span>println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;start: {:#04X?}\n end: {:#04X?}&#34;</span>, subspace.range().<span style="color:#ae81ff">0</span>, subspace.range().<span style="color:#ae81ff">1</span>);
+</code></pre></div><p>We can see observe this:</p>
+<pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+start: [
+    0x02,
+    0x74, // t
+    0x65, // e 
+    0x6E, // n
+    0x61, // a
+    0x6E, // n
+    0x74, // t
+    0x2D, // -
+    0x31, // 1
+    0x00, 
+    0x15,
+    0x2A, // 42
+    0x00,
+    0x00, // smallest possible byte
+]
+end: [
+    0x02,
+    0x74, // t
+    0x65, // e 
+    0x6E, // n
+    0x61, // a
+    0x6E, // n
+    0x74, // t
+    0x2D, // -
+    0x31, // 1
+    0x00, 
+    0x15,
+    0x2A, // 42
+    0x00,
+    0xFF, // biggest possible byte
+]
+</code></pre><p>Which make sens, if we take <code>(&quot;tenant-1&quot;, 42)</code> as a prefix, then the range for this subspace will be between <code>(&quot;tenant-1&quot;, 42, 0x00)</code> and <code>(&quot;tenant-1&quot;, 42, 0xFF)</code></p>
+<h3 id="the-directory">The directory</h3>
+<p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I&rsquo;m working on, which is the <code>Directory</code>. Let&rsquo;s have a look at the relevant <a href="https://apple.github.io/foundationdb/developer-guide.html#directories">documentation</a>:</p>
+<blockquote>
+<p>FoundationDB provides directories (available in each language binding) as a tool for managing related subspaces.</p>
+</blockquote>
+<blockquote>
+<p>Directories are a recommended approach for administering applications. Each application should create or open at least one directory to manage its subspaces.</p>
+</blockquote>
+<p>Okay, let&rsquo;s see the API(in Go, as I&rsquo;m working on the Rust API):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">subspace</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">CreateOrOpen</span>(<span style="color:#a6e22e">db</span>, []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-42&#34;</span>}, <span style="color:#66d9ef">nil</span>)
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+}
+
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">subspace</span>.<span style="color:#a6e22e">Bytes</span>())
+<span style="color:#75715e">// [21 18]
+</span></code></pre></div><p>We can see that we have a shorter subspace! The <code>directory</code> allows you to generate some integer that will be bind to a path, like here <code>&quot;application&quot;, &quot;my-app&quot;, &quot;tenant&quot;, &quot;tenant-42&quot;</code>.</p>
+<p>There are two advantages to this:</p>
+<ul>
+<li>shorter keys,</li>
+<li>cheap metadata operations like <code>List</code> or <code>Move</code>:</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// list all tenant in &#34;application&#34;, &#34;my-app&#34;:
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">tenants</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">List</span>(<span style="color:#a6e22e">db</span>, []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>})
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+}
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">tenants</span>)
+<span style="color:#75715e">// [tenant-42]
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// renaming &#39;tenant-42&#39; in &#39;tenant-142&#39;
+</span><span style="color:#75715e">// This will NOT move the data, only the metadata is modified
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">directorySubspace</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">Move</span>(<span style="color:#a6e22e">db</span>, 
+	[]<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-42&#34;</span>},  <span style="color:#75715e">// old path
+</span><span style="color:#75715e"></span>	[]<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-142&#34;</span>}) <span style="color:#75715e">// new path
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+}
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">directorySubspace</span>.<span style="color:#a6e22e">Bytes</span>())
+<span style="color:#75715e">// still [21 18]
+</span></code></pre></div><p>The returned object is actually a <code>DirectorySubspace</code>, which implements both <code>Directory</code> and <code>Subspace</code>, which means that you can use it to recreate many directories and subspaces at will 👌</p>
+<blockquote>
+<p>If you are wondering about how this integer is generated, I recommend going through this awesome blogpost on <a href="https://activesphere.com/blog/2018/08/05/high-contention-allocator">how high contention allocator works in FoundationDB.</a></p>
+</blockquote>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Notes about ETCD</title>

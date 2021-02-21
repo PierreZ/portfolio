@@ -6,7 +6,18 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 19 Feb 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 Feb 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Crafting row keys in FoundationDB</title>
+      <link>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</link>
+      <pubDate>Sun, 21 Feb 2021 00:24:27 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</guid>
+      <description>As I&amp;rsquo;m working on my latest contribution around FoundationDB and Rust, I had the chance to dig a bit into how FoundationDB&amp;rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎
+Row key? When you are using a key/value store, the design of the row key is extremely important, as this will define how well:
+ your scans will be optimized, your puts will be spread, you will avoid hot-spotting a shard/region.</description>
+    </item>
+    
     <item>
       <title>To the ☁️ and beyond 🚀</title>
       <link>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</link>
@@ -99,15 +110,6 @@ What? Record-Store is a layer running on top of FoundationDB. It provides abstra
       <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
       <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
 Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;lsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
-    </item>
-    
-    <item>
-      <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
-      <link>https://pierrezemb.fr/podcasts/bdh-99/</link>
-      <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/podcasts/bdh-99/</guid>
-      <description> </description>
     </item>
     
   </channel>
