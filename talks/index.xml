@@ -6,7 +6,18 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 16 Oct 2020 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Feb 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>To the ☁️ and beyond 🚀</title>
+      <link>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</link>
+      <pubDate>Fri, 19 Feb 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</guid>
+      <description>Occurences  CESI DevDay Epitech Insight  Ressources Slides  The slides are also available here 
+  Videos February 2021   Photos and tweets Merci @PierreZ &amp;amp; @LostInBrittany pour votre présentation sur le cloud ☁️🚀 (live on @TwitchFR )
+&amp;mdash; Alexandre Claveau (@ClaveauAlexx) February 19, 2021  </description>
+    </item>
+    
     <item>
       <title>Record-Layer 101</title>
       <link>https://pierrezemb.fr/talks/record-layer-101/</link>
@@ -93,16 +104,6 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
       <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?
 It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.
 During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
-    </item>
-    
-    <item>
-      <title>One day into the Time Series&#39;s world</title>
-      <link>https://pierrezemb.fr/talks/one-day-timeseries/</link>
-      <pubDate>Sun, 11 Nov 2018 22:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/one-day-timeseries/</guid>
-      <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
-Schedule  Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets  Ressources  slides  </description>
     </item>
     
   </channel>

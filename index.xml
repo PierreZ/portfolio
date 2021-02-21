@@ -6,7 +6,18 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Feb 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>To the ☁️ and beyond 🚀</title>
+      <link>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</link>
+      <pubDate>Fri, 19 Feb 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</guid>
+      <description>Occurences  CESI DevDay Epitech Insight  Ressources Slides  The slides are also available here 
+  Videos February 2021   Photos and tweets Merci @PierreZ &amp;amp; @LostInBrittany pour votre présentation sur le cloud ☁️🚀 (live on @TwitchFR )
+&amp;mdash; Alexandre Claveau (@ClaveauAlexx) February 19, 2021  </description>
+    </item>
+    
     <item>
       <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
       <link>https://pierrezemb.fr/podcasts/em-62/</link>
@@ -97,16 +108,6 @@ Internally, we have been running Apache Kafka for years, and despite all the ski
       
       <guid>https://pierrezemb.fr/podcasts/bdh-99/</guid>
       <description> </description>
-    </item>
-    
-    <item>
-      <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
-      <link>https://pierrezemb.fr/talks/announcing-kop/</link>
-      <pubDate>Tue, 31 Mar 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/announcing-kop/</guid>
-      <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.
-In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
     </item>
     
   </channel>
