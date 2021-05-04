@@ -6,7 +6,16 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 21 Feb 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 02 May 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lessons Learned from Operating ETCD</title>
+      <link>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</link>
+      <pubDate>Sun, 02 May 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</guid>
+      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide. Because of our Kubinception design(using Kubernetes to run Kubernetes), we are putting hundreds of customers in an ETCD cluster. This design is great to easily spawn control-planes for customers, but it is also putting a lot of pressure on ETCD.</description>
+    </item>
+    
     <item>
       <title>Crafting row keys in FoundationDB</title>
       <link>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</link>
@@ -99,16 +108,6 @@ What? Record-Store is a layer running on top of FoundationDB. It provides abstra
       <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
       <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
  As I&amp;rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
-    </item>
-    
-    <item>
-      <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
-      <link>https://pierrezemb.fr/talks/messaging-solution-pulsar/</link>
-      <pubDate>Tue, 16 Jun 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
-      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
-Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;lsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
     </item>
     
   </channel>
