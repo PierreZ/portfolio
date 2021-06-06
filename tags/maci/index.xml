@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>sql on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/tags/sql/</link>
-    <description>Recent content in sql on Pierre Zemb</description>
+    <title>maci on Pierre Zemb</title>
+    <link>https://pierrezemb.fr/tags/maci/</link>
+    <description>Recent content in maci on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/sql/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/maci/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
       <link>https://pierrezemb.fr/podcasts/maci-46/</link>
@@ -19,16 +19,6 @@ Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
 00:00:00 - Introduction
 00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5
 00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.</description>
-    </item>
-    
-    <item>
-      <title>What are ACID transactions?</title>
-      <link>https://pierrezemb.fr/posts/acid-transactions/</link>
-      <pubDate>Sun, 03 Feb 2019 15:37:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/acid-transactions/</guid>
-      <description>Transaction? &amp;quot;Programming should be about transforming data&amp;quot;  &amp;mdash; Programming Elixir 1.3 by Dave Thomas
- As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity.</description>
     </item>
     
   </channel>

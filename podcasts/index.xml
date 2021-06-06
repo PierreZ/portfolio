@@ -6,7 +6,21 @@
     <description>Recent content in Podcasts on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 20 Jan 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
+      <link>https://pierrezemb.fr/podcasts/maci-46/</link>
+      <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/maci-46/</guid>
+      <description>Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.
+  Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46
+Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
+00:00:00 - Introduction
+00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5
+00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.</description>
+    </item>
+    
     <item>
       <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
       <link>https://pierrezemb.fr/podcasts/em-62/</link>

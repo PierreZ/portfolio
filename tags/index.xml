@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 21 Feb 2021 00:24:27 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>maci</title>
+      <link>https://pierrezemb.fr/tags/maci/</link>
+      <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/maci/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sql</title>
+      <link>https://pierrezemb.fr/tags/sql/</link>
+      <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/tags/sql/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>foundationdb</title>
       <link>https://pierrezemb.fr/tags/foundationdb/</link>
@@ -76,24 +94,6 @@
       <pubDate>Fri, 18 Sep 2020 05:24:27 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/tags/diving-into/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>big-data-hebdo</title>
-      <link>https://pierrezemb.fr/tags/big-data-hebdo/</link>
-      <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/big-data-hebdo/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>pulsar</title>
-      <link>https://pierrezemb.fr/tags/pulsar/</link>
-      <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/tags/pulsar/</guid>
       <description></description>
     </item>
     

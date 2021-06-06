@@ -2,10 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</loc>
-    <lastmod>2021-05-02T01:22:36+01:00</lastmod>
+    <loc>https://pierrezemb.fr/tags/maci/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
+  </url><url>
+    <loc>https://pierrezemb.fr/podcasts/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
+  </url><url>
+    <loc>https://pierrezemb.fr/tags/sql/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
+  </url><url>
+    <loc>https://pierrezemb.fr/tags/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
+  </url><url>
+    <loc>https://pierrezemb.fr/podcasts/maci-46/</loc>
+    <lastmod>2021-06-04T01:22:36+01:00</lastmod>
+  </url><url>
+    <loc>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</loc>
     <lastmod>2021-05-02T01:22:36+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/talks/</loc>
@@ -20,9 +35,6 @@
     <loc>https://pierrezemb.fr/posts/</loc>
     <lastmod>2021-02-21T00:24:27+01:00</lastmod>
   </url><url>
-    <loc>https://pierrezemb.fr/tags/</loc>
-    <lastmod>2021-02-21T00:24:27+01:00</lastmod>
-  </url><url>
     <loc>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</loc>
     <lastmod>2021-02-19T01:22:36+01:00</lastmod>
   </url><url>
@@ -30,9 +42,6 @@
     <lastmod>2021-01-20T01:22:36+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/tags/etcd/</loc>
-    <lastmod>2021-01-20T01:22:36+01:00</lastmod>
-  </url><url>
-    <loc>https://pierrezemb.fr/podcasts/</loc>
     <lastmod>2021-01-20T01:22:36+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/tags/raft/</loc>
@@ -147,9 +156,6 @@
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/posts/ovh-alerts-flink/</loc>
-    <lastmod>2019-02-03T15:37:27+01:00</lastmod>
-  </url><url>
-    <loc>https://pierrezemb.fr/tags/sql/</loc>
     <lastmod>2019-02-03T15:37:27+01:00</lastmod>
   </url><url>
     <loc>https://pierrezemb.fr/tags/transaction/</loc>

@@ -6,7 +6,21 @@
     <description>Recent content on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 02 May 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
+      <link>https://pierrezemb.fr/podcasts/maci-46/</link>
+      <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/podcasts/maci-46/</guid>
+      <description>Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.
+  Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46
+Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
+00:00:00 - Introduction
+00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5
+00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.</description>
+    </item>
+    
     <item>
       <title>Lessons Learned from Operating ETCD</title>
       <link>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</link>
@@ -98,16 +112,6 @@ What? Record-Store is a layer running on top of FoundationDB. It provides abstra
       <description>Diving Into is a blogpost serie where we are digging a specific part of the project&amp;rsquo;s basecode. In this episode, we will digg into the implementation behind ETCD&amp;rsquo;s Linearizable reads.
  What is ETCD? From the official website:
  etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</description>
-    </item>
-    
-    <item>
-      <title>Notes about Raft&#39;s paper</title>
-      <link>https://pierrezemb.fr/posts/notes-about-raft/</link>
-      <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
-      <description>Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&amp;rsquo;s paper called &amp;lsquo;In Search of an Understandable Consensus Algorithm&amp;rsquo;.
- As I&amp;rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&amp;rsquo;m also playing with the amazing Raft labs made by PingCAP.</description>
     </item>
     
   </channel>
