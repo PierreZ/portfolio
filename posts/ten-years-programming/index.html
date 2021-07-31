@@ -1,128 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="Pierre Zemb ">
-<meta name="description" content="A retrospective of the last 10 years" />
-<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,software,engineer" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="#252627" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>10 years of programming and counting 🚀 - Pierre Zemb</title><meta name="Description" content="A retrospective of the last 10 years"><meta property="og:title" content="10 years of programming and counting 🚀" />
+<meta property="og:description" content="A retrospective of the last 10 years" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://pierrezemb.fr/posts/ten-years-programming/" /><meta property="og:image" content="http://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-09-30T00:24:27&#43;01:00" />
+<meta property="article:modified_time" content="2020-09-30T00:24:27&#43;01:00" />
 
-<link rel="canonical" href="https://pierrezemb.fr/posts/ten-years-programming/" />
-
-
-
-
-    <title>
-        
-            10 years of programming and counting 🚀 :: Pierre Zemb 
-        
-    </title>
-
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
-
-<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
-
-
-
-<link rel="stylesheet" href="/main.min.c467f70f5562ac8543d81da2f25cb1364ba4359b62a040d8ecd5bce0ef0a2edc.css">
-
-
-
-
-<meta itemprop="name" content="10 years of programming and counting 🚀">
-<meta itemprop="description" content="A retrospective of the last 10 years"><meta itemprop="datePublished" content="2020-09-30T00:24:27&#43;01:00" />
-<meta itemprop="dateModified" content="2020-09-30T00:24:27&#43;01:00" />
-<meta itemprop="wordCount" content="1603"><meta itemprop="image" content="https://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg">
-<meta itemprop="keywords" content="personal," /><meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg"/>
 
 <meta name="twitter:title" content="10 years of programming and counting 🚀"/>
 <meta name="twitter:description" content="A retrospective of the last 10 years"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="http://pierrezemb.fr/posts/ten-years-programming/" />
+<link rel="prev" href="http://pierrezemb.fr/posts/announcing-record-store/" /><link rel="next" href="http://pierrezemb.fr/posts/notes-about-etcd/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "10 years of programming and counting 🚀",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/pierrezemb.fr\/posts\/ten-years-programming\/"
+        },"genre": "posts","wordcount":  1603 ,
+        "url": "http:\/\/pierrezemb.fr\/posts\/ten-years-programming\/","datePublished": "2020-09-30T00:24:27+01:00","dateModified": "2020-09-30T00:24:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Pierre Zemb"},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": "A retrospective of the last 10 years"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-
-
-
-
-    <meta property="article:published_time" content="2020-09-30 00:24:27 &#43;0100 &#43;0100" />
-
-
-
-
-
-
-
-
-<script async defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script>
-    </head>
-
-    <body class="">
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text">$ cd ~/blog</span>
-            <span class="logo__cursor" style=""></span>
-        
-    </div>
-</a>
-
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-
-            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
-  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
-  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
-</svg>
-</span>
-        </span>
-    </span>
-</header>
-
-
-            <div class="content">
-                
-    <main class="post">
-
-        <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>8 minutes
-
-            
-
-            </p>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb">~/blog</a>
         </div>
-
-        <article>
-            <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/ten-years-programming/">10 years of programming and counting 🚀</a>
-            </h1>
-
-            
-
-            <div class="post-content">
-                <p>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓</p>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/">🧑‍💻 About </a><a class="menu-item" href="/posts/">🖊️ Blog </a><a class="menu-item" href="/podcasts/">🎙️ Podcasts </a><a class="menu-item" href="/talks/">📹 Talks </a><a class="menu-item" href="/categories/">🏷️ Categories </a><a class="menu-item" href="/cv.pdf">📄 Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb">~/blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">🧑‍💻About</a><a class="menu-item" href="/posts/" title="">🖊️Blog</a><a class="menu-item" href="/podcasts/" title="">🎙️Podcasts</a><a class="menu-item" href="/talks/" title="">📹Talks</a><a class="menu-item" href="/categories/" title="">🏷️Categories</a><a class="menu-item" href="/cv.pdf" title="">📄Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><article class="page single"><h1 class="single-title animated flipInX">10 years of programming and counting 🚀</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/personal/"><i class="far fa-folder fa-fw"></i>personal</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-09-30">2020-09-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1603 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;8 minutes&nbsp;</div>
+        </div><div class="content" id="content"><p>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓</p>
 <h2 id="learning-to-program-">Learning to program 👨🏻‍💻</h2>
 <p>I wrote my first <em>Hello, world</em> program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.</p>
 <p>I also discovered Linux around that time, and spent many nights playing with Linux commands. I started my journey to Linux with Centos and then Ubuntu 11.04. I think this started the loop I’m (still!) stuck in:
@@ -139,7 +124,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <p>I also met amazing persons, that are now friends and/or mentors. I remember feeling humble to be able to learn from them.</p>
 <p>I also discovered more global tech conferences. I asked as a birthday 🎁 to go to Devoxx France and DotScale, in 2014. It was awesome 😎</p>
 <p>By dint of watching talks, I wanted to give some. I started small, giving talks at my engineering school, then moved to the JUG itself. I learned <strong>a lot</strong> by making a lot of mistakes, but I’m pretty happy how things turned out, as I’m now speaking at tech conferences as part of my current work.</p>
-<img src="/posts/ten-years-programming/first-talk.jpg" alt="fig1" class="center">
+<!-- raw HTML omitted -->
 <p>I also started to be involved in events and organizations such as:</p>
 <ul>
 <li>The JUG/GDG</li>
@@ -167,8 +152,8 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <p>As always, things were not always magical, and i struggled more time than I can count. I learned that personal struggle is more difficult than technical, as you can always drill-down your tech problems by reading the code. The team was amazing 🚀, and we were helping each other a lot 🤝</p>
 <h2 id="searching-for-planets--">Searching for planets 🔭 🪐</h2>
 <p>When I started working on Metrics, we did a lot of internal on boarding. At his core, metrics is usine Warp10, which is coming with his own language to analyze timeseries. This provides heavy query-capabilities, but as it is stack-based, getting started was difficult. I needed a project to dive into timeseries analysis.</p>
-<p>I love astronomy 🔭, but there’s too much ☁️ (not the servers) in my city. I decided to look for astronomical timeseries. Turns out there is a lot, but one use case triggered my interest: exoplanet’s search. Almost everything from NASA is Opendata, so we decided to create <a href="https://helloexo.world/">HelloExoWorld</a>.</p>
-<p>We imported the <strong>25TB dataset into a Warp10 instance</strong> and start writing some WarpScript to search for transits. We wrote a <a href="https://helloexoworld.github.io/hew-hands-on/">hands-on about it</a>. We also did several labs in french conferences like Devoxx and many others.</p>
+<p>I love astronomy 🔭, but there’s too much ☁️ (not the servers) in my city. I decided to look for astronomical timeseries. Turns out there is a lot, but one use case triggered my interest: exoplanet’s search. Almost everything from NASA is Opendata, so we decided to create <a href="https://helloexo.world/" target="_blank" rel="noopener noreffer">HelloExoWorld</a>.</p>
+<p>We imported the <strong>25TB dataset into a Warp10 instance</strong> and start writing some WarpScript to search for transits. We wrote a <a href="https://helloexoworld.github.io/hew-hands-on/" target="_blank" rel="noopener noreffer">hands-on about it</a>. We also did several labs in french conferences like Devoxx and many others.</p>
 <h2 id="io-timeout-">IO timeout 🚧</h2>
 <p>Around 2018, OVHcloud started Managed Kubernetes, a free K8S control-plane. With this product we saw more developers coming to OVHcloud. We started thinking about how we could help them. Running stateful systems is <strong>hard</strong>, so maybe we could offer them some databases or queues in a As-a-Service fashion. We started to design such products from our Metrics experience. We started the IO Vision to offer <code>popular Storage APIs in front of a scalable storage</code>. Does it sound familiar? 😇 I had a lot of fun working on that vision as a Technical Leader.</p>
 <p>We started with queuing with ioStream. We wanted something that was:</p>
@@ -179,7 +164,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>Less operation burden at scale than Kafka</li>
 </ul>
 <p>We built ioStream around Apache Pulsar, and opened the beta around September 2019. As the same time we were working on Kafka’s support as a proxy in Rust. Writing such a software capable of translating Kafka’s TCP frames to Pulsar with a state-machine was a <strong>fun and challenging work</strong>. Rust is really a nice language to write such software.</p>
-<p>Then we worked with Apache Pulsar’s PMC to introduce a Kafka protocol handler on Pulsar brokers. I had the chance to work closely to two PMCs, it was an amazing experience for me 🚀 You can read about our collaboration <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/">here</a>.</p>
+<p>Then we worked with Apache Pulsar’s PMC to introduce a Kafka protocol handler on Pulsar brokers. I had the chance to work closely to two PMCs, it was an amazing experience for me 🚀 You can read about our collaboration <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/" target="_blank" rel="noopener noreffer">here</a>.</p>
 <p>Unfortunately as stated by the official communication, the project has been shut down:</p>
 <pre><code>However, the limited success of the beta service and other strategic focuses,
 have resulted in us taking the very difficult decision to close it.
@@ -189,88 +174,44 @@ have resulted in us taking the very difficult decision to close it.
 <p>Then I decided to join the Managed Kubernetes ☸️ team. This is my current team now, where I’m having a lot of fun working around ETCD.</p>
 <p>I really hope the next 10 years will be as fun as the last 10 years 😇</p>
 <hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
-
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2020-09-30</span>
             </div>
-        </article>
-
-        <hr />
-
-        <div class="post-info">
-                <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/personal">personal</a></span>
-                </p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1603 Words</p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-09-30 01:24 &#43;0200</p>
+            <div class="post-info-license"></div>
         </div>
-
-        
-            <div class="pagination">
-                <div class="pagination__title">
-                    <span class="pagination__title-h"></span>
-                    <hr />
-                </div>
-
-                <div class="pagination__buttons">
-                    
-                        <span class="button previous">
-                            <a href="https://pierrezemb.fr/posts/notes-about-etcd/">
-                                <span class="button__icon">←</span>
-                                <span class="button__text">Notes about ETCD</span>
-                            </a>
-                        </span>
-                    
-
-                    
-                        <span class="button next">
-                            <a href="https://pierrezemb.fr/posts/announcing-record-store/">
-                                <span class="button__text">Announcing Record-Store, a new (experimental) place for your data</span>
-                                <span class="button__icon">→</span>
-                            </a>
-                        </span>
-                    
-                </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
-        
-
-        
-    </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2021</span>
-            
-                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
-            
-            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
-            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
         </div>
     </div>
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
-        </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
     </div>
-</footer>
 
-            
+    <div class="post-nav"><a href="/posts/announcing-record-store/" class="prev" rel="prev" title="Announcing Record-Store, a new (experimental) place for your data"><i class="fas fa-angle-left fa-fw"></i>Announcing Record-Store, a new (experimental) place for your data</a>
+            <a href="/posts/notes-about-etcd/" class="next" rel="next" title="Notes about ETCD">Notes about ETCD<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
+    </footer></div>
 
-        
-
-
-
-
-<script type="text/javascript" src="/bundle.min.92eab5326cb4d0201a8571d27ab3fdae608ed705b1867b8a4d0f90a2b16626e44110bc7c918e5a1be7ec6d8448e5c6716a4f913f15e6c3ccf41b470c14f3814b.js" integrity="sha512-kuq1Mmy00CAahXHSerP9rmCO1wWxhnuKTQ&#43;QorFmJuRBELx8kY5aG&#43;fsbYRI5cZxak&#43;RPxXmw8z0G0cMFPOBSw=="></script>
-
-
-
-    </body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

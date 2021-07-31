@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>programming - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/programming/</link>
+        <description>programming - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 13 May 2016 17:19:23 &#43;0000</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/programming/" rel="self" type="application/rss+xml" /><item>
+    <title>Event-driven architecture 101</title>
+    <link>http://pierrezemb.fr/posts/eventdriven-architecture-101/</link>
+    <pubDate>Fri, 13 May 2016 17:19:23 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/posts/eventdriven-architecture-101/</guid>
+    <description><![CDATA[update 2019: this is a repost on my own blog. original article can be read on medium.
+ Do your own cover on http://dev.to/rly
+I’m still a student, so my point of view could be far from reality, be gentle ;)
+**tl;dr: Queue messaging are cool. Use them at the core of your architecture.**I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG.]]></description>
+</item></channel>
+</rss>

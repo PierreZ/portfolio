@@ -1,0 +1,19 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>maci - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/maci/</link>
+        <description>maci - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/maci/" rel="self" type="application/rss+xml" /><item>
+    <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
+    <link>http://pierrezemb.fr/podcasts/maci-46/</link>
+    <pubDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/podcasts/maci-46/</guid>
+    <description><![CDATA[Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.
+  Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46
+Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
+00:00:00 - Introduction
+00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5
+00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.]]></description>
+</item></channel>
+</rss>

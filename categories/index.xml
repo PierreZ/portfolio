@@ -1,10 +1,77 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Categories on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/categories/</link>
-    <description>Recent content in Categories on Pierre Zemb</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright><atom:link href="https://pierrezemb.fr/categories/index.xml" rel="self" type="application/rss+xml" />
-  </channel>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Categories - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/</link>
+        <description>Categories - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>maci</title>
+    <link>http://pierrezemb.fr/categories/maci/</link>
+    <pubDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/maci/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>sql</title>
+    <link>http://pierrezemb.fr/categories/sql/</link>
+    <pubDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/sql/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>FoundationDB</title>
+    <link>http://pierrezemb.fr/categories/foundationdb/</link>
+    <pubDate>Sun, 21 Feb 2021 00:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/foundationdb/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>electro-monkeys</title>
+    <link>http://pierrezemb.fr/categories/electro-monkeys/</link>
+    <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/electro-monkeys/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>etcd</title>
+    <link>http://pierrezemb.fr/categories/etcd/</link>
+    <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/etcd/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>raft</title>
+    <link>http://pierrezemb.fr/categories/raft/</link>
+    <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/raft/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>notesabout</title>
+    <link>http://pierrezemb.fr/categories/notesabout/</link>
+    <pubDate>Mon, 11 Jan 2021 00:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/notesabout/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>personal</title>
+    <link>http://pierrezemb.fr/categories/personal/</link>
+    <pubDate>Wed, 30 Sep 2020 00:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/personal/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>oss</title>
+    <link>http://pierrezemb.fr/categories/oss/</link>
+    <pubDate>Wed, 23 Sep 2020 10:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/oss/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>diving into</title>
+    <link>http://pierrezemb.fr/categories/diving-into/</link>
+    <pubDate>Fri, 18 Sep 2020 05:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/diving-into/</guid>
+    <description><![CDATA[]]></description>
+</item></channel>
 </rss>

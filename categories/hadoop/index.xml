@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>hadoop - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/hadoop/</link>
+        <description>hadoop - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/hadoop/" rel="self" type="application/rss+xml" /><item>
+    <title>What can be gleaned about GFS successor codenamed Colossus?</title>
+    <link>http://pierrezemb.fr/posts/colossus-google/</link>
+    <pubDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/posts/colossus-google/</guid>
+    <description><![CDATA[In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
+ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?'  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.]]></description>
+</item></channel>
+</rss>

@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>pulsar - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/pulsar/</link>
+        <description>pulsar - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 06 May 2020 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/pulsar/" rel="self" type="application/rss+xml" /><item>
+    <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
+    <link>http://pierrezemb.fr/podcasts/bdh-99/</link>
+    <pubDate>Wed, 06 May 2020 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/podcasts/bdh-99/</guid>
+    <description><![CDATA[ ]]></description>
+</item><item>
+    <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
+    <link>http://pierrezemb.fr/posts/announcing-kop/</link>
+    <pubDate>Tue, 24 Mar 2020 10:24:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/posts/announcing-kop/</guid>
+    <description><![CDATA[This is a repost from OVHcloud&rsquo;s official blogpost., please read it there to support my company. Thanks Horacio Gonzalez for the awesome drawings!
+ This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by Sijie Guo, Jia Zhai and Pierre Zemb. Thanks Horacio Gonzalez for the illustrations!
+We are excited to announce that StreamNative and OVHcloud are open-sourcing &ldquo;Kafka on Pulsar&rdquo; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers.]]></description>
+</item></channel>
+</rss>

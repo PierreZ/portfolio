@@ -1,127 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="Pierre Zemb ">
-<meta name="description" content="An overview of all the helpers to generate row keys with FoundationDB" />
-<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,software,engineer" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="#252627" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Crafting row keys in FoundationDB - Pierre Zemb</title><meta name="Description" content="An overview of all the helpers to generate row keys with FoundationDB"><meta property="og:title" content="Crafting row keys in FoundationDB" />
+<meta property="og:description" content="An overview of all the helpers to generate row keys with FoundationDB" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><meta property="og:image" content="http://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-02-21T00:24:27&#43;01:00" />
+<meta property="article:modified_time" content="2021-02-21T00:24:27&#43;01:00" />
 
-<link rel="canonical" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" />
-
-
-
-
-    <title>
-        
-            Crafting row keys in FoundationDB :: Pierre Zemb 
-        
-    </title>
-
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
-
-<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
-
-
-
-<link rel="stylesheet" href="/main.min.c467f70f5562ac8543d81da2f25cb1364ba4359b62a040d8ecd5bce0ef0a2edc.css">
-
-
-
-
-<meta itemprop="name" content="Crafting row keys in FoundationDB">
-<meta itemprop="description" content="An overview of all the helpers to generate row keys with FoundationDB"><meta itemprop="datePublished" content="2021-02-21T00:24:27&#43;01:00" />
-<meta itemprop="dateModified" content="2021-02-21T00:24:27&#43;01:00" />
-<meta itemprop="wordCount" content="1111"><meta itemprop="image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg">
-<meta itemprop="keywords" content="foundationdb," /><meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg"/>
 
 <meta name="twitter:title" content="Crafting row keys in FoundationDB"/>
 <meta name="twitter:description" content="An overview of all the helpers to generate row keys with FoundationDB"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" />
+<link rel="prev" href="http://pierrezemb.fr/posts/notes-about-etcd/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Crafting row keys in FoundationDB",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/pierrezemb.fr\/posts\/crafting-keys-in-fdb\/"
+        },"genre": "posts","wordcount":  1083 ,
+        "url": "http:\/\/pierrezemb.fr\/posts\/crafting-keys-in-fdb\/","datePublished": "2021-02-21T00:24:27+01:00","dateModified": "2021-02-21T00:24:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Pierre Zemb"},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": "An overview of all the helpers to generate row keys with FoundationDB"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-
-
-
-
-    <meta property="article:published_time" content="2021-02-21 00:24:27 &#43;0100 CET" />
-
-
-
-
-
-
-
-
-<script async defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script>
-    </head>
-
-    <body class="">
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text">$ cd ~/blog</span>
-            <span class="logo__cursor" style=""></span>
-        
-    </div>
-</a>
-
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-
-            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
-  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
-  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
-</svg>
-</span>
-        </span>
-    </span>
-</header>
-
-
-            <div class="content">
-                
-    <main class="post">
-
-        <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>6 minutes
-
-            
-
-            </p>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb">~/blog</a>
         </div>
-
-        <article>
-            <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">Crafting row keys in FoundationDB</a>
-            </h1>
-                <hr />
-                <aside id="toc">
-                <div class="toc-title">Table of Contents</div>
-                    <nav id="TableOfContents">
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/">🧑‍💻 About </a><a class="menu-item" href="/posts/">🖊️ Blog </a><a class="menu-item" href="/podcasts/">🎙️ Podcasts </a><a class="menu-item" href="/talks/">📹 Talks </a><a class="menu-item" href="/categories/">🏷️ Categories </a><a class="menu-item" href="/cv.pdf">📄 Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb">~/blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">🧑‍💻About</a><a class="menu-item" href="/posts/" title="">🖊️Blog</a><a class="menu-item" href="/podcasts/" title="">🎙️Podcasts</a><a class="menu-item" href="/talks/" title="">📹Talks</a><a class="menu-item" href="/categories/" title="">🏷️Categories</a><a class="menu-item" href="/cv.pdf" title="">📄Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Crafting row keys in FoundationDB</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/foundationdb/"><i class="far fa-folder fa-fw"></i>FoundationDB</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-02-21">2021-02-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1083 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#row-key">Row key?</a></li>
     <li><a href="#hand-crafting-row-keys">Hand-crafting row keys</a></li>
@@ -133,15 +127,16 @@
       </ul>
     </li>
   </ul>
-</nav>
-                </aside>
-                <hr />
-
-            
-
-            <div class="post-content">
-                <p><img src="/posts/notes-about-foundationdb/images/fdb-white.jpg" alt="fdb image"></p>
-<p>As I&rsquo;m working <a href="https://github.com/Clikengo/foundationdb-rs/issues/27">on my latest contribution around FoundationDB and Rust</a>, I had the chance to dig a bit into how FoundationDB&rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎</p>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/notes-about-foundationdb/images/fdb-white.jpg"
+        data-srcset="/posts/notes-about-foundationdb/images/fdb-white.jpg, /posts/notes-about-foundationdb/images/fdb-white.jpg 1.5x, /posts/notes-about-foundationdb/images/fdb-white.jpg 2x"
+        data-sizes="auto"
+        alt="/posts/notes-about-foundationdb/images/fdb-white.jpg"
+        title="fdb image" /></p>
+<p>As I&rsquo;m working <a href="https://github.com/Clikengo/foundationdb-rs/issues/27" target="_blank" rel="noopener noreffer">on my latest contribution around FoundationDB and Rust</a>, I had the chance to dig a bit into how FoundationDB&rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎</p>
 <h2 id="row-key">Row key?</h2>
 <p>When you are using a key/value store, the design of the <code>row key</code> is extremely important, as this will define how well:</p>
 <ul>
@@ -151,45 +146,45 @@
 </ul>
 <p>If you need more information on <code>row keys</code>, I recommend going through these links before moving on:</p>
 <ul>
-<li><a href="https://cloud.google.com/bigtable/docs/schema-design">&ldquo;Designing your schema&rdquo; BigTable documentation</a></li>
-<li><a href="https://hbase.apache.org/book.html#rowkey.design">&ldquo;Rowkey Design&rdquo; HBase documentation</a></li>
+<li><a href="https://cloud.google.com/bigtable/docs/schema-design" target="_blank" rel="noopener noreffer">&ldquo;Designing your schema&rdquo; BigTable documentation</a></li>
+<li><a href="https://hbase.apache.org/book.html#rowkey.design" target="_blank" rel="noopener noreffer">&ldquo;Rowkey Design&rdquo; HBase documentation</a></li>
 </ul>
 <h2 id="hand-crafting-row-keys">Hand-crafting row keys</h2>
-<p>Most of the time, you will need to craft the <code>row key</code> &ldquo;by hand&rdquo;, like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase&rsquo;s app</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Prefix + classId + labelsId + timestamp
-</span><span style="color:#75715e">// 128 bits
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> rowkey <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">+</span> 8 <span style="color:#f92672">+</span> 8 <span style="color:#f92672">+</span> 8<span style="color:#f92672">];</span>
+<p>Most of the time, you will need to craft the <code>row key</code> &ldquo;by hand&rdquo;, like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222" target="_blank" rel="noopener noreffer">an HBase&rsquo;s app</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
+</span><span class="c1">// 128 bits
+</span><span class="c1"></span><span class="kt">byte</span><span class="o">[]</span> <span class="n">rowkey</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">8</span> <span class="o">+</span> <span class="n">8</span> <span class="o">+</span> <span class="n">8</span><span class="o">];</span>
 
-System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
-<span style="color:#75715e">// Copy classId/labelsId
-</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Longs<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span>msg<span style="color:#f92672">.</span><span style="color:#a6e22e">getClassId</span><span style="color:#f92672">()),</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">,</span> 8<span style="color:#f92672">);</span>
-System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>Longs<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span>msg<span style="color:#f92672">.</span><span style="color:#a6e22e">getLabelsId</span><span style="color:#f92672">()),</span> 0<span style="color:#f92672">,</span> rowkey<span style="color:#f92672">,</span> Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">HBASE_RAW_DATA_KEY_PREFIX</span><span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">+</span> 8<span style="color:#f92672">,</span> 8<span style="color:#f92672">);</span>
-</code></pre></div><p>Or maybe you will wrap things in a function <a href="https://github.com/pingcap/tidb/blob/ef57bdbbb04f60a8be744060a99207e08a37514a/tablecodec/tablecodec.go#L80-L86">like this in Go</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// EncodeRowKey encodes the table id and record handle into a kv.Key
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">EncodeRowKey</span>(<span style="color:#a6e22e">tableID</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">encodedHandle</span> []<span style="color:#66d9ef">byte</span>) <span style="color:#a6e22e">kv</span>.<span style="color:#a6e22e">Key</span> {
-	<span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">prefixLen</span><span style="color:#f92672">+</span>len(<span style="color:#a6e22e">encodedHandle</span>))
-	<span style="color:#a6e22e">buf</span> = <span style="color:#a6e22e">appendTableRecordPrefix</span>(<span style="color:#a6e22e">buf</span>, <span style="color:#a6e22e">tableID</span>)
-	<span style="color:#a6e22e">buf</span> = append(<span style="color:#a6e22e">buf</span>, <span style="color:#a6e22e">encodedHandle</span><span style="color:#f92672">...</span>)
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">buf</span>
-}
+<span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">rowkey</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+<span class="c1">// Copy classId/labelsId
+</span><span class="c1"></span><span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">Longs</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getClassId</span><span class="o">()),</span> <span class="n">0</span><span class="o">,</span> <span class="n">rowkey</span><span class="o">,</span> <span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span><span class="o">,</span> <span class="n">8</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">Longs</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getLabelsId</span><span class="o">()),</span> <span class="n">0</span><span class="o">,</span> <span class="n">rowkey</span><span class="o">,</span> <span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">8</span><span class="o">,</span> <span class="n">8</span><span class="o">);</span>
+</code></pre></div><p>Or maybe you will wrap things in a function <a href="https://github.com/pingcap/tidb/blob/ef57bdbbb04f60a8be744060a99207e08a37514a/tablecodec/tablecodec.go#L80-L86" target="_blank" rel="noopener noreffer">like this in Go</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// EncodeRowKey encodes the table id and record handle into a kv.Key
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">EncodeRowKey</span><span class="p">(</span><span class="nx">tableID</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">encodedHandle</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="nx">kv</span><span class="p">.</span><span class="nx">Key</span> <span class="p">{</span>
+	<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">prefixLen</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="nx">encodedHandle</span><span class="p">))</span>
+	<span class="nx">buf</span> <span class="p">=</span> <span class="nf">appendTableRecordPrefix</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">tableID</span><span class="p">)</span>
+	<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">encodedHandle</span><span class="o">...</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">buf</span>
+<span class="p">}</span>
 </code></pre></div><p>Each time, you need to wrap the complexity of converting your objects to a row-key, by creating a buffer and write stuff in it.</p>
 <p>In our Java example, there is an interesting comment:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Prefix + classId + labelsId + timestamp
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
 </span></code></pre></div><p>If we are replacing some characters, we are not really far from:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// (Prefix, classId, labelsId, timestamp)
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// (Prefix, classId, labelsId, timestamp)
 </span></code></pre></div><p>Which looks like a <code>Tuple</code>(a collection of values of different types) and this is what FoundationDB is using as an abstraction to create keys 😍</p>
 <h2 id="fdbs-abstractions-and-helpers">FDB&rsquo;s abstractions and helpers</h2>
 <h3 id="tuple">Tuple</h3>
 <p>Instead of crafting bytes by hand, we are <code>packing</code> a Tuple:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// create a Tuple&lt;String, i64&gt; with (&#34;tenant-42&#34;, 1)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> tuple <span style="color:#f92672">=</span> (String::from(<span style="color:#e6db74">&#34;tenant-42&#34;</span>), <span style="color:#ae81ff">1</span>);
-
-<span style="color:#75715e">// and compute a row-key from the Tuple
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> row_key <span style="color:#f92672">=</span> foundationdb::tuple::pack::<span style="color:#f92672">&lt;</span>(String, <span style="color:#66d9ef">i64</span>)<span style="color:#f92672">&gt;</span>(<span style="color:#f92672">&amp;</span>tuple);
-</code></pre></div><p>The generated row-key will be readable from any bindings, as it&rsquo;s construction is standardized. Let&rsquo;s print it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// and print-it in hexa
-</span><span style="color:#75715e"></span>println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{:#04X?}&#34;</span>, row_key);
-</code></pre></div><pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// create a Tuple&lt;String, i64&gt; with (&#34;tenant-42&#34;, 1)
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">tuple</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;tenant-42&#34;</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// and compute a row-key from the Tuple
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">row_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foundationdb</span>::<span class="n">tuple</span>::<span class="n">pack</span>::<span class="o">&lt;</span><span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">i64</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tuple</span><span class="p">);</span><span class="w">
+</span></code></pre></div><p>The generated row-key will be readable from any bindings, as it&rsquo;s construction is standardized. Let&rsquo;s print it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// and print-it in hexa
+</span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">row_key</span><span class="p">);</span><span class="w">
+</span></code></pre></div><pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 [
     0x02,
     0x74, // t
@@ -204,17 +199,17 @@ System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy<
     0x15,
     0x2A, // 42
 ]
-</code></pre><p>As you can see, <code>pack</code> added some extra-characters. There are used to recognized the next type, a bit like when you are encoding/decoding some wire protocols. You can find the relevant documentation <a href="https://github.com/apple/foundationdb/blob/master/design/tuple.md">here</a>.</p>
+</code></pre><p>As you can see, <code>pack</code> added some extra-characters. There are used to recognized the next type, a bit like when you are encoding/decoding some wire protocols. You can find the relevant documentation <a href="https://github.com/apple/foundationdb/blob/master/design/tuple.md" target="_blank" rel="noopener noreffer">here</a>.</p>
 <p>Having this kind of standard means that we can easily decompose/<code>unpack</code> it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// retrieve the user and the magic number In a Tuple (String, i64)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> from_row_key <span style="color:#f92672">=</span> foundationdb::tuple::unpack::<span style="color:#f92672">&lt;</span>(String, <span style="color:#66d9ef">i64</span>)<span style="color:#f92672">&gt;</span>(<span style="color:#f92672">&amp;</span>row_key)<span style="color:#f92672">?</span>;
-
-println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;user=&#39;{}&#39;, magic_number={}&#34;</span>, from_row_key.<span style="color:#ae81ff">0</span>, from_row_key.<span style="color:#ae81ff">1</span>);
-<span style="color:#75715e">// user=&#39;tenant-42&#39;, magic_number=42
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// retrieve the user and the magic number In a Tuple (String, i64)
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">from_row_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foundationdb</span>::<span class="n">tuple</span>::<span class="n">unpack</span>::<span class="o">&lt;</span><span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">i64</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">row_key</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;user=&#39;{}&#39;, magic_number={}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">from_row_key</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">from_row_key</span><span class="p">.</span><span class="mi">1</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="c1">// user=&#39;tenant-42&#39;, magic_number=42
 </span></code></pre></div><p>Now that we saw <code>Tuples</code>, let&rsquo;s dig in the next abstraction: <code>subspaces</code></p>
 <h3 id="subspace">Subspace</h3>
 <p>When you are working with key-values store, we are often playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">/users/tenant-1/...
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">/users/tenant-1/...
 /users/tenant-2/...
 /users/tenant-3/...
 </code></pre></div><p>Here, <code>/users/tenant-1/</code> can be view like a prefix where we will put all the relevant keys. Instead of passing a simple prefix, FoundationDB is offering a dedicated structure called a <code>Subspace</code>:</p>
@@ -229,13 +224,13 @@ println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;use
 <p>As a best practice, API clients should use at least one subspace for application data.</p>
 </blockquote>
 <p>Well, as we have now the tools to handle keyspaces easily, it is now futile to craft keys by hand 🙃 Let&rsquo;s create a subspace!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">
-<span style="color:#75715e">// create a subspace from the Tuple (&#34;tenant-1&#34;, 42)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> subspace <span style="color:#f92672">=</span> Subspace::from((String::from(<span style="color:#e6db74">&#34;tenant-1&#34;</span>), <span style="color:#ae81ff">42</span>));
-
-<span style="color:#75715e">// let&#39;s print the range
-</span><span style="color:#75715e"></span>println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;start: {:#04X?}\n end: {:#04X?}&#34;</span>, subspace.range().<span style="color:#ae81ff">0</span>, subspace.range().<span style="color:#ae81ff">1</span>);
-</code></pre></div><p>We can see observe this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="w">
+</span><span class="w"></span><span class="c1">// create a subspace from the Tuple (&#34;tenant-1&#34;, 42)
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">subspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Subspace</span>::<span class="n">from</span><span class="p">((</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;tenant-1&#34;</span><span class="p">),</span><span class="w"> </span><span class="mi">42</span><span class="p">));</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// let&#39;s print the range
+</span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;start: {:#04X?}\n end: {:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">1</span><span class="p">);</span><span class="w">
+</span></code></pre></div><p>We can see observe this:</p>
 <pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 start: [
     0x02,
@@ -271,7 +266,7 @@ end: [
 ]
 </code></pre><p>Which make sens, if we take <code>(&quot;tenant-1&quot;, 42)</code> as a prefix, then the range for this subspace will be between <code>(&quot;tenant-1&quot;, 42, 0x00)</code> and <code>(&quot;tenant-1&quot;, 42, 0xFF)</code></p>
 <h3 id="directory">Directory</h3>
-<p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I&rsquo;m working on, which is the <code>Directory</code>. Let&rsquo;s have a look at the relevant <a href="https://apple.github.io/foundationdb/developer-guide.html#directories">documentation</a>:</p>
+<p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I&rsquo;m working on, which is the <code>Directory</code>. Let&rsquo;s have a look at the relevant <a href="https://apple.github.io/foundationdb/developer-guide.html#directories" target="_blank" rel="noopener noreffer">documentation</a>:</p>
 <blockquote>
 <p>FoundationDB provides directories (available in each language binding) as a tool for managing related subspaces.</p>
 </blockquote>
@@ -279,117 +274,79 @@ end: [
 <p>Directories are a recommended approach for administering applications. Each application should create or open at least one directory to manage its subspaces.</p>
 </blockquote>
 <p>Okay, let&rsquo;s see the API(in Go, as I&rsquo;m working on the Rust API):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">subspace</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">CreateOrOpen</span>(<span style="color:#a6e22e">db</span>, []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-42&#34;</span>}, <span style="color:#66d9ef">nil</span>)
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
-}
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">subspace</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">CreateOrOpen</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">,</span> <span class="s">&#34;tenant-42&#34;</span><span class="p">},</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
 
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">subspace</span>.<span style="color:#a6e22e">Bytes</span>())
-<span style="color:#75715e">// [21 18]
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">subspace</span><span class="p">.</span><span class="nf">Bytes</span><span class="p">())</span>
+<span class="c1">// [21 18]
 </span></code></pre></div><p>We can see that we have a shorter subspace! The <code>directory</code> allows you to generate some integer that will be bind to a path, like here <code>&quot;application&quot;, &quot;my-app&quot;, &quot;tenant&quot;, &quot;tenant-42&quot;</code>.</p>
 <p>There are two advantages to this:</p>
 <ul>
 <li>shorter keys,</li>
 <li>cheap metadata operations like <code>List</code> or <code>Move</code>:</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// list all tenant in &#34;application&#34;, &#34;my-app&#34;:
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">tenants</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">List</span>(<span style="color:#a6e22e">db</span>, []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>})
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
-}
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">tenants</span>)
-<span style="color:#75715e">// [tenant-42]
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">// renaming &#39;tenant-42&#39; in &#39;tenant-142&#39;
-</span><span style="color:#75715e">// This will NOT move the data, only the metadata is modified
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">directorySubspace</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">directory</span>.<span style="color:#a6e22e">Move</span>(<span style="color:#a6e22e">db</span>, 
-	[]<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-42&#34;</span>},  <span style="color:#75715e">// old path
-</span><span style="color:#75715e"></span>	[]<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application&#34;</span>, <span style="color:#e6db74">&#34;my-app&#34;</span>, <span style="color:#e6db74">&#34;tenant&#34;</span>, <span style="color:#e6db74">&#34;tenant-142&#34;</span>}) <span style="color:#75715e">// new path
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
-}
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">directorySubspace</span>.<span style="color:#a6e22e">Bytes</span>())
-<span style="color:#75715e">// still [21 18]
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list all tenant in &#34;application&#34;, &#34;my-app&#34;:
+</span><span class="c1"></span><span class="nx">tenants</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">})</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">tenants</span><span class="p">)</span>
+<span class="c1">// [tenant-42]
+</span><span class="c1"></span>
+<span class="c1">// renaming &#39;tenant-42&#39; in &#39;tenant-142&#39;
+</span><span class="c1">// This will NOT move the data, only the metadata is modified
+</span><span class="c1"></span><span class="nx">directorySubspace</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">Move</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> 
+	<span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">,</span> <span class="s">&#34;tenant-42&#34;</span><span class="p">},</span>  <span class="c1">// old path
+</span><span class="c1"></span>	<span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">,</span> <span class="s">&#34;tenant-142&#34;</span><span class="p">})</span> <span class="c1">// new path
+</span><span class="c1"></span><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">directorySubspace</span><span class="p">.</span><span class="nf">Bytes</span><span class="p">())</span>
+<span class="c1">// still [21 18]
 </span></code></pre></div><p>The returned object is actually a <code>DirectorySubspace</code>, which implements both <code>Directory</code> and <code>Subspace</code>, which means that you can use it to recreate many directories and subspaces at will 👌</p>
 <blockquote>
-<p>If you are wondering about how this integer is generated, I recommend going through this awesome blogpost on <a href="https://activesphere.com/blog/2018/08/05/high-contention-allocator">how high contention allocator works in FoundationDB.</a></p>
+<p>If you are wondering about how this integer is generated, I recommend going through this awesome blogpost on <a href="https://activesphere.com/blog/2018/08/05/high-contention-allocator" target="_blank" rel="noopener noreffer">how high contention allocator works in FoundationDB.</a></p>
 </blockquote>
 <hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
-
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-02-21</span>
             </div>
-        </article>
-
-        <hr />
-
-        <div class="post-info">
-                <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/foundationdb">foundationdb</a></span>
-                </p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1111 Words</p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-02-21 00:24 &#43;0100</p>
+            <div class="post-info-license"></div>
         </div>
-
-        
-            <div class="pagination">
-                <div class="pagination__title">
-                    <span class="pagination__title-h"></span>
-                    <hr />
-                </div>
-
-                <div class="pagination__buttons">
-                    
-
-                    
-                        <span class="button next">
-                            <a href="https://pierrezemb.fr/posts/notes-about-etcd/">
-                                <span class="button__text">Notes about ETCD</span>
-                                <span class="button__icon">→</span>
-                            </a>
-                        </span>
-                    
-                </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" data-title="Crafting row keys in FoundationDB" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/crafting-keys-in-fdb/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/crafting-keys-in-fdb/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" data-title="Crafting row keys in FoundationDB"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/crafting-keys-in-fdb/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
-        
-
-        
-    </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2021</span>
-            
-                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
-            
-            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
-            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
         </div>
     </div>
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
-        </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
     </div>
-</footer>
 
-            
+    <div class="post-nav"><a href="/posts/notes-about-etcd/" class="prev" rel="prev" title="Notes about ETCD"><i class="fas fa-angle-left fa-fw"></i>Notes about ETCD</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
+    </footer></div>
 
-        
-
-
-
-
-<script type="text/javascript" src="/bundle.min.92eab5326cb4d0201a8571d27ab3fdae608ed705b1867b8a4d0f90a2b16626e44110bc7c918e5a1be7ec6d8448e5c6716a4f913f15e6c3ccf41b470c14f3814b.js" integrity="sha512-kuq1Mmy00CAahXHSerP9rmCO1wWxhnuKTQ&#43;QorFmJuRBELx8kY5aG&#43;fsbYRI5cZxak&#43;RPxXmw8z0G0cMFPOBSw=="></script>
-
-
-
-    </body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

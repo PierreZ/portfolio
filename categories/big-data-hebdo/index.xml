@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>big-data-hebdo - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/big-data-hebdo/</link>
+        <description>big-data-hebdo - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 06 May 2020 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/big-data-hebdo/" rel="self" type="application/rss+xml" /><item>
+    <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
+    <link>http://pierrezemb.fr/podcasts/bdh-99/</link>
+    <pubDate>Wed, 06 May 2020 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/podcasts/bdh-99/</guid>
+    <description><![CDATA[ ]]></description>
+</item></channel>
+</rss>

@@ -1,162 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="Pierre Zemb">
-<meta name="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Event-driven architecture 101 - Pierre Zemb</title><meta name="Description" content=""><meta property="og:title" content="Event-driven architecture 101" />
+<meta property="og:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
  Do your own cover on http://dev.to/rly
 I’m still a student, so my point of view could be far from reality, be gentle ;)
 **tl;dr: Queue messaging are cool. Use them at the core of your architecture.**I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG." />
-<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,software,engineer" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="#252627" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://pierrezemb.fr/posts/eventdriven-architecture-101/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2016-05-13T17:19:23&#43;00:00" />
+<meta property="article:modified_time" content="2019-01-10T21:57:01&#43;01:00" />
 
-<link href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656" rel="canonical" />
-
-
-
-
-    <title>
-        
-            Event-driven architecture 101 :: Pierre Zemb 
-        
-    </title>
-
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
-
-<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
-
-
-
-<link rel="stylesheet" href="/main.min.c467f70f5562ac8543d81da2f25cb1364ba4359b62a040d8ecd5bce0ef0a2edc.css">
-
-
-
-
-<meta itemprop="name" content="Event-driven architecture 101">
-<meta itemprop="description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
- Do your own cover on http://dev.to/rly
-I’m still a student, so my point of view could be far from reality, be gentle ;)
-**tl;dr: Queue messaging are cool. Use them at the core of your architecture.**I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG."><meta itemprop="datePublished" content="2016-05-13T17:19:23&#43;00:00" />
-<meta itemprop="dateModified" content="2019-01-10T21:57:01&#43;01:00" />
-<meta itemprop="wordCount" content="1099"><meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
-<meta itemprop="keywords" content="programming,event," /><meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
-
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Event-driven architecture 101"/>
 <meta name="twitter:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
  Do your own cover on http://dev.to/rly
 I’m still a student, so my point of view could be far from reality, be gentle ;)
 **tl;dr: Queue messaging are cool. Use them at the core of your architecture.**I’m currently playing a lot around Kafka and Flink at work. I also discovered Vert.x at my local JUG."/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656" rel="canonical" />
+<link rel="prev" href="http://pierrezemb.fr/posts/lets-talk-about-containers/" /><link rel="next" href="http://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Event-driven architecture 101",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/pierrezemb.fr\/posts\/eventdriven-architecture-101\/"
+        },"genre": "posts","wordcount":  1099 ,
+        "url": "http:\/\/pierrezemb.fr\/posts\/eventdriven-architecture-101\/","datePublished": "2016-05-13T17:19:23+00:00","dateModified": "2019-01-10T21:57:01+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Pierre Zemb"},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-
-
-
-
-    <meta property="article:published_time" content="2016-05-13 17:19:23.788 &#43;0000 UTC" />
-
-
-
-
-
-
-
-
-<script async defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script>
-    </head>
-
-    <body class="">
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text">$ cd ~/blog</span>
-            <span class="logo__cursor" style=""></span>
-        
-    </div>
-</a>
-
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-
-            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
-  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
-  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
-</svg>
-</span>
-        </span>
-    </span>
-</header>
-
-
-            <div class="content">
-                
-    <main class="post">
-
-        <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>6 minutes
-
-            
-
-            </p>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb">~/blog</a>
         </div>
-
-        <article>
-            <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/eventdriven-architecture-101/">Event-driven architecture 101</a>
-            </h1>
-
-            
-
-            <div class="post-content">
-                <p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656">medium</a>.</p>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/">🧑‍💻 About </a><a class="menu-item" href="/posts/">🖊️ Blog </a><a class="menu-item" href="/podcasts/">🎙️ Podcasts </a><a class="menu-item" href="/talks/">📹 Talks </a><a class="menu-item" href="/categories/">🏷️ Categories </a><a class="menu-item" href="/cv.pdf">📄 Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb">~/blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">🧑‍💻About</a><a class="menu-item" href="/posts/" title="">🖊️Blog</a><a class="menu-item" href="/podcasts/" title="">🎙️Podcasts</a><a class="menu-item" href="/talks/" title="">📹Talks</a><a class="menu-item" href="/categories/" title="">🏷️Categories</a><a class="menu-item" href="/cv.pdf" title="">📄Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Event-driven architecture 101</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/programming/"><i class="far fa-folder fa-fw"></i>programming</a>&nbsp;<a href="/categories/event/"><i class="far fa-folder fa-fw"></i>event</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2016-05-13">2016-05-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1099 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656" target="_blank" rel="noopener noreffer">medium</a>.</p>
 <hr>
-<p><img src="/posts/eventdriven-architecture-101/images/1.png" alt="image"></p>
-<p>Do your own cover on <a href="http://dev.to/rly">http://dev.to/rly</a></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/1.png"
+        data-srcset="/posts/eventdriven-architecture-101/images/1.png, /posts/eventdriven-architecture-101/images/1.png 1.5x, /posts/eventdriven-architecture-101/images/1.png 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/1.png"
+        title="image" /></p>
+<p>Do your own cover on <a href="http://dev.to/rly" target="_blank" rel="noopener noreffer">http://dev.to/rly</a></p>
 <p><em>I’m still a student, so my point of view could be far from reality, be gentle ;)</em></p>
-<p>**<em>tl;dr: Queue messaging are cool. Use them at the core of your architecture.</em>**I’m currently playing a lot around <a href="https://kafka.apache.org/">Kafka</a> and <a href="https://flink.apache.org/">Flink</a> at work. I also discovered <a href="http://vertx.io/">Vert.x</a> at my local JUG. All three have a common word: <strong>events</strong>. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.</p>
+<p>**<em>tl;dr: Queue messaging are cool. Use them at the core of your architecture.</em>**I’m currently playing a lot around <a href="https://kafka.apache.org/" target="_blank" rel="noopener noreffer">Kafka</a> and <a href="https://flink.apache.org/" target="_blank" rel="noopener noreffer">Flink</a> at work. I also discovered <a href="http://vertx.io/" target="_blank" rel="noopener noreffer">Vert.x</a> at my local JUG. All three have a common word: <strong>events</strong>. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.</p>
 <h1 id="the-unix-philosophy">the Unix philosophy</h1>
-<p><img src="/posts/eventdriven-architecture-101/images/2.gif" alt="image"></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/2.gif"
+        data-srcset="/posts/eventdriven-architecture-101/images/2.gif, /posts/eventdriven-architecture-101/images/2.gif 1.5x, /posts/eventdriven-architecture-101/images/2.gif 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/2.gif"
+        title="image" /></p>
 <p>I’m a huge fan of GNU/Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? <strong>Pipes or |</strong>. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:</p>
 <ul>
 <li><strong>list files</strong> in a folder</li>
 <li>From this list, <strong>manipulate/filter</strong> it. One line must correspond to one file, things like folder are omitted</li>
 <li>And then <strong>count</strong> the line!</li>
 </ul>
-<p>In the UNIX world, it should give you something like “<strong><em>ls -l | grep ^- | wc -l”.</em></strong> it might feels like chinese. For me, it’s just feels logical. <strong>3 operations mapped into 3 commands.</strong> You declare a set a commands that, in the end, give you the result. It’s simple and also very fast (in fact, you can find funny articles like this one: <a href="http://aadrake.com/command-line-tools-can-be-235x-faster-than-your-hadoop-cluster.html">Command-line tools can be 235x faster than your Hadoop cluster</a>). This is only possible thanks to the <strong>UNIX philosophy</strong>, greatly describe by Doug McIlroy, Elliot Pinson and Berk Tague in 1978:</p>
+<p>In the UNIX world, it should give you something like “<strong><em>ls -l | grep ^- | wc -l”.</em></strong> it might feels like chinese. For me, it’s just feels logical. <strong>3 operations mapped into 3 commands.</strong> You declare a set a commands that, in the end, give you the result. It’s simple and also very fast (in fact, you can find funny articles like this one: <a href="http://aadrake.com/command-line-tools-can-be-235x-faster-than-your-hadoop-cluster.html" target="_blank" rel="noopener noreffer">Command-line tools can be 235x faster than your Hadoop cluster</a>). This is only possible thanks to the <strong>UNIX philosophy</strong>, greatly describe by Doug McIlroy, Elliot Pinson and Berk Tague in 1978:</p>
 <blockquote>
 <p>Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&gt; Expect the output of every program to become the input to another, as yet unknown, program.</p>
 </blockquote>
 <p>Why should I care? It’s 2016, not 1978! Well…</p>
 <h1 id="back-in-2016">Back in 2016</h1>
-<p><img src="/posts/eventdriven-architecture-101/images/3.gif" alt="image"></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/3.gif"
+        data-srcset="/posts/eventdriven-architecture-101/images/3.gif, /posts/eventdriven-architecture-101/images/3.gif 1.5x, /posts/eventdriven-architecture-101/images/3.gif 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/3.gif"
+        title="image" /></p>
 <p>Cloud changed everything in terms of software engineering. <strong>We can now deploy applications without thinking about the underlying server</strong>. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, <strong>Why should I deploy only one huge app ?</strong> why can’t I deploy multiples applications instead of one? <strong>Let’s call theses applications micro services</strong> because we are in 2016.</p>
-<p><img src="/posts/eventdriven-architecture-101/images/4.png" alt="image"></p>
-<p>OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? <strong>How can they communicate? How can we simulate UNIX pipes?</strong> Before answering, let’s answer to another question first: <strong>What do we really need to send through our network?</strong> Don’t forget the  <a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing"><strong>Fallacies of distributed computing</strong></a><strong>…</strong></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/4.png"
+        data-srcset="/posts/eventdriven-architecture-101/images/4.png, /posts/eventdriven-architecture-101/images/4.png 1.5x, /posts/eventdriven-architecture-101/images/4.png 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/4.png"
+        title="image" /></p>
+<p>OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? <strong>How can they communicate? How can we simulate UNIX pipes?</strong> Before answering, let’s answer to another question first: <strong>What do we really need to send through our network?</strong> Don’t forget the  <a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing" target="_blank" rel="noopener noreffer"><strong>Fallacies of distributed computing</strong></a><strong>…</strong></p>
 <p>Let’s take an example. We are a new startup, and we are building our plateform. We’ll certainly need to handle our customers. Let’s say that for each new customer, <strong>we need to make two actions</strong>: add it to our database, and then to our mailing-list. <strong>A simple and classical way would be to just call two functions</strong> (whether on the same applications or not), and then say to the customer: “You’re successfully registered”. Like this:</p>
-<p><img src="/posts/eventdriven-architecture-101/images/5.png" alt="image"></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/5.png"
+        data-srcset="/posts/eventdriven-architecture-101/images/5.png, /posts/eventdriven-architecture-101/images/5.png 1.5x, /posts/eventdriven-architecture-101/images/5.png 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/5.png"
+        title="image" /></p>
 <p>Classic approach</p>
 <p>Is there another approach? Let’s use an <strong>event-based architecture</strong>:</p>
 <h1 id="lets-talk-events"><strong>Let’s talk events</strong></h1>
@@ -165,112 +189,82 @@ I’m still a student, so my point of view could be far from reality, be gentle 
 <p>a thing that happens, especially one of importance.</p>
 </blockquote>
 <p>Well, handling a new customer is a thing that happens (hopefully). For this, we’ll be using a <strong>Queue messaging system or Broker</strong>. It’s a <strong>middleware</strong> that will <strong>receive events, and making them available for another application or groups of applications.</strong></p>
-<p><img src="/posts/eventdriven-architecture-101/images/6.gif" alt="image"></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/6.gif"
+        data-srcset="/posts/eventdriven-architecture-101/images/6.gif, /posts/eventdriven-architecture-101/images/6.gif 1.5x, /posts/eventdriven-architecture-101/images/6.gif 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/6.gif"
+        title="image" /></p>
 <p>Queue messaging architecture with 2 producers and 4 consumers</p>
 <p>So let’s rethink our architecture. Pay attention to the words: our Register page will <strong>produce</strong> an event that will contains all the information about our client. This event will be <strong>queued</strong>, waiting to be <strong>consumed</strong> by the associated micro services.</p>
-<p><img src="/posts/eventdriven-architecture-101/images/7.png" alt="image"></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/eventdriven-architecture-101/images/7.png"
+        data-srcset="/posts/eventdriven-architecture-101/images/7.png, /posts/eventdriven-architecture-101/images/7.png 1.5x, /posts/eventdriven-architecture-101/images/7.png 2x"
+        data-sizes="auto"
+        alt="/posts/eventdriven-architecture-101/images/7.png"
+        title="image" /></p>
 <p>Simple event-driven architecture</p>
 <p>We didn’t changed much, but we enable many things over here:</p>
 <ul>
 <li><strong>Simplicity</strong>. Remember, the first rule ! “Make each program do one thing well”. Like this, your <strong>code base for each app will be simple</strong> <strong>as hell</strong>, and you’ll be able to easily replace your software if needed.</li>
 <li><strong>Modularity</strong>. You need to add another action to the event, for example CreateProfile ? Easy, <strong>just plug another app on the same queue</strong>. You need to test a new version of your program? Easy, <strong>just plug it on the same queue</strong>.</li>
 <li><strong>Scalability</strong>. One of your micro services is taking too much time? <strong>Just start a new instance of it</strong>. Huge traffic? Add new instances. With this approach, you can start really small and become giant.</li>
-<li><strong>Big-data friendly.</strong> This type of architecture is often used to handle a lot of data. With plateform like <a href="http://flink.apache.org">Apache Flink</a>, you can do some <strong>stream processing directly</strong>. <a href="https://ci.apache.org/projects/flink/flink-docs-master/apis/streaming/index.html#example-program">Look how easy it is</a>.</li>
+<li><strong>Big-data friendly.</strong> This type of architecture is often used to handle a lot of data. With plateform like <a href="http://flink.apache.org" target="_blank" rel="noopener noreffer">Apache Flink</a>, you can do some <strong>stream processing directly</strong>. <a href="https://ci.apache.org/projects/flink/flink-docs-master/apis/streaming/index.html#example-program" target="_blank" rel="noopener noreffer">Look how easy it is</a>.</li>
 <li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
 </ul>
 <h1 id="what-about-serverless"><strong>What about serverless?</strong></h1>
-<p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> and quickly followed by <a href="https://cloud.google.com/functions/docs">Google</a>, <a href="https://azure.microsoft.com/en-us/services/functions/">Microsoft</a>, <a href="https://new-console.ng.bluemix.net/openwhisk/">IBM</a> and <a href="https://www.iron.io/introducing-aws-lambda-support">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
+<p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a href="https://aws.amazon.com/lambda/" target="_blank" rel="noopener noreffer">AWS Lambda</a> and quickly followed by <a href="https://cloud.google.com/functions/docs" target="_blank" rel="noopener noreffer">Google</a>, <a href="https://azure.microsoft.com/en-us/services/functions/" target="_blank" rel="noopener noreffer">Microsoft</a>, <a href="https://new-console.ng.bluemix.net/openwhisk/" target="_blank" rel="noopener noreffer">IBM</a> and <a href="https://www.iron.io/introducing-aws-lambda-support" target="_blank" rel="noopener noreffer">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
 <h1 id="additional-links-and-talks-about-this-topic">Additional links and talks about this topic</h1>
 <ul>
-<li><a href="http://www.confluent.io/blog/apache-kafka-samza-and-the-unix-philosophy-of-distributed-data">Apache Kafka, Samza, and the Unix Philosophy of Distributed Data</a> by <a href="https://medium.com/u/13be457aed12">Martin Kleppmann</a></li>
-<li><a href="http://blog.cloudera.com/blog/2014/09/apache-kafka-for-beginners/">Apache Kafka for Beginners</a> by Cloudera Engineering Blog</li>
-<li><a href="https://www.voxxed.com/blog/2016/04/introduction-apache-kafka/">Introduction to Apache Kafka</a> by Guglielmo Iozza</li>
+<li><a href="http://www.confluent.io/blog/apache-kafka-samza-and-the-unix-philosophy-of-distributed-data" target="_blank" rel="noopener noreffer">Apache Kafka, Samza, and the Unix Philosophy of Distributed Data</a> by <a href="https://medium.com/u/13be457aed12" target="_blank" rel="noopener noreffer">Martin Kleppmann</a></li>
+<li><a href="http://blog.cloudera.com/blog/2014/09/apache-kafka-for-beginners/" target="_blank" rel="noopener noreffer">Apache Kafka for Beginners</a> by Cloudera Engineering Blog</li>
+<li><a href="https://www.voxxed.com/blog/2016/04/introduction-apache-kafka/" target="_blank" rel="noopener noreffer">Introduction to Apache Kafka</a> by Guglielmo Iozza</li>
 <li>[Apache Flink Training] (<a href="http://dataartisans.github.io/flink-training/)by">http://dataartisans.github.io/flink-training/)by</a> data-artisans</li>
-<li>Meetup LeboncoinTech — AMQP 101 by <a href="https://medium.com/u/58ea5a89aaae">Quentin ADAM</a> (French sorry)</li>
+<li>Meetup LeboncoinTech — AMQP 101 by <a href="https://medium.com/u/58ea5a89aaae" target="_blank" rel="noopener noreffer">Quentin ADAM</a> (French sorry)</li>
 <li>vert.x 3 — be reactive on the JVM but not only in Java by Clement Escoffier/Paulo Lopes DEVOXX 2015</li>
 </ul>
-<p>Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ">Twitter</a>, or have a look on my <a href="https://pierrezemb.fr">website</a>.</p>
-
+<p>Please, Feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a>, or have a look on my <a href="https://pierrezemb.fr" target="_blank" rel="noopener noreffer">website</a>.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2019-01-10</span>
             </div>
-        </article>
-
-        <hr />
-
-        <div class="post-info">
-                <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/programming">programming</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/event">event</a></span>
-                </p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1099 Words</p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2016-05-13 19:19 &#43;0200</p>
+            <div class="post-info-license"></div>
         </div>
-
-        
-            <div class="pagination">
-                <div class="pagination__title">
-                    <span class="pagination__title-h"></span>
-                    <hr />
-                </div>
-
-                <div class="pagination__buttons">
-                    
-                        <span class="button previous">
-                            <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">
-                                <span class="button__icon">←</span>
-                                <span class="button__text">Engage maximum warp speed in time series analysis with WarpScript</span>
-                            </a>
-                        </span>
-                    
-
-                    
-                        <span class="button next">
-                            <a href="https://pierrezemb.fr/posts/lets-talk-about-containers/">
-                                <span class="button__text">Let’s talk about containers</span>
-                                <span class="button__icon">→</span>
-                            </a>
-                        </span>
-                    
-                </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/eventdriven-architecture-101/" data-title="Event-driven architecture 101" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/eventdriven-architecture-101/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/eventdriven-architecture-101/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/eventdriven-architecture-101/" data-title="Event-driven architecture 101"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/eventdriven-architecture-101/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
-        
-
-        
-    </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2021</span>
-            
-                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
-            
-            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
-            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
         </div>
     </div>
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
-        </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
     </div>
-</footer>
 
-            
+    <div class="post-nav"><a href="/posts/lets-talk-about-containers/" class="prev" rel="prev" title="Let’s talk about containers"><i class="fas fa-angle-left fa-fw"></i>Let’s talk about containers</a>
+            <a href="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" class="next" rel="next" title="Engage maximum warp speed in time series analysis with WarpScript">Engage maximum warp speed in time series analysis with WarpScript<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
+    </footer></div>
 
-        
-
-
-
-
-<script type="text/javascript" src="/bundle.min.92eab5326cb4d0201a8571d27ab3fdae608ed705b1867b8a4d0f90a2b16626e44110bc7c918e5a1be7ec6d8448e5c6716a4f913f15e6c3ccf41b470c14f3814b.js" integrity="sha512-kuq1Mmy00CAahXHSerP9rmCO1wWxhnuKTQ&#43;QorFmJuRBELx8kY5aG&#43;fsbYRI5cZxak&#43;RPxXmw8z0G0cMFPOBSw=="></script>
-
-
-
-    </body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

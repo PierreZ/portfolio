@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Podcasts on Pierre Zemb</title>
-    <link>https://pierrezemb.fr/podcasts/</link>
+    <link>http://pierrezemb.fr/podcasts/</link>
     <description>Recent content in Podcasts on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
-    <copyright>&lt;a href=&#34;http://creativecommons.org/licenses/by/3.0/&#34;&gt;Some Rights Reserved&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
-      <link>https://pierrezemb.fr/podcasts/maci-46/</link>
+      <link>http://pierrezemb.fr/podcasts/maci-46/</link>
       <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
       
-      <guid>https://pierrezemb.fr/podcasts/maci-46/</guid>
+      <guid>http://pierrezemb.fr/podcasts/maci-46/</guid>
       <description>Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.
   Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46
 Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
@@ -23,29 +23,29 @@ Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
     
     <item>
       <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
-      <link>https://pierrezemb.fr/podcasts/em-62/</link>
+      <link>http://pierrezemb.fr/podcasts/em-62/</link>
       <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
       
-      <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
+      <guid>http://pierrezemb.fr/podcasts/em-62/</guid>
       <description>Episode You can listen to the episode here.
 Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
     </item>
     
     <item>
       <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
-      <link>https://pierrezemb.fr/podcasts/bdh-99/</link>
+      <link>http://pierrezemb.fr/podcasts/bdh-99/</link>
       <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
       
-      <guid>https://pierrezemb.fr/podcasts/bdh-99/</guid>
+      <guid>http://pierrezemb.fr/podcasts/bdh-99/</guid>
       <description> </description>
     </item>
     
     <item>
       <title>🇫🇷 BigData Hebdo 93 : FoundationDB</title>
-      <link>https://pierrezemb.fr/podcasts/bdh-93/</link>
+      <link>http://pierrezemb.fr/podcasts/bdh-93/</link>
       <pubDate>Mon, 17 Feb 2020 01:22:36 +0100</pubDate>
       
-      <guid>https://pierrezemb.fr/podcasts/bdh-93/</guid>
+      <guid>http://pierrezemb.fr/podcasts/bdh-93/</guid>
       <description> Notes  Notes about FoundationDB  </description>
     </item>
     

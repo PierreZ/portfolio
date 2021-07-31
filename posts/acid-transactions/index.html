@@ -1,142 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="Pierre Zemb ">
-<meta name="description" content="Transaction? &amp;quot;Programming should be about transforming data&amp;quot;  &amp;mdash; Programming Elixir 1.3 by Dave Thomas
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>What are ACID transactions? - Pierre Zemb</title><meta name="Description" content=""><meta property="og:title" content="What are ACID transactions?" />
+<meta property="og:description" content="Transaction? &quot;Programming should be about transforming data&quot;  &mdash; Programming Elixir 1.3 by Dave Thomas
  As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity." />
-<meta name="keywords" content="infrastructure,engineer,portfolio,developer,software,pierre,zemb,pierrez,tech,lead,software,engineer" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="#252627" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://pierrezemb.fr/posts/acid-transactions/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-02-03T15:37:27&#43;01:00" />
+<meta property="article:modified_time" content="2019-02-03T15:37:27&#43;01:00" />
 
-<link rel="canonical" href="https://pierrezemb.fr/posts/acid-transactions/" />
-
-
-
-
-    <title>
-        
-            What are ACID transactions? :: Pierre Zemb 
-        
-    </title>
-
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
-
-<script src="https://unpkg.com/mermaid@8.4/dist/mermaid.min.js"></script>
-
-
-
-<link rel="stylesheet" href="/main.min.c467f70f5562ac8543d81da2f25cb1364ba4359b62a040d8ecd5bce0ef0a2edc.css">
-
-
-
-
-<meta itemprop="name" content="What are ACID transactions?">
-<meta itemprop="description" content="Transaction? &quot;Programming should be about transforming data&quot;  &mdash; Programming Elixir 1.3 by Dave Thomas
- As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity."><meta itemprop="datePublished" content="2019-02-03T15:37:27&#43;01:00" />
-<meta itemprop="dateModified" content="2019-02-03T15:37:27&#43;01:00" />
-<meta itemprop="wordCount" content="718"><meta itemprop="image" content="https://pierrezemb.fr/myself.jpg"/>
-<meta itemprop="keywords" content="transaction,sql," /><meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://pierrezemb.fr/myself.jpg"/>
-
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="What are ACID transactions?"/>
 <meta name="twitter:description" content="Transaction? &quot;Programming should be about transforming data&quot;  &mdash; Programming Elixir 1.3 by Dave Thomas
  As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity."/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="http://pierrezemb.fr/posts/acid-transactions/" />
+<link rel="prev" href="http://pierrezemb.fr/posts/hbase-data-model/" /><link rel="next" href="http://pierrezemb.fr/posts/ovh-alerts-flink/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "What are ACID transactions?",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/pierrezemb.fr\/posts\/acid-transactions\/"
+        },"genre": "posts","wordcount":  718 ,
+        "url": "http:\/\/pierrezemb.fr\/posts\/acid-transactions\/","datePublished": "2019-02-03T15:37:27+01:00","dateModified": "2019-02-03T15:37:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Pierre Zemb"},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-
-
-
-
-    <meta property="article:published_time" content="2019-02-03 15:37:27 &#43;0100 CET" />
-
-
-
-
-
-
-
-
-<script async defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script>
-    </head>
-
-    <body class="">
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text">$ cd ~/blog</span>
-            <span class="logo__cursor" style=""></span>
-        
-    </div>
-</a>
-
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="https://pierrezemb.fr/about/">About</a></li><li><a href="https://pierrezemb.fr/posts/">Blog</a></li><li><a href="https://pierrezemb.fr/talks/">Talks</a></li><li><a href="https://pierrezemb.fr/podcasts/">Podcasts</a></li><li><a href="https://pierrezemb.fr/cv.pdf">Résumé</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-
-            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
-  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
-  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
-</svg>
-</span>
-        </span>
-    </span>
-</header>
-
-
-            <div class="content">
-                
-    <main class="post">
-
-        <div class="post-info">
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 minutes
-
-            
-
-            </p>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb">~/blog</a>
         </div>
-
-        <article>
-            <h1 class="post-title">
-                <a href="https://pierrezemb.fr/posts/acid-transactions/">What are ACID transactions?</a>
-            </h1>
-
-            
-
-            <div class="post-content">
-                <h1 id="transaction">Transaction?</h1>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/">🧑‍💻 About </a><a class="menu-item" href="/posts/">🖊️ Blog </a><a class="menu-item" href="/podcasts/">🎙️ Podcasts </a><a class="menu-item" href="/talks/">📹 Talks </a><a class="menu-item" href="/categories/">🏷️ Categories </a><a class="menu-item" href="/cv.pdf">📄 Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb">~/blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">🧑‍💻About</a><a class="menu-item" href="/posts/" title="">🖊️Blog</a><a class="menu-item" href="/podcasts/" title="">🎙️Podcasts</a><a class="menu-item" href="/talks/" title="">📹Talks</a><a class="menu-item" href="/categories/" title="">🏷️Categories</a><a class="menu-item" href="/cv.pdf" title="">📄Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">What are ACID transactions?</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/transaction/"><i class="far fa-folder fa-fw"></i>transaction</a>&nbsp;<a href="/categories/sql/"><i class="far fa-folder fa-fw"></i>sql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-02-03">2019-02-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;718 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#atomic">Atomic</a></li>
+    <li><a href="#consistency">Consistency</a></li>
+    <li><a href="#isolation">Isolation</a>
+      <ul>
+        <li><a href="#isolation-by-the-theory">Isolation by the theory</a></li>
+        <li><a href="#isolation-in-real-databases">Isolation in Real Databases</a></li>
+      </ul>
+    </li>
+    <li><a href="#durability">Durability</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="transaction">Transaction?</h1>
 <pre><code>&quot;Programming should be about transforming data&quot;
 </code></pre>
 <p>&mdash; Programming Elixir 1.3 by Dave Thomas</p>
 <hr>
-<p>As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called <strong>relational database management system</strong> or <a href="https://en.wikipedia.org/wiki/Relational_database_management_system">RDBMS</a>. Thanks to them, we, as developers, can develop applications pretty easily, <strong>without the need to implement our own storage solution</strong>. Interacting with <a href="https://www.mysql.com/">mySQL</a> or <a href="https://www.postgresql.org/">PostgreSQL</a> have now become a <strong>commodity</strong>. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:</p>
+<p>As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called <strong>relational database management system</strong> or <a href="https://en.wikipedia.org/wiki/Relational_database_management_system" target="_blank" rel="noopener noreffer">RDBMS</a>. Thanks to them, we, as developers, can develop applications pretty easily, <strong>without the need to implement our own storage solution</strong>. Interacting with <a href="https://www.mysql.com/" target="_blank" rel="noopener noreffer">mySQL</a> or <a href="https://www.postgresql.org/" target="_blank" rel="noopener noreffer">PostgreSQL</a> have now become a <strong>commodity</strong>. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:</p>
 <ul>
 <li>How can we interact with <strong>datastores that can fail?</strong></li>
 <li>What is happening if two users are  <strong>updating a value at the same time?</strong></li>
 </ul>
 <p>As a database user, we are using <code>transactions</code> to answer these questions. As a developer, a transaction is a <strong>single unit of logic or work</strong>, sometimes made up of multiple operations. It is mainly an <strong>abstraction</strong> that we are using to <strong>hide underlying problems</strong>, such as concurrency or hardware faults.</p>
-<p><code>ACID</code> appears in a paper published in 1983 called <a href="https://sites.fas.harvard.edu/~cs265/papers/haerder-1983.pdf">&ldquo;Principles of transaction-oriented database recovery&rdquo;</a> written by <em>Theo Haerder</em> and <em>Andreas Reuter</em>. This paper introduce a terminology of properties for a transaction:</p>
+<p><code>ACID</code> appears in a paper published in 1983 called <a href="https://sites.fas.harvard.edu/~cs265/papers/haerder-1983.pdf" target="_blank" rel="noopener noreffer">&ldquo;Principles of transaction-oriented database recovery&rdquo;</a> written by <em>Theo Haerder</em> and <em>Andreas Reuter</em>. This paper introduce a terminology of properties for a transaction:</p>
 <blockquote>
 <p><strong>A</strong>tomic, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability</p>
 </blockquote>
@@ -154,9 +157,9 @@
 <thead>
 <tr>
 <th>Isolation level</th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Dirty_reads">dirty reads</a></th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads">Non-repeatable reads</a></th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Phantom_reads">Phantom reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Dirty_reads" target="_blank" rel="noopener noreffer">dirty reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads" target="_blank" rel="noopener noreffer">Non-repeatable reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Phantom_reads" target="_blank" rel="noopener noreffer">Phantom reads</a></th>
 <th>Performance</th>
 </tr>
 </thead>
@@ -199,96 +202,52 @@
 <blockquote>
 <p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
 </blockquote>
-<p>&mdash; <a href="https://www.postgresql.org/docs/current/mvcc-intro.html">Concurrency Control introduction</a></p>
-<p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC">a standard used by the industry</a>.</p>
+<p>&mdash; <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener noreffer">Concurrency Control introduction</a></p>
+<p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC" target="_blank" rel="noopener noreffer">a standard used by the industry</a>.</p>
 <hr>
 <h2 id="durability">Durability</h2>
 <p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
 <h1 id="thats-it">That&rsquo;s it?</h1>
 <p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
 <hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
-
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2019-02-03</span>
             </div>
-        </article>
-
-        <hr />
-
-        <div class="post-info">
-                <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://pierrezemb.fr/tags/transaction">transaction</a></span><span class="tag"><a href="https://pierrezemb.fr/tags/sql">sql</a></span>
-                </p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>718 Words</p>
-
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-02-03 15:37 &#43;0100</p>
+            <div class="post-info-license"></div>
         </div>
-
-        
-            <div class="pagination">
-                <div class="pagination__title">
-                    <span class="pagination__title-h"></span>
-                    <hr />
-                </div>
-
-                <div class="pagination__buttons">
-                    
-                        <span class="button previous">
-                            <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/">
-                                <span class="button__icon">←</span>
-                                <span class="button__text">Handling OVH&#39;s alerts with Apache Flink</span>
-                            </a>
-                        </span>
-                    
-
-                    
-                        <span class="button next">
-                            <a href="https://pierrezemb.fr/posts/hbase-data-model/">
-                                <span class="button__text">Hbase Data Model</span>
-                                <span class="button__icon">→</span>
-                            </a>
-                        </span>
-                    
-                </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
-        
-
-        
-    </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2021</span>
-            
-                <span><a href="https://pierrezemb.fr">Pierre Zemb</a></span>
-            
-            <span><a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a></span>
-            <span> <a href="https://pierrezemb.fr/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
         </div>
     </div>
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
-        </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
     </div>
-</footer>
 
-            
+    <div class="post-nav"><a href="/posts/hbase-data-model/" class="prev" rel="prev" title="Hbase Data Model"><i class="fas fa-angle-left fa-fw"></i>Hbase Data Model</a>
+            <a href="/posts/ovh-alerts-flink/" class="next" rel="next" title="Handling OVH&#39;s alerts with Apache Flink">Handling OVH&#39;s alerts with Apache Flink<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
+    </footer></div>
 
-        
-
-
-
-
-<script type="text/javascript" src="/bundle.min.92eab5326cb4d0201a8571d27ab3fdae608ed705b1867b8a4d0f90a2b16626e44110bc7c918e5a1be7ec6d8448e5c6716a4f913f15e6c3ccf41b470c14f3814b.js" integrity="sha512-kuq1Mmy00CAahXHSerP9rmCO1wWxhnuKTQ&#43;QorFmJuRBELx8kY5aG&#43;fsbYRI5cZxak&#43;RPxXmw8z0G0cMFPOBSw=="></script>
-
-
-
-    </body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>
