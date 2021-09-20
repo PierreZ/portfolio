@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>podcast - Category - Pierre Zemb</title>
+        <link>http://pierrezemb.fr/categories/podcast/</link>
+        <description>podcast - Category - Pierre Zemb</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 26 Aug 2021 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/podcast/" rel="self" type="application/rss+xml" /><item>
+    <title>🇫🇷 Message à caractère informatique 54 : Une Attaque De Souris Cosmique Dans MDN Met AVIF Les Nerfs De Google</title>
+    <link>http://pierrezemb.fr/podcasts/maci-54/</link>
+    <pubDate>Thu, 26 Aug 2021 01:22:36 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/podcasts/maci-54/</guid>
+    <description><![CDATA[Dans ce cinquante-cinquième épisode nous parlons de Grafana, patent trolls, MDN, AVIF dans Safari, paradoxe de Simpson, Cosmos, DDoS, Cloudflare, Google, Linux, Razer et PAM
+  ]]></description>
+</item></channel>
+</rss>

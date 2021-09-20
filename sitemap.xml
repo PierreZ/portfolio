@@ -2,10 +2,12 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://pierrezemb.fr/categories/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>http://pierrezemb.fr/categories/maci/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>http://pierrezemb.fr/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>http://pierrezemb.fr/podcasts/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/categories/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/categories/maci/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/categories/podcast/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/podcasts/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>http://pierrezemb.fr/podcasts/maci-54/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
             <loc>http://pierrezemb.fr/categories/sql/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
             <loc>http://pierrezemb.fr/podcasts/maci-46/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
             <loc>http://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</loc><lastmod>2021-05-02T01:22:36&#43;01:00</lastmod></url><url>

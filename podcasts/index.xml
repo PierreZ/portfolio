@@ -6,7 +6,17 @@
     <description>Recent content in Podcasts on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 04 Jun 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 Aug 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Message à caractère informatique 54 : Une Attaque De Souris Cosmique Dans MDN Met AVIF Les Nerfs De Google</title>
+      <link>http://pierrezemb.fr/podcasts/maci-54/</link>
+      <pubDate>Thu, 26 Aug 2021 01:22:36 +0100</pubDate>
+      
+      <guid>http://pierrezemb.fr/podcasts/maci-54/</guid>
+      <description>Dans ce cinquante-cinquième épisode nous parlons de Grafana, patent trolls, MDN, AVIF dans Safari, paradoxe de Simpson, Cosmos, DDoS, Cloudflare, Google, Linux, Razer et PAM
+  </description>
+    </item>
+    
     <item>
       <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
       <link>http://pierrezemb.fr/podcasts/maci-46/</link>
