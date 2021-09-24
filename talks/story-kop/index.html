@@ -5,32 +5,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Lessons Learned from Operating ETCD - Pierre Zemb</title><meta name="Description" content=""><meta property="og:title" content="Lessons Learned from Operating ETCD" />
-<meta property="og:description" content="Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide. Because of our Kubinception design(using Kubernetes to run Kubernetes), we are putting hundreds of customers in an ETCD cluster. This design is great to easily spawn control-planes for customers, but it is also putting a lot of pressure on ETCD." />
+        <title> Il était une fois Kafka sur Pulsar  - Pierre Zemb</title><meta name="Description" content=""><meta property="og:title" content=" Il était une fois Kafka sur Pulsar " />
+<meta property="og:description" content="Abstract Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&rsquo;est ainsi que notre histoire commence.
+Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/" /><meta property="article:section" content="talks" />
-<meta property="article:published_time" content="2021-05-02T01:22:36&#43;01:00" />
-<meta property="article:modified_time" content="2021-05-02T01:22:36&#43;01:00" />
+<meta property="og:url" content="http://pierrezemb.fr/talks/story-kop/" /><meta property="article:section" content="talks" />
+<meta property="article:published_time" content="2021-09-24T01:22:36&#43;01:00" />
+<meta property="article:modified_time" content="2021-09-24T01:22:36&#43;01:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Lessons Learned from Operating ETCD"/>
-<meta name="twitter:description" content="Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide. Because of our Kubinception design(using Kubernetes to run Kubernetes), we are putting hundreds of customers in an ETCD cluster. This design is great to easily spawn control-planes for customers, but it is also putting a lot of pressure on ETCD."/>
+<meta name="twitter:title" content=" Il était une fois Kafka sur Pulsar "/>
+<meta name="twitter:description" content="Abstract Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&rsquo;est ainsi que notre histoire commence.
+Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar."/>
 <meta name="application-name" content="Pierre Zemb">
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="http://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/" />
-<link rel="prev" href="http://pierrezemb.fr/talks/to-the-cloud-and-beyond/" /><link rel="next" href="http://pierrezemb.fr/talks/story-kop/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+<link rel="canonical" href="http://pierrezemb.fr/talks/story-kop/" />
+<link rel="prev" href="http://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Lessons Learned from Operating ETCD",
+        "headline": " Il était une fois Kafka sur Pulsar ",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/pierrezemb.fr\/talks\/lessons-learned-from-operating-etcd\/"
-        },"genre": "talks","wordcount":  188 ,
-        "url": "http:\/\/pierrezemb.fr\/talks\/lessons-learned-from-operating-etcd\/","datePublished": "2021-05-02T01:22:36+01:00","dateModified": "2021-05-02T01:22:36+01:00","publisher": {
+            "@id": "http:\/\/pierrezemb.fr\/talks\/story-kop\/"
+        },"genre": "talks","wordcount":  202 ,
+        "url": "http:\/\/pierrezemb.fr\/talks\/story-kop\/","datePublished": "2021-09-24T01:22:36+01:00","dateModified": "2021-09-24T01:22:36+01:00","publisher": {
             "@type": "Organization",
             "name": "Pierre Zemb"},"author": {
                 "@type": "Person",
@@ -101,36 +103,35 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="page single special"><h1 class="single-title animated pulse faster">Lessons Learned from Operating ETCD</h1><div class="content" id="content"><h1 id="abstract">Abstract</h1>
-<p>OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide. Because of our Kubinception design(using Kubernetes to run Kubernetes), we are putting hundreds of customers in an ETCD cluster. This design is great to easily spawn control-planes for customers, but it is also putting a lot of pressure on ETCD. To keep it healthy while growing up constantly, we had to learn many things about how ETCD works under the hood and how we can operate it efficiently.</p>
-<p>In this talk, you will have the insights of how we are operating our ETCD clusters. We will tell you our journey to use ETCD, from our observability to deployments and management, what did work and what did not.</p>
+                <div class="container"><div class="page single special"><h1 class="single-title animated pulse faster"> Il était une fois Kafka sur Pulsar </h1><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/announcing-kop/images/kop-1.png"
+        data-srcset="/posts/announcing-kop/images/kop-1.png, /posts/announcing-kop/images/kop-1.png 1.5x, /posts/announcing-kop/images/kop-1.png 2x"
+        data-sizes="auto"
+        alt="/posts/announcing-kop/images/kop-1.png"
+        title="hbase image" /></p>
+<h1 id="abstract">Abstract</h1>
+<p>Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&rsquo;est ainsi que notre histoire commence.</p>
+<p>Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar. Pour construire notre plateforme de topic managé, nous avions besoin de ce support. On s’est d’abord lancé dans l’écriture d’un proxy en Rust capable de transformer le protocole Kafka vers celui de Pulsar à la volée. Mais lorsque nous avons appris que l’équipe en charge de Pulsar travaillait sur le même sujet, nous avons décidé de les rejoindre 🤝</p>
+<p>A la fin de ce talk, vous saurez plus de choses sur le fonctionnement interne de Kafka et de Pulsar. Vous aurez également un retour d’expérience sur l’écriture d’un proxy maison de streaming Rust. Mais surtout sur comment passer d’un développement interne à travailler avec les mainteneurs d’un projet open-source et intégrer la communauté.</p>
 <h1 id="occurences">Occurences</h1>
 <ul>
-<li><a href="https://kccnceu2021.sched.com/event/iE5K/lessons-learned-from-operating-etcd-pierre-zemb-ovhcloud" target="_blank" rel="noopener noreffer">KubeCon Europe 2021</a></li>
+<li><a href="https://cfp.devoxx.fr/2021/talk/MZF-7892/Il_etait_une_fois_Kafka_sur_Pulsar" target="_blank" rel="noopener noreffer">Devoxx 2021</a></li>
 </ul>
 <h1 id="ressources">Ressources</h1>
 <h2 id="slides">Slides</h2>
 <div>
-        <p>The slides are also available <b><a href="https://docs.google.com/presentation/d/1uOpawkCoqPQuxD5MuEhXeCrJV1Nw9fopUBq2IRTvwcI/edit?usp=sharing/edit?usp=sharing" target="_blank">here</a> </b></p>
+        <p>The slides are also available <b><a href="https://docs.google.com/presentation/d/1oLK5wz3DsYj0dk7_X2dEUqOLRNbk_hY2-HtskxZiYJM/edit?usp=sharing" target="_blank">here</a> </b></p>
 </div>
 
 <br>
 <iframe
-        src="https://docs.google.com/presentation/d/e/2PACX-1vQYNwMYLlNb4LjblfrbYyspIBuGTb8tKcBu9yTBaRr8vzs8A-5pde4yHsq0cY5A14o_L8mcq8zdmf7A/embed?start=false&loop=false&delayms=3000"
+        src="https://docs.google.com/presentation/d/e/2PACX-1vQhJANmNZmzD1D5zLD0Gr4_ldvGXEB4xc-WyD_gVeAX1huSAumpA923qAgGA2voGi9EY21JPeMk_kh7/embed?start=false&loop=false&delayms=3000"
         frameborder="0" width="960" height="569"
         allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true">
 </iframe>
 
-
-<h2 id="videos">Videos</h2>
-
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/IrJyrGQ_R9c" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
-
-<h1 id="photos-and-tweets">Photos and tweets</h1>
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">TOMORROW: For anyone attending <a href="https://twitter.com/hashtag/KubeCon?src=hash&amp;ref_src=twsrc%5Etfw">#KubeCon</a> EU Virtual, check out <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a>&#39;s talk about lessons learned with <a href="https://twitter.com/hashtag/etcd?src=hash&amp;ref_src=twsrc%5Etfw">#etcd</a> while he was at <a href="https://twitter.com/OVHcloud?ref_src=twsrc%5Etfw">@OVHcloud</a> | May 5 at 14:15 CEST <a href="https://t.co/BcPnAOx5rm">https://t.co/BcPnAOx5rm</a></p>&mdash; etcd (@etcdio) <a href="https://twitter.com/etcdio/status/1389541817004134404?ref_src=twsrc%5Etfw">May 4, 2021</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 </div></div></div>
             </main><footer class="footer">

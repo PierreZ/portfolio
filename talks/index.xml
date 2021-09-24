@@ -6,7 +6,17 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 02 May 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 24 Sep 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title> Il était une fois Kafka sur Pulsar </title>
+      <link>http://pierrezemb.fr/talks/story-kop/</link>
+      <pubDate>Fri, 24 Sep 2021 01:22:36 +0100</pubDate>
+      
+      <guid>http://pierrezemb.fr/talks/story-kop/</guid>
+      <description>Abstract Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&amp;rsquo;est ainsi que notre histoire commence.
+Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar.</description>
+    </item>
+    
     <item>
       <title>Lessons Learned from Operating ETCD</title>
       <link>http://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</link>
