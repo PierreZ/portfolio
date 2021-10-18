@@ -12,8 +12,8 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
  HBase Book: Time To Live (TTL)" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/ttl-hbase/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2019-05-27T22:07:11&#43;02:00" />
-<meta property="article:modified_time" content="2019-05-27T22:07:11&#43;02:00" />
+<meta property="article:published_time" content="2019-05-27T22:07:11+02:00" />
+<meta property="article:modified_time" content="2019-05-27T22:07:11+02:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Playing with TTL in HBase"/>
@@ -129,22 +129,22 @@ Time To Live (TTL) Let&rsquo;s read the doc first!
 </blockquote>
 <p><a href="https://hbase.apache.org/book.html#ttl" target="_blank" rel="noopener noreffer">HBase Book: Time To Live (TTL)</a></p>
 <p>Let&rsquo;s play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart" target="_blank" rel="noopener noreffer">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">./bin/hbase shell
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">./bin/hbase shell
 
 hbase<span class="o">(</span>main<span class="o">)</span>:001:0&gt; create <span class="s1">&#39;test_table&#39;</span>, <span class="o">{</span><span class="s1">&#39;NAME&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;cf1&#39;</span>,<span class="s1">&#39;TTL&#39;</span> <span class="o">=</span>&gt; 30<span class="o">}</span> <span class="c1"># 30 sec</span>
 </code></pre></div><p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:002:0&gt; put <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>, <span class="s1">&#39;TTL Demo&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:002:0&gt; put <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>, <span class="s1">&#39;TTL Demo&#39;</span>
 </code></pre></div><p>And you can <code>get</code> it with:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:003:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:003:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
  cf1:desc                          <span class="nv">timestamp</span><span class="o">=</span>1558366581134, <span class="nv">value</span><span class="o">=</span>TTL Demo
 <span class="m">1</span> row<span class="o">(</span>s<span class="o">)</span> in 0.0080 seconds
 </code></pre></div><p>Here&rsquo;s our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:004:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:004:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
 <span class="m">0</span> row<span class="o">(</span>s<span class="o">)</span> in 0.0220 seconds
 </code></pre></div><p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:002:0&gt; scan <span class="s1">&#39;test_table&#39;</span>, <span class="o">{</span><span class="nv">RAW</span> <span class="o">=</span>&gt; true<span class="o">}</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:002:0&gt; scan <span class="s1">&#39;test_table&#39;</span>, <span class="o">{</span><span class="nv">RAW</span> <span class="o">=</span>&gt; true<span class="o">}</span>
 ROW                                COLUMN+CELL
  row123                            <span class="nv">column</span><span class="o">=</span>cf1:desc, <span class="nv">timestamp</span><span class="o">=</span>1558366581134, <span class="nv">value</span><span class="o">=</span>TTL Demo
 <span class="m">1</span> row<span class="o">(</span>s<span class="o">)</span> in 0.3280 seconds
@@ -154,7 +154,7 @@ ROW                                COLUMN+CELL
 <li>force the <strong>compaction</strong>:</li>
 </ul>
 <!-- raw HTML omitted -->
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:014:0&gt; flush <span class="s1">&#39;test_table&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:014:0&gt; flush <span class="s1">&#39;test_table&#39;</span>
 Took 0.4456 seconds    
 hbase<span class="o">(</span>main<span class="o">)</span>:015:0&gt; compact <span class="s1">&#39;test_table&#39;</span>
 Took 0.0468 seconds
@@ -173,7 +173,7 @@ Took 0.0060 seconds
 </blockquote>
 <p><a href="https://hbase.apache.org/book.html#versions" target="_blank" rel="noopener noreffer">HBase Book: Versions</a></p>
 <p>You may have seen it during our scan earlier, there is a <strong>timestamp associated</strong> with the version of the cell:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:003:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hbase<span class="o">(</span>main<span class="o">)</span>:003:0&gt; get <span class="s1">&#39;test_table&#39;</span>,<span class="s1">&#39;row123&#39;</span>,<span class="s1">&#39;cf1:desc&#39;</span>
 COLUMN                             CELL
  cf1:desc                          <span class="nv">timestamp</span><span class="o">=</span>1558366581134, <span class="nv">value</span><span class="o">=</span>TTL Demo
  <span class="c1">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^ </span>
@@ -184,7 +184,7 @@ COLUMN                             CELL
 <p><em>Caution:</em> the version timestamp is used internally by HBase for things like <strong>time-to-live calculations</strong>. It’s usually best to avoid setting this timestamp yourself. Prefer using a separate timestamp attribute of the row, or have the timestamp as a part of the row key, or both.</p>
 </blockquote>
 <p>Let&rsquo;s try it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">date +%s -d <span class="s2">&#34;+2 min&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">date +%s -d <span class="s2">&#34;+2 min&#34;</span>
 <span class="m">1558472441</span>  <span class="c1"># don&#39;t forget to add 3 zeroes as the time need to be in millisecond!</span>
 
 ./bin/hbase shell
@@ -228,7 +228,7 @@ Took 0.0031 seconds
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

@@ -11,8 +11,8 @@
 In the last two years, there’s been a technology that became really hype." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/lets-talk-about-containers/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2016-01-04T18:52:19&#43;00:00" />
-<meta property="article:modified_time" content="2019-01-10T21:56:50&#43;01:00" />
+<meta property="article:published_time" content="2016-01-04T18:52:19+00:00" />
+<meta property="article:modified_time" content="2019-01-10T21:56:50+01:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Let’s talk about containers"/>
@@ -174,7 +174,7 @@ In the last two years, there’s been a technology that became really hype."/>
 <p>That was really bothering me. At this point, if the container is holding everything, why not use a VM? Why do we need to bundle Ubuntu into the container? From a outside point-of-view, running a container in interactive mode is much like a virtual machines right? <strong>At the time of writing, Docker’s official image for Ubuntu was pulled more than 36,000,000 time</strong>. That’s huge! And disturbing. Do you really need for example “ls, chmod, chown, sudo” into a container?</p>
 <p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;amp;loop=false#slide=id.ge614ec624_2_70" target="_blank" rel="noopener noreffer">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability" target="_blank" rel="noopener noreffer">Ghost</a>, and 80% to <a href="http://heartbleed.com/" target="_blank" rel="noopener noreffer">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>
 <h3 id="so-what-should-i-put-into-my-container">So what should I put into my container?</h3>
-<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine" target="_blank" rel="noopener noreffer">docker-alpine</a> or [baseimage-docker] (<a href="https://github.com/phusion/baseimage-docker)which">https://github.com/phusion/baseimage-docker)which</a> are cool, but in fact, the answer was on Docker’s website… Here’s the [official sentence] (<a href="https://www.docker.com/what-docker)that">https://www.docker.com/what-docker)that</a> explains the difference between containers and virtual machines:</p>
+<p>I looked a lot around the internet, I saw things like <a href="https://github.com/gliderlabs/docker-alpine" target="_blank" rel="noopener noreffer">docker-alpine</a> or [baseimage-docker] (<a href="https://github.com/phusion/baseimage-docker%29which" target="_blank" rel="noopener noreffer">https://github.com/phusion/baseimage-docker)which</a> are cool, but in fact, the answer was on Docker’s website… Here’s the [official sentence] (<a href="https://www.docker.com/what-docker%29that" target="_blank" rel="noopener noreffer">https://www.docker.com/what-docker)that</a> explains the difference between containers and virtual machines:</p>
 <blockquote>
 <p>“Containers include the application and all of its dependencies, but share the kernel with other containers.”</p>
 </blockquote>
@@ -198,7 +198,7 @@ In the last two years, there’s been a technology that became really hype."/>
 <p>You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.</p>
 </blockquote>
 <p>That means that our Dockerfile now looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-docker" data-lang="docker"><span class="k">FROM</span><span class="s"> scratch  </span><span class="err">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-docker" data-lang="docker"><span class="k">FROM</span><span class="s"> scratch  </span><span class="err">
 </span><span class="err"></span><span class="k">ADD</span> hello /  <span class="err">
 </span><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="err">/hello</span><span class="p">]</span><span class="err">
 </span></code></pre></div><p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf" target="_blank" rel="noopener noreffer"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>
@@ -234,7 +234,7 @@ In the last two years, there’s been a technology that became really hype."/>
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

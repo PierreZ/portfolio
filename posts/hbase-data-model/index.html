@@ -10,8 +10,8 @@
  &ndash; Hbase architecture overview" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/hbase-data-model/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2019-01-27T20:24:27&#43;01:00" />
-<meta property="article:modified_time" content="2019-01-27T20:24:27&#43;01:00" />
+<meta property="article:published_time" content="2019-01-27T20:24:27+01:00" />
+<meta property="article:modified_time" content="2019-01-27T20:24:27+01:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Hbase Data Model"/>
@@ -141,7 +141,7 @@
 <li>A column is divided between a <strong>Column Family</strong> and a <strong>Column Qualifier</strong>. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is <strong>static</strong>, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.</li>
 </ul>
 <p>Not as easy as you thought? Here&rsquo;s an example! Let&rsquo;s say that we&rsquo;re trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &ldquo;Contents&rdquo;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &ldquo;content:html&rdquo; or &ldquo;content:video&rdquo;.</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
   <span class="nt">&#34;fr.pierrezemb.www&#34;</span><span class="p">:</span> <span class="p">{</span>          <span class="err">//</span> <span class="err">Row</span> <span class="err">key</span>
     <span class="nt">&#34;contents&#34;</span><span class="p">:</span> <span class="p">{</span>                 <span class="err">//</span> <span class="err">Column</span> <span class="err">family</span>
       <span class="nt">&#34;content:html&#34;</span><span class="p">:</span> <span class="p">{</span>	          <span class="err">//</span> <span class="err">Column</span> <span class="err">qualifier</span>
@@ -210,7 +210,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

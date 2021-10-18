@@ -11,8 +11,8 @@
  etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/diving-into-etcd-linearizable/" /><meta property="og:image" content="http://pierrezemb.fr/posts/diving-into-etcd-linearizable/etcd.png" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-09-18T05:24:27&#43;01:00" />
-<meta property="article:modified_time" content="2020-09-18T05:24:27&#43;01:00" />
+<meta property="article:published_time" content="2020-09-18T05:24:27+01:00" />
+<meta property="article:modified_time" content="2020-09-18T05:24:27+01:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://pierrezemb.fr/posts/diving-into-etcd-linearizable/etcd.png"/>
@@ -167,14 +167,14 @@
 <p>The basic idea behind this is to confirm that the <strong>leader is true leader or not</strong> by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&rsquo;s dive into the implementation!</p>
 <p>All codes are from the current latest release <a href="https://github.com/etcd-io/etcd/releases/tag/v3.4.13" target="_blank" rel="noopener noreffer">v3.4.13</a>.</p>
 <p><a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L114-L120" target="_blank" rel="noopener noreffer">Let&rsquo;s take a Range operation</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">if</span> <span class="p">!</span><span class="nx">r</span><span class="p">.</span><span class="nx">Serializable</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">	<span class="k">if</span> <span class="p">!</span><span class="nx">r</span><span class="p">.</span><span class="nx">Serializable</span> <span class="p">{</span>
 		<span class="nx">err</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">linearizableReadNotify</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
 		<span class="nx">trace</span><span class="p">.</span><span class="nf">Step</span><span class="p">(</span><span class="s">&#34;agreement among raft nodes before linearized reading&#34;</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 			<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">
+</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
 <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">EtcdServer</span><span class="p">)</span> <span class="nf">linearizableReadNotify</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
 	<span class="nx">s</span><span class="p">.</span><span class="nx">readMu</span><span class="p">.</span><span class="nf">RLock</span><span class="p">()</span>
 	<span class="nx">nc</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">readNotifier</span>
@@ -197,12 +197,12 @@
 	<span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div><p>So in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L773-L793" target="_blank" rel="noopener noreffer">linearizableReadNotify</a>, we are waiting for a signal. <code>readwaitc</code> is used in another goroutine called <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771" target="_blank" rel="noopener noreffer">linearizableReadLoop</a>. This goroutines will call this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">node</span><span class="p">)</span> <span class="nf">ReadIndex</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">rctx</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">node</span><span class="p">)</span> <span class="nf">ReadIndex</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">rctx</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nx">n</span><span class="p">.</span><span class="nf">step</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgReadIndex</span><span class="p">,</span> <span class="nx">Entries</span><span class="p">:</span> <span class="p">[]</span><span class="nx">pb</span><span class="p">.</span><span class="nx">Entry</span><span class="p">{{</span><span class="nx">Data</span><span class="p">:</span> <span class="nx">rctx</span><span class="p">}}})</span>
 <span class="p">}</span>
 
 </code></pre></div><p>that will create a <code>MsgReadIndex</code> message that will be handled in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/raft/raft.go#L994" target="_blank" rel="noopener noreffer">stepLeader</a>, who will send the message to the followers, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgReadIndex</span><span class="p">:</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgReadIndex</span><span class="p">:</span>
 		<span class="c1">// If more than the local vote is needed, go through a full broadcast,
 </span><span class="c1"></span>		<span class="c1">// otherwise optimize.
 </span><span class="c1"></span>		<span class="k">if</span> <span class="p">!</span><span class="nx">r</span><span class="p">.</span><span class="nx">prs</span><span class="p">.</span><span class="nf">IsSingleton</span><span class="p">()</span> <span class="p">{</span>
@@ -222,7 +222,7 @@
 				<span class="p">}</span>
 			<span class="p">}</span>
 </code></pre></div><p>So, the <code>leader</code> is sending a heartbeat in <code>ReadOnlySafe</code> mode. Turns out there is two modes:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
 	<span class="c1">// ReadOnlySafe guarantees the linearizability of the read only request by
 </span><span class="c1"></span>	<span class="c1">// communicating with the quorum. It is the default and suggested option.
 </span><span class="c1"></span>	<span class="nx">ReadOnlySafe</span> <span class="nx">ReadOnlyOption</span> <span class="p">=</span> <span class="kc">iota</span>
@@ -234,7 +234,7 @@
 </span><span class="c1"></span>	<span class="nx">ReadOnlyLeaseBased</span>
 <span class="p">)</span>
 </code></pre></div><p>Responses from the followers will be handled here:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgHeartbeatResp</span><span class="p">:</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgHeartbeatResp</span><span class="p">:</span>
 		<span class="c1">// PZ: omitting some code here
 </span><span class="c1"></span>		<span class="nx">rss</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">readOnly</span><span class="p">.</span><span class="nf">advance</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
 		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">rs</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">rss</span> <span class="p">{</span>
@@ -246,7 +246,7 @@
 			<span class="p">}</span>
 		<span class="p">}</span>
 </code></pre></div><p>We are storing things into a <code>ReadState</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ReadState provides state for read only query.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ReadState provides state for read only query.
 </span><span class="c1">// It&#39;s caller&#39;s responsibility to call ReadIndex first before getting
 </span><span class="c1">// this state from ready, it&#39;s also caller&#39;s duty to differentiate if this
 </span><span class="c1">// state is what it requests through RequestCtx, eg. given a unique id as
@@ -256,11 +256,11 @@
 	<span class="nx">RequestCtx</span> <span class="p">[]</span><span class="kt">byte</span>
 <span class="p">}</span>
 </code></pre></div><p>Now that the state has been updated, we need to unblock our <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771" target="_blank" rel="noopener noreffer">linearizableReadLoop</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">		<span class="k">for</span> <span class="p">!</span><span class="nx">timeout</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">done</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">		<span class="k">for</span> <span class="p">!</span><span class="nx">timeout</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">done</span> <span class="p">{</span>
 			<span class="k">select</span> <span class="p">{</span>
 			<span class="k">case</span> <span class="nx">rs</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">s</span><span class="p">.</span><span class="nx">r</span><span class="p">.</span><span class="nx">readStateC</span><span class="p">:</span>
 </code></pre></div><p>Cool, another channel! Turns out, <code>readStateC</code> is updated in <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/raft.go#L162" target="_blank" rel="noopener noreffer">one of the main goroutine</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// start prepares and starts raftNode in a new goroutine. It is no longer safe
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// start prepares and starts raftNode in a new goroutine. It is no longer safe
 </span><span class="c1">// to modify the fields after it has been started.
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">raftNode</span><span class="p">)</span> <span class="nf">start</span><span class="p">(</span><span class="nx">rh</span> <span class="o">*</span><span class="nx">raftReadyHandler</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">internalTimeout</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span>
@@ -280,7 +280,7 @@
 					<span class="k">case</span> <span class="nx">r</span><span class="p">.</span><span class="nx">readStateC</span> <span class="o">&lt;-</span> <span class="nx">rd</span><span class="p">.</span><span class="nx">ReadStates</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">rd</span><span class="p">.</span><span class="nx">ReadStates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
 				<span class="p">}</span>
 </code></pre></div><p>Perfect, now <code>readStateC</code> is notified, and we can continue on <a href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L672-L771" target="_blank" rel="noopener noreffer">linearizableReadLoop</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">		<span class="k">if</span> <span class="nx">ai</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">getAppliedIndex</span><span class="p">();</span> <span class="nx">ai</span> <span class="p">&lt;</span> <span class="nx">rs</span><span class="p">.</span><span class="nx">Index</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">		<span class="k">if</span> <span class="nx">ai</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">getAppliedIndex</span><span class="p">();</span> <span class="nx">ai</span> <span class="p">&lt;</span> <span class="nx">rs</span><span class="p">.</span><span class="nx">Index</span> <span class="p">{</span>
 			<span class="k">select</span> <span class="p">{</span>
 			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">s</span><span class="p">.</span><span class="nx">applyWait</span><span class="p">.</span><span class="nf">Wait</span><span class="p">(</span><span class="nx">rs</span><span class="p">.</span><span class="nx">Index</span><span class="p">):</span>
 			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">s</span><span class="p">.</span><span class="nx">stopping</span><span class="p">:</span>
@@ -292,7 +292,7 @@
 </code></pre></div><p>The first part is a safety measure to makes sure the applied index is lower that the index stored in <code>ReadState</code>. And then finally we are unlocking all pending reads 🤩</p>
 <h2 id="one-more-thing-follower-read">One more thing: Follower read</h2>
 <p>We went through <code>stepLeader</code> a lot, be there is something interesting in <a href="https://github.com/etcd-io/etcd/blob/v4.3.13/raft/raft.go#L1320" target="_blank" rel="noopener noreffer"><code>stepFollower</code></a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgReadIndex</span><span class="p">:</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">	<span class="k">case</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">MsgReadIndex</span><span class="p">:</span>
 		<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">lead</span> <span class="o">==</span> <span class="nx">None</span> <span class="p">{</span>
 			<span class="nx">r</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;%x no leader at term %d; dropping index reading msg&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Term</span><span class="p">)</span>
 			<span class="k">return</span> <span class="kc">nil</span>
@@ -304,7 +304,7 @@
 <ul>
 <li>If you are running etcd &lt;= 3.4, make sure <strong>logger=zap</strong> is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
   <span class="nt">&#34;level&#34;</span><span class="p">:</span> <span class="s2">&#34;info&#34;</span><span class="p">,</span>
   <span class="nt">&#34;ts&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-08-12T08:24:56.181Z&#34;</span><span class="p">,</span>
   <span class="nt">&#34;caller&#34;</span><span class="p">:</span> <span class="s2">&#34;traceutil/trace.go:145&#34;</span><span class="p">,</span>
@@ -356,7 +356,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

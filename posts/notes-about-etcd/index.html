@@ -9,8 +9,8 @@
 <meta property="og:description" content="List of ressources gleaned about ETCD" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/notes-about-etcd/" /><meta property="og:image" content="http://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-01-11T00:24:27&#43;01:00" />
-<meta property="article:modified_time" content="2021-01-11T00:24:27&#43;01:00" />
+<meta property="article:published_time" content="2021-01-11T00:24:27+01:00" />
+<meta property="article:modified_time" content="2021-01-11T00:24:27+01:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png"/>
@@ -228,7 +228,7 @@
 </ul>
 <p>Key and values are bytes-oriented but ordered.</p>
 <h3 id="transactions">Transactions</h3>
-<div class="highlight"><pre class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// From google paxosdb paper:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// From google paxosdb paper:
 </span><span class="c1">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
 </span><span class="c1">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
 </span><span class="c1">// and consists of three components:
@@ -262,7 +262,7 @@
 <p>Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision</p>
 </blockquote>
 <h3 id="lease">Lease</h3>
-<div class="highlight"><pre class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// this message represent a Lease
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// this message represent a Lease
 </span><span class="c1"></span><span class="kd">message</span> <span class="nc">Lease</span> <span class="p">{</span><span class="err">
 </span><span class="err"></span>  <span class="c1">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
 </span><span class="c1"></span>  <span class="kt">int64</span> <span class="n">TTL</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
@@ -272,7 +272,7 @@
 </span><span class="err"></span>  <span class="kt">int64</span> <span class="n">insert_timestamp</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
 </span><span class="err"></span><span class="p">}</span><span class="err">
 </span></code></pre></div><h3 id="watches">Watches</h3>
-<div class="highlight"><pre class="chroma"><code class="language-proto" data-lang="proto"><span class="kd">message</span> <span class="nc">Watch</span> <span class="p">{</span><span class="err">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="kd">message</span> <span class="nc">Watch</span> <span class="p">{</span><span class="err">
 </span><span class="err"></span>  <span class="c1">// key is the key to register for watching.
 </span><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
 </span><span class="err">
@@ -361,7 +361,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 <p>Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded</p>
 </blockquote>
 <p>Snapshot can be saved using <code>etcdctl</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">etcdctl snapshot save backup.db
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">etcdctl snapshot save backup.db
 </code></pre></div><h3 id="lease-1">Lease</h3>
 <p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497" target="_blank" rel="noopener noreffer">create some issues</a>:</p>
 <blockquote>
@@ -402,7 +402,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

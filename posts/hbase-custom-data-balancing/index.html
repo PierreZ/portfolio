@@ -9,8 +9,8 @@
 <meta property="og:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/" /><meta property="og:image" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-02-14T10:24:27&#43;01:00" />
-<meta property="article:modified_time" content="2020-02-14T10:24:27&#43;01:00" />
+<meta property="article:published_time" content="2020-02-14T10:24:27+01:00" />
+<meta property="article:modified_time" content="2020-02-14T10:24:27+01:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg"/>
@@ -205,7 +205,7 @@ We decided to rewrite our tooling to make it more general, and to <strong>contri
 <p>The second contribution was about <a href="https://github.com/apache/hbase/commit/42d535a57a75b58f585b48df9af9c966e6c7e46a" target="_blank" rel="noopener noreffer">adding an optional costFunction to balance regions according to a capacity rule</a>.</p>
 <h2 id="how-does-it-works">How does it works?</h2>
 <p>The balancer will load a file containing lines of rules. <strong>A rule is composed of a regexp for hostname, and a limit.</strong> For example, we could have:</p>
-<pre><code>rs[0-9] 200
+<pre tabindex="0"><code>rs[0-9] 200
 rs1[0-9] 50
 </code></pre><p>RegionServers with <strong>hostnames matching the first rules will have a limit of 200</strong>, and <strong>the others 50</strong>. If there&rsquo;s no match, a default is set.</p>
 <p>Thanks to these rule, we have two key pieces of information:</p>
@@ -220,7 +220,7 @@ rs1[0-9] 50
 <li>10 RS, named <code>rs10</code> to <code>rs19</code>, loaded with 60 regions each, which can each handle 50 regions.</li>
 </ul>
 <p>So, based on the following rules:</p>
-<pre><code>rs[0-9] 200
+<pre tabindex="0"><code>rs[0-9] 200
 rs1[0-9] 50
 </code></pre><p>&hellip; we can see that the <strong>second group is overloaded</strong>, whereas the first group has plenty of space.</p>
 <p>We know that we can handle a maximum of <strong>2,500 regions</strong> (200×10 + 50×10), and we have currently <strong>1,200 regions</strong> (60×20). As such, the <code>HeterogeneousRegionCountCostFunction</code> will understand that the cluster is <strong>full at 48.0%</strong> (1200/2500). Based on this information, we will then <strong>try to put all the RegionServers at ~48% of the load, according to the rules.</strong></p>
@@ -265,7 +265,7 @@ software. We <strong>had an opinion</strong> about how a particular issue should
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

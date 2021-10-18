@@ -9,8 +9,8 @@
 <meta property="og:description" content="An overview of all the helpers to generate row keys with FoundationDB" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><meta property="og:image" content="http://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-02-21T00:24:27&#43;01:00" />
-<meta property="article:modified_time" content="2021-02-21T00:24:27&#43;01:00" />
+<meta property="article:published_time" content="2021-02-21T00:24:27+01:00" />
+<meta property="article:modified_time" content="2021-02-21T00:24:27+01:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg"/>
@@ -151,7 +151,7 @@
 </ul>
 <h2 id="hand-crafting-row-keys">Hand-crafting row keys</h2>
 <p>Most of the time, you will need to craft the <code>row key</code> &ldquo;by hand&rdquo;, like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222" target="_blank" rel="noopener noreffer">an HBase&rsquo;s app</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
 </span><span class="c1">// 128 bits
 </span><span class="c1"></span><span class="kt">byte</span><span class="o">[]</span> <span class="n">rowkey</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">8</span> <span class="o">+</span> <span class="n">8</span> <span class="o">+</span> <span class="n">8</span><span class="o">];</span>
 
@@ -160,7 +160,7 @@
 </span><span class="c1"></span><span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">Longs</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getClassId</span><span class="o">()),</span> <span class="n">0</span><span class="o">,</span> <span class="n">rowkey</span><span class="o">,</span> <span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span><span class="o">,</span> <span class="n">8</span><span class="o">);</span>
 <span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">Longs</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getLabelsId</span><span class="o">()),</span> <span class="n">0</span><span class="o">,</span> <span class="n">rowkey</span><span class="o">,</span> <span class="n">Constants</span><span class="o">.</span><span class="na">HBASE_RAW_DATA_KEY_PREFIX</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">8</span><span class="o">,</span> <span class="n">8</span><span class="o">);</span>
 </code></pre></div><p>Or maybe you will wrap things in a function <a href="https://github.com/pingcap/tidb/blob/ef57bdbbb04f60a8be744060a99207e08a37514a/tablecodec/tablecodec.go#L80-L86" target="_blank" rel="noopener noreffer">like this in Go</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// EncodeRowKey encodes the table id and record handle into a kv.Key
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// EncodeRowKey encodes the table id and record handle into a kv.Key
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">EncodeRowKey</span><span class="p">(</span><span class="nx">tableID</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">encodedHandle</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="nx">kv</span><span class="p">.</span><span class="nx">Key</span> <span class="p">{</span>
 	<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">prefixLen</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="nx">encodedHandle</span><span class="p">))</span>
 	<span class="nx">buf</span> <span class="p">=</span> <span class="nf">appendTableRecordPrefix</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">tableID</span><span class="p">)</span>
@@ -169,22 +169,22 @@
 <span class="p">}</span>
 </code></pre></div><p>Each time, you need to wrap the complexity of converting your objects to a row-key, by creating a buffer and write stuff in it.</p>
 <p>In our Java example, there is an interesting comment:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Prefix + classId + labelsId + timestamp
 </span></code></pre></div><p>If we are replacing some characters, we are not really far from:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// (Prefix, classId, labelsId, timestamp)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// (Prefix, classId, labelsId, timestamp)
 </span></code></pre></div><p>Which looks like a <code>Tuple</code>(a collection of values of different types) and this is what FoundationDB is using as an abstraction to create keys 😍</p>
 <h2 id="fdbs-abstractions-and-helpers">FDB&rsquo;s abstractions and helpers</h2>
 <h3 id="tuple">Tuple</h3>
 <p>Instead of crafting bytes by hand, we are <code>packing</code> a Tuple:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// create a Tuple&lt;String, i64&gt; with (&#34;tenant-42&#34;, 1)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// create a Tuple&lt;String, i64&gt; with (&#34;tenant-42&#34;, 1)
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">tuple</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;tenant-42&#34;</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// and compute a row-key from the Tuple
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">row_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foundationdb</span>::<span class="n">tuple</span>::<span class="n">pack</span>::<span class="o">&lt;</span><span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">i64</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tuple</span><span class="p">);</span><span class="w">
 </span></code></pre></div><p>The generated row-key will be readable from any bindings, as it&rsquo;s construction is standardized. Let&rsquo;s print it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// and print-it in hexa
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// and print-it in hexa
 </span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">row_key</span><span class="p">);</span><span class="w">
-</span></code></pre></div><pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+</span></code></pre></div><pre tabindex="0"><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 [
     0x02,
     0x74, // t
@@ -201,7 +201,7 @@
 ]
 </code></pre><p>As you can see, <code>pack</code> added some extra-characters. There are used to recognized the next type, a bit like when you are encoding/decoding some wire protocols. You can find the relevant documentation <a href="https://github.com/apple/foundationdb/blob/master/design/tuple.md" target="_blank" rel="noopener noreffer">here</a>.</p>
 <p>Having this kind of standard means that we can easily decompose/<code>unpack</code> it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// retrieve the user and the magic number In a Tuple (String, i64)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// retrieve the user and the magic number In a Tuple (String, i64)
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">from_row_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foundationdb</span>::<span class="n">tuple</span>::<span class="n">unpack</span>::<span class="o">&lt;</span><span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">i64</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">row_key</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;user=&#39;{}&#39;, magic_number={}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">from_row_key</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">from_row_key</span><span class="p">.</span><span class="mi">1</span><span class="p">);</span><span class="w">
@@ -209,7 +209,7 @@
 </span></code></pre></div><p>Now that we saw <code>Tuples</code>, let&rsquo;s dig in the next abstraction: <code>subspaces</code></p>
 <h3 id="subspace">Subspace</h3>
 <p>When you are working with key-values store, we are often playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">/users/tenant-1/...
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">/users/tenant-1/...
 /users/tenant-2/...
 /users/tenant-3/...
 </code></pre></div><p>Here, <code>/users/tenant-1/</code> can be view like a prefix where we will put all the relevant keys. Instead of passing a simple prefix, FoundationDB is offering a dedicated structure called a <code>Subspace</code>:</p>
@@ -224,14 +224,14 @@
 <p>As a best practice, API clients should use at least one subspace for application data.</p>
 </blockquote>
 <p>Well, as we have now the tools to handle keyspaces easily, it is now futile to craft keys by hand 🙃 Let&rsquo;s create a subspace!</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="w">
 </span><span class="w"></span><span class="c1">// create a subspace from the Tuple (&#34;tenant-1&#34;, 42)
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">subspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Subspace</span>::<span class="n">from</span><span class="p">((</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;tenant-1&#34;</span><span class="p">),</span><span class="w"> </span><span class="mi">42</span><span class="p">));</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// let&#39;s print the range
 </span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;start: {:#04X?}\n end: {:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">1</span><span class="p">);</span><span class="w">
 </span></code></pre></div><p>We can see observe this:</p>
-<pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+<pre tabindex="0"><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 start: [
     0x02,
     0x74, // t
@@ -274,7 +274,7 @@ end: [
 <p>Directories are a recommended approach for administering applications. Each application should create or open at least one directory to manage its subspaces.</p>
 </blockquote>
 <p>Okay, let&rsquo;s see the API(in Go, as I&rsquo;m working on the Rust API):</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">subspace</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">CreateOrOpen</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">,</span> <span class="s">&#34;tenant-42&#34;</span><span class="p">},</span> <span class="kc">nil</span><span class="p">)</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">subspace</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">CreateOrOpen</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">,</span> <span class="s">&#34;tenant-42&#34;</span><span class="p">},</span> <span class="kc">nil</span><span class="p">)</span>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 <span class="p">}</span>
@@ -287,7 +287,7 @@ end: [
 <li>shorter keys,</li>
 <li>cheap metadata operations like <code>List</code> or <code>Move</code>:</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list all tenant in &#34;application&#34;, &#34;my-app&#34;:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list all tenant in &#34;application&#34;, &#34;my-app&#34;:
 </span><span class="c1"></span><span class="nx">tenants</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;application&#34;</span><span class="p">,</span> <span class="s">&#34;my-app&#34;</span><span class="p">,</span> <span class="s">&#34;tenant&#34;</span><span class="p">})</span>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
@@ -338,7 +338,7 @@ end: [
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
