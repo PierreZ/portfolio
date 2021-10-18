@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/pierrezemb.fr\/posts\/colossus-google\/"
-        },"genre": "posts","wordcount":  1299 ,
+        },"genre": "posts","wordcount":  1296 ,
         "url": "http:\/\/pierrezemb.fr\/posts\/colossus-google\/","datePublished": "2019-08-04T15:07:11+02:00","dateModified": "2019-08-04T15:07:11+02:00","publisher": {
             "@type": "Organization",
             "name": "Pierre Zemb"},"author": {
@@ -108,7 +108,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">What can be gleaned about GFS successor codenamed Colossus?</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw"></i>distributed-systems</a>&nbsp;<a href="/categories/hadoop/"><i class="far fa-folder fa-fw"></i>hadoop</a>&nbsp;<a href="/categories/colossus/"><i class="far fa-folder fa-fw"></i>colossus</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-08-04">2019-08-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1299 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-08-04">2019-08-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1296 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;7 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -250,6 +250,14 @@
 <li>Colossus and D are two separate things.</li>
 </ul>
 </li>
+<li>
+<p>From <a href="https://cloud.google.com/blog/products/storage-data-transfer/a-peek-behind-colossus-googles-file-system" target="_blank" rel="noopener noreffer">Colossus under the hood: a peek into Google’s scalable storage system</a>:</p>
+<ul>
+<li>Colossus&rsquo;s Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.</li>
+<li>background storage managers called Custodians, there are handling tasks like disk space balancing and RAID reconstruction.</li>
+<li>Applications needs to specifies I/O, availability, and durability requirements</li>
+</ul>
+</li>
 </ul>
 <p>What is that &ldquo;D&rdquo;?</p>
 <ul>
@@ -268,10 +276,6 @@
 </ul>
 </li>
 </ul>
-<p>From <a href="https://cloud.google.com/blog/products/storage-data-transfer/a-peek-behind-colossus-googles-file-system" target="_blank" rel="noopener noreffer">Colossus under the hood: a peek into Google’s scalable storage system</a>:
-* Colossus&rsquo;s Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.
-* background storage managers called Custodians, there are handling tasks like disk space balancing and RAID reconstruction.
-* Applications needs to specifies I/O, availability, and durability requirements</p>
 <h3 id="deployments">Deployments</h3>
 <!-- raw HTML omitted -->
 <p>How everything is deployed? Using Borg!</p>
