@@ -184,7 +184,7 @@
 </span></code></pre></div><p>The generated row-key will be readable from any bindings, as it&rsquo;s construction is standardized. Let&rsquo;s print it:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// and print-it in hexa
 </span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">row_key</span><span class="p">);</span><span class="w">
-</span></code></pre></div><pre tabindex="0"><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+</span></code></pre></div><pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 [
     0x02,
     0x74, // t
@@ -231,7 +231,7 @@
 </span><span class="w"></span><span class="c1">// let&#39;s print the range
 </span><span class="c1"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;start: {:#04X?}\n end: {:#04X?}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">subspace</span><span class="p">.</span><span class="n">range</span><span class="p">().</span><span class="mi">1</span><span class="p">);</span><span class="w">
 </span></code></pre></div><p>We can see observe this:</p>
-<pre tabindex="0"><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+<pre><code class="language-log" data-lang="log">// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 start: [
     0x02,
     0x74, // t
@@ -338,7 +338,7 @@ end: [
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.87.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
