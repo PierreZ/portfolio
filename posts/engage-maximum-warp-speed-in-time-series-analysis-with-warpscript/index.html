@@ -224,7 +224,7 @@
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
 <h3 id="geez-give-me-an-example">Geez, give me an example!</h3>
 <p>Here’s an example of a simple but advanced query:</p>
-<pre><code>// Fetching all values  
+<pre tabindex="0"><code>// Fetching all values  
 [ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
 [ SWAP bucketizer.max	0 1 m 0 ] BUCKETIZE // Round to nearest long  
 [ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by 'buildingID'  
@@ -246,7 +246,7 @@
 <li><strong>PATTERNDETECTION</strong> is running the list of motifs on all the time series you have.</li>
 </ul>
 <p>Here’s the code</p>
-<pre><code>// defining some variables  
+<pre tabindex="0"><code>// defining some variables  
 32 'windowSize' STORE  
 8 'patternLength' STORE  
 16 'quantizationScale' STORE  
@@ -304,7 +304,7 @@ $windowSize $patternLength $quantizationScale  PATTERNDETECTION
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.87.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
