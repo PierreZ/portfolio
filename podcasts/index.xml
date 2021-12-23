@@ -6,7 +6,25 @@
     <description>Recent content in Podcasts on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 26 Aug 2021 01:22:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Dec 2021 01:23:36 +0100</lastBuildDate><atom:link href="http://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>🇫🇷 Message à caractère informatique 60: Databricks et Snowflake aboient, haproxy passe et graphe les ramassages des miettes</title>
+      <link>http://pierrezemb.fr/podcasts/maci-60/</link>
+      <pubDate>Wed, 01 Dec 2021 01:23:36 +0100</pubDate>
+      
+      <guid>http://pierrezemb.fr/podcasts/maci-60/</guid>
+      <description>Dans cet épisode de référence, bien que difficile à numéroter, nous recevons Mathieu Ancelin et nous parlons : de la levée de fonds de PlanetScale, de la guerre entre Databricks et Snowflakes, des 20 ans de HAProxy, des ressources query dans SQL, des meilleurs performances de nos vieux claviers PS/2, d&amp;rsquo;un outil Apple Open Source pour l&amp;rsquo;analyse de logs de Garbage Collection, avant de finir en musique&amp;hellip; indice : c&amp;rsquo;est pas du Mozart.</description>
+    </item>
+    
+    <item>
+      <title>🇫🇷 Message à caractère informatique 59: SCALEWAY FAIT UNE RFC POUR CANCEL LA FUTURE DE GAIAX</title>
+      <link>http://pierrezemb.fr/podcasts/maci-59/</link>
+      <pubDate>Wed, 01 Dec 2021 01:22:36 +0100</pubDate>
+      
+      <guid>http://pierrezemb.fr/podcasts/maci-59/</guid>
+      <description>Dans ce fabuleux épisode, nous recevons le non moins fabuleux Mathieu Ancelin pour parler : Open Source autour de la MAIF, de Scaleway qui quitte le projet GaïaX, de Nu.age la nouvelle offre de cloud par La Poste, de l&amp;rsquo;apparition du verbe &amp;ldquo;query&amp;rdquo; en HTTP, de l&amp;rsquo;épique mise à jour par la IETF des RFC par une RFC, d&amp;rsquo;Async cancellation en RUST, d&amp;rsquo;Innernet un outil pour configurer ses VPN, avant de finir en musique (attention le son est addictif !</description>
+    </item>
+    
     <item>
       <title>🇫🇷 Message à caractère informatique 54 : Une Attaque De Souris Cosmique Dans MDN Met AVIF Les Nerfs De Google</title>
       <link>http://pierrezemb.fr/podcasts/maci-54/</link>
