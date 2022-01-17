@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Best resources to learn about data and distributed systems - Pierre Zemb</title><meta name="Description" content="Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#39;s the best resources I used to learn distributed systems"><meta property="og:title" content="Best resources to learn about data and distributed systems" />
+<meta property="og:description" content="Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#39;s the best resources I used to learn distributed systems" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://pierrezemb.fr/posts/distsys-resources/" /><meta property="og:image" content="http://pierrezemb.fr/posts/distsys-resources/books.jpeg" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-17T01:37:27+01:00" />
+<meta property="article:modified_time" content="2022-01-17T01:37:27+01:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://pierrezemb.fr/posts/distsys-resources/books.jpeg"/>
+
+<meta name="twitter:title" content="Best resources to learn about data and distributed systems"/>
+<meta name="twitter:description" content="Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#39;s the best resources I used to learn distributed systems"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="http://pierrezemb.fr/posts/distsys-resources/" />
+<link rel="prev" href="http://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Best resources to learn about data and distributed systems",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/pierrezemb.fr\/posts\/distsys-resources\/"
+        },"genre": "posts","wordcount":  1409 ,
+        "url": "http:\/\/pierrezemb.fr\/posts\/distsys-resources\/","datePublished": "2022-01-17T01:37:27+01:00","dateModified": "2022-01-17T01:37:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Pierre Zemb"},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": "Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here's the best resources I used to learn distributed systems"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb">~/blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb">~/blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Best resources to learn about data and distributed systems</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/learning/"><i class="far fa-folder fa-fw"></i>learning</a>&nbsp;<a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw"></i>distributed-systems</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-01-17">2022-01-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1409 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;7 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#reading-">Reading 📚</a>
+      <ul>
+        <li><a href="#designing-data-intensive-applications-">Designing Data-Intensive Applications 📘</a></li>
+        <li><a href="#database-internals-">Database Internals 📘</a></li>
+        <li><a href="#jepsen-blog-">Jepsen blog ✍️</a></li>
+        <li><a href="#distributed-systems-for-fun-and-profit-">Distributed systems for fun and profit 📘</a></li>
+        <li><a href="#translucent-databases-">Translucent Databases 📘</a></li>
+        <li><a href="#the-art-of-postgresql-">The Art of PostgreSQL 📘</a></li>
+      </ul>
+    </li>
+    <li><a href="#watching-">Watching 📺</a>
+      <ul>
+        <li><a href="#cmu-database-group-">CMU Database Group 🧑‍🏫</a></li>
+        <li><a href="#distributed-systems-lecture-series-">Distributed Systems lecture series 🧑‍🏫</a></li>
+        <li><a href="#academic-conferences-">Academic conferences 📹</a></li>
+        <li><a href="#industrial-conference-">Industrial conference 📹</a></li>
+        <li><a href="#distsys-reading-group-sessions-">DistSys Reading Group sessions 📹</a></li>
+      </ul>
+    </li>
+    <li><a href="#coding-">Coding 🧑‍💻</a>
+      <ul>
+        <li><a href="#maelstrom-">Maelstrom ⚡</a></li>
+        <li><a href="#pingcaps-talent-plan-">PingCAP&rsquo;s Talent Plan ⚡</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you to get started.  Here&rsquo;s a list of resources I used to learn distributed systems. I will keep this blogpost up-to-date with books, conferences, and so on.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/distsys-resources/books.jpeg"
+        data-srcset="/posts/distsys-resources/books.jpeg, /posts/distsys-resources/books.jpeg 1.5x, /posts/distsys-resources/books.jpeg 2x"
+        data-sizes="auto"
+        alt="/posts/distsys-resources/books.jpeg"
+        title="/posts/distsys-resources/books.jpeg" /></p>
+<blockquote>
+<p>A distributed system is one in which the failure of a computer you didn&rsquo;t even know existed can render your own computer unusable.</p>
+<p>-Lamport, 1987</p>
+</blockquote>
+<h2 id="reading-">Reading 📚</h2>
+<h3 id="designing-data-intensive-applications-">Designing Data-Intensive Applications 📘</h3>
+<p>Let&rsquo;s start by one of my favorite book, <a href="https://dataintensive.net/" target="_blank" rel="noopener noreffer">Designing Data-Intensive Applications</a>, written by <a href="https://martin.kleppmann.com/" target="_blank" rel="noopener noreffer">Martin Kleppmann</a>. This is by far the most practical book you will ever find about distributed systems. It covers:</p>
+<ul>
+<li>Data models, query languages and encoding,</li>
+<li>Replication, partitioning, the associated troubles, consistency, consensus,</li>
+<li>batch and stream processing.</li>
+</ul>
+<blockquote>
+<p>NoSQL… Big Data… Scalability… CAP Theorem… Eventual Consistency… Sharding…</p>
+<p>Nice buzzwords, but how does the stuff actually work?</p>
+<p>As software engineers, we need to build applications that are reliable, scalable and maintainable in the long run. We need to understand the range of available tools and their trade-offs. For that, we have to dig deeper than buzzwords.</p>
+<p>This book will help you navigate the diverse and fast-changing landscape of technologies for storing and processing data. We compare a broad variety of tools and approaches, so that you can see the strengths and weaknesses of each, and decide what’s best for your application.</p>
+</blockquote>
+<h3 id="database-internals-">Database Internals 📘</h3>
+<p><a href="https://www.databass.dev/" target="_blank" rel="noopener noreffer">Database Internals</a>, written by <a href="https://twitter.com/ifesdjeen" target="_blank" rel="noopener noreffer">Alex Petrov</a>, is a fantastic book for anyone wondering how a database works. I recommend reading it after <code>Designing Data-Intensive Applications</code>, as the author dives in more details compared to Martin&rsquo;s book.</p>
+<blockquote>
+<p>Have you ever wanted to learn more about Databases but did not know where to start? This is a book just for you.</p>
+<p>We can treat databases and other infrastructure components as black boxes, but it doesn’t have to be that way. Sometimes we have to take a closer look at what’s going on because of performance issues. Sometimes databases misbehave, and we need to find out what exactly is going on. Some of us want to work in infrastructure and develop databases. This book’s main intention is to introduce you to the cornerstone concepts and help you understand how databases work.</p>
+<p>The book consists of two parts: Storage Engines and Distributed Systems since that’s where most of the differences between the vast majority of databases is coming from.</p>
+</blockquote>
+<h3 id="jepsen-blog-">Jepsen blog ✍️</h3>
+<p>We are often using databases as a source of truth, but they are also pieces of software with bugs in it. Kyle Kingsbury is the most famous database-breaker with <a href="http://jepsen.io/" target="_blank" rel="noopener noreffer">Jepsen</a>:</p>
+<blockquote>
+<p>Jepsen is an effort to improve the safety of distributed databases, queues, consensus systems, etc. We maintain an open source software library for systems testing, as well as blog posts and conference talks exploring particular systems’ failure modes. In each analysis we explore whether the system lives up to its documentation’s claims, file new bugs, and suggest recommendations for operators.</p>
+</blockquote>
+<p>You will find analysis on many databases, such as CockroachDB, etcd, Kafka, MongoDB, and so on.</p>
+<p>Here&rsquo;s a great bonus: Kyle is also teaching distributed systems, and his notes are <a href="https://github.com/aphyr/distsys-class#an-introduction-to-distributed-systems" target="_blank" rel="noopener noreffer">available</a>.</p>
+<h3 id="distributed-systems-for-fun-and-profit-">Distributed systems for fun and profit 📘</h3>
+<p>While being the only free book on this list, <a href="http://book.mixu.net/distsys/" target="_blank" rel="noopener noreffer">Distributed systems for fun and profit</a> is an awesome book. The author, <a href="http://mixu.net/" target="_blank" rel="noopener noreffer">Mikito Takada</a> has done a terrific work to vulgarize distributed systems.</p>
+<blockquote>
+<p>I wanted a text that would bring together the ideas behind many of the more recent distributed systems - systems such as Amazon&rsquo;s Dynamo, Google&rsquo;s BigTable and MapReduce, Apache&rsquo;s Hadoop and so on.</p>
+</blockquote>
+<blockquote>
+<p>In this text I&rsquo;ve tried to provide a more accessible introduction to distributed systems. To me, that means two things: introducing the key concepts that you will need in order to have a good time reading more serious texts, and providing a narrative that covers things in enough detail that you get a gist of what&rsquo;s going on without getting stuck on details.</p>
+</blockquote>
+<h3 id="translucent-databases-">Translucent Databases 📘</h3>
+<p>I really like the pitch of the book:</p>
+<blockquote>
+<p>Do you have personal information in your database?</p>
+<p>Do you keep files on your customers, your employees, or anyone else?</p>
+<p>Do you need to worry about European laws restricting the information you keep?</p>
+<p>Do you keep copies of credit card numbers, social security numbers, or other information that might be useful to identity thieves or insurance fraudsters?</p>
+<p>Do you deal with medical records or personal secrets?</p>
+<p>Most database administrators have some of these worries. Some have all of them. That&rsquo;s why database security is so important.</p>
+<p>This new book, Translucent Databases, describes a different attitude toward protecting the information.</p>
+</blockquote>
+<p><a href="http://wayner.org/node/46" target="_blank" rel="noopener noreffer">Translucent Databases</a> is a short book, focus on how to store sensitive data. You will find several dozen examples of interesting case studies on how to efficiently and privately store sensitive data. A must-have.</p>
+<h3 id="the-art-of-postgresql-">The Art of PostgreSQL 📘</h3>
+<p><a href="https://theartofpostgresql.com/" target="_blank" rel="noopener noreffer">The Art of PostgreSQL</a> is all about showing the power of both SQL and PostgreSQL. It explains the how&rsquo;s and why&rsquo;s of using Postgres&rsquo;s many feature, and how you, as a developers, can take advantages of it. A brilliant book that should be read by every developer.</p>
+<h2 id="watching-">Watching 📺</h2>
+<h3 id="cmu-database-group-">CMU Database Group 🧑‍🏫</h3>
+<p>The Database Group at Carnegie Mellon University have been publishing a lot of contents, including:</p>
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjZaHA6QcxDfJ0SIWBzQFKEG" target="_blank" rel="noopener noreffer">Intro to Database Systems lecture</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjasmrEd2_Yi1deeE360zv5O" target="_blank" rel="noopener noreffer">Advanced Database Systems lecture</a></li>
+</ul>
+<p>which are the best lectures about database in my opinion.</p>
+<p>I also recommend their Quarantine database talks playlists:</p>
+<blockquote>
+<p>the &ldquo;Quarantine Database Tech Talks&rdquo; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.</p>
+</blockquote>
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjbeqnfuvp30VrI7VXiFuOXS" target="_blank" rel="noopener noreffer">Vaccination Database Tech Talks First Dose</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjbDOFN4U4-Uv95-N8sgzs5D" target="_blank" rel="noopener noreffer">Vaccination Database Tech Talks Second Dose</a></li>
+</ul>
+<h3 id="distributed-systems-lecture-series-">Distributed Systems lecture series 🧑‍🏫</h3>
+<p><a href="https://martin.kleppmann.com/" target="_blank" rel="noopener noreffer">Martin Kleppmann</a>(<code>Designing Data Intensive applications</code>&rsquo;s author) published an <a href="https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB" target="_blank" rel="noopener noreffer">8-lecture series on distributed systems</a>:</p>
+<blockquote>
+<p>This video is part of an 8-lecture series on distributed systems, given as part of the undergraduate computer science course at the University of Cambridge.</p>
+</blockquote>
+<h3 id="academic-conferences-">Academic conferences 📹</h3>
+<p>Keeping track of the academic world is not easy, but thankfully, we can keep track of several academic conferences which are data-related, including:</p>
+<ul>
+<li><a href="http://cidrdb.org" target="_blank" rel="noopener noreffer">CIDR</a></li>
+<li><a href="https://sigmod.org/" target="_blank" rel="noopener noreffer">SIGMOD/PODS</a></li>
+<li><a href="https://vldb.org" target="_blank" rel="noopener noreffer">VLDB</a></li>
+<li><a href="https://papoc-workshop.github.io/2022/" target="_blank" rel="noopener noreffer">PaPoC</a></li>
+</ul>
+<h3 id="industrial-conference-">Industrial conference 📹</h3>
+<p>There is not much database-focused conferences, but you will be interested to see talks from:</p>
+<ul>
+<li><a href="https://hydraconf.com/" target="_blank" rel="noopener noreffer">HydraConf</a></li>
+<li><a href="https://www.hytradboi.com/" target="_blank" rel="noopener noreffer">HYTRADBOI</a></li>
+</ul>
+<h3 id="distsys-reading-group-sessions-">DistSys Reading Group sessions 📹</h3>
+<p>If you are looking for explanations about a distributed systems paper, you may be interested in the <a href="http://charap.co/category/reading-group/" target="_blank" rel="noopener noreffer">DistSys Reading Group</a>:</p>
+<blockquote>
+<p>Every week we present and discuss one distributed systems paper. We try to focus on relatively new papers, although we occasionally break this rule for some important older publications. The main objective of this group is to share knowledge through the discussion. Our participants come from academia and industry and often carry a unique perspective and expertise on the subject matter.</p>
+</blockquote>
+<p>Every session can be found on their <a href="https://www.youtube.com/channel/UCMKIroHVXvMQRIBhENE6RhQ" target="_blank" rel="noopener noreffer">YouTube channel</a>.</p>
+<h2 id="coding-">Coding 🧑‍💻</h2>
+<h3 id="maelstrom-">Maelstrom ⚡</h3>
+<p>Ever wonder to develop your own toy distributed systems? Fear no more, you can use <a href="https://github.com/jepsen-io/maelstrom" target="_blank" rel="noopener noreffer">Maelstrom</a> for that!</p>
+<blockquote>
+<p>Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &ldquo;a commutative set&rdquo; or &ldquo;a transactional key-value store&rdquo;, and lets you learn by writing implementations which those test suites can exercise. It&rsquo;s used as a part of a distributed systems workshop by Jepsen.</p>
+</blockquote>
+<blockquote>
+<p>Maelstrom provides a range of tests for different kinds of distributed systems, built on top of a simple JSON protocol via STDIN and STDOUT. Users write servers in any language. Maelstrom runs those servers, sends them requests, routes messages via a simulated network, and checks that clients observe expected behavior. You want to write Plumtree in Bash? Byzantine Paxos in Intercal? Maelstrom is for you.</p>
+</blockquote>
+<h3 id="pingcaps-talent-plan-">PingCAP&rsquo;s Talent Plan ⚡</h3>
+<p>PingCAP is the company behind the tidb/tikv stack, a new distributed systems. They developed their own <a href="https://github.com/pingcap/talent-plan" target="_blank" rel="noopener noreffer">open source training program</a>:</p>
+<blockquote>
+<p>Talent Plan is an open source training program initiated by PingCAP. It aims to create or combine some open source learning materials for people interested in open source, distributed systems, Rust, Golang, and other infrastructure knowledge. As such, it provides a series of courses focused on open source collaboration, rust programming, distributed database and systems.</p>
+</blockquote>
+<p>I went through the Raft project in Rust and I learned a lot!</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-01-17</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/distsys-resources/" data-title="Best resources to learn about data and distributed systems" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/distsys-resources/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/distsys-resources/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/distsys-resources/" data-title="Best resources to learn about data and distributed systems"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/distsys-resources/"><i class="fab fa-reddit fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/crafting-keys-in-fdb/" class="prev" rel="prev" title="Crafting row keys in FoundationDB"><i class="fas fa-angle-left fa-fw"></i>Crafting row keys in FoundationDB</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

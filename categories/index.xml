@@ -3,7 +3,21 @@
         <title>Categories - Category - Pierre Zemb</title>
         <link>http://pierrezemb.fr/categories/</link>
         <description>Categories - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 01 Dec 2021 01:23:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>distributed-systems</title>
+    <link>http://pierrezemb.fr/categories/distributed-systems/</link>
+    <pubDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/distributed-systems/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>learning</title>
+    <link>http://pierrezemb.fr/categories/learning/</link>
+    <pubDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/categories/learning/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>maci</title>
     <link>http://pierrezemb.fr/categories/maci/</link>
     <pubDate>Wed, 01 Dec 2021 01:23:36 &#43;0100</pubDate>
@@ -58,20 +72,6 @@
     <pubDate>Mon, 11 Jan 2021 00:24:27 &#43;0100</pubDate>
     <author>Author</author>
     <guid>http://pierrezemb.fr/categories/notesabout/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>personal</title>
-    <link>http://pierrezemb.fr/categories/personal/</link>
-    <pubDate>Wed, 30 Sep 2020 00:24:27 &#43;0100</pubDate>
-    <author>Author</author>
-    <guid>http://pierrezemb.fr/categories/personal/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>oss</title>
-    <link>http://pierrezemb.fr/categories/oss/</link>
-    <pubDate>Wed, 23 Sep 2020 10:24:27 &#43;0100</pubDate>
-    <author>Author</author>
-    <guid>http://pierrezemb.fr/categories/oss/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

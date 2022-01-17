@@ -3,7 +3,15 @@
         <title>distributed-systems - Category - Pierre Zemb</title>
         <link>http://pierrezemb.fr/categories/distributed-systems/</link>
         <description>distributed-systems - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
+    <title>Best resources to learn about data and distributed systems</title>
+    <link>http://pierrezemb.fr/posts/distsys-resources/</link>
+    <pubDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</pubDate>
+    <author>Author</author>
+    <guid>http://pierrezemb.fr/posts/distsys-resources/</guid>
+    <description><![CDATA[Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you to get started. Here&rsquo;s a list of resources I used to learn distributed systems. I will keep this blogpost up-to-date with books, conferences, and so on.
+ A distributed system is one in which the failure of a computer you didn&rsquo;t even know existed can render your own computer unusable.]]></description>
+</item><item>
     <title>What can be gleaned about GFS successor codenamed Colossus?</title>
     <link>http://pierrezemb.fr/posts/colossus-google/</link>
     <pubDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</pubDate>
