@@ -1,23 +1,23 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>analytics - Category - Pierre Zemb</title>
-        <link>http://pierrezemb.fr/categories/analytics/</link>
+        <link>https://pierrezemb.fr/categories/analytics/</link>
         <description>analytics - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 11 Oct 2017 10:23:11 &#43;0000</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/analytics/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 11 Oct 2017 10:23:11 &#43;0000</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/analytics/" rel="self" type="application/rss+xml" /><item>
     <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
-    <link>http://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>
+    <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>
     <pubDate>Wed, 11 Oct 2017 10:23:11 &#43;0000</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</guid>
+    <guid>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</guid>
     <description><![CDATA[update 2019: this is a repost on my own blog. original article can be read on medium.
  Artist’s impression of the super-Earth exoplanet LHS 1140b By ESO/spaceengine.org — CC BY 4.0
 My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a passion, something I’m willing to do at work, on my free-time, at night or the week-end.]]></description>
 </item><item>
     <title>Engage maximum warp speed in time series analysis with WarpScript</title>
-    <link>http://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
+    <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
     <pubDate>Sun, 08 Oct 2017 20:43:05 &#43;0000</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
+    <guid>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
     <description><![CDATA[update 2019: this is a repost on my own blog. original article can be read on medium.
  We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.]]></description>
 </item></channel>

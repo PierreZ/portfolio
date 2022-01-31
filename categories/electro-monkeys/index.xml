@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>electro-monkeys - Category - Pierre Zemb</title>
-        <link>http://pierrezemb.fr/categories/electro-monkeys/</link>
+        <link>https://pierrezemb.fr/categories/electro-monkeys/</link>
         <description>electro-monkeys - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/electro-monkeys/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/electro-monkeys/" rel="self" type="application/rss+xml" /><item>
     <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
-    <link>http://pierrezemb.fr/podcasts/em-62/</link>
+    <link>https://pierrezemb.fr/podcasts/em-62/</link>
     <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/podcasts/em-62/</guid>
+    <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
     <description><![CDATA[Episode You can listen to the episode here.
 Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&rsquo;est une base de données sur laquelle il n&rsquo;existe aucune littérature. Et c&rsquo;est une chose que j&rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.]]></description>
 </item></channel>

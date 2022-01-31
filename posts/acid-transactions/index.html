@@ -9,7 +9,7 @@
 <meta property="og:description" content="Transaction? &quot;Programming should be about transforming data&quot;  &mdash; Programming Elixir 1.3 by Dave Thomas
  As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called relational database management system or RDBMS. Thanks to them, we, as developers, can develop applications pretty easily, without the need to implement our own storage solution. Interacting with mySQL or PostgreSQL have now become a commodity." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://pierrezemb.fr/posts/acid-transactions/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://pierrezemb.fr/posts/acid-transactions/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-02-03T15:37:27+01:00" />
 <meta property="article:modified_time" content="2019-02-03T15:37:27+01:00" />
 
@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="http://pierrezemb.fr/posts/acid-transactions/" />
-<link rel="prev" href="http://pierrezemb.fr/posts/hbase-data-model/" /><link rel="next" href="http://pierrezemb.fr/posts/ovh-alerts-flink/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+<link rel="canonical" href="https://pierrezemb.fr/posts/acid-transactions/" />
+<link rel="prev" href="https://pierrezemb.fr/posts/hbase-data-model/" /><link rel="next" href="https://pierrezemb.fr/posts/ovh-alerts-flink/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -30,9 +30,9 @@
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/pierrezemb.fr\/posts\/acid-transactions\/"
+            "@id": "https:\/\/pierrezemb.fr\/posts\/acid-transactions\/"
         },"genre": "posts","wordcount":  718 ,
-        "url": "http:\/\/pierrezemb.fr\/posts\/acid-transactions\/","datePublished": "2019-02-03T15:37:27+01:00","dateModified": "2019-02-03T15:37:27+01:00","publisher": {
+        "url": "https:\/\/pierrezemb.fr\/posts\/acid-transactions\/","datePublished": "2019-02-03T15:37:27+01:00","dateModified": "2019-02-03T15:37:27+01:00","publisher": {
             "@type": "Organization",
             "name": "Pierre Zemb"},"author": {
                 "@type": "Person",
@@ -222,7 +222,7 @@
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-reddit fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
         </div>
     </div>

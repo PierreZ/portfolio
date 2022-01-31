@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>containers - Category - Pierre Zemb</title>
-        <link>http://pierrezemb.fr/categories/containers/</link>
+        <link>https://pierrezemb.fr/categories/containers/</link>
         <description>containers - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 04 Jan 2016 18:52:19 &#43;0000</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/containers/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 04 Jan 2016 18:52:19 &#43;0000</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/containers/" rel="self" type="application/rss+xml" /><item>
     <title>Let’s talk about containers</title>
-    <link>http://pierrezemb.fr/posts/lets-talk-about-containers/</link>
+    <link>https://pierrezemb.fr/posts/lets-talk-about-containers/</link>
     <pubDate>Mon, 04 Jan 2016 18:52:19 &#43;0000</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/lets-talk-about-containers/</guid>
+    <guid>https://pierrezemb.fr/posts/lets-talk-about-containers/</guid>
     <description><![CDATA[update 2019: this is a repost on my own blog. original article can be read on medium.
  English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)
 In the last two years, there’s been a technology that became really hype.]]></description>

@@ -8,12 +8,12 @@
         <title>Contributing to Apache HBase: custom data balancing - Pierre Zemb</title><meta name="Description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring."><meta property="og:title" content="Contributing to Apache HBase: custom data balancing" />
 <meta property="og:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/" /><meta property="og:image" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://pierrezemb.fr/posts/hbase-custom-data-balancing/" /><meta property="og:image" content="https://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-02-14T10:24:27+01:00" />
 <meta property="article:modified_time" content="2020-02-14T10:24:27+01:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg"/>
+<meta name="twitter:image" content="https://pierrezemb.fr/posts/hbase-custom-data-balancing/images/hbase-ovh-1.jpeg"/>
 
 <meta name="twitter:title" content="Contributing to Apache HBase: custom data balancing"/>
 <meta name="twitter:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring."/>
@@ -22,7 +22,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
 <link href="https://www.ovh.com/blog/contributing-to-apache-hbase-custom-data-balancing/" rel="canonical" />
-<link rel="prev" href="http://pierrezemb.fr/posts/notes-about-foundationdb/" /><link rel="next" href="http://pierrezemb.fr/posts/announcing-kop/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+<link rel="prev" href="https://pierrezemb.fr/posts/notes-about-foundationdb/" /><link rel="next" href="https://pierrezemb.fr/posts/announcing-kop/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -30,9 +30,9 @@
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/pierrezemb.fr\/posts\/hbase-custom-data-balancing\/"
+            "@id": "https:\/\/pierrezemb.fr\/posts\/hbase-custom-data-balancing\/"
         },"genre": "posts","wordcount":  1216 ,
-        "url": "http:\/\/pierrezemb.fr\/posts\/hbase-custom-data-balancing\/","datePublished": "2020-02-14T10:24:27+01:00","dateModified": "2020-02-14T10:24:27+01:00","publisher": {
+        "url": "https:\/\/pierrezemb.fr\/posts\/hbase-custom-data-balancing\/","datePublished": "2020-02-14T10:24:27+01:00","dateModified": "2020-02-14T10:24:27+01:00","publisher": {
             "@type": "Organization",
             "name": "Pierre Zemb"},"author": {
                 "@type": "Person",
@@ -248,7 +248,7 @@ software. We <strong>had an opinion</strong> about how a particular issue should
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://pierrezemb.fr/posts/hbase-custom-data-balancing/" data-title="Contributing to Apache HBase: custom data balancing" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="http://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://pierrezemb.fr/posts/hbase-custom-data-balancing/" data-title="Contributing to Apache HBase: custom data balancing"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="http://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-reddit fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/hbase-custom-data-balancing/" data-title="Contributing to Apache HBase: custom data balancing" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/hbase-custom-data-balancing/" data-title="Contributing to Apache HBase: custom data balancing"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"><i class="fab fa-reddit fa-fw"></i></a></span>
             </div>
         </div>
     </div>

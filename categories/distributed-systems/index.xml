@@ -1,48 +1,48 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>distributed-systems - Category - Pierre Zemb</title>
-        <link>http://pierrezemb.fr/categories/distributed-systems/</link>
+        <link>https://pierrezemb.fr/categories/distributed-systems/</link>
         <description>distributed-systems - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</lastBuildDate><atom:link href="http://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
     <title>Best resources to learn about data and distributed systems</title>
-    <link>http://pierrezemb.fr/posts/distsys-resources/</link>
+    <link>https://pierrezemb.fr/posts/distsys-resources/</link>
     <pubDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/distsys-resources/</guid>
+    <guid>https://pierrezemb.fr/posts/distsys-resources/</guid>
     <description><![CDATA[Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you to get started. Here&rsquo;s a list of resources I used to learn distributed systems. I will keep this blogpost up-to-date with books, conferences, and so on.
  A distributed system is one in which the failure of a computer you didn&rsquo;t even know existed can render your own computer unusable.]]></description>
 </item><item>
     <title>What can be gleaned about GFS successor codenamed Colossus?</title>
-    <link>http://pierrezemb.fr/posts/colossus-google/</link>
+    <link>https://pierrezemb.fr/posts/colossus-google/</link>
     <pubDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/colossus-google/</guid>
+    <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
     <description><![CDATA[In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
  Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?'  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.]]></description>
 </item><item>
     <title>Playing with TTL in HBase</title>
-    <link>http://pierrezemb.fr/posts/ttl-hbase/</link>
+    <link>https://pierrezemb.fr/posts/ttl-hbase/</link>
     <pubDate>Mon, 27 May 2019 22:07:11 &#43;0200</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/ttl-hbase/</guid>
+    <guid>https://pierrezemb.fr/posts/ttl-hbase/</guid>
     <description><![CDATA[Among all features provided by HBase, there is one that is pretty handy to deal with your data&rsquo;s lifecyle: the fact that every cell version can have Time to Live or TTL. Let&rsquo;s dive into the feature!
 Time To Live (TTL) Let&rsquo;s read the doc first!
  ColumnFamilies can set a TTL length in seconds, and HBase will automatically delete rows once the expiration time is reached.
  HBase Book: Time To Live (TTL)]]></description>
 </item><item>
     <title>Handling OVH&#39;s alerts with Apache Flink</title>
-    <link>http://pierrezemb.fr/posts/ovh-alerts-flink/</link>
+    <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
     <pubDate>Sun, 03 Feb 2019 15:37:27 &#43;0100</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
+    <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
     <description><![CDATA[This is a repost from OVH&rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
 Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.]]></description>
 </item><item>
     <title>Hbase Data Model</title>
-    <link>http://pierrezemb.fr/posts/hbase-data-model/</link>
+    <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
     <pubDate>Sun, 27 Jan 2019 20:24:27 &#43;0100</pubDate>
     <author>Author</author>
-    <guid>http://pierrezemb.fr/posts/hbase-data-model/</guid>
+    <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
     <description><![CDATA[HBase?  Apache HBase™ is a type of &ldquo;NoSQL&rdquo; database. &ldquo;NoSQL&rdquo; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &ldquo;Data Store&rdquo; than &ldquo;Data Base&rdquo; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.
  &ndash; Hbase architecture overview]]></description>
 </item></channel>
