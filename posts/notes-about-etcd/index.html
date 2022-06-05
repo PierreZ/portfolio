@@ -4,25 +4,26 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>Notes about ETCD - Pierre Zemb</title><meta name="Description" content="List of ressources gleaned about ETCD"><meta property="og:title" content="Notes about ETCD" />
 <meta property="og:description" content="List of ressources gleaned about ETCD" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-etcd/" /><meta property="og:image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-01-11T00:24:27+01:00" />
-<meta property="article:modified_time" content="2021-01-11T00:24:27+01:00" />
+<meta property="article:modified_time" content="2021-01-11T00:24:27+01:00" /><meta property="og:site_name" content="My cool site" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png"/>
 
 <meta name="twitter:title" content="Notes about ETCD"/>
 <meta name="twitter:description" content="List of ressources gleaned about ETCD"/>
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-etcd/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/ten-years-programming/" /><link rel="next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+<link rel="prev" href="https://pierrezemb.fr/posts/ten-years-programming/" /><link rel="next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -34,13 +35,13 @@
         },"genre": "posts","wordcount":  2028 ,
         "url": "https:\/\/pierrezemb.fr\/posts\/notes-about-etcd\/","datePublished": "2021-01-11T00:24:27+01:00","dateModified": "2021-01-11T00:24:27+01:00","publisher": {
             "@type": "Organization",
-            "name": "Pierre Zemb"},"author": {
+            "name": ""},"author": {
                 "@type": "Person",
                 "name": "Pierre Zemb"
             },"description": "List of ressources gleaned about ETCD"
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
@@ -51,16 +52,16 @@
             <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw"></i>
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
                         </a>
                         <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw"></i>
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw"></i>
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
@@ -79,41 +80,39 @@
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw"></i>
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
                         </a>
                         <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw"></i>
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
                         </span>
                     </div>
                     <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
                         Cancel
                     </a>
                 </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw"></i>
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
             </a></div>
     </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Notes about ETCD</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/etcd/"><i class="far fa-folder fa-fw"></i>etcd</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw"></i>notesabout</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-11">2021-01-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2028 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;10 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about ETCD</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/etcd/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>etcd</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>notesabout</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2021-01-11">2021-01-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;2028 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;10 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
@@ -228,69 +227,69 @@
 </ul>
 <p>Key and values are bytes-oriented but ordered.</p>
 <h3 id="transactions">Transactions</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// From google paxosdb paper:
-</span><span class="c1">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
-</span><span class="c1">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
-</span><span class="c1">// and consists of three components:
-</span><span class="c1">// 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
-</span><span class="c1">// for the absence or presence of a value, or compare with a given value. Two different tests in the guard
-</span><span class="c1">// may apply to the same or different entries in the database. All tests in the guard are applied and
-</span><span class="c1">// MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
-</span><span class="c1">// it executes f op (see item 3 below).
-</span><span class="c1">// 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
-</span><span class="c1">// lookup operation, and applies to a single database entry. Two different operations in the list may apply
-</span><span class="c1">// to the same or different entries in the database. These operations are executed
-</span><span class="c1">// if guard evaluates to
-</span><span class="c1">// true.
-</span><span class="c1">// 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
-</span><span class="c1"></span><span class="kd">message</span> <span class="nc">TxnRequest</span> <span class="p">{</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// compare is a list of predicates representing a conjunction of terms.
-</span><span class="c1"></span>  <span class="c1">// If the comparisons succeed, then the success requests will be processed in order,
-</span><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
-</span><span class="c1"></span>  <span class="c1">// If the comparisons fail, then the failure requests will be processed in order,
-</span><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
-</span><span class="c1"></span>  <span class="k">repeated</span> <span class="n">Compare</span> <span class="n">compare</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// success is a list of requests which will be applied when compare evaluates to true.
-</span><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">success</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// failure is a list of requests which will be applied when compare evaluates to false.
-</span><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">failure</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
-</span><span class="err"></span><span class="p">}</span><span class="err">
-</span></code></pre></div><h3 id="versioned-data">Versioned data</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="c1">// From google paxosdb paper:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
+</span></span></span><span class="line"><span class="cl"><span class="c1">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
+</span></span></span><span class="line"><span class="cl"><span class="c1">// and consists of three components:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
+</span></span></span><span class="line"><span class="cl"><span class="c1">// for the absence or presence of a value, or compare with a given value. Two different tests in the guard
+</span></span></span><span class="line"><span class="cl"><span class="c1">// may apply to the same or different entries in the database. All tests in the guard are applied and
+</span></span></span><span class="line"><span class="cl"><span class="c1">// MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
+</span></span></span><span class="line"><span class="cl"><span class="c1">// it executes f op (see item 3 below).
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
+</span></span></span><span class="line"><span class="cl"><span class="c1">// lookup operation, and applies to a single database entry. Two different operations in the list may apply
+</span></span></span><span class="line"><span class="cl"><span class="c1">// to the same or different entries in the database. These operations are executed
+</span></span></span><span class="line"><span class="cl"><span class="c1">// if guard evaluates to
+</span></span></span><span class="line"><span class="cl"><span class="c1">// true.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">message</span> <span class="nc">TxnRequest</span> <span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// compare is a list of predicates representing a conjunction of terms.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the comparisons succeed, then the success requests will be processed in order,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the comparisons fail, then the failure requests will be processed in order,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">Compare</span> <span class="n">compare</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// success is a list of requests which will be applied when compare evaluates to true.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">success</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// failure is a list of requests which will be applied when compare evaluates to false.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">failure</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span></code></pre></div><h3 id="versioned-data">Versioned data</h3>
 <p>Each Key/Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.</p>
 <p>In order to avoid having a growing keySpace, one can issue the <code>Compact</code> gRPC service:</p>
 <blockquote>
 <p>Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision</p>
 </blockquote>
 <h3 id="lease">Lease</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="c1">// this message represent a Lease
-</span><span class="c1"></span><span class="kd">message</span> <span class="nc">Lease</span> <span class="p">{</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
-</span><span class="c1"></span>  <span class="kt">int64</span> <span class="n">TTL</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
-</span><span class="c1"></span>  <span class="kt">int64</span> <span class="n">ID</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span><span class="err">
-</span><span class="err"></span>  <span class="kt">int64</span> <span class="n">insert_timestamp</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
-</span><span class="err"></span><span class="p">}</span><span class="err">
-</span></code></pre></div><h3 id="watches">Watches</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="kd">message</span> <span class="nc">Watch</span> <span class="p">{</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// key is the key to register for watching.
-</span><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// range_end is the end of the range [key, range_end) to watch. If range_end is not given,
-</span><span class="c1"></span>  <span class="c1">// only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than
-</span><span class="c1"></span>  <span class="c1">// or equal to the key argument are watched.
-</span><span class="c1"></span>  <span class="c1">// If the range_end is one bit larger than the given key,
-</span><span class="c1"></span>  <span class="c1">// then all keys with the prefix (the given key) will be watched.
-</span><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">range_end</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span><span class="err">
-</span><span class="err"></span>  <span class="c1">// If watch_id is provided and non-zero, it will be assigned to this watcher.
-</span><span class="c1"></span>  <span class="c1">// Since creating a watcher in etcd is not a synchronous operation,
-</span><span class="c1"></span>  <span class="c1">// this can be used ensure that ordering is correct when creating multiple
-</span><span class="c1"></span>  <span class="c1">// watchers on the same stream. Creating a watcher with an ID already in
-</span><span class="c1"></span>  <span class="c1">// use on the stream will cause an error to be returned.
-</span><span class="c1"></span>  <span class="kt">int64</span> <span class="n">watch_id</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span><span class="err">
-</span><span class="err"></span><span class="p">}</span><span class="err">
-</span></code></pre></div><h3 id="linearizable-reads">Linearizable reads</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="c1">// this message represent a Lease
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">message</span> <span class="nc">Lease</span> <span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">TTL</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">ID</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="kt">int64</span> <span class="n">insert_timestamp</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span></code></pre></div><h3 id="watches">Watches</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="kd">message</span> <span class="nc">Watch</span> <span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// key is the key to register for watching.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// range_end is the end of the range [key, range_end) to watch. If range_end is not given,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// or equal to the key argument are watched.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the range_end is one bit larger than the given key,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// then all keys with the prefix (the given key) will be watched.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">range_end</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// If watch_id is provided and non-zero, it will be assigned to this watcher.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// Since creating a watcher in etcd is not a synchronous operation,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// this can be used ensure that ordering is correct when creating multiple
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// watchers on the same stream. Creating a watcher with an ID already in
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// use on the stream will cause an error to be returned.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">watch_id</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span></code></pre></div><h3 id="linearizable-reads">Linearizable reads</h3>
 <p>Section 8 of the raft paper explains the issue:</p>
 <blockquote>
 <p>Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.</p>
@@ -361,8 +360,8 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 <p>Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded</p>
 </blockquote>
 <p>Snapshot can be saved using <code>etcdctl</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">etcdctl snapshot save backup.db
-</code></pre></div><h3 id="lease-1">Lease</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">etcdctl snapshot save backup.db
+</span></span></code></pre></div><h3 id="lease-1">Lease</h3>
 <p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497" target="_blank" rel="noopener noreffer">create some issues</a>:</p>
 <blockquote>
 <p>The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.</p>
@@ -379,13 +378,11 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <div class="post-info-line">
             <div class="post-info-mod">
                 <span>Updated on 2021-01-11</span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
+            </div></div>
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-reddit fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -397,20 +394,20 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/ten-years-programming/" class="prev" rel="prev" title="10 years of programming and counting 🚀"><i class="fas fa-angle-left fa-fw"></i>10 years of programming and counting 🚀</a>
-            <a href="/posts/crafting-keys-in-fdb/" class="next" rel="next" title="Crafting row keys in FoundationDB">Crafting row keys in FoundationDB<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/posts/ten-years-programming/" class="prev" rel="prev" title="10 years of programming and counting 🚀"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>10 years of programming and counting 🚀</a>
+            <a href="/posts/crafting-keys-in-fdb/" class="next" rel="next" title="Crafting row keys in FoundationDB">Crafting row keys in FoundationDB<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.99.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
         <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw"></i>
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw"></i>
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

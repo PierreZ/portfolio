@@ -8,21 +8,21 @@
     <language>en</language>
     <lastBuildDate>Mon, 18 Apr 2022 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Développer des applications observables pour la production </title>
-      <link>https://pierrezemb.fr/talks/observability-from-on-call/</link>
-      <pubDate>Mon, 18 Apr 2022 01:22:36 +0100</pubDate>
-      
-      <guid>https://pierrezemb.fr/talks/observability-from-on-call/</guid>
-      <description>Assez peu de développeurs ont l&amp;rsquo;envie ou l&amp;rsquo;opportunité de faire de l&amp;rsquo;astreinte. Pourtant, avoir la possibilité de voir son propre logiciel (ou celui de collègues) partir en vrille sans comprendre pourquoi est une véritable opportunité. En effet, c’est une chance de comprendre les véritables enjeux derrière l&amp;rsquo;analyse des performances et le besoin de débugger en production. Pour pouvoir comprendre ce qui se passe, nous avons besoin de faits tangibles, de données.</description>
-    </item>
-    
-    <item>
       <title>À la découverte des bases de données</title>
       <link>https://pierrezemb.fr/talks/db-101/</link>
       <pubDate>Mon, 18 Apr 2022 01:22:36 +0100</pubDate>
       
       <guid>https://pierrezemb.fr/talks/db-101/</guid>
       <description>Abstract Nous avons l&amp;rsquo;habitude en tant que développeur de traiter les bases de données comme des services capables de ranger, organiser et stocker durablement nos informations. On oublie assez facilement que ce sont des logiciels à part entière. Depuis plus de 50 ans, industriels et chercheurs développent de nouvelles architectures et techniques d&amp;rsquo;ingénierie pour les rendre plus scalables et plus performantes. Je vous propose d&amp;rsquo;ouvrir le capot et de découvrir comment fonctionne une base de données.</description>
+    </item>
+    
+    <item>
+      <title>Développer des applications observables pour la production </title>
+      <link>https://pierrezemb.fr/talks/observability-from-on-call/</link>
+      <pubDate>Mon, 18 Apr 2022 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/observability-from-on-call/</guid>
+      <description>Assez peu de développeurs ont l&amp;rsquo;envie ou l&amp;rsquo;opportunité de faire de l&amp;rsquo;astreinte. Pourtant, avoir la possibilité de voir son propre logiciel (ou celui de collègues) partir en vrille sans comprendre pourquoi est une véritable opportunité. En effet, c’est une chance de comprendre les véritables enjeux derrière l&amp;rsquo;analyse des performances et le besoin de débugger en production. Pour pouvoir comprendre ce qui se passe, nous avons besoin de faits tangibles, de données.</description>
     </item>
     
     <item>
@@ -81,7 +81,7 @@ In this talk, we will dig into the paper and the library&amp;rsquo;s concepts an
       
       <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
       <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
-Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;lsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
+Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;rsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
     </item>
     
     <item>

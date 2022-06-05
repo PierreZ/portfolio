@@ -4,25 +4,26 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Diving into Kafka&#39;s Protocol - Pierre Zemb</title><meta name="Description" content=""><meta property="og:title" content="Diving into Kafka&#39;s Protocol" />
+        <title>Diving into Kafka&#39;s Protocol - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Diving into Kafka&#39;s Protocol" />
 <meta property="og:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.
  The protocol reference For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-12-08T15:00:00+01:00" />
-<meta property="article:modified_time" content="2019-12-08T15:00:00+01:00" />
+<meta property="article:modified_time" content="2019-12-08T15:00:00+01:00" /><meta property="og:site_name" content="My cool site" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Diving into Kafka&#39;s Protocol"/>
 <meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.
  The protocol reference For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange."/>
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" /><link rel="next" href="https://pierrezemb.fr/posts/notes-about-foundationdb/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+<link rel="prev" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" /><link rel="next" href="https://pierrezemb.fr/posts/notes-about-foundationdb/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -34,13 +35,13 @@
         },"genre": "posts","wordcount":  331 ,
         "url": "https:\/\/pierrezemb.fr\/posts\/diving-into-kafka-protocol\/","datePublished": "2019-12-08T15:00:00+01:00","dateModified": "2019-12-08T15:00:00+01:00","publisher": {
             "@type": "Organization",
-            "name": "Pierre Zemb"},"author": {
+            "name": ""},"author": {
                 "@type": "Person",
                 "name": "Pierre Zemb"
             },"description": ""
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
@@ -51,16 +52,16 @@
             <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw"></i>
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
                         </a>
                         <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw"></i>
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw"></i>
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
@@ -79,41 +80,39 @@
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw"></i>
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
                         </a>
                         <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw"></i>
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
                         </span>
                     </div>
                     <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
                         Cancel
                     </a>
                 </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw"></i>
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
             </a></div>
     </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Diving into Kafka&#39;s Protocol</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/kafka/"><i class="far fa-folder fa-fw"></i>kafka</a>&nbsp;<a href="/categories/diving-into/"><i class="far fa-folder fa-fw"></i>diving into</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-08">2019-12-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;331 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Diving into Kafka's Protocol</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/kafka/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>kafka</a>&nbsp;<a href="/categories/diving-into/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>diving into</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-12-08">2019-12-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;331 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
@@ -182,13 +181,11 @@
         <div class="post-info-line">
             <div class="post-info-mod">
                 <span>Updated on 2019-12-08</span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
+            </div></div>
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol" data-via="PierreZ"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-reddit fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" data-title="Diving into Kafka&#39;s Protocol"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -200,20 +197,20 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/diving-into-hbase-memstore/" class="prev" rel="prev" title="Diving into Hbase&#39;s MemStore"><i class="fas fa-angle-left fa-fw"></i>Diving into Hbase&#39;s MemStore</a>
-            <a href="/posts/notes-about-foundationdb/" class="next" rel="next" title="Notes about FoundationDB">Notes about FoundationDB<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/posts/diving-into-hbase-memstore/" class="prev" rel="prev" title="Diving into Hbase&#39;s MemStore"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Diving into Hbase's MemStore</a>
+            <a href="/posts/notes-about-foundationdb/" class="next" rel="next" title="Notes about FoundationDB">Notes about FoundationDB<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.88.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2015 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.99.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
         <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw"></i>
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw"></i>
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><link rel="stylesheet" href="/lib/mermaid/mermaid.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/mermaid/mermaid.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"data":{"id-1":"sequenceDiagram\n\n    Note left of KafkaClient: I'm speaking Kafka \u003cbr/\u003e 2.3,but can the \u003cbr/\u003e broker understand \u003cbr/\u003e me?\n\n    KafkaClient -\u003e\u003e+ Broker0: API_VERSIONS request\n\n    Note right of Broker0: I can handle theses \u003cbr/\u003e structures in theses \u003cbr/\u003eversions: ...\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Thanks!\u003cbr/\u003e I see you can handle \u003cbr/\u003e SASL, let's auth! \u003cbr/\u003e can you handle \u003cbr/\u003e SASL_PLAIN?\n    KafkaClient -\u003e\u003e+ Broker0: SASL_HANDSHAKE request\n\n    Note right of Broker0: Yes I can handle \u003cbr/\u003e SASL_PLAIN \u003cbr/\u003e among others\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Awesome, here's \u003cbr/\u003e my credentials!\n    KafkaClient -\u003e\u003e+ Broker0: SASL_AUTHENTICATE request\n\n    Note right of Broker0: Checking...\n    Note right of Broker0: You are \u003cbr/\u003eauthenticated!\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Cool! \u003cbr/\u003e Can you give \u003cbr/\u003e the cluster topology?\u003cbr/\u003e I want to \u003cbr/\u003e use 'my-topic'\n    KafkaClient -\u003e\u003e+ Broker0: METADATA request\n\n    Note right of Broker0: There is one topic \u003cbr/\u003e with one partition\u003cbr/\u003e called 'my-topic'\u003cbr/\u003eThe partition's leader \u003cbr/\u003e is Broker0\n    Broker0 -\u003e\u003e- KafkaClient: \n\nNote left of KafkaClient: That is you, I don't \u003cbr/\u003e need to handshake \u003cbr/\u003e again with \u003cbr/\u003e another broker","id-2":"sequenceDiagram\n\n    Note over KafkaClient,Broker0: ...handshaking, see above...\n\n    loop pull msg\n        Note left of KafkaClient: I have a batch \u003cbr/\u003e containing one \u003cbr/\u003e message for the \u003cbr/\u003e partition-0 \u003cbr/\u003e of 'my-topic'\n        KafkaClient -\u003e\u003e+ Broker0: PRODUCE request\n\n        Note right of Broker0: Processing...\u003cbr/\u003e\n        Note right of Broker0: Done!\n        Broker0 -\u003e\u003e- KafkaClient: \n        \n        Note left of KafkaClient: Thanks\n    end","id-3":"sequenceDiagram\n\n    Note over KafkaClient,Broker0: ...handshaking, see above...\n\n    Note left of KafkaClient: Who is the \u003cbr/\u003e coordinator for\u003cbr/\u003e 'my-topic'?\n    KafkaClient -\u003e\u003e+ Broker0: FIND_COORDINATOR request\n\n    Note right of Broker0: It is Broker1!\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: OK, let's connect\u003cbr/\u003e to Broker1\n    Note over KafkaClient,Broker1: ...handshaking, see above...\n\n    Note left of KafkaClient: Hi, I want to join a \u003cbr/\u003e consumption group \u003cbr/\u003efor 'my-topic'\n    KafkaClient -\u003e\u003e+ Broker1: JOIN_GROUP request\n\n    Note right of Broker1: Welcome! I will be \u003cbr/\u003e waiting a bit for any \u003cbr/\u003eof your friends.\n    Note right of Broker1: You are now leader. \u003cbr/\u003eYour group contains \u003cbr/\u003e only one member.\u003cbr/\u003e You now  need to \u003cbr/\u003e assign partitions to \u003cbr/\u003e them. \n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Computing \u003cbr/\u003ethe assigment...\n    Note left of KafkaClient: Done! I will be \u003cbr/\u003e in charge of handling \u003cbr/\u003e partition-0 of \u003cbr/\u003e'my-topic'\n    KafkaClient -\u003e\u003e+ Broker1: SYNC_GROUP request\n\n    Note right of Broker1: Thanks, I will \u003cbr/\u003ebroadcast the \u003cbr/\u003eassigmnents to \u003cbr/\u003eeveryone\n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Can I get the \u003cbr/\u003e committed offsets \u003cbr/\u003e for partition-0\u003cbr/\u003efor my consumer\u003cbr/\u003egroup?\n    KafkaClient -\u003e\u003e+ Broker1: OFFSET_FETCH request\n\n    Note right of Broker1: Found no \u003cbr/\u003ecommitted offset\u003cbr/\u003e for partition-0\n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Thanks, I will now \u003cbr/\u003econnect to Broker0\n\n    Note over KafkaClient,Broker0: ...handshaking again...\n\n    opt if new consumer-group\n        Note left of KafkaClient: Can you give me\u003cbr/\u003e the earliest position\u003cbr/\u003e for partition-0?\n        KafkaClient -\u003e\u003e+ Broker0: LIST_OFFSETS request\n        \n        Note right of Broker0: Here's the earliest \u003cbr/\u003e position: ...\n        Broker0 -\u003e\u003e- KafkaClient: \n    end \n    loop pull msg\n\n        opt Consume\n            Note left of KafkaClient: Can you give me\u003cbr/\u003e some messages \u003cbr/\u003e starting  at offset X?\n            KafkaClient -\u003e\u003e+ Broker0: FETCH request\n\n            Note right of Broker0: Here some records...\n            Broker0 -\u003e\u003e- KafkaClient: \n\n            Note left of KafkaClient: Processing...\n            Note left of KafkaClient: Can you commit \u003cbr/\u003eoffset X?\n            KafkaClient -\u003e\u003e+ Broker1: OFFSET_COMMIT request\n\n            Note right of Broker1: Committing...\n            Note right of Broker1: Done!\n            Broker1 -\u003e\u003e- KafkaClient: \n        end\n\n        Note left of KafkaClient: I need to send \u003cbr/\u003e some lifeness proof \u003cbr/\u003e to the coordinator           \n        opt Healthcheck\n            Note left of KafkaClient: I am still alive!  \n            KafkaClient -\u003e\u003e+ Broker1: HEARTBEAT request\n            Note right of Broker1: I hear you\n            Broker1 -\u003e\u003e- KafkaClient: \n        end\n    end "},"search":{"highlightTag":null,"lunrIndexURL":"/index.json","maxResultLength":null,"noResultsFound":"No results found","snippetLength":null,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"sequenceDiagram\n\n    Note left of KafkaClient: I'm speaking Kafka \u003cbr/\u003e 2.3,but can the \u003cbr/\u003e broker understand \u003cbr/\u003e me?\n\n    KafkaClient -\u003e\u003e+ Broker0: API_VERSIONS request\n\n    Note right of Broker0: I can handle theses \u003cbr/\u003e structures in theses \u003cbr/\u003eversions: ...\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Thanks!\u003cbr/\u003e I see you can handle \u003cbr/\u003e SASL, let's auth! \u003cbr/\u003e can you handle \u003cbr/\u003e SASL_PLAIN?\n    KafkaClient -\u003e\u003e+ Broker0: SASL_HANDSHAKE request\n\n    Note right of Broker0: Yes I can handle \u003cbr/\u003e SASL_PLAIN \u003cbr/\u003e among others\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Awesome, here's \u003cbr/\u003e my credentials!\n    KafkaClient -\u003e\u003e+ Broker0: SASL_AUTHENTICATE request\n\n    Note right of Broker0: Checking...\n    Note right of Broker0: You are \u003cbr/\u003eauthenticated!\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Cool! \u003cbr/\u003e Can you give \u003cbr/\u003e the cluster topology?\u003cbr/\u003e I want to \u003cbr/\u003e use 'my-topic'\n    KafkaClient -\u003e\u003e+ Broker0: METADATA request\n\n    Note right of Broker0: There is one topic \u003cbr/\u003e with one partition\u003cbr/\u003e called 'my-topic'\u003cbr/\u003eThe partition's leader \u003cbr/\u003e is Broker0\n    Broker0 -\u003e\u003e- KafkaClient: \n\nNote left of KafkaClient: That is you, I don't \u003cbr/\u003e need to handshake \u003cbr/\u003e again with \u003cbr/\u003e another broker","id-2":"sequenceDiagram\n\n    Note over KafkaClient,Broker0: ...handshaking, see above...\n\n    loop pull msg\n        Note left of KafkaClient: I have a batch \u003cbr/\u003e containing one \u003cbr/\u003e message for the \u003cbr/\u003e partition-0 \u003cbr/\u003e of 'my-topic'\n        KafkaClient -\u003e\u003e+ Broker0: PRODUCE request\n\n        Note right of Broker0: Processing...\u003cbr/\u003e\n        Note right of Broker0: Done!\n        Broker0 -\u003e\u003e- KafkaClient: \n        \n        Note left of KafkaClient: Thanks\n    end","id-3":"sequenceDiagram\n\n    Note over KafkaClient,Broker0: ...handshaking, see above...\n\n    Note left of KafkaClient: Who is the \u003cbr/\u003e coordinator for\u003cbr/\u003e 'my-topic'?\n    KafkaClient -\u003e\u003e+ Broker0: FIND_COORDINATOR request\n\n    Note right of Broker0: It is Broker1!\n    Broker0 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: OK, let's connect\u003cbr/\u003e to Broker1\n    Note over KafkaClient,Broker1: ...handshaking, see above...\n\n    Note left of KafkaClient: Hi, I want to join a \u003cbr/\u003e consumption group \u003cbr/\u003efor 'my-topic'\n    KafkaClient -\u003e\u003e+ Broker1: JOIN_GROUP request\n\n    Note right of Broker1: Welcome! I will be \u003cbr/\u003e waiting a bit for any \u003cbr/\u003eof your friends.\n    Note right of Broker1: You are now leader. \u003cbr/\u003eYour group contains \u003cbr/\u003e only one member.\u003cbr/\u003e You now  need to \u003cbr/\u003e assign partitions to \u003cbr/\u003e them. \n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Computing \u003cbr/\u003ethe assigment...\n    Note left of KafkaClient: Done! I will be \u003cbr/\u003e in charge of handling \u003cbr/\u003e partition-0 of \u003cbr/\u003e'my-topic'\n    KafkaClient -\u003e\u003e+ Broker1: SYNC_GROUP request\n\n    Note right of Broker1: Thanks, I will \u003cbr/\u003ebroadcast the \u003cbr/\u003eassigmnents to \u003cbr/\u003eeveryone\n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Can I get the \u003cbr/\u003e committed offsets \u003cbr/\u003e for partition-0\u003cbr/\u003efor my consumer\u003cbr/\u003egroup?\n    KafkaClient -\u003e\u003e+ Broker1: OFFSET_FETCH request\n\n    Note right of Broker1: Found no \u003cbr/\u003ecommitted offset\u003cbr/\u003e for partition-0\n    Broker1 -\u003e\u003e- KafkaClient: \n\n    Note left of KafkaClient: Thanks, I will now \u003cbr/\u003econnect to Broker0\n\n    Note over KafkaClient,Broker0: ...handshaking again...\n\n    opt if new consumer-group\n        Note left of KafkaClient: Can you give me\u003cbr/\u003e the earliest position\u003cbr/\u003e for partition-0?\n        KafkaClient -\u003e\u003e+ Broker0: LIST_OFFSETS request\n        \n        Note right of Broker0: Here's the earliest \u003cbr/\u003e position: ...\n        Broker0 -\u003e\u003e- KafkaClient: \n    end \n    loop pull msg\n\n        opt Consume\n            Note left of KafkaClient: Can you give me\u003cbr/\u003e some messages \u003cbr/\u003e starting  at offset X?\n            KafkaClient -\u003e\u003e+ Broker0: FETCH request\n\n            Note right of Broker0: Here some records...\n            Broker0 -\u003e\u003e- KafkaClient: \n\n            Note left of KafkaClient: Processing...\n            Note left of KafkaClient: Can you commit \u003cbr/\u003eoffset X?\n            KafkaClient -\u003e\u003e+ Broker1: OFFSET_COMMIT request\n\n            Note right of Broker1: Committing...\n            Note right of Broker1: Done!\n            Broker1 -\u003e\u003e- KafkaClient: \n        end\n\n        Note left of KafkaClient: I need to send \u003cbr/\u003e some lifeness proof \u003cbr/\u003e to the coordinator           \n        opt Healthcheck\n            Note left of KafkaClient: I am still alive!  \n            KafkaClient -\u003e\u003e+ Broker1: HEARTBEAT request\n            Note right of Broker1: I hear you\n            Broker1 -\u003e\u003e- KafkaClient: \n        end\n    end "},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

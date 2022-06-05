@@ -7,9 +7,10 @@
     <title>Handling OVH&#39;s alerts with Apache Flink</title>
     <link>https://pierrezemb.fr/posts/ovh-alerts-flink/</link>
     <pubDate>Sun, 03 Feb 2019 15:37:27 &#43;0100</pubDate>
-    <author>Author</author>
+    <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/ovh-alerts-flink/</guid>
     <description><![CDATA[This is a repost from OVH&rsquo;s official blogpost.. Thanks Horacio Gonzalez for the awesome drawings!
 Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics to effectively monitor its entire stack. Whether they are low-level or business centric, they allow teams to gain insight into how our services are operating on a daily basis. The need to store millions of datapoints per second has produced the need to create a dedicated team to build a operate a product to handle that load: **Metrics Data Platform.]]></description>
-</item></channel>
+</item>
+</channel>
 </rss>

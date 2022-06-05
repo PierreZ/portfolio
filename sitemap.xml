@@ -2,15 +2,15 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://pierrezemb.fr/talks/db-101/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/observability-from-on-call/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/talks/db-101/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/podcasts/maci-64/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/maci/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/podcast/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/podcasts/maci-64/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/maci-63/</loc><lastmod>2022-02-21T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/maci-62/</loc><lastmod>2022-01-19T01:23:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/distsys-resources/</loc><lastmod>2022-01-31T01:37:27&#43;01:00</lastmod></url><url>
@@ -23,16 +23,16 @@
             <loc>https://pierrezemb.fr/podcasts/maci-59/</loc><lastmod>2021-12-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/story-kop/</loc><lastmod>2021-09-24T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/maci-54/</loc><lastmod>2021-08-26T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/categories/sql/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/maci-46/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/categories/sql/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</loc><lastmod>2021-05-02T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</loc><lastmod>2021-02-21T00:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/foundationdb/</loc><lastmod>2021-02-21T00:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</loc><lastmod>2021-02-19T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/podcasts/em-62/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/electro-monkeys/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/etcd/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/raft/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/podcasts/em-62/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/notes-about-etcd/</loc><lastmod>2021-01-11T00:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/notesabout/</loc><lastmod>2021-01-11T00:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/record-layer-101/</loc><lastmod>2020-10-16T01:22:36&#43;01:00</lastmod></url><url>
@@ -44,16 +44,16 @@
             <loc>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</loc><lastmod>2020-09-18T05:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/notes-about-raft/</loc><lastmod>2020-07-30T07:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/messaging-solution-pulsar/</loc><lastmod>2020-06-16T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/podcasts/bdh-99/</loc><lastmod>2020-05-06T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/big-data-hebdo/</loc><lastmod>2020-05-06T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/pulsar/</loc><lastmod>2020-05-06T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/podcasts/bdh-99/</loc><lastmod>2020-05-06T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/announcing-kop/</loc><lastmod>2020-03-31T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/announcing-kop/</loc><lastmod>2020-03-24T10:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/contribution/</loc><lastmod>2020-03-24T10:24:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/podcasts/bdh-93/</loc><lastmod>2020-02-17T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/tags/big-data-hebdo/</loc><lastmod>2020-02-17T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/tags/foundationdb/</loc><lastmod>2020-02-17T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/tags/</loc><lastmod>2020-02-17T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/podcasts/bdh-93/</loc><lastmod>2020-02-17T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</loc><lastmod>2020-02-14T10:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/hbase/</loc><lastmod>2020-02-14T10:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/notes-about-foundationdb/</loc><lastmod>2020-01-30T10:24:27&#43;01:00</lastmod></url><url>
