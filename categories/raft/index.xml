@@ -19,7 +19,7 @@ Sum-up etcd est une base de données bien connue de toutes les équipes opérati
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
     <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&rsquo;s paper called &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;.
- As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&rsquo;m also playing with the amazing Raft labs made by PingCAP.]]></description>
+As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&rsquo;m also playing with the amazing Raft labs made by PingCAP.]]></description>
 </item>
 </channel>
 </rss>

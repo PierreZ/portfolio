@@ -10,8 +10,7 @@
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/podcasts/maci-64/</guid>
     <description><![CDATA[Dans ce formidable épisode, il est question d&rsquo;automation et de télétravail, de Rust, d&rsquo;expérimenbtation de Fetch dans Node.js, de HTML Dialog Element, du nouveau chip Intel, de grpcurl&hellip; et comme toujours on finira en chanson !
-👋 Laissez un commentaire ou venez discuter avec nous sur @clever_cloudFR pour nous dire ce que vous avez pensé de ce nouvel épisode.
-  ]]></description>
+👋 Laissez un commentaire ou venez discuter avec nous sur @clever_cloudFR pour nous dire ce que vous avez pensé de ce nouvel épisode.]]></description>
 </item>
 <item>
     <title>🇫🇷 Message à caractère informatique 63: L&#39;oAuth v100 met en demeure la foundation des fusions de RFC</title>
@@ -19,8 +18,7 @@
     <pubDate>Mon, 21 Feb 2022 01:23:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/podcasts/maci-63/</guid>
-    <description><![CDATA[Dans cet incroyable épisode, il est question : de la CNIL et de Google Analytics ; de la faille #log4shell ; d&rsquo;authentification, de la version 100 de Chrome et Firefox ; d&rsquo;un nouveau container pour les requètes ; d&rsquo;un incident poilu sur PostgreSQL ; de migration de métadata ; d&rsquo;éxécution de code arbitraire et d&rsquo;extension de cockpit JSON&hellip; pour finir, comme il se doit en musique.
-  ]]></description>
+    <description><![CDATA[Dans cet incroyable épisode, il est question : de la CNIL et de Google Analytics ; de la faille #log4shell ; d&rsquo;authentification, de la version 100 de Chrome et Firefox ; d&rsquo;un nouveau container pour les requètes ; d&rsquo;un incident poilu sur PostgreSQL ; de migration de métadata ; d&rsquo;éxécution de code arbitraire et d&rsquo;extension de cockpit JSON&hellip; pour finir, comme il se doit en musique.]]></description>
 </item>
 <item>
     <title>🇫🇷 Message à caractère informatique 62: btrfs est le seul filesystem avec des vrais cristaux de sel à l&#39;intérieur</title>
@@ -28,8 +26,7 @@
     <pubDate>Wed, 19 Jan 2022 01:23:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/podcasts/maci-62/</guid>
-    <description><![CDATA[nous parlons implémentation d&rsquo;Apache Aiflow sur Clever Cloud, d&rsquo;intégration de Rust dans GCC, d&rsquo;acronymes pénibles, d&rsquo;IPtable VIS et surtout et dans le détails des kernels 5.14 et 5.15 de Linux.
-  ]]></description>
+    <description><![CDATA[nous parlons implémentation d&rsquo;Apache Aiflow sur Clever Cloud, d&rsquo;intégration de Rust dans GCC, d&rsquo;acronymes pénibles, d&rsquo;IPtable VIS et surtout et dans le détails des kernels 5.14 et 5.15 de Linux.]]></description>
 </item>
 <item>
     <title>🇫🇷 Message à caractère informatique 61: overclock le soc, on est en retard sur le kernel</title>
@@ -61,8 +58,7 @@
     <pubDate>Thu, 26 Aug 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/podcasts/maci-54/</guid>
-    <description><![CDATA[Dans ce cinquante-cinquième épisode nous parlons de Grafana, patent trolls, MDN, AVIF dans Safari, paradoxe de Simpson, Cosmos, DDoS, Cloudflare, Google, Linux, Razer et PAM
-  ]]></description>
+    <description><![CDATA[Dans ce cinquante-cinquième épisode nous parlons de Grafana, patent trolls, MDN, AVIF dans Safari, paradoxe de Simpson, Cosmos, DDoS, Cloudflare, Google, Linux, Razer et PAM]]></description>
 </item>
 </channel>
 </rss>

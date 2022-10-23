@@ -11,7 +11,7 @@
     <guid>https://pierrezemb.fr/posts/notes-about-etcd/</guid>
     <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover ETCD.
 Overview of ETCD As stated in the official documentation:
- etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.]]></description>
+etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.]]></description>
 </item>
 <item>
     <title>Notes about Raft&#39;s paper</title>
@@ -20,7 +20,7 @@ Overview of ETCD As stated in the official documentation:
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
     <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover Raft&rsquo;s paper called &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;.
- As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&rsquo;m also playing with the amazing Raft labs made by PingCAP.]]></description>
+As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located here and I&rsquo;m also playing with the amazing Raft labs made by PingCAP.]]></description>
 </item>
 <item>
     <title>Notes about FoundationDB</title>
@@ -29,8 +29,8 @@ Overview of ETCD As stated in the official documentation:
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
     <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
- Overview of FoundationDB As stated in the official documentation:
- FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.]]></description>
+Overview of FoundationDB As stated in the official documentation:
+FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.]]></description>
 </item>
 </channel>
 </rss>

@@ -11,7 +11,7 @@
     <guid>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</guid>
     <description><![CDATA[As I&rsquo;m working on my latest contribution around FoundationDB and Rust, I had the chance to dig a bit into how FoundationDB&rsquo;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎
 Row key? When you are using a key/value store, the design of the row key is extremely important, as this will define how well:
- your scans will be optimized, your puts will be spread, you will avoid hot-spotting a shard/region.]]></description>
+your scans will be optimized, your puts will be spread, you will avoid hot-spotting a shard/region.]]></description>
 </item>
 <item>
     <title>Announcing Record-Store, a new (experimental) place for your data</title>
@@ -21,7 +21,7 @@ Row key? When you are using a key/value store, the design of the row key is extr
     <guid>https://pierrezemb.fr/posts/announcing-record-store/</guid>
     <description><![CDATA[TL;DR: I&rsquo;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on https://pierrez.github.io/record-store.
 What? Record-Store is a layer running on top of FoundationDB. It provides abstractions to create, load and deletes customer-defined data called records, which are hold into a RecordSpace. We would like to have this kind of flow for developers:
- Opening RecordSpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records  You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?]]></description>
+Opening RecordSpace, for example prod/users Create a protobuf definition which will be used as schema Upsert schema Push records Query records delete records You need another KeySpace to store another type of data, or maybe a KeySpace dedicated to production env?]]></description>
 </item>
 <item>
     <title>Notes about FoundationDB</title>
@@ -30,8 +30,8 @@ What? Record-Store is a layer running on top of FoundationDB. It provides abstra
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
     <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
- Overview of FoundationDB As stated in the official documentation:
- FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.]]></description>
+Overview of FoundationDB As stated in the official documentation:
+FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.]]></description>
 </item>
 </channel>
 </rss>

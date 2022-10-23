@@ -10,7 +10,7 @@
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
     <description><![CDATA[In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
- Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?&rsquo;  Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.]]></description>
+Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like &lsquo;What does the death of Hadoop mean for big data?&rsquo; Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.]]></description>
 </item>
 </channel>
 </rss>
