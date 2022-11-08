@@ -120,14 +120,20 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#in-memory-storage">in-memory storage</a></li>
-    <li><a href="#flush-on-hdfs">Flush on HDFS</a></li>
-    <li><a href="#compaction">Compaction</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#storing-data">storing data</a></li>
-    <li><a href="#in-memory-compactions">in-memory Compactions</a></li>
+    <li><a href="#what-is-the-memstore">What is the MemStore?</a></li>
+    <li><a href="#hbase-1">Hbase 1</a>
+      <ul>
+        <li><a href="#in-memory-storage">in-memory storage</a></li>
+        <li><a href="#flush-on-hdfs">Flush on HDFS</a></li>
+        <li><a href="#compaction">Compaction</a></li>
+      </ul>
+    </li>
+    <li><a href="#hbase-2">Hbase 2</a>
+      <ul>
+        <li><a href="#storing-data">storing data</a></li>
+        <li><a href="#in-memory-compactions">in-memory Compactions</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p><img
@@ -141,15 +147,15 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 <p><a href="/tags/diving-into/" rel="">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.</p>
 <hr>
 <p><code>tl;dr:</code> Hbase is using the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentSkipListMap.html" target="_blank" rel="noopener noreffer">ConcurrentSkipListMap</a>.</p>
-<h1 id="what-is-the-memstore">What is the MemStore?</h1>
+<h2 id="what-is-the-memstore">What is the MemStore?</h2>
 <blockquote>
 <p>The <code>memtable</code> from the official <a href="https://research.google.com/archive/bigtable-osdi06.pdf" target="_blank" rel="noopener noreffer">BigTable paper</a> is the equivalent of the <code>MemStore</code> in Hbase.</p>
 </blockquote>
 <p>As rows are <strong>sorted lexicographically</strong> in Hbase, when data comes in, you need to have some kind of a <strong>in-memory buffer</strong> to order those keys. This is where the <code>MemStore</code> comes in. It absorbs the recent write (or put in Hbase semantics) operations. All the rest are immutable files called <code>HFile</code> stored in HDFS. There is one <code>MemStore</code> per <code>column family</code>.</p>
 <p>Let&rsquo;s dig into how the MemStore internally works in Hbase 1.X.</p>
-<h1 id="hbase-1">Hbase 1</h1>
+<h2 id="hbase-1">Hbase 1</h2>
 <p>All extract of code for this section are taken from <a href="https://github.com/apache/hbase/tree/rel/1.4.9" target="_blank" rel="noopener noreffer">rel/1.4.9</a> tag.</p>
-<h2 id="in-memory-storage">in-memory storage</h2>
+<h3 id="in-memory-storage">in-memory storage</h3>
 <p>The <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L35" target="_blank" rel="noopener noreffer">MemStore interface</a> is giving us insight on how it is working internally.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * Write an update
@@ -167,15 +173,15 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 <li>concurrency</li>
 <li>sorted elements</li>
 </ul>
-<h2 id="flush-on-hdfs">Flush on HDFS</h2>
+<h3 id="flush-on-hdfs">Flush on HDFS</h3>
 <p>As we seen above, the <code>MemStore</code> is supporting all the puts. When asked to flush, the current memstore is <strong>moved to snapshot and is cleared</strong>. Flushed file are called (<a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/io/hfile/HFile.java" target="_blank" rel="noopener noreffer">HFiles</a>) and they are similar to <code>SSTables</code> introduced by the official <a href="https://research.google.com/archive/bigtable-osdi06.pdf" target="_blank" rel="noopener noreffer">BigTable paper</a>. HFiles are flushed on the Hadoop Distributed File System called <code>HDFS</code>.</p>
 <blockquote>
 <p>If you want deeper insight about SSTables, I recommend reading <a href="https://github.com/facebook/rocksdb/wiki/Rocksdb-BlockBasedTable-Format" target="_blank" rel="noopener noreffer">Table Format from the awesome RocksDB wiki</a></p>
 </blockquote>
-<h2 id="compaction">Compaction</h2>
+<h3 id="compaction">Compaction</h3>
 <p>Compaction are only run on HFiles. It means that <strong>if hot data is continuously updated, we are overusing memory due to duplicate entries per row per MemStore</strong>. Accordion tends to solve this problem through <em>in-memory compactions</em>. Let&rsquo;s have a look to Hbase 2.X!</p>
-<h1 id="hbase-2">Hbase 2</h1>
-<h2 id="storing-data">storing data</h2>
+<h2 id="hbase-2">Hbase 2</h2>
+<h3 id="storing-data">storing data</h3>
 <p><strong>All extract of code starting from here are taken from <a href="https://github.com/apache/hbase/tree/rel/2.1.2" target="_blank" rel="noopener noreffer">rel/2.1.2</a> tag.</strong></p>
 <p>Does <code>MemStore</code> interface changed?</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="cm">/**
@@ -188,7 +194,7 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 </span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L67-L73" target="_blank" rel="noopener noreffer">add function in MemStore interface</a></p>
 <p>The signature changed a bit, to include passing a object instead of returning a long. Moving on.</p>
 <p>The new structure implementing MemStore is called <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/AbstractMemStore.java#L42" target="_blank" rel="noopener noreffer">AbstractMemStore</a>. Again, we have some layers, where AbstractMemStore is writing to a <code>MutableSegment</code>, which itsef is wrapping <code>Segment</code>. If you dig far enough, you will find that data are stored into the <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSet.java#L35-L51" target="_blank" rel="noopener noreffer">CellSet class</a> which is also things built on top of <strong>ConcurrentSkipListMap</strong>!</p>
-<h2 id="in-memory-compactions">in-memory Compactions</h2>
+<h3 id="in-memory-compactions">in-memory Compactions</h3>
 <p>Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: <a href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in" target="_blank" rel="noopener noreffer">Accordion: HBase Breathes with In-Memory Compaction</a> and the <a href="https://issues.apache.org/jira/secure/attachment/12709471/HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf" target="_blank" rel="noopener noreffer">document design</a> is also available.</p>
 <hr>
 <p><strong>Thank you</strong> for reading my post! feel free to react to this article, I&rsquo;m also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>

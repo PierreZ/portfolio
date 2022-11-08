@@ -119,7 +119,7 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
     <li>
       <ul>
         <li></li>
-        <li><a href="#geez-give-me-an-example">Geez, give me an example!</a></li>
+        <li><a href="#geez-give-me-an-example">Geez, give me an example</a></li>
         <li><a href="#what-about-a-more-complex-example">What about a more complex example?</a></li>
       </ul>
     </li>
@@ -221,11 +221,11 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
 <h4 id="unified-language">Unified Language</h4>
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
-<h3 id="geez-give-me-an-example">Geez, give me an example!</h3>
+<h3 id="geez-give-me-an-example">Geez, give me an example</h3>
 <p>Here’s an example of a simple but advanced query:</p>
 <pre tabindex="0"><code>// Fetching all values  
 [ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
-[ SWAP bucketizer.max	0 1 m 0 ] BUCKETIZE // Round to nearest long  
+[ SWAP bucketizer.max 0 1 m 0 ] BUCKETIZE // Round to nearest long  
 [ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by &#39;buildingID&#39;  
 [ SWAP [ &#39;buildingID&#39; ] reducer.max ] REDUCE
 </code></pre><p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>

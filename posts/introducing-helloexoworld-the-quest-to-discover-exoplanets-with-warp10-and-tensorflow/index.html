@@ -34,7 +34,7 @@ My passion for programming was kind of late, I typed my first line of code at my
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/pierrezemb.fr\/posts\/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow\/"
-        },"genre": "posts","wordcount":  1117 ,
+        },"genre": "posts","wordcount":  1112 ,
         "url": "https:\/\/pierrezemb.fr\/posts\/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow\/","datePublished": "2017-10-11T10:23:11+00:00","dateModified": "2019-01-10T22:16:31+01:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -109,7 +109,7 @@ My passion for programming was kind of late, I typed my first line of code at my
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/timeseries/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>timeseries</a>&nbsp;<a href="/categories/helloexoworld/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>helloexoworld</a>&nbsp;<a href="/categories/analytics/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>analytics</a>&nbsp;<a href="/categories/warp10/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>warp10</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2017-10-11">2017-10-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1117 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2017-10-11">2017-10-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1112 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;6 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
@@ -163,7 +163,7 @@ My passion for programming was kind of late, I typed my first line of code at my
         data-sizes="auto"
         alt="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/3.png"
         title="image" /></p>
-<p>I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would <strong>motivate me</strong> over the time. So I started typing over keywords, more work-related, such as <strong><em>time series</em></strong> or <strong><em>analytics</em></strong>. I found many papers related to astrophysics, but there was two keywords that were coming back: <strong>exoplanet detection</strong>.</p>
+<p>I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would <strong>motivate me</strong> over the time. So I started typing over keywords, more work-related, such as <em><strong>time series</strong></em> or <em><strong>analytics</strong></em>. I found many papers related to astrophysics, but there was two keywords that were coming back: <strong>exoplanet detection</strong>.</p>
 <h3 id="what-is-an-exoplanet-and-how-to-detect-it">What is an exoplanet and how to detect it?</h3>
 <p>Let’s quote our good old friend <a href="https://en.wikipedia.org/wiki/Exoplanet" target="_blank" rel="noopener noreffer"><strong>Wikipedia</strong></a>:</p>
 <blockquote>
@@ -178,7 +178,7 @@ My passion for programming was kind of late, I typed my first line of code at my
         data-sizes="auto"
         alt="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/images/4.gif"
         title="image" /></p>
-<p>animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. <strong><em>Credits: NASA’s Goddard Space Flight Center</em></strong></p>
+<p>animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. <em><strong>Credits: NASA’s Goddard Space Flight Center</strong></em></p>
 <p>To recap, exoplanet detection using the transit method are in reality a <strong>time series analysis problem</strong>. As I’m starting to be familiar with that type of analytics thanks to my current work at OVH in <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer"><strong>Metrics Data Platform</strong></a>, I wanted to give it a try.</p>
 <h3 id="keplerk2-mission">Kepler/K2 mission</h3>
 <p><img
@@ -221,7 +221,6 @@ My passion for programming was kind of late, I typed my first line of code at my
 </ul>
 <p>Then <a href="https://github.com/PierreZ/kepler2warp10" target="_blank" rel="noopener noreffer"><strong>Kepler2Warp10</strong></a> is used to <strong>push the CSV files generated by kepler-lens to Warp10</strong>.</p>
 <p>To ease importation, an <a href="https://github.com/PierreZ/kepler2warp10-ansible" target="_blank" rel="noopener noreffer"><strong>Ansible role</strong></a>  has been made, to spread the work across multiples small <strong>virtual machines</strong>.</p>
-<p>Principles of transaction-oriented database recovery</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">The import of @NASAKepler  dataset has been spread on 16 machines, just because I can 😎 <a href="https://t.co/qa49tAgdzz">pic.twitter.com/qa49tAgdzz</a></p>&mdash; Pierre Zemb (@PierreZ) <a href="https://twitter.com/PierreZ/status/908784580450295808?ref_src=twsrc%5Etfw">September 15, 2017</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 

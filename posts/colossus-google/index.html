@@ -32,7 +32,7 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/pierrezemb.fr\/posts\/colossus-google\/"
-        },"genre": "posts","wordcount":  1296 ,
+        },"genre": "posts","wordcount":  1241 ,
         "url": "https:\/\/pierrezemb.fr\/posts\/colossus-google\/","datePublished": "2019-08-04T15:07:11+02:00","dateModified": "2019-08-04T15:07:11+02:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -107,8 +107,8 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">What can be gleaned about GFS successor codenamed Colossus?</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>distributed-systems</a>&nbsp;<a href="/categories/hadoop/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>hadoop</a>&nbsp;<a href="/categories/colossus/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>colossus</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-08-04">2019-08-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1296 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;7 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-08-04">2019-08-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1241 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;6 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -118,7 +118,7 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
   <ul>
     <li><a href="#hadoops-story">Hadoop&rsquo;s story</a></li>
     <li><a href="#is-hadoop-still-revelant">Is Hadoop still revelant?</a></li>
-    <li><a href="#well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes!</a></li>
+    <li><a href="#well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes</a></li>
     <li><a href="#how-gfs-evolved-within-google">How GFS evolved within Google</a>
       <ul>
         <li><a href="#technical-overview">Technical overview</a></li>
@@ -185,7 +185,7 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 <li>Should I be moving that persistent volume over my slow network?</li>
 <li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698" target="_blank" rel="noopener noreffer">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
 </ul>
-<h2 id="well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes!</h2>
+<h2 id="well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes</h2>
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 <ul>
 <li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop" target="_blank" rel="noopener noreffer">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&rdquo;</a></li>
@@ -261,7 +261,7 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 <p>What is that &ldquo;D&rdquo;?</p>
 <ul>
 <li>
-<p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/" target="_blank" rel="noopener noreffer"> The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
+<p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/" target="_blank" rel="noopener noreffer">The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
 <ul>
 <li>D stands for <em>Disk</em>,</li>
 <li>D is a fileserver running on almost all machines in a cluster.</li>
@@ -278,9 +278,6 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 <h3 id="deployments">Deployments</h3>
 <!-- raw HTML omitted -->
 <p>How everything is deployed? Using Borg!</p>
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">I think the team that&#39;s pushing the forefront of something k8s-like for persistency/durability is... the Colossus/D team at Google, who have been running storage servers managed by Borg for almost a decade now :)<br><br>Problem is, it&#39;s not k8s. But could tell us what that roadmap is.</p>&mdash; Liz Fong-Jones (方禮真) (@lizthegrey) <a href="https://twitter.com/lizthegrey/status/1197044446279479297?ref_src=twsrc%5Etfw">November 20, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 <h3 id="migration">Migration</h3>
 <p>The migration process is described in the now free <a href="https://static.googleusercontent.com/media/sre.google/en//static/pdf/case-studies-infrastructure-change-management.pdf" target="_blank" rel="noopener noreffer">Case Studies in Infrastructure Change Management</a> book.</p>
 <h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</h2>

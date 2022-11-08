@@ -124,9 +124,9 @@ In the last two years, there’s been a technology that became really hype. It w
         <li><a href="#docker-hype">Docker hype</a></li>
       </ul>
     </li>
-    <li><a href="#and-they-were-more-like">And they were more like:</a>
+    <li><a href="#and-they-were-more-like">And they were more like</a>
       <ul>
-        <li><a href="#lets-create-a-container">Let’s create a container!</a></li>
+        <li><a href="#lets-create-a-container">Let’s create a container</a></li>
         <li><a href="#so-what-should-i-put-into-my-container">So what should I put into my container?</a></li>
         <li><a href="#static-compilation">Static compilation</a></li>
       </ul>
@@ -158,7 +158,7 @@ In the last two years, there’s been a technology that became really hype. It w
         data-sizes="auto"
         alt="/posts/lets-talk-about-containers/images/2.jpeg"
         title="image" /></p>
-<h2 id="and-they-were-more-like">And they were more like:</h2>
+<h2 id="and-they-were-more-like">And they were more like</h2>
 <p><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -168,7 +168,7 @@ In the last two years, there’s been a technology that became really hype. It w
         alt="/posts/lets-talk-about-containers/images/3.jpeg"
         title="image" /></p>
 <p>Ops knew about containers since the dawn of time, so why such hype now? I think that “write once, run everywhere” is the true slogan of Docker, because you can run docker containers in any environments that has Docker. <strong>You want to try the latest datastore/SaaS app that you found on Hacker News or Reddit? There’s a Dockerfile for that</strong>. And that is super cool. So everyone started to get interested in Docker, myself included. But the real benefit is that many huge companies like Google admits that containers are the way they are deploying apps. <strong>They don’t care what type of applications they are deploying or where it’s running, it’s just running somewhere.</strong> That’s all that matters. By unifying the packages, you can automatize and deliver whatever you want somewhere. Do you really care if it’s on a specific machine? No you don’t. That’s a powerful way to think infrastructure more like a bunch of compute or storage power, and not individual machines.</p>
-<h3 id="lets-create-a-container">Let’s create a container!</h3>
+<h3 id="lets-create-a-container">Let’s create a container</h3>
 <p>That’s not a secret: I love <a href="https://golang.org/" target="_blank" rel="noopener noreffer">Go</a>. It’s in my opinion a very nice programming language <a href="https://medium.com/@PierreZ/why-you-really-should-give-golang-a-try-6b577092d725" target="_blank" rel="noopener noreffer">that you should really try</a>. So let’s say that I’m creating a go app, and then ship it with Docker. So I’ll use the officiel Docker image right? <strong>Then I end up with a 700MB container to ship a 10MB app</strong>… I thought that containers were supposed to be small… Why? because it’s based on a full OS, with go compiler and so on. To run a single binary, there’s no need to have the whole Go compiler stack.</p>
 <p>That was really bothering me. At this point, if the container is holding everything, why not use a VM? Why do we need to bundle Ubuntu into the container? From a outside point-of-view, running a container in interactive mode is much like a virtual machines right? <strong>At the time of writing, Docker’s official image for Ubuntu was pulled more than 36,000,000 time</strong>. That’s huge! And disturbing. Do you really need for example “ls, chmod, chown, sudo” into a container?</p>
 <p>There is another huge impact on having a full distribution on a container: Security. <strong>You now have to watch not only for CVEs (Common Vulnerabilities and Exposures) on the packages in your host distribution, but also in your container</strong>! After all, based on this <a href="https://docs.google.com/presentation/d/1toUKgqLyy1b-pZlDgxONLduiLmt2yaLR0GliBB7b3L0/pub?start=false&amp;amp;loop=false#slide=id.ge614ec624_2_70" target="_blank" rel="noopener noreffer">presentation</a>, 66.6% of analyzed images on Quay.io are vulnerable to <a href="https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability" target="_blank" rel="noopener noreffer">Ghost</a>, and 80% to <a href="http://heartbleed.com/" target="_blank" rel="noopener noreffer">Heartbleed</a>. That is quite scary… So adding this nightmare doesn’t seems the solution.</p>

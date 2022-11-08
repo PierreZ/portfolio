@@ -116,9 +116,13 @@ The protocol reference For the last few months, I worked a lot around Kafka&rsqu
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#common-handshake">Common handshake</a></li>
-    <li><a href="#producing">Producing</a></li>
-    <li><a href="#consuming">Consuming</a></li>
+    <li><a href="#the-protocol-reference">The protocol reference</a>
+      <ul>
+        <li><a href="#common-handshake">Common handshake</a></li>
+        <li><a href="#producing">Producing</a></li>
+        <li><a href="#consuming">Consuming</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p><img
@@ -131,9 +135,9 @@ The protocol reference For the last few months, I worked a lot around Kafka&rsqu
         title="kafka image" /></p>
 <p><a href="/tags/diving-into/" rel="">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.</p>
 <hr>
-<h1 id="the-protocol-reference">The protocol reference</h1>
+<h2 id="the-protocol-reference">The protocol reference</h2>
 <p>For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia" target="_blank" rel="noopener noreffer">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a href="https://kafka.apache.org/protocol.html" target="_blank" rel="noopener noreffer">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let&rsquo;s dive in!</p>
-<h2 id="common-handshake">Common handshake</h2>
+<h3 id="common-handshake">Common handshake</h3>
 <p>After a client established the TCP connection, there is a few common requests and responses that are almost always here.</p>
 <p>The common handhake can be divided in three parts:</p>
 <ul>
@@ -148,10 +152,10 @@ The protocol reference For the last few months, I worked a lot around Kafka&rsqu
 <p>All the following diagrams are generated with <a href="https://mermaidjs.github.io/#/" target="_blank" rel="noopener noreffer">MermaidJS</a>.</p>
 </blockquote>
 <div class="mermaid" id="id-1"></div>
-<h2 id="producing">Producing</h2>
+<h3 id="producing">Producing</h3>
 <p>The <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Produce" target="_blank" rel="noopener noreffer">PRODUCE</a></strong> API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.</p>
 <div class="mermaid" id="id-2"></div>
-<h2 id="consuming">Consuming</h2>
+<h3 id="consuming">Consuming</h3>
 <p>Consuming is more complicated than producing. You can learn more in <a href="https://www.youtube.com/watch?v=maJulQ4ABNY" target="_blank" rel="noopener noreffer">The Magical Group Coordination Protocol of Apache Kafka</a> By Gwen Shapira, Principal Data Architect @ Confluent and also in the <a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka&#43;Client-side&#43;Assignment&#43;Proposal" target="_blank" rel="noopener noreffer">Kafka Client-side Assignment Proposal</a>.</p>
 <p>Consuming can be divided in three parts:</p>
 <ul>
