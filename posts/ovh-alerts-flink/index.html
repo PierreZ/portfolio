@@ -62,8 +62,7 @@ Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics 
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
                     <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -106,7 +105,7 @@ Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics 
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Handling OVH's alerts with Apache Flink</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>distributed-systems</a>&nbsp;<a href="/categories/flink/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>flink</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>distributed-systems</a>&nbsp;<a href="/categories/flink/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>flink</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-02-03">2019-02-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;948 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
@@ -128,7 +127,7 @@ Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics 
     </li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH&#39;s alerts with Apache Flink" target="_blank" rel="noopener noreffer">OVH&rsquo;s official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/" target="_blank" rel="noopener noreffer">Horacio Gonzalez</a> for the awesome drawings!</p>
+            </div><div class="content" id="content"><p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH&#39;s alerts with Apache Flink" target="_blank" rel="noopener noreffer ">OVH&rsquo;s official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/" target="_blank" rel="noopener noreffer ">Horacio Gonzalez</a> for the awesome drawings!</p>
 <h1 id="handling-ovhs-alerts-with-apache-flink">Handling OVH&rsquo;s alerts with Apache Flink</h1>
 <p><img
         class="lazyload"
@@ -138,7 +137,7 @@ Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics 
         data-sizes="auto"
         alt="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472"
         title="OVH &amp;amp; Apache Flink" /></p>
-<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer">**Metrics Data Platform</a>.<strong>By relying on <a href="https://hbase.apache.org/" target="_blank" rel="noopener noreffer">**Apache Hbase</a>, <a href="https://kafka.apache.org/" target="_blank" rel="noopener noreffer">Apache Kafka</a></strong> and <a href="https://www.warp10.io/" target="_blank" rel="noopener noreffer"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
+<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer ">**Metrics Data Platform</a>.<strong>By relying on <a href="https://hbase.apache.org/" target="_blank" rel="noopener noreffer ">**Apache Hbase</a>, <a href="https://kafka.apache.org/" target="_blank" rel="noopener noreffer ">Apache Kafka</a></strong> and <a href="https://www.warp10.io/" target="_blank" rel="noopener noreffer "><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
 <p>After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the <strong>Alerting.</strong></p>
 <h2 id="meet-omni-our-alerting-layer">Meet OMNI, our alerting layer</h2>
 <p>OMNI is our code name for a <strong>fully distributed</strong>, <strong>as-code</strong>, <strong>alerting</strong> system that we developed on top of Metrics. It is split into components:</p>
@@ -148,17 +147,17 @@ Handling OVH&rsquo;s alerts with Apache Flink OVH relies extensively on metrics 
 </ul>
 <p>The query executor is pushing the query results into Kafka, ready to be handled! We now need to perform all the tasks that an alerting system does:</p>
 <ul>
-<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a href="https://en.wikipedia.org/wiki/Alarm_fatigue" target="_blank" rel="noopener noreffer">alert fatigue.</a></li>
+<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a href="https://en.wikipedia.org/wiki/Alarm_fatigue" target="_blank" rel="noopener noreffer ">alert fatigue.</a></li>
 <li>Handling <strong>escalation</strong> steps, <strong>acknowledgement</strong>or <strong>snooze</strong>.</li>
 <li><strong>Notify</strong> the end user, through differents <strong>channels</strong>: SMS, mail, Push notifications, …</li>
 </ul>
-<p>To handle that, we looked at open-source projects, such as <a href="https://github.com/prometheus/alertmanager" target="_blank" rel="noopener noreffer">Prometheus AlertManager,</a> <a href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall" target="_blank" rel="noopener noreffer">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
+<p>To handle that, we looked at open-source projects, such as <a href="https://github.com/prometheus/alertmanager" target="_blank" rel="noopener noreffer ">Prometheus AlertManager,</a> <a href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall" target="_blank" rel="noopener noreffer ">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
 <blockquote>
 <p>Handling alerts as streams of data,<br>
 moving from operators to another.</p>
 </blockquote>
-<p>We embraced it, and decided to leverage <a href="https://flink.apache.org/" target="_blank" rel="noopener noreffer">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
-<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a href="https://flink.apache.org/flink-architecture.html" target="_blank" rel="noopener noreffer">What is Apache Flink?</a></p>
+<p>We embraced it, and decided to leverage <a href="https://flink.apache.org/" target="_blank" rel="noopener noreffer ">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
+<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a href="https://flink.apache.org/flink-architecture.html" target="_blank" rel="noopener noreffer ">What is Apache Flink?</a></p>
 <h2 id="beacon-architecture"><strong>Beacon architecture</strong></h2>
 <p>At his core, Beacon is reading events from <strong>Kafka</strong>. Everything is represented as a <strong>message</strong>, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:</p>
 <ul>
@@ -177,7 +176,7 @@ moving from operators to another.</p>
     </a><figcaption class="image-caption">architecture</figcaption>
     </figure>
 <h2 id="handling-states">Handling States</h2>
-<p>If you are new to streaming architecture, I recommend reading <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html" target="_blank" rel="noopener noreffer">Dataflow Programming Model</a> from Flink official documentation.</p>
+<p>If you are new to streaming architecture, I recommend reading <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html" target="_blank" rel="noopener noreffer ">Dataflow Programming Model</a> from Flink official documentation.</p>
 <figure><a class="lightgallery" href="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/003.png?x70472" title="Hello Friend" data-thumbnail="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/003.png?x70472" data-sub-html="<h2>beacon architecture</h2>">
         <img
             class="lazyload"
@@ -188,7 +187,7 @@ moving from operators to another.</p>
             alt="Hello Friend" />
     </a><figcaption class="image-caption">beacon architecture</figcaption>
     </figure>
-<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state" target="_blank" rel="noopener noreffer">keyed by</a>in Flink API) by users. Here&rsquo;s an example:</p>
+<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state" target="_blank" rel="noopener noreffer ">keyed by</a>in Flink API) by users. Here&rsquo;s an example:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">final</span> <span class="n">DataStream</span><span class="o">&gt;</span> <span class="n">alertStream</span> <span class="o">=</span>
 </span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl">      <span class="c1">// Partitioning Stream per AlertIdentifier
@@ -207,11 +206,11 @@ moving from operators to another.</p>
 <li><strong>SetSinceOnSelector</strong>, which is setting <strong>since</strong> when the alert is triggered</li>
 <li><strong>SetStateAndTrend</strong>, which is setting the <strong>state</strong>(ONGOING, RECOVERY or OK) and the <strong>trend</strong>(do we have more or less metrics in errors).</li>
 </ul>
-<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/" target="_blank" rel="noopener noreffer">Map, FlatMap, Reduce</a>, including their <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions" target="_blank" rel="noopener noreffer">Rich</a> and <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state" target="_blank" rel="noopener noreffer">Keyed</a> version. We have a few <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html" target="_blank" rel="noopener noreffer">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
+<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/" target="_blank" rel="noopener noreffer ">Map, FlatMap, Reduce</a>, including their <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions" target="_blank" rel="noopener noreffer ">Rich</a> and <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state" target="_blank" rel="noopener noreffer ">Keyed</a> version. We have a few <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html" target="_blank" rel="noopener noreffer ">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
 <h2 id="integration-tests">Integration tests</h2>
 <p>As the number of classes was growing, we needed to test our pipeline. Because it is only wired to Kafka, we wrapped consumer and producer to create what we call **scenari:**a series of integration tests running different scenarios.</p>
 <h2 id="queryable-state">Queryable state</h2>
-<p>One killer feature of Apache Flink is the <strong>capabilities of <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html" target="_blank" rel="noopener noreffer">**<strong>querying the internal state</strong></a></strong> of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
+<p>One killer feature of Apache Flink is the <strong>capabilities of <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html" target="_blank" rel="noopener noreffer ">**<strong>querying the internal state</strong></a></strong> of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
 <ul>
 <li>at which escalation steps are we on</li>
 <li>is it snoozed or <em>ack</em>-ed</li>
@@ -226,11 +225,11 @@ moving from operators to another.</p>
         data-sizes="auto"
         alt="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/004-1.png?x70472"
         title="Queryable state overview" />Queryable state overview</p>
-<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/" target="_blank" rel="noopener noreffer">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
+<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/" target="_blank" rel="noopener noreffer ">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
 <h3 id="apache-flink-deployment">Apache Flink deployment</h3>
 <p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper&rsquo;s cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
 <p>We are using <strong>RockDB</strong> as a state backend, backed by OpenStack <strong>Swift storage</strong>provided by OVH Public Cloud.</p>
-<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter" target="_blank" rel="noopener noreffer">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium" target="_blank" rel="noopener noreffer">Beamium</a> to gain <strong>observability</strong> over job&rsquo;s health.</p>
+<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter" target="_blank" rel="noopener noreffer ">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium" target="_blank" rel="noopener noreffer ">Beamium</a> to gain <strong>observability</strong> over job&rsquo;s health.</p>
 <h3 id="in-short-we-love-apache-flink">In short, we love Apache Flink</h3>
 <p>If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.</p>
 <p><img
@@ -241,7 +240,7 @@ moving from operators to another.</p>
         data-sizes="auto"
         alt="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472"
         title="Apache Flink" /></p>
-<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F" target="_blank" rel="noopener noreffer">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
+<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F" target="_blank" rel="noopener noreffer ">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
@@ -251,7 +250,7 @@ moving from operators to another.</p>
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/ovh-alerts-flink/" data-title="Handling OVH&#39;s alerts with Apache Flink"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -278,5 +277,5 @@ moving from operators to another.</p>
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>
