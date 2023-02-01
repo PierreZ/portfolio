@@ -4,22 +4,40 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>FoundationDB - Tag - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="FoundationDB" />
-<meta property="og:description" content="This is my cool site" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://pierrezemb.fr/tags/foundationdb/" /><meta property="og:site_name" content="My cool site" />
+        <title>Développer des logiciels fiables grâce à la simulation - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Développer des logiciels fiables grâce à la simulation" />
+<meta property="og:description" content="Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple : l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Existe-t-il un moyen de générer toutes les erreurs possibles afin d&rsquo;aider le développeur ? Une des solutions consiste à venir tout contrôler de façon déterministe, du temps que va prendre l’I/O, au scheduling des threads, en passant par quelle erreur a été déclenchée." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pierrezemb.fr/talks/simulation-vtt/" /><meta property="article:section" content="talks" />
+<meta property="article:published_time" content="2023-02-01T01:22:36+01:00" />
+<meta property="article:modified_time" content="2023-02-01T01:22:36+01:00" /><meta property="og:site_name" content="My cool site" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="FoundationDB"/>
-<meta name="twitter:description" content="This is my cool site"/>
+<meta name="twitter:title" content="Développer des logiciels fiables grâce à la simulation"/>
+<meta name="twitter:description" content="Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple : l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Existe-t-il un moyen de générer toutes les erreurs possibles afin d&rsquo;aider le développeur ? Une des solutions consiste à venir tout contrôler de façon déterministe, du temps que va prendre l’I/O, au scheduling des threads, en passant par quelle erreur a été déclenchée."/>
 <meta name="application-name" content="My cool site">
 <meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/tags/foundationdb/" />
-<link rel="alternate" href="/tags/foundationdb/index.xml" type="application/rss+xml" title="Pierre Zemb">
-    <link rel="feed" href="/tags/foundationdb/index.xml" type="application/rss+xml" title="Pierre Zemb"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="canonical" href="https://pierrezemb.fr/talks/simulation-vtt/" />
+<link rel="prev" href="https://pierrezemb.fr/talks/db-101/" /><link rel="next" href="https://pierrezemb.fr/talks/split-compute-storage/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script></head>
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Développer des logiciels fiables grâce à la simulation",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/pierrezemb.fr\/talks\/simulation-vtt\/"
+        },"genre": "talks","wordcount":  141 ,
+        "url": "https:\/\/pierrezemb.fr\/talks\/simulation-vtt\/","datePublished": "2023-02-01T01:22:36+01:00","dateModified": "2023-02-01T01:22:36+01:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": ""
+    }
+    </script></head>
     <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
@@ -80,10 +98,18 @@
     <div class="search-dropdown mobile">
         <div id="search-dropdown-mobile"></div>
     </div><main class="main">
-                <div class="container"><div class="page archive"><h2 class="single-title animate__animated animate__pulse animate__faster"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;FoundationDB</h2><h3 class="group-title">2020</h3><article class="archive-item">
-                        <a href="/podcasts/bdh-93/" class="archive-item-link">🇫🇷 BigData Hebdo 93 : FoundationDB</a>
-                        <span class="archive-item-date">02-17</span>
-                    </article></div></div>
+                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">Développer des logiciels fiables grâce à la simulation</h1><div class="content" id="content"><p>Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple : l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Existe-t-il un moyen de générer toutes les erreurs possibles afin d&rsquo;aider le développeur ?
+Une des solutions consiste à venir tout contrôler de façon déterministe, du temps que va prendre l’I/O, au scheduling des threads, en passant par quelle erreur a été déclenchée. C’est ce qu’on appelle le Deterministic Simulation Testing.</p>
+<p>Durant ce talk, vous découvrirez les enjeux et les impacts de la simulation dans le cycle de développement d’un logiciel fortement distribué. Vous découvrirez également comment Clever Cloud utilise la simulation pour venir accélérer la R&amp;D de nouveaux produits.</p>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://docs.google.com/presentation/d/1XGh1xmHdlI50PvP3D6gp5o7afhiwCmI7swOdmx14R50/edit?usp=sharing" target="_blank" rel="noopener noreffer ">Slides</a></li>
+</ul>
+<h2 id="occurences">Occurences</h2>
+<ul>
+<li>VeryTechTrip 2023</li>
+</ul>
+</div></div></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.110.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
@@ -95,5 +121,5 @@
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>
