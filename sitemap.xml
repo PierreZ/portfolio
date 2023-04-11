@@ -2,10 +2,11 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://pierrezemb.fr/talks/fdb-best-secret/</loc><lastmod>2023-04-10T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/</loc><lastmod>2023-04-10T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/talks/</loc><lastmod>2023-04-10T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/split-compute-storage/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/simulation-vtt/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/talks/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/db-101/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/observability-from-on-call/</loc><lastmod>2022-04-18T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/maci-64/</loc><lastmod>2022-03-03T01:23:36&#43;01:00</lastmod></url><url>

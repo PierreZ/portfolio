@@ -6,7 +6,18 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 01 Feb 2023 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 10 Apr 2023 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FoundationDB : le secret le mieux gardé des nouvelles architectures distribuées !</title>
+      <link>https://pierrezemb.fr/talks/fdb-best-secret/</link>
+      <pubDate>Mon, 10 Apr 2023 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/fdb-best-secret/</guid>
+      <description>Savez-vous quel est le point commun entre Apple, Snowflake, VMWare et Datadog ? Ces entreprises partagent le même ingrédient : FoundationDB
+FoundationDB est une base de données distribuée, open-source, souvent cachée dans l&amp;rsquo;infrastructure bas-niveau permettant de gérer des transactions distribuées ACID.
+Durant ce talk, nous vous proposons une découverte de cette base de données si peu connue. Vous découvrirez l&amp;rsquo;histoire du projet, ses garanties transactionnelles aussi fortes que Spanner, ainsi que sa robustesse opérationnelle.</description>
+    </item>
+    
     <item>
       <title>Découpler le stockage du calcul, une fausse bonne idée ?</title>
       <link>https://pierrezemb.fr/talks/split-compute-storage/</link>
