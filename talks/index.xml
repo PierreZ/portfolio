@@ -6,7 +6,16 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 10 Apr 2023 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jun 2023 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Développer des bases de données fiables grâce à la simulation</title>
+      <link>https://pierrezemb.fr/talks/simulation-bdd/</link>
+      <pubDate>Thu, 01 Jun 2023 01:22:36 +0100</pubDate>
+      
+      <guid>https://pierrezemb.fr/talks/simulation-bdd/</guid>
+      <description>Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple: l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Ce constat est encore + vrai quand l&amp;rsquo;on travaille dans les entrailles des bases de données, où la moindre erreur peut générer de la corruption de données clientes.</description>
+    </item>
+    
     <item>
       <title>FoundationDB : le secret le mieux gardé des nouvelles architectures distribuées !</title>
       <link>https://pierrezemb.fr/talks/fdb-best-secret/</link>

@@ -4,35 +4,33 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>One day into the Time Series&#39;s world - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="One day into the Time Series&#39;s world" />
-<meta property="og:description" content="Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
-Schedule Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets Ressources slides " />
+        <title>Développer des bases de données fiables grâce à la simulation - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Développer des bases de données fiables grâce à la simulation" />
+<meta property="og:description" content="Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple: l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Ce constat est encore &#43; vrai quand l&rsquo;on travaille dans les entrailles des bases de données, où la moindre erreur peut générer de la corruption de données clientes." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://pierrezemb.fr/talks/one-day-timeseries/" /><meta property="article:section" content="talks" />
-<meta property="article:published_time" content="2018-11-11T22:22:36+01:00" />
-<meta property="article:modified_time" content="2018-11-11T22:22:36+01:00" /><meta property="og:site_name" content="My cool site" />
+<meta property="og:url" content="https://pierrezemb.fr/talks/simulation-bdd/" /><meta property="article:section" content="talks" />
+<meta property="article:published_time" content="2023-06-01T01:22:36+01:00" />
+<meta property="article:modified_time" content="2023-06-01T01:22:36+01:00" /><meta property="og:site_name" content="My cool site" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="One day into the Time Series&#39;s world"/>
-<meta name="twitter:description" content="Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
-Schedule Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets Ressources slides "/>
+<meta name="twitter:title" content="Développer des bases de données fiables grâce à la simulation"/>
+<meta name="twitter:description" content="Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple: l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Ce constat est encore &#43; vrai quand l&rsquo;on travaille dans les entrailles des bases de données, où la moindre erreur peut générer de la corruption de données clientes."/>
 <meta name="application-name" content="My cool site">
 <meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/talks/one-day-timeseries/" />
-<link rel="prev" href="https://pierrezemb.fr/talks/metrics-experience/" /><link rel="next" href="https://pierrezemb.fr/talks/nasa-datasets/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="canonical" href="https://pierrezemb.fr/talks/simulation-bdd/" />
+<link rel="prev" href="https://pierrezemb.fr/talks/fdb-best-secret/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "One day into the Time Series's world",
+        "headline": "Développer des bases de données fiables grâce à la simulation",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/talks\/one-day-timeseries\/"
-        },"genre": "talks","wordcount":  34 ,
-        "url": "https:\/\/pierrezemb.fr\/talks\/one-day-timeseries\/","datePublished": "2018-11-11T22:22:36+01:00","dateModified": "2018-11-11T22:22:36+01:00","publisher": {
+            "@id": "https:\/\/pierrezemb.fr\/talks\/simulation-bdd\/"
+        },"genre": "talks","wordcount":  200 ,
+        "url": "https:\/\/pierrezemb.fr\/talks\/simulation-bdd\/","datePublished": "2023-06-01T01:22:36+01:00","dateModified": "2023-06-01T01:22:36+01:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
                 "@type": "Person",
@@ -100,18 +98,16 @@ Schedule Introduction to Time Series Time Series in real life Code instrumentati
     <div class="search-dropdown mobile">
         <div id="search-dropdown-mobile"></div>
     </div><main class="main">
-                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">One day into the Time Series&#39;s world</h1><div class="content" id="content"><h1 id="abstract">Abstract</h1>
-<p>This is a one-day course I am giving at my former engineering school ISEN Brest.</p>
-<h1 id="schedule">Schedule</h1>
+                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">Développer des bases de données fiables grâce à la simulation</h1><div class="content" id="content"><p>Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple: l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Ce constat est encore + vrai quand l&rsquo;on travaille dans les entrailles des bases de données, où la moindre erreur peut générer de la corruption de données clientes.</p>
+<p>Existe-t-il de l&rsquo;outillage permettant de palier à ce problème ? Une des solutions consiste à venir tout contrôler de façon déterministe: du temps que va prendre l’I/O, au scheduling des threads, en passant par quelle erreur a été déclenché. C’est ce qu’on appelle le Deterministic Simulation Testing. C&rsquo;est la technique que nous avons choisi afin de pouvoir valider l&rsquo;implémentation de nos propres bases de données serverless.</p>
+<p>Durant ce talk, vous découvrirez les enjeux et les impacts de la simulation dans le cycle de développement d’un logiciel fortement distribué. Vous apprendrez à utiliser notre simulateur open-source. Vous découvrirez également comment Clever Cloud utilise la simulation pour venir accélérer la R&amp;D des futures produits data de l&rsquo;entreprise.</p>
+<h2 id="resources">Resources</h2>
 <ul>
-<li>Introduction to Time Series</li>
-<li>Time Series in real life</li>
-<li>Code instrumentation</li>
-<li>Lab: searching for exoplanets</li>
+<li><a href="https://docs.google.com/presentation/d/1lrG1a5s7wrEV2i8msHkS11HbiqHyukDe4uUXUwaJ9fI/edit?usp=sharing" target="_blank" rel="noopener noreffer ">Slides</a></li>
 </ul>
-<h1 id="ressources">Ressources</h1>
+<h2 id="occurences">Occurences</h2>
 <ul>
-<li><a href="https://docs.google.com/presentation/d/1gTyUi_cICeGhSTIzBGe1NaZbf8BzI8bLe9OgnbFsZOI/edit?usp=sharing" target="_blank" rel="noopener noreffer ">slides</a></li>
+<li><a href="https://www.meetup.com/fr-FR/paris-open-source-data-infrastructure-meetup/events/294037433/" target="_blank" rel="noopener noreffer ">Paris Open Source Data Infrastructure Meetup - June 2023</a></li>
 </ul>
 </div></div></div>
             </main><footer class="footer">
