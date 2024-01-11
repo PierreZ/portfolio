@@ -4,23 +4,24 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>Monitoring OVH: 300k servers, 27 DCs and one metrics platform - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Monitoring OVH: 300k servers, 27 DCs and one metrics platform" />
+        <title>Monitoring OVH: 300k servers, 27 DCs and one metrics platform - Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:title" content="Monitoring OVH: 300k servers, 27 DCs and one metrics platform" />
 <meta property="og:description" content="Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?
 In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://pierrezemb.fr/talks/one-monitoring-platform/" /><meta property="article:section" content="talks" />
 <meta property="article:published_time" content="2019-05-19T17:24:34+02:00" />
-<meta property="article:modified_time" content="2019-05-19T17:24:34+02:00" /><meta property="og:site_name" content="My cool site" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Monitoring OVH: 300k servers, 27 DCs and one metrics platform"/>
+<meta property="article:modified_time" content="2019-05-19T17:24:34+02:00" /><meta property="og:site_name" content="Pierre Zemb" />
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Monitoring OVH: 300k servers, 27 DCs and one metrics platform"/>
 <meta name="twitter:description" content="Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?
 In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure."/>
-<meta name="application-name" content="My cool site">
-<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="twitter:site" content="@PierreZ"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/talks/one-monitoring-platform/" />
-<link rel="prev" href="https://pierrezemb.fr/talks/handling-jvm-scale/" /><link rel="next" href="https://pierrezemb.fr/talks/bookkeeper-101/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="prev" href="https://pierrezemb.fr/talks/handling-jvm-scale/" /><link rel="next" href="https://pierrezemb.fr/talks/bookkeeper-101/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
@@ -31,7 +32,7 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/pierrezemb.fr\/talks\/one-monitoring-platform\/"
-        },"genre": "talks","wordcount":  297 ,
+        },"genre": "talks","wordcount":  298 ,
         "url": "https:\/\/pierrezemb.fr\/talks\/one-monitoring-platform\/","datePublished": "2019-05-19T17:24:34+02:00","dateModified": "2019-05-19T17:24:34+02:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -45,7 +46,7 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="Pierre Zemb">~/blog</a>
+            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
@@ -68,7 +69,7 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="Pierre Zemb">~/blog</a>
+                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -116,22 +117,27 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
 <p><blockquote class="twitter-tweet"><p lang="fr" dir="ltr"><a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> et <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> nous raconte leur « histoire sans fin » pour créer la plateforme metrics 👏🏻 <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a> <a href="https://t.co/iVwKjJ2BnR">pic.twitter.com/iVwKjJ2BnR</a></p>&mdash; Cecile (@CecileHbh) <a href="https://twitter.com/CecileHbh/status/1128967524152946688?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> speaking about Wap 10 @ <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a>. Awesome presentation guys! <a href="https://t.co/q0bdJ0m2mw">pic.twitter.com/q0bdJ0m2mw</a></p>&mdash; Nikita Rousseau (@nirousseau) <a href="https://twitter.com/nirousseau/status/1128967131062767616?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 
 <blockquote class="twitter-tweet"><p lang="fr" dir="ltr">Ceci n&#39;est pas du placement de produit 😜<a href="https://twitter.com/SenXHQ?ref_src=twsrc%5Etfw">@SenXHQ</a> <a href="https://twitter.com/warp10io?ref_src=twsrc%5Etfw">@warp10io</a> à l&#39;honneur 😎<a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> <a href="https://twitter.com/SylvainLareyre?ref_src=twsrc%5Etfw">@SylvainLareyre</a> Ok pour le câlin 😊 <a href="https://t.co/M60jw7Wmyv">pic.twitter.com/M60jw7Wmyv</a></p>&mdash; JobOpportunIT (@JobOpportunIT_) <a href="https://twitter.com/JobOpportunIT_/status/1128960579346030594?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Great talk <a href="https://twitter.com/RivieraDEV?ref_src=twsrc%5Etfw">@RivieraDEV</a> from <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> and <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> on Monitoring @OVH <a href="https://twitter.com/hashtag/SenX?src=hash&amp;ref_src=twsrc%5Etfw">#SenX</a> <a href="https://t.co/Voxwa4KyIf">pic.twitter.com/Voxwa4KyIf</a></p>&mdash; Tiffany Souterre (@TiffanySouterre) <a href="https://twitter.com/TiffanySouterre/status/1128960166781771776?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<blockquote class="twitter-tweet"><p lang="fr" dir="ltr">On part sur Monitoring OVH: 300k serveurs, 27 DCs une plateforme de métriques avec <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> et <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://t.co/GB5CsLoz6m">pic.twitter.com/GB5CsLoz6m</a></p>&mdash; RivieraDEV 🌴 (@RivieraDEV) <a href="https://twitter.com/RivieraDEV/status/1128956775124918272?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
+
+<blockquote class="twitter-tweet"><p lang="fr" dir="ltr">On part sur Monitoring OVH: 300k serveurs, 27 DCs une plateforme de métriques avec <a href="https://twitter.com/LostInBrittany?ref_src=twsrc%5Etfw">@LostInBrittany</a> et <a href="https://twitter.com/PierreZ?ref_src=twsrc%5Etfw">@PierreZ</a> <a href="https://t.co/GB5CsLoz6m">pic.twitter.com/GB5CsLoz6m</a></p>&mdash; Riviera DEV 🌴 (@RivieraDEV) <a href="https://twitter.com/RivieraDEV/status/1128956775124918272?ref_src=twsrc%5Etfw">May 16, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 </p>
 </div></div></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.112.7">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.121.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
@@ -140,5 +146,5 @@ In this talk we will relate our experience building and maintaining OVH Metrics,
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
 </html>

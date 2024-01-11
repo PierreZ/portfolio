@@ -6,113 +6,84 @@
     <description>Recent content in Podcasts on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 03 Mar 2022 01:23:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 03 Mar 2022 01:23:36 +0100</lastBuildDate>
+    <atom:link href="https://pierrezemb.fr/podcasts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>🇫🇷 Message à caractère informatique 64: Des sirènes, des crabes coreutils mais pas d&#39;enclave de blu ray ?</title>
       <link>https://pierrezemb.fr/podcasts/maci-64/</link>
       <pubDate>Thu, 03 Mar 2022 01:23:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-64/</guid>
-      <description>Dans ce formidable épisode, il est question d&amp;rsquo;automation et de télétravail, de Rust, d&amp;rsquo;expérimenbtation de Fetch dans Node.js, de HTML Dialog Element, du nouveau chip Intel, de grpcurl&amp;hellip; et comme toujours on finira en chanson !
-👋 Laissez un commentaire ou venez discuter avec nous sur @clever_cloudFR pour nous dire ce que vous avez pensé de ce nouvel épisode.</description>
+      <description>Dans ce formidable épisode, il est question d&amp;rsquo;automation et de télétravail, de Rust, d&amp;rsquo;expérimenbtation de Fetch dans Node.js, de HTML Dialog Element, du nouveau chip Intel, de grpcurl&amp;hellip; et comme toujours on finira en chanson !&#xA;👋 Laissez un commentaire ou venez discuter avec nous sur @clever_cloudFR pour nous dire ce que vous avez pensé de ce nouvel épisode.</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 63: L&#39;oAuth v100 met en demeure la foundation des fusions de RFC</title>
       <link>https://pierrezemb.fr/podcasts/maci-63/</link>
       <pubDate>Mon, 21 Feb 2022 01:23:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-63/</guid>
       <description>Dans cet incroyable épisode, il est question : de la CNIL et de Google Analytics ; de la faille #log4shell ; d&amp;rsquo;authentification, de la version 100 de Chrome et Firefox ; d&amp;rsquo;un nouveau container pour les requètes ; d&amp;rsquo;un incident poilu sur PostgreSQL ; de migration de métadata ; d&amp;rsquo;éxécution de code arbitraire et d&amp;rsquo;extension de cockpit JSON&amp;hellip; pour finir, comme il se doit en musique.</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 62: btrfs est le seul filesystem avec des vrais cristaux de sel à l&#39;intérieur</title>
       <link>https://pierrezemb.fr/podcasts/maci-62/</link>
       <pubDate>Wed, 19 Jan 2022 01:23:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-62/</guid>
       <description>nous parlons implémentation d&amp;rsquo;Apache Aiflow sur Clever Cloud, d&amp;rsquo;intégration de Rust dans GCC, d&amp;rsquo;acronymes pénibles, d&amp;rsquo;IPtable VIS et surtout et dans le détails des kernels 5.14 et 5.15 de Linux.</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 61: overclock le soc, on est en retard sur le kernel</title>
       <link>https://pierrezemb.fr/podcasts/maci-61/</link>
       <pubDate>Wed, 12 Jan 2022 01:23:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-61/</guid>
       <description>Dans ce fabuleux épisode réalisé en famille avec Quentin Adam, Marc Antoine Perennou, Julien Durillon et Pierre Zemb nous parlons de class action sur une entente Google / Apple sur les moteur de recherche, des processeurs Mobile eye by Intel et des annonces AMD et Intel pour de nouveaux procs, de GNUPG qui devient économiquement viable, du bug Exchange de l&amp;rsquo;an 2022. On vous présente les nouvelles recrues de Clever Cloud et enfin, on vous parle Kernel !</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 60: Databricks et Snowflake aboient, haproxy passe et graphe les ramassages des miettes</title>
       <link>https://pierrezemb.fr/podcasts/maci-60/</link>
       <pubDate>Wed, 01 Dec 2021 01:23:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-60/</guid>
       <description>Dans cet épisode de référence, bien que difficile à numéroter, nous recevons Mathieu Ancelin et nous parlons : de la levée de fonds de PlanetScale, de la guerre entre Databricks et Snowflakes, des 20 ans de HAProxy, des ressources query dans SQL, des meilleurs performances de nos vieux claviers PS/2, d&amp;rsquo;un outil Apple Open Source pour l&amp;rsquo;analyse de logs de Garbage Collection, avant de finir en musique&amp;hellip; indice : c&amp;rsquo;est pas du Mozart.</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 59: Scaleway fait une rfc pour cancel la future de gaiax</title>
       <link>https://pierrezemb.fr/podcasts/maci-59/</link>
       <pubDate>Wed, 01 Dec 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-59/</guid>
       <description>Dans ce fabuleux épisode, nous recevons le non moins fabuleux Mathieu Ancelin pour parler : Open Source autour de la MAIF, de Scaleway qui quitte le projet GaïaX, de Nu.age la nouvelle offre de cloud par La Poste, de l&amp;rsquo;apparition du verbe &amp;ldquo;query&amp;rdquo; en HTTP, de l&amp;rsquo;épique mise à jour par la IETF des RFC par une RFC, d&amp;rsquo;Async cancellation en RUST, d&amp;rsquo;Innernet un outil pour configurer ses VPN, avant de finir en musique (attention le son est addictif !</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 54 : Une Attaque De Souris Cosmique Dans MDN Met AVIF Les Nerfs De Google</title>
       <link>https://pierrezemb.fr/podcasts/maci-54/</link>
       <pubDate>Thu, 26 Aug 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-54/</guid>
       <description>Dans ce cinquante-cinquième épisode nous parlons de Grafana, patent trolls, MDN, AVIF dans Safari, paradoxe de Simpson, Cosmos, DDoS, Cloudflare, Google, Linux, Razer et PAM</description>
     </item>
-    
     <item>
       <title>🇫🇷 Message à caractère informatique 46 : Faire Le Tri Dans Ses Relations</title>
       <link>https://pierrezemb.fr/podcasts/maci-46/</link>
       <pubDate>Fri, 04 Jun 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/maci-46/</guid>
-      <description>Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.
-Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46
-Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh
-00:00:00 - Introduction
-00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5
-00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.businessinsider.in/tech/news/amazon-just-got-sued-by-the-us-government-for-the-first-time-alleging-the-worlds-largest-online-marketplace-is-engaging-in-unfair-practices-with-third-party-sellers/articleshow/82975643.cms
-00:14:10 - Article sur QUIC après publication de la RFC 9000 (et des RFC liées 8999, 9001,9002).</description>
+      <description>Dans ce quarante-septième épisode nous parlons de Google, Amazon, QUIC, The Art of PostgreSQL, PolarDB, PG Auto Failover, VLDB, ToroDB, Citus, gh-ost.&#xA;Notes Toutes les notes sont disponibles sur https://www.clever-cloud.com/fr/podcast/episode46&#xA;Avec par ordre d’apparition : @urcadox @PierreZ @zepag @tapoueh&#xA;00:00:00 - Introduction&#xA;00:01:54 - Google et les infos de localisation https://www.businessinsider.fr/us/unredacted-google-lawsuit-docs-detail-efforts-to-collect-user-location-2021-5&#xA;00:06:57 - Amazon attaqué par le gouvernement US pour pratiques déloyales envers les vendeurs de sa marketplace https://www.businessinsider.in/tech/news/amazon-just-got-sued-by-the-us-government-for-the-first-time-alleging-the-worlds-largest-online-marketplace-is-engaging-in-unfair-practices-with-third-party-sellers/articleshow/82975643.cms&#xA;00:14:10 - Article sur QUIC après publication de la RFC 9000 (et des RFC liées 8999, 9001,9002).</description>
     </item>
-    
     <item>
       <title>🇫🇷 Electro Monkeys 62: ETCD avec Pierre Zemb</title>
       <link>https://pierrezemb.fr/podcasts/em-62/</link>
       <pubDate>Wed, 20 Jan 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/em-62/</guid>
-      <description>Episode You can listen to the episode here.
-Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
+      <description>Episode You can listen to the episode here.&#xA;Sum-up etcd est une base de données bien connue de toutes les équipes opérationnelles, puisqu&amp;rsquo;elle est au coeur de Kubernetes. Cependant, mis à part sa documentation en ligne, c&amp;rsquo;est une base de données sur laquelle il n&amp;rsquo;existe aucune littérature. Et c&amp;rsquo;est une chose que j&amp;rsquo;ai peine à comprendre pour un projet de cette importance qui a un tel impact sur notre quotidien.</description>
     </item>
-    
     <item>
       <title>🇫🇷 BigData Hebdo 99 : Apache Pulsar &amp; Kafka on Pulsar</title>
       <link>https://pierrezemb.fr/podcasts/bdh-99/</link>
       <pubDate>Wed, 06 May 2020 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/bdh-99/</guid>
       <description> </description>
     </item>
-    
     <item>
       <title>🇫🇷 BigData Hebdo 93 : FoundationDB</title>
       <link>https://pierrezemb.fr/podcasts/bdh-93/</link>
       <pubDate>Mon, 17 Feb 2020 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/podcasts/bdh-93/</guid>
       <description> Notes Notes about FoundationDB </description>
     </item>
-    
   </channel>
 </rss>

@@ -6,209 +6,154 @@
     <description>Recent content in Talks on Pierre Zemb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 01 Jun 2023 01:22:36 +0100</lastBuildDate><atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jun 2023 01:22:36 +0100</lastBuildDate>
+    <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Développer des bases de données fiables grâce à la simulation</title>
       <link>https://pierrezemb.fr/talks/simulation-bdd/</link>
       <pubDate>Thu, 01 Jun 2023 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/simulation-bdd/</guid>
       <description>Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple: l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Ce constat est encore + vrai quand l&amp;rsquo;on travaille dans les entrailles des bases de données, où la moindre erreur peut générer de la corruption de données clientes.</description>
     </item>
-    
     <item>
       <title>FoundationDB : le secret le mieux gardé des nouvelles architectures distribuées !</title>
       <link>https://pierrezemb.fr/talks/fdb-best-secret/</link>
       <pubDate>Mon, 10 Apr 2023 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/fdb-best-secret/</guid>
-      <description>Savez-vous quel est le point commun entre Apple, Snowflake, VMWare et Datadog ? Ces entreprises partagent le même ingrédient : FoundationDB
-FoundationDB est une base de données distribuée, open-source, souvent cachée dans l&amp;rsquo;infrastructure bas-niveau permettant de gérer des transactions distribuées ACID.
-Durant ce talk, nous vous proposons une découverte de cette base de données si peu connue. Vous découvrirez l&amp;rsquo;histoire du projet, ses garanties transactionnelles aussi fortes que Spanner, ainsi que sa robustesse opérationnelle.</description>
+      <description>Savez-vous quel est le point commun entre Apple, Snowflake, VMWare et Datadog ? Ces entreprises partagent le même ingrédient : FoundationDB&#xA;FoundationDB est une base de données distribuée, open-source, souvent cachée dans l&amp;rsquo;infrastructure bas-niveau permettant de gérer des transactions distribuées ACID.&#xA;Durant ce talk, nous vous proposons une découverte de cette base de données si peu connue. Vous découvrirez l&amp;rsquo;histoire du projet, ses garanties transactionnelles aussi fortes que Spanner, ainsi que sa robustesse opérationnelle.</description>
     </item>
-    
     <item>
       <title>Découpler le stockage du calcul, une fausse bonne idée ?</title>
       <link>https://pierrezemb.fr/talks/split-compute-storage/</link>
       <pubDate>Wed, 01 Feb 2023 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/split-compute-storage/</guid>
       <description>Clever Cloud est une entreprise européenne basée en France, experte depuis plus de 10 ans dans la création de solutions d&amp;rsquo;hébergement en mode PaaS (Platform-as-a-Service) performantes et faciles à utiliser, avec un grand souci de souveraineté et sécurité des données. Dans cette optique, nous opérons et industrialisons des milliers de bases de données pour nos clients. Cette volumétrie nous oblige à venir imaginer et concevoir les bases de données de demain, qui devront être à la fois résilientes et efficientes.</description>
     </item>
-    
     <item>
       <title>Développer des logiciels fiables grâce à la simulation</title>
       <link>https://pierrezemb.fr/talks/simulation-vtt/</link>
       <pubDate>Wed, 01 Feb 2023 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/simulation-vtt/</guid>
       <description>Tester la fiabilité d’un logiciel est toujours une chose assez difficile. Malgré tous nos efforts, nous n’arrivons pas à écrire des programmes sans bugs. La raison est assez simple : l’être humain est étonnamment mauvais pour pouvoir imaginer toutes les erreurs possibles qu’un programme peut avoir. Existe-t-il un moyen de générer toutes les erreurs possibles afin d&amp;rsquo;aider le développeur ? Une des solutions consiste à venir tout contrôler de façon déterministe, du temps que va prendre l’I/O, au scheduling des threads, en passant par quelle erreur a été déclenchée.</description>
     </item>
-    
     <item>
       <title>À la découverte des bases de données</title>
       <link>https://pierrezemb.fr/talks/db-101/</link>
       <pubDate>Mon, 18 Apr 2022 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/db-101/</guid>
       <description>Abstract Nous avons l&amp;rsquo;habitude en tant que développeur de traiter les bases de données comme des services capables de ranger, organiser et stocker durablement nos informations. On oublie assez facilement que ce sont des logiciels à part entière. Depuis plus de 50 ans, industriels et chercheurs développent de nouvelles architectures et techniques d&amp;rsquo;ingénierie pour les rendre plus scalables et plus performantes. Je vous propose d&amp;rsquo;ouvrir le capot et de découvrir comment fonctionne une base de données.</description>
     </item>
-    
     <item>
       <title>Développer des applications observables pour la production </title>
       <link>https://pierrezemb.fr/talks/observability-from-on-call/</link>
       <pubDate>Mon, 18 Apr 2022 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/observability-from-on-call/</guid>
       <description>Assez peu de développeurs ont l&amp;rsquo;envie ou l&amp;rsquo;opportunité de faire de l&amp;rsquo;astreinte. Pourtant, avoir la possibilité de voir son propre logiciel (ou celui de collègues) partir en vrille sans comprendre pourquoi est une véritable opportunité. En effet, c’est une chance de comprendre les véritables enjeux derrière l&amp;rsquo;analyse des performances et le besoin de débugger en production. Pour pouvoir comprendre ce qui se passe, nous avons besoin de faits tangibles, de données.</description>
     </item>
-    
     <item>
       <title>Cloud computing 101</title>
       <link>https://pierrezemb.fr/talks/cloud-computing-101/</link>
       <pubDate>Mon, 13 Dec 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/cloud-computing-101/</guid>
-      <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
-Schedule Cloud Computing IaaS/PaaS/Kubernetes demo Microservices architecture Kafka practice Ressources Slides </description>
+      <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.&#xA;Schedule Cloud Computing IaaS/PaaS/Kubernetes demo Microservices architecture Kafka practice Ressources Slides </description>
     </item>
-    
     <item>
       <title> Il était une fois Kafka sur Pulsar </title>
       <link>https://pierrezemb.fr/talks/story-kop/</link>
       <pubDate>Fri, 24 Sep 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/story-kop/</guid>
-      <description>Abstract Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&amp;rsquo;est ainsi que notre histoire commence.
-Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar.</description>
+      <description>Abstract Apache Pulsar est un système de messagerie pub-sub distribué et open source. Il offre de nombreux avantages par rapport à Kafka, tels que le multi-tenant, la géo-réplication, le stockage découplé ou encore le SQL et FaaS directement intégrées. La seule chose qui manque pour une large adoption est le support du standard de-facto pour le streaming: Kafka. Et c&amp;rsquo;est ainsi que notre histoire commence.&#xA;Dans ce talk, nous vous raconterons notre parcours pour construire Kafka On Pulsar.</description>
     </item>
-    
     <item>
       <title>Lessons Learned from Operating ETCD</title>
       <link>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</link>
       <pubDate>Sun, 02 May 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</guid>
       <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide. Because of our Kubinception design(using Kubernetes to run Kubernetes), we are putting hundreds of customers in an ETCD cluster. This design is great to easily spawn control-planes for customers, but it is also putting a lot of pressure on ETCD.</description>
     </item>
-    
     <item>
       <title>To the ☁️ and beyond 🚀</title>
       <link>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</link>
       <pubDate>Fri, 19 Feb 2021 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</guid>
       <description>Occurences CESI DevDay Epitech Insight Ressources Slides The slides are also available here Videos February 2021 </description>
     </item>
-    
     <item>
       <title>Record-Layer 101</title>
       <link>https://pierrezemb.fr/talks/record-layer-101/</link>
       <pubDate>Fri, 16 Oct 2020 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/record-layer-101/</guid>
-      <description>Abstract The FoundationDB Record Layer is an open source library that provides a record-oriented datastore with semantic similar to a relational database, implemented on top of FoundationDB. It is highly used within Apple by CloudKit, Apple’s cloud backend service to host billions of independent databases, many with a common schema.
-In this talk, we will dig into the paper and the library&amp;rsquo;s concepts and feature. You will also discover how to use the library from a developer&amp;rsquo;s point-of-view, with examples taken from ETCD-Layer and Record-Store.</description>
+      <description>Abstract The FoundationDB Record Layer is an open source library that provides a record-oriented datastore with semantic similar to a relational database, implemented on top of FoundationDB. It is highly used within Apple by CloudKit, Apple’s cloud backend service to host billions of independent databases, many with a common schema.&#xA;In this talk, we will dig into the paper and the library&amp;rsquo;s concepts and feature. You will also discover how to use the library from a developer&amp;rsquo;s point-of-view, with examples taken from ETCD-Layer and Record-Store.</description>
     </item>
-    
     <item>
       <title>Building a Messaging Solutions for OVHcloud with Apache Pulsar</title>
       <link>https://pierrezemb.fr/talks/messaging-solution-pulsar/</link>
       <pubDate>Tue, 16 Jun 2020 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/messaging-solution-pulsar/</guid>
-      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.
-Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;rsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
+      <description>Abstract OVHcloud is the biggest European cloud provider. From dedicated servers to Managed Kubernetes, from VMware® based Hosted Private Cloud to OpenStack-based Public Cloud, we have over 1.4 million customers worldwide.&#xA;Internally, we have been running Apache Kafka for years, and despite all the skills obtained operating multiples clusters with millions of messages per second, we decided to shift and build the foundation of our &amp;rsquo;topic-as-a-service&amp;rsquo; product called ioStream on Apache Pulsar.</description>
     </item>
-    
     <item>
       <title>Introducing Kafka-on-Pulsar: Bring native Kafka protocol support to Apache Pulsar</title>
       <link>https://pierrezemb.fr/talks/announcing-kop/</link>
       <pubDate>Tue, 31 Mar 2020 01:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/announcing-kop/</guid>
-      <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.
-In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
+      <description>Abstract Kafka-on-Pulsar has been one of the most anticipated features in the Pulsar ecosystem. The Kafka-on-Pulsar project was initiated by StreamNative and the OVHCloud team quickly joined the project to collaborate on its development. Kafka-on-Pulsar enables Kafka applications to leverage Pulsar’s powerful features, such as streamlined operations with enterprise-grade multi-tenancy, without modifying code.&#xA;In this webinar, Sijie Guo, from StreamNative, and Pierre Zemb, from OVHCloud, will introduce KoP and discuss the following:</description>
     </item>
-    
     <item>
       <title>Bookkeeper 101</title>
       <link>https://pierrezemb.fr/talks/bookkeeper-101/</link>
       <pubDate>Tue, 08 Oct 2019 12:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/bookkeeper-101/</guid>
-      <description>Abstract Apache Bookkeeper is the main datastore used by Apache Pulsar. This Top-Level Apache project is defined as « A scalable, fault-tolerant, and low-latency storage service optimized for real-time workloads ». BookKeeper is suitable for a wide variety of use cases, from WAL to storage. In this talk, we will dive into Bookkeeper’s concepts, the public API, deployments and how it is used within Pulsar.
-Occurences HUG France: Special Apache Pulsar Meetup Ressources slides Photos and tweets Si vous cherchez à organiser les MeetUP, nos bureaux à Paris, Nantes, Rennes, Lyon, Bordeaux, Brest, Wroclaw, Madrid, Milan, London, Montreal, Dallas, Reston sont dispo gratos.</description>
+      <description>Abstract Apache Bookkeeper is the main datastore used by Apache Pulsar. This Top-Level Apache project is defined as « A scalable, fault-tolerant, and low-latency storage service optimized for real-time workloads ». BookKeeper is suitable for a wide variety of use cases, from WAL to storage. In this talk, we will dive into Bookkeeper’s concepts, the public API, deployments and how it is used within Pulsar.&#xA;Occurences HUG France: Special Apache Pulsar Meetup Ressources slides Photos and tweets Si vous cherchez à organiser les MeetUP, nos bureaux à Paris, Nantes, Rennes, Lyon, Bordeaux, Brest, Wroclaw, Madrid, Milan, London, Montreal, Dallas, Reston sont dispo gratos.</description>
     </item>
-    
     <item>
       <title>Monitoring OVH: 300k servers, 27 DCs and one metrics platform</title>
       <link>https://pierrezemb.fr/talks/one-monitoring-platform/</link>
       <pubDate>Sun, 19 May 2019 17:24:34 +0200</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/one-monitoring-platform/</guid>
-      <description>Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?
-In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure.</description>
+      <description>Abstract What to do when you must monitor the whole infrastructure of the biggest European hosting and cloud provider? How to choose a tool when the most used ones fail to scale to your needs? How to build an Metrics platform to unify, conciliate and replace years of fragmented legacy partial solutions?&#xA;In this talk we will relate our experience building and maintaining OVH Metrics, the platform used to monitor all OVH infrastructure.</description>
     </item>
-    
     <item>
       <title>Operate JVM at Scale</title>
       <link>https://pierrezemb.fr/talks/handling-jvm-scale/</link>
       <pubDate>Mon, 06 May 2019 22:18:13 +0200</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/handling-jvm-scale/</guid>
       <description>Abstract OVH has 27 data centers, more than 300 000 servers and 1.3 million customers. We operate one of the world’s largest cloud infrastructures on a daily basis, running millions of applications. Those softwares manage millions of transactions every second. To monitor such an architecture, OVH has chosen to build a unified monitoring platform: OVH Metrics Data Platform. Such a platform uses complex distributed systems to operate, based mainly on open source tools running on the JVM (Apache Kafka, Apache HBase, Warp 10, …).</description>
     </item>
-    
     <item>
       <title>Handling alerts at OVH-Scale with Apache Flink</title>
       <link>https://pierrezemb.fr/talks/ovh-alerts-flink/</link>
       <pubDate>Thu, 18 Apr 2019 22:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/ovh-alerts-flink/</guid>
       <description>Abstract OVH relies heavily on metrics to effectively monitor its entire infrastructure. Offering a low-level vision and business, these allow teams to better operate the daily operation of our services. After managing more than 300 TB of telemetry, we started working on an alerting solution over this huge datalake. For that, we decided to use Apache Flink to manage all these large scale alerts. Today, this project manages the alerting of flagship OVH products such as Public Cloud Instances and Kubernetes.</description>
     </item>
-    
     <item>
       <title>What we learned as DevOps @OVH</title>
       <link>https://pierrezemb.fr/talks/devops-ovh/</link>
       <pubDate>Wed, 06 Mar 2019 22:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/devops-ovh/</guid>
       <description>Abstract Have you been wondered what is like to be working at the largest European Cloud Provider as a DevOps ? Despite both working on differents teams and products, we have a lot in common, such as good practices, organizations, technologies and even our good mood ! Time to lift the curtain! We will share with you perspectives from two DevOps: one working on OVH managed Kubernetes product and one working on Metrics, OVH distributed monitoring platform.</description>
     </item>
-    
     <item>
       <title>Rediscover the known data universe with NASA dataset</title>
       <link>https://pierrezemb.fr/talks/nasa-datasets/</link>
       <pubDate>Sat, 15 Dec 2018 19:11:11 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/nasa-datasets/</guid>
-      <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?
-It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.
-During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
+      <description>Abstract For many years humanity has been exploring the skies, dreaming of interstellar voyages and new planetary colonies. And you, do you want to go 3h with us to discover the universe?&#xA;It turns out that NASA has a great public dataset, especially one that is used to search for exoplanets, that is, planets outside our solar system.&#xA;During this Hands-on, we will guide you through the different stages of rediscovering exoplanets using Warp10, an open-source time series processing platform.</description>
     </item>
-    
     <item>
       <title>One day into the Time Series&#39;s world</title>
       <link>https://pierrezemb.fr/talks/one-day-timeseries/</link>
       <pubDate>Sun, 11 Nov 2018 22:22:36 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/one-day-timeseries/</guid>
-      <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.
-Schedule Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets Ressources slides </description>
+      <description>Abstract This is a one-day course I am giving at my former engineering school ISEN Brest.&#xA;Schedule Introduction to Time Series Time Series in real life Code instrumentation Lab: searching for exoplanets Ressources slides </description>
     </item>
-    
     <item>
       <title>Metrics Experience beyond protocols</title>
       <link>https://pierrezemb.fr/talks/metrics-experience/</link>
       <pubDate>Sat, 16 Dec 2017 15:38:52 +0100</pubDate>
-      
       <guid>https://pierrezemb.fr/talks/metrics-experience/</guid>
-      <description>Occurences Paris Open Source Summit, 2017 Ressources The slides are available here.
-Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW
-&amp;mdash; Collignon Rémi (@miton1810) December 7, 2017 </description>
+      <description>Occurences Paris Open Source Summit, 2017 Ressources The slides are available here.&#xA;Photos and Tweets Let&amp;#39;s discover @OvhMetrics experience with @PierreZ at #OSSPARIS17 pic.twitter.com/Xz1tRTNcFW&#xA;&amp;mdash; Collignon Rémi (@miton1810) December 7, 2017 </description>
     </item>
-    
   </channel>
 </rss>

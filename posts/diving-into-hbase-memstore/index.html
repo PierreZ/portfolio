@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>Diving into Hbase&#39;s MemStore - Pierre Zemb</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Diving into Hbase&#39;s MemStore" />
+        <title>Diving into Hbase&#39;s MemStore - Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:title" content="Diving into Hbase&#39;s MemStore" />
 <meta property="og:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
 tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore? The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
@@ -12,19 +12,20 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-11-17T10:24:27+01:00" />
-<meta property="article:modified_time" content="2019-11-17T10:24:27+01:00" /><meta property="og:site_name" content="My cool site" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Diving into Hbase&#39;s MemStore"/>
+<meta property="article:modified_time" content="2019-11-17T10:24:27+01:00" /><meta property="og:site_name" content="Pierre Zemb" />
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Diving into Hbase&#39;s MemStore"/>
 <meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into the implementation behind Hbase&rsquo;s MemStore.
 tl;dr: Hbase is using the ConcurrentSkipListMap.
 What is the MemStore? The memtable from the official BigTable paper is the equivalent of the MemStore in Hbase.
 As rows are sorted lexicographically in Hbase, when data comes in, you need to have some kind of a in-memory buffer to order those keys."/>
-<meta name="application-name" content="My cool site">
-<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="twitter:site" content="@PierreZ"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/colossus-google/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="prev" href="https://pierrezemb.fr/posts/colossus-google/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
@@ -49,7 +50,7 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="Pierre Zemb">~/blog</a>
+            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
@@ -72,7 +73,7 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="Pierre Zemb">~/blog</a>
+                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -155,17 +156,17 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 <p>All extract of code for this section are taken from <a href="https://github.com/apache/hbase/tree/rel/1.4.9" target="_blank" rel="noopener noreffer ">rel/1.4.9</a> tag.</p>
 <h3 id="in-memory-storage">in-memory storage</h3>
 <p>The <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L35" target="_blank" rel="noopener noreffer ">MemStore interface</a> is giving us insight on how it is working internally.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * Write an update
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * @param cell
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * @return approximate size of the passed cell.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">add</span><span class="o">(</span><span class="kd">final</span> <span class="n">Cell</span> <span class="n">cell</span><span class="o">);</span>
-</span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L68-L73" target="_blank" rel="noopener noreffer ">add function on the MemStore</a></p>
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">long</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">Cell</span><span class="w"> </span><span class="n">cell</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L68-L73" target="_blank" rel="noopener noreffer ">add function on the MemStore</a></p>
 <p>The implementation is hold by <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/DefaultMemStore.java" target="_blank" rel="noopener noreffer ">DefaultMemStore</a>. <code>add</code> is wrapped by several functions, but in the end, we are arriving here:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">addToCellSet</span><span class="o">(</span><span class="n">Cell</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">boolean</span> <span class="n">b</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">activeSection</span><span class="o">.</span><span class="na">getCellSkipListSet</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-</span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/DefaultMemStore.java#L202-L213" target="_blank" rel="noopener noreffer ">addToCellSet on the DefaultMemStore</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">addToCellSet</span><span class="p">(</span><span class="n">Cell</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">activeSection</span><span class="p">.</span><span class="na">getCellSkipListSet</span><span class="p">().</span><span class="na">add</span><span class="p">(</span><span class="n">e</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/DefaultMemStore.java#L202-L213" target="_blank" rel="noopener noreffer ">addToCellSet on the DefaultMemStore</a></p>
 <p><a href="https://github.com/apache/hbase/blob/rel/1.4.9/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSkipListSet.java#L33-L48" target="_blank" rel="noopener noreffer ">CellSkipListSet class</a> is built on top of <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentSkipListMap.html" target="_blank" rel="noopener noreffer ">ConcurrentSkipListMap</a>, which provide nice features:</p>
 <ul>
 <li>concurrency</li>
@@ -182,14 +183,14 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 <h3 id="storing-data">storing data</h3>
 <p><strong>All extract of code starting from here are taken from <a href="https://github.com/apache/hbase/tree/rel/2.1.2" target="_blank" rel="noopener noreffer ">rel/2.1.2</a> tag.</strong></p>
 <p>Does <code>MemStore</code> interface changed?</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * Write an update
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * @param cell
 </span></span></span><span class="line"><span class="cl"><span class="cm">   * @param memstoreSizing The delta in memstore size will be passed back via this.
 </span></span></span><span class="line"><span class="cl"><span class="cm">   *        This will include both data size and heap overhead delta.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="kd">final</span> <span class="n">Cell</span> <span class="n">cell</span><span class="o">,</span> <span class="n">MemStoreSizing</span> <span class="n">memstoreSizing</span><span class="o">);</span>
-</span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L67-L73" target="_blank" rel="noopener noreffer ">add function in MemStore interface</a></p>
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">Cell</span><span class="w"> </span><span class="n">cell</span><span class="p">,</span><span class="w"> </span><span class="n">MemStoreSizing</span><span class="w"> </span><span class="n">memstoreSizing</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>&ndash; <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/MemStore.java#L67-L73" target="_blank" rel="noopener noreffer ">add function in MemStore interface</a></p>
 <p>The signature changed a bit, to include passing a object instead of returning a long. Moving on.</p>
 <p>The new structure implementing MemStore is called <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/AbstractMemStore.java#L42" target="_blank" rel="noopener noreffer ">AbstractMemStore</a>. Again, we have some layers, where AbstractMemStore is writing to a <code>MutableSegment</code>, which itsef is wrapping <code>Segment</code>. If you dig far enough, you will find that data are stored into the <a href="https://github.com/apache/hbase/blob/rel/2.1.2/hbase-server/src/main/java/org/apache/hadoop/hbase/regionserver/CellSet.java#L35-L51" target="_blank" rel="noopener noreffer ">CellSet class</a> which is also things built on top of <strong>ConcurrentSkipListMap</strong>!</p>
 <h3 id="in-memory-compactions">in-memory Compactions</h3>
@@ -222,8 +223,8 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.112.7">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.121.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
@@ -232,5 +233,5 @@ As rows are sorted lexicographically in Hbase, when data comes in, you need to h
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
 </html>
