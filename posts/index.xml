@@ -3,7 +3,16 @@
         <title>All Posts - Pierre Zemb</title>
         <link>https://pierrezemb.fr/posts/</link>
         <description>All Posts | Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
+    <link>https://pierrezemb.fr/posts/academic-conferences/</link>
+    <pubDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</pubDate>
+    <author>Pierre Zemb</author>
+    <guid>https://pierrezemb.fr/posts/academic-conferences/</guid>
+    <description><![CDATA[I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there&rsquo;s another source of information I&rsquo;ve been using for a long time that not many people know about: academic papers.
+You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often dive deeper into specific aspects of infrastructure.]]></description>
+</item>
+<item>
     <title>Best resources to learn about data and distributed systems</title>
     <link>https://pierrezemb.fr/posts/distsys-resources/</link>
     <pubDate>Mon, 17 Jan 2022 01:37:27 &#43;0100</pubDate>
@@ -90,16 +99,6 @@ We are excited to announce that StreamNative and OVHcloud are open-sourcing &ldq
 In today&rsquo;s blogpost, we&rsquo;re going to take a look at our upstream contribution to Apache HBase&rsquo;s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud&rsquo;s monitoring.
 The context Have you ever wondered how:
 we generate the graphs for your OVHcloud server or web hosting package?]]></description>
-</item>
-<item>
-    <title>Notes about FoundationDB</title>
-    <link>https://pierrezemb.fr/posts/notes-about-foundationdb/</link>
-    <pubDate>Thu, 30 Jan 2020 10:24:27 &#43;0100</pubDate>
-    <author>Pierre Zemb</author>
-    <guid>https://pierrezemb.fr/posts/notes-about-foundationdb/</guid>
-    <description><![CDATA[Notes About is a blogpost serie you will find a lot of links, videos, quotes, podcasts to click on about a specific topic. Today we will discover FoundationDB.
-Overview of FoundationDB As stated in the official documentation:
-FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations.]]></description>
 </item>
 </channel>
 </rss>
