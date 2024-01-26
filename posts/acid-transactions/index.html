@@ -21,7 +21,7 @@ As developers, we are interacting oftenly with data, whenever handling it from a
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/acid-transactions/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/hbase-data-model/" /><link rel="next" href="https://pierrezemb.fr/posts/ovh-alerts-flink/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="prev" href="https://pierrezemb.fr/posts/hbase-data-model/" /><link rel="next" href="https://pierrezemb.fr/posts/ovh-alerts-flink/" /><link rel="stylesheet" href="/css/style.min.87bf1911dd101ec4f361dc638848b84bc1cdf6bfede2bce9f7291cbf99fdcc4d.css" integrity="sha256-h78ZEd0QHsTzYdxjiEi4S8HN9r/t4rzp9ykcv5n9zE0="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
@@ -62,7 +62,8 @@ As developers, we are interacting oftenly with data, whenever handling it from a
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
                     <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
+                </a>
+            </div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -105,7 +106,7 @@ As developers, we are interacting oftenly with data, whenever handling it from a
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">What are ACID transactions?</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/transaction/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>transaction</a>&nbsp;<a href="/categories/sql/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>sql</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/transaction/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>transaction</a>&nbsp;<a href="/categories/sql/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>sql</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-02-03">2019-02-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;718 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
@@ -131,13 +132,13 @@ As developers, we are interacting oftenly with data, whenever handling it from a
 </code></pre>
 <p>&mdash; Programming Elixir 1.3 by Dave Thomas</p>
 <hr>
-<p>As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called <strong>relational database management system</strong> or <a href="https://en.wikipedia.org/wiki/Relational_database_management_system" target="_blank" rel="noopener noreffer ">RDBMS</a>. Thanks to them, we, as developers, can develop applications pretty easily, <strong>without the need to implement our own storage solution</strong>. Interacting with <a href="https://www.mysql.com/" target="_blank" rel="noopener noreffer ">mySQL</a> or <a href="https://www.postgresql.org/" target="_blank" rel="noopener noreffer ">PostgreSQL</a> have now become a <strong>commodity</strong>. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:</p>
+<p>As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called <strong>relational database management system</strong> or <a href="https://en.wikipedia.org/wiki/Relational_database_management_system" target="_blank" rel="noopener noreffer">RDBMS</a>. Thanks to them, we, as developers, can develop applications pretty easily, <strong>without the need to implement our own storage solution</strong>. Interacting with <a href="https://www.mysql.com/" target="_blank" rel="noopener noreffer">mySQL</a> or <a href="https://www.postgresql.org/" target="_blank" rel="noopener noreffer">PostgreSQL</a> have now become a <strong>commodity</strong>. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:</p>
 <ul>
 <li>How can we interact with <strong>datastores that can fail?</strong></li>
 <li>What is happening if two users are  <strong>updating a value at the same time?</strong></li>
 </ul>
 <p>As a database user, we are using <code>transactions</code> to answer these questions. As a developer, a transaction is a <strong>single unit of logic or work</strong>, sometimes made up of multiple operations. It is mainly an <strong>abstraction</strong> that we are using to <strong>hide underlying problems</strong>, such as concurrency or hardware faults.</p>
-<p><code>ACID</code> appears in a paper published in 1983 called <a href="https://sites.fas.harvard.edu/~cs265/papers/haerder-1983.pdf" target="_blank" rel="noopener noreffer ">&ldquo;Principles of transaction-oriented database recovery&rdquo;</a> written by <em>Theo Haerder</em> and <em>Andreas Reuter</em>. This paper introduce a terminology of properties for a transaction:</p>
+<p><code>ACID</code> appears in a paper published in 1983 called <a href="https://sites.fas.harvard.edu/~cs265/papers/haerder-1983.pdf" target="_blank" rel="noopener noreffer">&ldquo;Principles of transaction-oriented database recovery&rdquo;</a> written by <em>Theo Haerder</em> and <em>Andreas Reuter</em>. This paper introduce a terminology of properties for a transaction:</p>
 <blockquote>
 <p><strong>A</strong>tomic, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability</p>
 </blockquote>
@@ -155,9 +156,9 @@ As developers, we are interacting oftenly with data, whenever handling it from a
 <thead>
 <tr>
 <th>Isolation level</th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Dirty_reads" target="_blank" rel="noopener noreffer ">dirty reads</a></th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads" target="_blank" rel="noopener noreffer ">Non-repeatable reads</a></th>
-<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Phantom_reads" target="_blank" rel="noopener noreffer ">Phantom reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Dirty_reads" target="_blank" rel="noopener noreffer">dirty reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads" target="_blank" rel="noopener noreffer">Non-repeatable reads</a></th>
+<th><a href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Phantom_reads" target="_blank" rel="noopener noreffer">Phantom reads</a></th>
 <th>Performance</th>
 </tr>
 </thead>
@@ -200,15 +201,15 @@ As developers, we are interacting oftenly with data, whenever handling it from a
 <blockquote>
 <p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
 </blockquote>
-<p>&mdash; <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener noreffer ">Concurrency Control introduction</a></p>
-<p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC" target="_blank" rel="noopener noreffer ">a standard used by the industry</a>.</p>
+<p>&mdash; <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener noreffer">Concurrency Control introduction</a></p>
+<p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC" target="_blank" rel="noopener noreffer">a standard used by the industry</a>.</p>
 <hr>
 <h2 id="durability">Durability</h2>
 <p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
 <h1 id="thats-it">That&rsquo;s it?</h1>
 <p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
 <hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
@@ -218,7 +219,7 @@ As developers, we are interacting oftenly with data, whenever handling it from a
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/acid-transactions/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/acid-transactions/" data-title="What are ACID transactions?"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -245,5 +246,5 @@ As developers, we are interacting oftenly with data, whenever handling it from a
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.5.4/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
 </html>

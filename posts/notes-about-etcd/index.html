@@ -20,7 +20,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-etcd/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/ten-years-programming/" /><link rel="next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="prev" href="https://pierrezemb.fr/posts/ten-years-programming/" /><link rel="next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/css/style.min.87bf1911dd101ec4f361dc638848b84bc1cdf6bfede2bce9f7291cbf99fdcc4d.css" integrity="sha256-h78ZEd0QHsTzYdxjiEi4S8HN9r/t4rzp9ykcv5n9zE0="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
@@ -61,7 +61,8 @@
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
                     <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
+                </a>
+            </div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -104,7 +105,7 @@
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about ETCD</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/etcd/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>etcd</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>notesabout</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/etcd/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>etcd</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>notesabout</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2021-01-11">2021-01-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;2034 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;10 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
@@ -151,7 +152,7 @@
         title="etcd image" /></p>
 <p><a href="/tags/notesabout/" rel="">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover ETCD.</p>
 <h2 id="overview-of-etcd">Overview of ETCD</h2>
-<p>As stated in the <a href="https://etcd.io/" target="_blank" rel="noopener noreffer ">official documentation</a>:</p>
+<p>As stated in the <a href="https://etcd.io/" target="_blank" rel="noopener noreffer">official documentation</a>:</p>
 <blockquote>
 <p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
 </blockquote>
@@ -178,10 +179,10 @@
 <ul>
 <li>using <a href="/posts/notes-about-raft/" rel="">the raft consensus algorithm</a>,</li>
 <li>a single group raft,</li>
-<li>using <a href="https://grpc.io/" target="_blank" rel="noopener noreffer ">gRPC</a> for communication,</li>
+<li>using <a href="https://grpc.io/" target="_blank" rel="noopener noreffer">gRPC</a> for communication,</li>
 <li>using a self-made WAL implementation,</li>
 <li>storing key-values into bbolt,</li>
-<li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a href="https://en.wikipedia.org/wiki/PACELC_theorem" target="_blank" rel="noopener noreffer ">in terms of the PACELC theorem</a>).</li>
+<li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a href="https://en.wikipedia.org/wiki/PACELC_theorem" target="_blank" rel="noopener noreffer">in terms of the PACELC theorem</a>).</li>
 </ul>
 <h3 id="consensus-raft">Consensus? Raft?</h3>
 <ul>
@@ -294,7 +295,7 @@
 </blockquote>
 <p>ETCD implements <code>ReadIndex</code> read(more info on <a href="/posts/diving-into-etcd-linearizable/" rel="">Diving into ETCD’s linearizable reads</a>).</p>
 <h3 id="how-etcd-is-using-bbolt">How ETCD is using bbolt</h3>
-<p><a href="https://github.com/etcd-io/bbolt" target="_blank" rel="noopener noreffer ">bbolt</a> is the underlying kv used in etcd. <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214" target="_blank" rel="noopener noreffer ">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68" target="_blank" rel="noopener noreffer ">a B-Tree is used</a>.</p>
+<p><a href="https://github.com/etcd-io/bbolt" target="_blank" rel="noopener noreffer">bbolt</a> is the underlying kv used in etcd. <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214" target="_blank" rel="noopener noreffer">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68" target="_blank" rel="noopener noreffer">a B-Tree is used</a>.</p>
 <blockquote>
 <ul>
 <li>Bolt allows only one read-write transaction at a time but allows as many read-only transactions as you want at a time.</li>
@@ -306,7 +307,7 @@
 <li>Etcd implements multi-version-concurrency-control (MVCC) on top of Boltdb</li>
 </ul>
 </blockquote>
-<p><a href="https://github.com/etcd-io/etcd/issues/12169#issuecomment-673292122" target="_blank" rel="noopener noreffer ">From an Github issue</a>:</p>
+<p><a href="https://github.com/etcd-io/etcd/issues/12169#issuecomment-673292122" target="_blank" rel="noopener noreffer">From an Github issue</a>:</p>
 <blockquote>
 <p>Note that the underlying <code>bbolt</code> mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.</p>
 </blockquote>
@@ -315,7 +316,7 @@
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p><a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159" target="_blank" rel="noopener noreffer ">The interface can be found here</a>.</p>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159" target="_blank" rel="noopener noreffer">The interface can be found here</a>.</p>
 <ul>
 <li>Create use TTL and Txn</li>
 <li>Get use KV.Get</li>
@@ -325,7 +326,7 @@
 <li>Watch uses Watch with a channel</li>
 </ul>
 <h2 id="jepsen">Jepsen</h2>
-<p>The Jepsen team tested <a href="https://jepsen.io/analyses/etcd-3.4.3" target="_blank" rel="noopener noreffer ">etcd-3.4.3</a>, here&rsquo;s some quotes:</p>
+<p>The Jepsen team tested <a href="https://jepsen.io/analyses/etcd-3.4.3" target="_blank" rel="noopener noreffer">etcd-3.4.3</a>, here&rsquo;s some quotes:</p>
 <blockquote>
 <p>In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.</p>
 </blockquote>
@@ -340,7 +341,7 @@
 </blockquote>
 <h2 id="operation-notes">Operation notes</h2>
 <h3 id="deployements-tips">Deployements tips</h3>
-<p><a href="https://etcd.io/docs/v3.4.0/faq/" target="_blank" rel="noopener noreffer ">From the official documentation</a>:</p>
+<p><a href="https://etcd.io/docs/v3.4.0/faq/" target="_blank" rel="noopener noreffer">From the official documentation</a>:</p>
 <blockquote>
 <p>Since etcd writes data to disk, SSD is highly recommended.
 To prevent performance degradation or unintentionally overloading the key-value store, etcd enforces a configurable storage size quota set to 2GB by default.
@@ -352,7 +353,7 @@ To avoid swapping or running out of memory, the machine should have at least as 
 <p>After compacting the keyspace, the backend database may exhibit internal fragmentation.
 Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.</p>
 </blockquote>
-<p>Defrag is basically <a href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349" target="_blank" rel="noopener noreffer ">dumping the bbolt tree on disk and reopening it</a>.</p>
+<p>Defrag is basically <a href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349" target="_blank" rel="noopener noreffer">dumping the bbolt tree on disk and reopening it</a>.</p>
 <h3 id="snapshot">Snapshot</h3>
 <p>An ETCD snapshot is related to Raft&rsquo;s snapshot:</p>
 <blockquote>
@@ -361,16 +362,16 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 <p>Snapshot can be saved using <code>etcdctl</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">etcdctl snapshot save backup.db
 </span></span></code></pre></div><h3 id="lease-1">Lease</h3>
-<p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497" target="_blank" rel="noopener noreffer ">create some issues</a>:</p>
+<p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497" target="_blank" rel="noopener noreffer">create some issues</a>:</p>
 <blockquote>
 <p>The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.</p>
 </blockquote>
 <h3 id="war-stories">War stories</h3>
 <ul>
-<li><a href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/" target="_blank" rel="noopener noreffer ">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
-<li><a href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/" target="_blank" rel="noopener noreffer ">How a production outage in Grafana Cloud&rsquo;s Hosted Prometheus service was caused by a bad etcd client setup</a></li>
-<li><a href="https://github.com/etcd-io/etcd/issues/11884" target="_blank" rel="noopener noreffer ">Random performance issue on etcd 3.4</a></li>
-<li><a href="https://arxiv.org/pdf/2004.00372.pdf" target="_blank" rel="noopener noreffer ">Impact of etcd deployment on Kubernetes, Istio, and application performance</a></li>
+<li><a href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/" target="_blank" rel="noopener noreffer">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
+<li><a href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/" target="_blank" rel="noopener noreffer">How a production outage in Grafana Cloud&rsquo;s Hosted Prometheus service was caused by a bad etcd client setup</a></li>
+<li><a href="https://github.com/etcd-io/etcd/issues/11884" target="_blank" rel="noopener noreffer">Random performance issue on etcd 3.4</a></li>
+<li><a href="https://arxiv.org/pdf/2004.00372.pdf" target="_blank" rel="noopener noreffer">Impact of etcd deployment on Kubernetes, Istio, and application performance</a></li>
 </ul>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
@@ -381,7 +382,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -408,5 +409,5 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.5.4/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
 </html>
