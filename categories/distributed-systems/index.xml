@@ -3,7 +3,16 @@
         <title>distributed-systems - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/distributed-systems/</link>
         <description>distributed-systems - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/distributed-systems/" rel="self" type="application/rss+xml" /><item>
+    <title>True idempotent transactions with FoundationDB 7.3</title>
+    <link>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</link>
+    <pubDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</pubDate>
+    <author>Pierre Zemb</author>
+    <guid>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</guid>
+    <description><![CDATA[I have been working around FoundationDB for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: commit_unknown_result.
+Transactions with unknown results When you start writing code with FDB, you may be under the assertions that given the database’s robustness, you will not experience some strange behavior under certain failure scenarios. Turns out, there is one scenario that is possible to reach, and quickly explained in the official documentation:]]></description>
+</item>
+<item>
     <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
     <link>https://pierrezemb.fr/posts/academic-conferences/</link>
     <pubDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</pubDate>

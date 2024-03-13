@@ -3,12 +3,20 @@
         <title>Categories - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/</link>
         <description>Categories - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
     <title>distributed-systems</title>
     <link>https://pierrezemb.fr/categories/distributed-systems/</link>
-    <pubDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</pubDate>
+    <pubDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/categories/distributed-systems/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>FoundationDB</title>
+    <link>https://pierrezemb.fr/categories/foundationdb/</link>
+    <pubDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</pubDate>
+    <author>Pierre Zemb</author>
+    <guid>https://pierrezemb.fr/categories/foundationdb/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>
@@ -41,14 +49,6 @@
     <pubDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/categories/sql/</guid>
-    <description><![CDATA[]]></description>
-</item>
-<item>
-    <title>FoundationDB</title>
-    <link>https://pierrezemb.fr/categories/foundationdb/</link>
-    <pubDate>Sun, 21 Feb 2021 00:24:27 &#43;0100</pubDate>
-    <author>Pierre Zemb</author>
-    <guid>https://pierrezemb.fr/categories/foundationdb/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>

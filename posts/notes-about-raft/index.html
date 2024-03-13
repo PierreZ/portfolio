@@ -20,7 +20,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-raft/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/announcing-kop/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/" /><link rel="stylesheet" href="/css/style.min.87bf1911dd101ec4f361dc638848b84bc1cdf6bfede2bce9f7291cbf99fdcc4d.css" integrity="sha256-h78ZEd0QHsTzYdxjiEi4S8HN9r/t4rzp9ykcv5n9zE0="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="prev" href="https://pierrezemb.fr/posts/announcing-kop/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
     {
@@ -61,8 +61,7 @@
                         </span>
                     </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
                     <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -105,7 +104,7 @@
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about Raft's paper</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/raft/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>raft</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>notesabout</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/raft/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>raft</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>notesabout</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2020-07-30">2020-07-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1780 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;9 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
@@ -149,9 +148,9 @@
         title="raft_image" /></p>
 <p><a href="/tags/notesabout/" rel="">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover Raft&rsquo;s paper called &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;.</p>
 <hr>
-<p>As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener noreffer">here</a> and I&rsquo;m also playing with the amazing <a href="https://github.com/pingcap/talent-plan/tree/master/courses/dss/raft" target="_blank" rel="noopener noreffer">Raft labs made by PingCAP</a>.</p>
+<p>As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener noreffer ">here</a> and I&rsquo;m also playing with the amazing <a href="https://github.com/pingcap/talent-plan/tree/master/courses/dss/raft" target="_blank" rel="noopener noreffer ">Raft labs made by PingCAP</a>.</p>
 <blockquote>
-<p>These labs are derived from the <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html" target="_blank" rel="noopener noreffer">lab2:raft</a> and <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html" target="_blank" rel="noopener noreffer">lab3:kvraft</a> from the famous <a href="http://nil.csail.mit.edu/6.824/2018/index.html" target="_blank" rel="noopener noreffer">MIT 6.824</a> course but rewritten in Rust.</p>
+<p>These labs are derived from the <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html" target="_blank" rel="noopener noreffer ">lab2:raft</a> and <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html" target="_blank" rel="noopener noreffer ">lab3:kvraft</a> from the famous <a href="http://nil.csail.mit.edu/6.824/2018/index.html" target="_blank" rel="noopener noreffer ">MIT 6.824</a> course but rewritten in Rust.</p>
 </blockquote>
 <h2 id="abstract">Abstract</h2>
 <blockquote>
@@ -188,14 +187,14 @@
 <h2 id="whats-wrong-with-paxos">What’s wrong with Paxos?</h2>
 <p>The paper is listing the drawbacks of Paxos:</p>
 <ul>
-<li>difficult to understand, and <a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf" target="_blank" rel="noopener noreffer">I can&rsquo;t blame them</a></li>
+<li>difficult to understand, and <a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf" target="_blank" rel="noopener noreffer ">I can&rsquo;t blame them</a></li>
 <li>many details are missing from the paper to implement <code>Multi-Paxos</code> as the paper is mainly describing <code>single-decree Paxos</code></li>
 </ul>
 <blockquote>
 <p>It is simpler and more efficient to design a system around a log, where new entries are appended sequentially in a constrained order.</p>
 </blockquote>
 <blockquote>
-<p>As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf" target="_blank" rel="noopener noreffer">Chubby</a> implementers is typical:</p>
+<p>As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf" target="_blank" rel="noopener noreffer ">Chubby</a> implementers is typical:</p>
 </blockquote>
 <blockquote>
 <blockquote>
@@ -254,7 +253,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <li><strong>Append-Entries RPCs</strong> are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.</li>
 </ul>
 <h3 id="leader-election">Leader election</h3>
-<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#election" target="_blank" rel="noopener noreffer">here</a>.</p>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#election" target="_blank" rel="noopener noreffer ">here</a>.</p>
 <p>The key-point of the election are the fact that:</p>
 <ul>
 <li>nodes vote for themselves,</li>
@@ -273,7 +272,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <p>Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).</p>
 </blockquote>
 <h3 id="log-replication">Log replication</h3>
-<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#replication" target="_blank" rel="noopener noreffer">here</a>.</p>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#replication" target="_blank" rel="noopener noreffer ">here</a>.</p>
 <blockquote>
 <p>Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.</p>
 </blockquote>
@@ -337,7 +336,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <p>Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.</p>
 </blockquote>
 <hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer">Twitter</a> if needed.</p>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
@@ -347,7 +346,7 @@ the final system will be based on an un-proven protocol [4].</p>
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -374,5 +373,5 @@ the final system will be based on an un-proven protocol [4].</p>
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
             </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.5.4/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
 </html>

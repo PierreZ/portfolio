@@ -2,11 +2,13 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://pierrezemb.fr/categories/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/categories/distributed-systems/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/categories/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/categories/distributed-systems/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/categories/foundationdb/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/posts/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/learning/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/posts/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/academic-conferences/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/simulation-bdd/</loc><lastmod>2023-06-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/</loc><lastmod>2023-06-01T01:22:36&#43;01:00</lastmod></url><url>
@@ -32,7 +34,6 @@
             <loc>https://pierrezemb.fr/categories/sql/</loc><lastmod>2021-06-04T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/lessons-learned-from-operating-etcd/</loc><lastmod>2021-05-02T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</loc><lastmod>2021-02-21T00:24:27&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/categories/foundationdb/</loc><lastmod>2021-02-21T00:24:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</loc><lastmod>2021-02-19T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/podcasts/em-62/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/electro-monkeys/</loc><lastmod>2021-01-20T01:22:36&#43;01:00</lastmod></url><url>
