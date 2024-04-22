@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>podcast - Category - Pierre Zemb</title>
+        <title>Podcast - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/podcast/</link>
-        <description>podcast - Category - Pierre Zemb</description>
+        <description>Podcast - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 03 Mar 2022 01:23:36 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/podcast/" rel="self" type="application/rss+xml" /><item>
     <title>🇫🇷 Message à caractère informatique 64: Des sirènes, des crabes coreutils mais pas d&#39;enclave de blu ray ?</title>
     <link>https://pierrezemb.fr/podcasts/maci-64/</link>

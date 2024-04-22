@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>personal - Category - Pierre Zemb</title>
+        <title>Personal - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/personal/</link>
-        <description>personal - Category - Pierre Zemb</description>
+        <description>Personal - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 30 Sep 2020 00:24:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/personal/" rel="self" type="application/rss+xml" /><item>
     <title>10 years of programming and counting 🚀</title>
     <link>https://pierrezemb.fr/posts/ten-years-programming/</link>

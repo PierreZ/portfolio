@@ -3,24 +3,24 @@
         <title>Categories - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/</link>
         <description>Categories - Category - Pierre Zemb</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
-    <title>distributed-systems</title>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Apr 2024 00:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Distributed-Systems</title>
     <link>https://pierrezemb.fr/categories/distributed-systems/</link>
-    <pubDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</pubDate>
+    <pubDate>Mon, 22 Apr 2024 00:37:27 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/categories/distributed-systems/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>FoundationDB</title>
+    <title>Foundationdb</title>
     <link>https://pierrezemb.fr/categories/foundationdb/</link>
-    <pubDate>Tue, 12 Mar 2024 00:37:27 &#43;0100</pubDate>
+    <pubDate>Mon, 22 Apr 2024 00:37:27 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
     <guid>https://pierrezemb.fr/categories/foundationdb/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>learning</title>
+    <title>Learning</title>
     <link>https://pierrezemb.fr/categories/learning/</link>
     <pubDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -28,7 +28,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>maci</title>
+    <title>Maci</title>
     <link>https://pierrezemb.fr/categories/maci/</link>
     <pubDate>Thu, 03 Mar 2022 01:23:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -36,7 +36,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>podcast</title>
+    <title>Podcast</title>
     <link>https://pierrezemb.fr/categories/podcast/</link>
     <pubDate>Thu, 03 Mar 2022 01:23:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -44,7 +44,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>sql</title>
+    <title>Sql</title>
     <link>https://pierrezemb.fr/categories/sql/</link>
     <pubDate>Fri, 04 Jun 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -52,7 +52,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>electro-monkeys</title>
+    <title>Electro-Monkeys</title>
     <link>https://pierrezemb.fr/categories/electro-monkeys/</link>
     <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -60,7 +60,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>etcd</title>
+    <title>Etcd</title>
     <link>https://pierrezemb.fr/categories/etcd/</link>
     <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -68,7 +68,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>raft</title>
+    <title>Raft</title>
     <link>https://pierrezemb.fr/categories/raft/</link>
     <pubDate>Wed, 20 Jan 2021 01:22:36 &#43;0100</pubDate>
     <author>Pierre Zemb</author>
@@ -76,7 +76,7 @@
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>notesabout</title>
+    <title>Notesabout</title>
     <link>https://pierrezemb.fr/categories/notesabout/</link>
     <pubDate>Mon, 11 Jan 2021 00:24:27 &#43;0100</pubDate>
     <author>Pierre Zemb</author>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Redwood’s memory tuning in FoundationDB - Pierre Zemb</title><meta name="Description" content="Learn how to tune FoundationDB for Redwood storage Engine"><meta property="og:title" content="Redwood’s memory tuning in FoundationDB" />
+<meta property="og:description" content="Learn how to tune FoundationDB for Redwood storage Engine" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-04-22T00:37:27+01:00" />
+<meta property="article:modified_time" content="2024-04-22T00:37:27+01:00" /><meta property="og:site_name" content="Pierre Zemb" />
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Redwood’s memory tuning in FoundationDB"/>
+<meta name="twitter:description" content="Learn how to tune FoundationDB for Redwood storage Engine"/>
+      <meta name="twitter:site" content="@PierreZ"/>
+<meta name="application-name" content="Pierre Zemb">
+<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" />
+<link rel="prev" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Redwood’s memory tuning in FoundationDB",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/readme\/"
+        },"genre": "posts","wordcount":  558 ,
+        "url": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/readme\/","datePublished": "2024-04-22T00:37:27+01:00","dateModified": "2024-04-22T00:37:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Pierre Zemb"
+            },"description": "Learn how to tune FoundationDB for Redwood storage Engine"
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Redwood’s memory tuning in FoundationDB</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/foundationdb/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Foundationdb</a>&nbsp;<a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Distributed-Systems</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-04-22">2024-04-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;558 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#btree-page-cache">BTree page cache</a></li>
+    <li><a href="#byte-sample-memory-usage">Byte Sample memory usage</a></li>
+    <li><a href="#the-global-memory-formula">The global memory formula</a></li>
+    <li><a href="#special-thanks">Special thanks</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.</p>
+<h2 id="btree-page-cache">BTree page cache</h2>
+<p>We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:</p>
+<pre tabindex="0"><code>10.0.3.23:4501 ( 65% cpu; 61% machine; 0.010 Gbps; 93% disk IO; 7.5 GB / 7.4 GB RAM  )
+10.0.3.24:4501 ( 61% cpu; 61% machine; 0.010 Gbps; 87% disk IO; 9.7 GB / 7.4 GB RAM  )
+10.0.3.25:4501 ( 69% cpu; 61% machine; 0.010 Gbps; 93% disk IO; 5.4 GB / 7.4 GB RAM  )
+</code></pre><p>This was our first «we need to dig into this» moment with FDB. We couldn’t find the root-cause and we asked the community. Turns out we had a classic page-cache issue which was spotted by <a href="https://forums.foundationdb.org/u/markus.pilman/summary" target="_blank" rel="noopener noreffer ">Markus Pilman</a> and <a href="https://forums.foundationdb.org/u/wmd/summary" target="_blank" rel="noopener noreffer ">William Dowling</a>. While the trace files are pretty verbose, they are containing a lot of information like this one:</p>
+<pre tabindex="0"><code>&#34;PagerCacheHit&#34;: &#34;39852&#34;,
+&#34;PagerCacheMiss&#34;: &#34;25903&#34;,
+</code></pre><p>Yep, that’s a 40% cache-miss ratio over 5s 😱 This is why the disk was so busy, spending his time moving pages back and forth. We need to bump the memory, but how much? The general recommandation that worked for us is to target around 1-2% of the <code>kvstore_used_bytes</code> metrics. As we have around 1TiB of data per StorageServer, we can add the following config key:</p>
+<pre tabindex="0"><code>cache_memory = 10GiB
+</code></pre><p>Which fixed our cache-miss issue 🎉</p>
+<pre tabindex="0"><code>&#34;PagerCacheHit&#34;: &#34;51968&#34;,
+&#34;PagerCacheMiss&#34;: &#34;432&#34;,
+</code></pre><p> </p>
+<h2 id="byte-sample-memory-usage">Byte Sample memory usage</h2>
+<p>But our problems are still resolved, as we are still seeing some OOM 😭 Because this cluster is storing time-series data, each StorageServers is holding around 1TiB of data. As we were holding more and more data, we saw more and more OOM errors on our <code>fdbmonitor</code> logs. Something was growing linearly with our usage and needed tuning. This time, we had help from <a href="https://forums.foundationdb.org/u/SteavedHams/summary" target="_blank" rel="noopener noreffer ">Steve Atherton</a> which pointed us towards the direction of the <a href="https://forums.foundationdb.org/t/foundationdb-7-1-24-the-memory-usage-after-clean-startup-of-fdbserver-process-is-too-high/3863/8?u=pierrez" target="_blank" rel="noopener noreffer ">Byte Sample</a>:</p>
+<blockquote>
+<p>There is a data structure that storage servers have called the Byte Sample which stores a deterministic random sample of keys. This data is persisted on disk in the storage engine and is loaded immediately upon storage server startup. Unfortunately, its size is not tracked or reported, but grows linearly with KV size and I suspect yours is somewhere around 4GB-6GB based on the memory usage I’ve seen for smaller storage KV sizes.</p>
+</blockquote>
+<p>So, we need to add around 4GB more in the memory, but there is no config for that parameter. It needs to be embedded in the global <code>memory</code> parameter. Let’s compute the right value!</p>
+<h2 id="the-global-memory-formula">The global memory formula</h2>
+<p>By testing things on our clusters, we ended up with this formula:</p>
+<pre tabindex="0"><code># Default is 2
+cache_memory = (1-2% of kvstore_used_bytes)GiB
+# Default is 8
+memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB
+</code></pre><p>Which fixed all our memory issues with FoundationDB 🎉 And to be fair, this is the only things we needed to tune on our clusters, which is quite impressive 👀</p>
+<h2 id="special-thanks">Special thanks</h2>
+<p>I would like to thank Markus, William and Steve from the FoundationDB community for their help 🤝</p>
+<hr>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2024-04-22</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/automatic-txn-fdb-730/" class="prev" rel="prev" title="True idempotent transactions with FoundationDB 7.3"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>True idempotent transactions with FoundationDB 7.3</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.124.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</html>

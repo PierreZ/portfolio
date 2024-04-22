@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>timeseries - Category - Pierre Zemb</title>
+        <title>Timeseries - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/timeseries/</link>
-        <description>timeseries - Category - Pierre Zemb</description>
+        <description>Timeseries - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 11 Oct 2017 10:23:11 &#43;0000</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/timeseries/" rel="self" type="application/rss+xml" /><item>
     <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
     <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>

@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>colossus - Category - Pierre Zemb</title>
+        <title>Colossus - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/colossus/</link>
-        <description>colossus - Category - Pierre Zemb</description>
+        <description>Colossus - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 04 Aug 2019 15:07:11 &#43;0200</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/colossus/" rel="self" type="application/rss+xml" /><item>
     <title>What can be gleaned about GFS successor codenamed Colossus?</title>
     <link>https://pierrezemb.fr/posts/colossus-google/</link>

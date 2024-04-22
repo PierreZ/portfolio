@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>learning - Category - Pierre Zemb</title>
+        <title>Learning - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/learning/</link>
-        <description>learning - Category - Pierre Zemb</description>
+        <description>Learning - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Jan 2024 15:37:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/learning/" rel="self" type="application/rss+xml" /><item>
     <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
     <link>https://pierrezemb.fr/posts/academic-conferences/</link>

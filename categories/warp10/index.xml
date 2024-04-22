@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>warp10 - Category - Pierre Zemb</title>
+        <title>Warp10 - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/warp10/</link>
-        <description>warp10 - Category - Pierre Zemb</description>
+        <description>Warp10 - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 11 Oct 2017 10:23:11 &#43;0000</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/warp10/" rel="self" type="application/rss+xml" /><item>
     <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
     <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>

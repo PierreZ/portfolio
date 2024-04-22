@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>diving into - Category - Pierre Zemb</title>
+        <title>Diving Into - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/diving-into/</link>
-        <description>diving into - Category - Pierre Zemb</description>
+        <description>Diving Into - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 18 Sep 2020 05:24:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/diving-into/" rel="self" type="application/rss+xml" /><item>
     <title>Diving into ETCD&#39;s linearizable reads</title>
     <link>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</link>

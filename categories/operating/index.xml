@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>operating - Category - Pierre Zemb</title>
+        <title>Operating - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/operating/</link>
-        <description>operating - Category - Pierre Zemb</description>
+        <description>Operating - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 04 Jan 2016 18:52:19 &#43;0000</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/operating/" rel="self" type="application/rss+xml" /><item>
     <title>Let’s talk about containers</title>
     <link>https://pierrezemb.fr/posts/lets-talk-about-containers/</link>

@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "style.min.css",
-	"sourceRoot": "/home/pierrez/workspace/markdown/pierrezemb.fr",
+	"sourceRoot": "/Users/pierrezemb/workspace/markdown/pierrezemb.fr",
 	"sources": [
 		"themes/LoveIt/assets/css/style.scss",
 		"themes/LoveIt/assets/lib/normalize/normalize.css",

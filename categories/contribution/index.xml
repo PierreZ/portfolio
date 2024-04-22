@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>contribution - Category - Pierre Zemb</title>
+        <title>Contribution - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/contribution/</link>
-        <description>contribution - Category - Pierre Zemb</description>
+        <description>Contribution - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 24 Mar 2020 10:24:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/contribution/" rel="self" type="application/rss+xml" /><item>
     <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
     <link>https://pierrezemb.fr/posts/announcing-kop/</link>

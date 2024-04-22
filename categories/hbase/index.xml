@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>hbase - Category - Pierre Zemb</title>
+        <title>Hbase - Category - Pierre Zemb</title>
         <link>https://pierrezemb.fr/categories/hbase/</link>
-        <description>hbase - Category - Pierre Zemb</description>
+        <description>Hbase - Category - Pierre Zemb</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 14 Feb 2020 10:24:27 &#43;0100</lastBuildDate><atom:link href="https://pierrezemb.fr/categories/hbase/" rel="self" type="application/rss+xml" /><item>
     <title>Contributing to Apache HBase: custom data balancing</title>
     <link>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</link>
