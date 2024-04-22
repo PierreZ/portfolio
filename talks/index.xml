@@ -4,7 +4,7 @@
     <title>Talks on Pierre Zemb</title>
     <link>https://pierrezemb.fr/talks/</link>
     <description>Recent content in Talks on Pierre Zemb</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo 0.125.0</generator>
     <language>en</language>
     <lastBuildDate>Thu, 01 Jun 2023 01:22:36 +0100</lastBuildDate>
     <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
@@ -76,7 +76,7 @@
       <link>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</link>
       <pubDate>Fri, 19 Feb 2021 01:22:36 +0100</pubDate>
       <guid>https://pierrezemb.fr/talks/to-the-cloud-and-beyond/</guid>
-      <description>Occurences CESI DevDay Epitech Insight Ressources Slides The slides are also available here Videos February 2021 </description>
+      <description>Occurences CESI DevDay Epitech Insight Ressources Slides The slides are also available here Videos </description>
     </item>
     <item>
       <title>Record-Layer 101</title>

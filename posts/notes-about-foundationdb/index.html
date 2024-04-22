@@ -4,16 +4,20 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>Notes about FoundationDB - Pierre Zemb</title><meta name="Description" content="List of ressources gleaned about FoundationDB"><meta property="og:title" content="Notes about FoundationDB" />
-<meta property="og:description" content="List of ressources gleaned about FoundationDB" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-foundationdb/" /><meta property="og:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-01-30T10:24:27+01:00" />
-<meta property="article:modified_time" content="2020-01-30T10:24:27+01:00" /><meta property="og:site_name" content="Pierre Zemb" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg" /><meta name="twitter:title" content="Notes about FoundationDB"/>
-<meta name="twitter:description" content="List of ressources gleaned about FoundationDB"/>
-      <meta name="twitter:site" content="@PierreZ"/>
+        <title>Notes about FoundationDB - Pierre Zemb</title><meta name="Description" content="List of ressources gleaned about FoundationDB"><meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-foundationdb/">
+  <meta property="og:site_name" content="Pierre Zemb">
+  <meta property="og:title" content="Notes about FoundationDB">
+  <meta property="og:description" content="List of ressources gleaned about FoundationDB">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+  <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-01-30T10:24:27+01:00">
+    <meta property="article:modified_time" content="2020-01-30T10:24:27+01:00">
+    <meta property="og:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-foundationdb/images/fdb-white.jpg"><meta name="twitter:title" content="Notes about FoundationDB">
+<meta name="twitter:description" content="List of ressources gleaned about FoundationDB">
+      <meta name="twitter:site" content="@PierreZ">
 <meta name="application-name" content="Pierre Zemb">
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -30,7 +34,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/pierrezemb.fr\/posts\/notes-about-foundationdb\/"
-        },"genre": "posts","wordcount":  2329 ,
+        },"genre": "posts","wordcount":  791 ,
         "url": "https:\/\/pierrezemb.fr\/posts\/notes-about-foundationdb\/","datePublished": "2020-01-30T10:24:27+01:00","dateModified": "2020-01-30T10:24:27+01:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -104,8 +108,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about FoundationDB</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/foundationdb/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Foundationdb</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Notesabout</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2020-01-30">2020-01-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;2329 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;11 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2020-01-30">2020-01-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;791 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -176,8 +180,6 @@
 <li><a href="https://jepsen.io/consistency/models/strict-serializable" target="_blank" rel="noopener noreffer ">strict serializability</a>(operations appear to have occurred in some order),</li>
 <li><a href="https://cloud.google.com/spanner/docs/true-time-external-consistency" target="_blank" rel="noopener noreffer ">external consistency</a>(For any two transactions, T1 and T2, if T2 starts to commit after T1 finishes committing, then the timestamp for T2 is greater than the timestamp for T1).</li>
 </ul>
-<p><strong>And this is THE tweet that triggered a lot of curiosity on my side:</strong></p>
-
 <h2 id="the-story">The story</h2>
 <p>FoundationDB started as a company in 2009, and then <a href="https://techcrunch.com/2015/03/24/apple-acquires-durable-database-company-foundationdb/" target="_blank" rel="noopener noreffer ">has been acquired in 2015 by Apple</a>. It <a href="https://news.ycombinator.com/item?id=9259986" target="_blank" rel="noopener noreffer ">was a bad public publicity for the database as the download were removed.</a></p>
 <p>On April 19, 2018, Apple <a href="https://www.foundationdb.org/blog/foundationdb-is-open-source/" target="_blank" rel="noopener noreffer ">open sourced the software, releasing it under the Apache 2.0 license</a>.</p>
@@ -212,9 +214,12 @@
 </blockquote>
 <p>A good overview of the simulation can be found <a href="https://apple.github.io/foundationdb/testing.html" target="_blank" rel="noopener noreffer ">here</a>. You can also have a look at this awesome talk!</p>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/4fFDFbi3toc" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/4fFDFbi3toc?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="\"Testing Distributed Systems w/ Deterministic Simulation\" by Will Wilson"
+      ></iframe>
+    </div>
 
 <p>Simulation has been made possible by combining:</p>
 <ul>
@@ -307,9 +312,12 @@
         title="fdb image" /></p>
 <h3 id="read-and-write-path">Read and Write Path</h3>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/EMwhsGsxfPU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/EMwhsGsxfPU?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="Technical Overview of FoundationDB - Evan Tschannen, Apple"
+      ></iframe>
+    </div>
 
 <h4 id="read-path">Read Path</h4>
 <ol>
@@ -347,9 +355,12 @@
 <h3 id="storage">Storage</h3>
 <p>A lot of information are available in this talk:</p>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/nlus1Z7TVTI" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/nlus1Z7TVTI?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="Future of FoundationDB Storage Engines - Steve Atherton, Apple"
+      ></iframe>
+    </div>
 
 <ul>
 <li><code>memory</code> is optimized for small databases. Data is stored in memory and logged to disk. In this storage engine, all data must be resident in memory at all times, and all reads are satisfied from memory.</li>
@@ -363,9 +374,12 @@
 <h2 id="fdb-one-more-things-layers">FDB One more things: Layers</h2>
 <h3 id="concept-of-layers">Concept of layers</h3>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/HLE8chgw6LI" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/HLE8chgw6LI?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="FoundationDB Record Layer: Open Source Structured Storage on FoundationDB - Nicholas Schiefer, Apple"
+      ></iframe>
+    </div>
 
 <p>FDB is resolving many distributed problems, but you still need things like <strong>security, multi-tenancy, query optimizations, schema, indexing</strong>.</p>
 <hr>
@@ -402,9 +416,12 @@
 <h3 id="apples-record-layer">Apple&rsquo;s Record Layer</h3>
 <p>The paper is located <a href="https://arxiv.org/pdf/1901.04452.pdf" target="_blank" rel="noopener noreffer ">FoundationDB Record Layer:A Multi-Tenant Structured Datastore</a></p>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/SvoUHHM9IKU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/SvoUHHM9IKU?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="Using FoundationDB and the FDB Record Layer to Build CloudKit - Scott Gray, Apple"
+      ></iframe>
+    </div>
 
 <p>Record Layer was designed to solve CloudKit problem.</p>
 <hr>
@@ -461,9 +478,12 @@
 <h2 id="kubernetes-operators">Kubernetes Operators</h2>
 <h3 id="overview-of-the-operator">Overview of the operator</h3>
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/A3U8M8pt3Ks" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/A3U8M8pt3Ks?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="Managing FoundationDB at Scale - John Brownlee, Apple"
+      ></iframe>
+    </div>
 
 <hr>
 <p><img
@@ -542,7 +562,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.124.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.125.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

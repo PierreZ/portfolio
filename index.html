@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-	<meta name="generator" content="Hugo 0.124.1">
+	<meta name="generator" content="Hugo 0.125.0">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:title" content="Pierre Zemb" />
-<meta property="og:description" content="Pierre Zemb&#39;s personal blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://pierrezemb.fr/" /><meta property="og:site_name" content="Pierre Zemb" />
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Pierre Zemb"/>
-<meta name="twitter:description" content="Pierre Zemb&#39;s personal blog"/>
-      <meta name="twitter:site" content="@PierreZ"/>
+        <title>Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:url" content="https://pierrezemb.fr/">
+  <meta property="og:site_name" content="Pierre Zemb">
+  <meta property="og:title" content="Pierre Zemb">
+  <meta property="og:description" content="Pierre Zemb&#39;s personal blog">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Pierre Zemb">
+<meta name="twitter:description" content="Pierre Zemb&#39;s personal blog">
+      <meta name="twitter:site" content="@PierreZ">
 <meta name="application-name" content="Pierre Zemb">
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -99,11 +101,11 @@
         alt="https://www.gravatar.com/avatar/b016a639f94c25aa1fdfd025e3449839?s=240&amp;d=mp"
         title="https://www.gravatar.com/avatar/b016a639f94c25aa1fdfd025e3449839?s=240&amp;d=mp" /></a></div><h1 class="home-title">Pierre Zemb</h1><div class="home-subtitle">Engineering Manager @ Clever Cloud </br> Distributed and Database systems</div><div class="links"><a href="https://github.com/PierreZ" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github fa-fw" aria-hidden="true"></i></a><a href="https://linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b" title="LinkedIn" target="_blank" rel="noopener noreffer me"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="https://twitter.com/PierreZ" title="Twitter" target="_blank" rel="noopener noreffer me"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="https://www.youtube.com/channel/pierrezemb" title="YouTube" target="_blank" rel="noopener noreffer me"><i class="fab fa-youtube fa-fw" aria-hidden="true"></i></a><a href="https://keybase.io/pierrez" title="Keybase" target="_blank" rel="noopener noreffer me"><i class="fab fa-keybase fa-fw" aria-hidden="true"></i></a><a href="https://www.twitch.tv/PierreZemb" title="Twitch" target="_blank" rel="noopener noreffer me"><i class="fab fa-twitch fa-fw" aria-hidden="true"></i></a><a href="https://fosstodon.org/@PierreZ" title="Mastodon" target="_blank" rel="noopener noreffer me"><i class="fab fa-mastodon fa-fw" aria-hidden="true"></i></a><a href="/index.xml" title="RSS" target="_blank" rel="noopener noreffer me"><i class="fas fa-rss fa-fw" aria-hidden="true"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/redwood-memory-tuning/readme/">Redwood’s memory tuning in FoundationDB</a>
+        <a href="/posts/redwood-memory-tuning/">Redwood’s memory tuning in FoundationDB</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-publish">published on <time datetime="2024-04-22">2024-04-22</time></span>&nbsp;<span class="post-category">included in <a href="/categories/foundationdb/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Foundationdb</a>&nbsp;<a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Distributed-Systems</a></span></div><div class="content">While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.
 BTree page cache We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:
 10.0.3.23:4501 ( 65% cpu; 61% machine; 0.</div><div class="post-footer">
-        <a href="/posts/redwood-memory-tuning/readme/">Read More</a></div>
+        <a href="/posts/redwood-memory-tuning/">Read More</a></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/automatic-txn-fdb-730/">True idempotent transactions with FoundationDB 7.3</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-publish">published on <time datetime="2024-03-12">2024-03-12</time></span>&nbsp;<span class="post-category">included in <a href="/categories/foundationdb/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Foundationdb</a>&nbsp;<a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Distributed-Systems</a></span></div><div class="content">I have been working around FoundationDB for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: commit_unknown_result.
@@ -149,7 +151,7 @@ etcd is a strongly consistent, distributed key-value store that provides a relia
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.124.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.125.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

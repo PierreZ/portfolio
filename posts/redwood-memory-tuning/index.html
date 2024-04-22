@@ -4,20 +4,23 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
-        <title>Redwood’s memory tuning in FoundationDB - Pierre Zemb</title><meta name="Description" content="Learn how to tune FoundationDB for Redwood storage Engine"><meta property="og:title" content="Redwood’s memory tuning in FoundationDB" />
-<meta property="og:description" content="Learn how to tune FoundationDB for Redwood storage Engine" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2024-04-22T00:37:27+01:00" />
-<meta property="article:modified_time" content="2024-04-22T00:37:27+01:00" /><meta property="og:site_name" content="Pierre Zemb" />
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Redwood’s memory tuning in FoundationDB"/>
-<meta name="twitter:description" content="Learn how to tune FoundationDB for Redwood storage Engine"/>
-      <meta name="twitter:site" content="@PierreZ"/>
+        <title>Redwood’s memory tuning in FoundationDB - Pierre Zemb</title><meta name="Description" content="Learn how to tune FoundationDB for Redwood storage Engine"><meta property="og:url" content="https://pierrezemb.fr/posts/redwood-memory-tuning/">
+  <meta property="og:site_name" content="Pierre Zemb">
+  <meta property="og:title" content="Redwood’s memory tuning in FoundationDB">
+  <meta property="og:description" content="Learn how to tune FoundationDB for Redwood storage Engine">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+  <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-04-22T00:37:27+01:00">
+    <meta property="article:modified_time" content="2024-04-22T00:37:27+01:00">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Redwood’s memory tuning in FoundationDB">
+<meta name="twitter:description" content="Learn how to tune FoundationDB for Redwood storage Engine">
+      <meta name="twitter:site" content="@PierreZ">
 <meta name="application-name" content="Pierre Zemb">
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" />
+<link rel="canonical" href="https://pierrezemb.fr/posts/redwood-memory-tuning/" />
 <link rel="prev" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
@@ -28,9 +31,9 @@
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/readme\/"
+            "@id": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/"
         },"genre": "posts","wordcount":  558 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/readme\/","datePublished": "2024-04-22T00:37:27+01:00","dateModified": "2024-04-22T00:37:27+01:00","publisher": {
+        "url": "https:\/\/pierrezemb.fr\/posts\/redwood-memory-tuning\/","datePublished": "2024-04-22T00:37:27+01:00","dateModified": "2024-04-22T00:37:27+01:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
                 "@type": "Person",
@@ -159,7 +162,7 @@ memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/readme/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/" data-title="Redwood’s memory tuning in FoundationDB" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/" data-title="Redwood’s memory tuning in FoundationDB"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/redwood-memory-tuning/" data-title="Redwood’s memory tuning in FoundationDB"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -175,7 +178,7 @@ memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.124.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.125.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
