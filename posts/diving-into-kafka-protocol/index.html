@@ -7,16 +7,18 @@
         <title>Diving into Kafka&#39;s Protocol - Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">
   <meta property="og:site_name" content="Pierre Zemb">
   <meta property="og:title" content="Diving into Kafka&#39;s Protocol">
-  <meta property="og:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&amp;rsquo;s basecode. In this episode, we will digg into Kafka&amp;rsquo;s protocol.
-The protocol reference For the last few months, I worked a lot around Kafka&amp;rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
+  <meta property="og:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project’s basecode. In this episode, we will digg into Kafka’s protocol.
+The protocol reference For the last few months, I worked a lot around Kafka’s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
-  <meta property="article:section" content="posts">
+    <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2019-12-08T15:00:00+01:00">
     <meta property="article:modified_time" content="2019-12-08T15:00:00+01:00">
-<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Diving into Kafka&#39;s Protocol">
-<meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project&rsquo;s basecode. In this episode, we will digg into Kafka&rsquo;s protocol.
-The protocol reference For the last few months, I worked a lot around Kafka&rsquo;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Diving into Kafka&#39;s Protocol">
+  <meta name="twitter:description" content="Diving Into is a blogpost serie where we are digging a specific part of of the project’s basecode. In this episode, we will digg into Kafka’s protocol.
+The protocol reference For the last few months, I worked a lot around Kafka’s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to KoP (Kafka On Pulsar). The full Kafka Protocol documentation is available here, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange.">
       <meta name="twitter:site" content="@PierreZ">
 <meta name="application-name" content="Pierre Zemb">
 <meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -207,7 +209,7 @@ The protocol reference For the last few months, I worked a lot around Kafka&rsqu
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.125.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

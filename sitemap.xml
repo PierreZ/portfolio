@@ -2,17 +2,18 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://pierrezemb.fr/talks/building-dist-db-fdb-rust/</loc><lastmod>2024-07-05T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/</loc><lastmod>2024-07-05T01:22:36&#43;01:00</lastmod></url><url>
+            <loc>https://pierrezemb.fr/talks/</loc><lastmod>2024-07-05T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/distributed-systems/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/foundationdb/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/redwood-memory-tuning/</loc><lastmod>2024-04-22T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</loc><lastmod>2024-03-12T00:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/categories/learning/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/posts/academic-conferences/</loc><lastmod>2024-01-22T15:37:27&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/simulation-bdd/</loc><lastmod>2023-06-01T01:22:36&#43;01:00</lastmod></url><url>
-            <loc>https://pierrezemb.fr/talks/</loc><lastmod>2023-06-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/fdb-best-secret/</loc><lastmod>2023-04-10T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/split-compute-storage/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>
             <loc>https://pierrezemb.fr/talks/simulation-vtt/</loc><lastmod>2023-02-01T01:22:36&#43;01:00</lastmod></url><url>

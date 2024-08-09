@@ -4,10 +4,17 @@
     <title>Talks on Pierre Zemb</title>
     <link>https://pierrezemb.fr/talks/</link>
     <description>Recent content in Talks on Pierre Zemb</description>
-    <generator>Hugo 0.125.0</generator>
+    <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 01 Jun 2023 01:22:36 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jul 2024 01:22:36 +0100</lastBuildDate>
     <atom:link href="https://pierrezemb.fr/talks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building distributed, multi-tenant databases with FoundationDB and Rust</title>
+      <link>https://pierrezemb.fr/talks/building-dist-db-fdb-rust/</link>
+      <pubDate>Fri, 05 Jul 2024 01:22:36 +0100</pubDate>
+      <guid>https://pierrezemb.fr/talks/building-dist-db-fdb-rust/</guid>
+      <description>Abstract It is commonly accepted that it is not advisable to develop certain types of software in-house, notably cryptography, but this also applies to another critical area: databases. When you add constraints such as scalability, resilience or multi-tenancy, the development of such software becomes particularly complex, where the slightest error can compromise the integrity of the data.&#xA;Despite the difficulties, two years ago, at Clever Cloud, a European cloud hosting company, we started to undertake the creation of our own distributed and multi-tenant database.</description>
+    </item>
     <item>
       <title>Développer des bases de données fiables grâce à la simulation</title>
       <link>https://pierrezemb.fr/talks/simulation-bdd/</link>
