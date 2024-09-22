@@ -1,132 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>10 years of programming and counting 🚀 - Pierre Zemb</title><meta name="Description" content="A retrospective of the last 10 years"><meta property="og:url" content="https://pierrezemb.fr/posts/ten-years-programming/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="10 years of programming and counting 🚀">
-  <meta property="og:description" content="A retrospective of the last 10 years">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2020-09-30T00:24:27+01:00">
-    <meta property="article:modified_time" content="2020-09-30T00:24:27+01:00">
-    <meta property="og:image" content="https://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 years of programming and counting 🚀 | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="10 years of programming and counting 🚀">
+<meta name="description" content="A retrospective of the last 10 years">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://pierrezemb.fr/posts/ten-years-programming/first-talk.jpg">
-  <meta name="twitter:title" content="10 years of programming and counting 🚀">
-  <meta name="twitter:description" content="A retrospective of the last 10 years">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/ten-years-programming/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/announcing-record-store/" /><link rel="next" href="https://pierrezemb.fr/posts/notes-about-etcd/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "10 years of programming and counting 🚀",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/ten-years-programming\/"
-        },"genre": "posts","wordcount":  1603 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/ten-years-programming\/","datePublished": "2020-09-30T00:24:27+01:00","dateModified": "2020-09-30T00:24:27+01:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": "A retrospective of the last 10 years"
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="10 years of programming and counting 🚀">
+<meta property="og:description" content="A retrospective of the last 10 years"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/ten-years-programming/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><article class="page single"><h1 class="single-title animate__animated animate__flipInX">10 years of programming and counting 🚀</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/personal/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Personal</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2020-09-30">2020-09-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1603 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;8 minutes&nbsp;</div>
-        </div><div class="content" id="content"><p>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓</p>
-<h2 id="learning-to-program-">Learning to program 👨🏻‍💻</h2>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>10 years of programming and counting 🚀</h1>
+      <p>
+        <i>
+          <time datetime="2020-09-30T00:24:27+01:00" pubdate>30 Sep, 2020</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#learning-to-program-man-skin-tone-2-computer">Learning to program 👨🏻‍💻</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#java-and-hadoop-elephant">Java and Hadoop 🐘</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#let-s-meet-other-people-wave">Let’s meet other people 👋</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#learning-big-data-floppy-disk">Learning big data 💾</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#searching-for-planets-telescope-ringed-planet">Searching for planets 🔭 🪐</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#io-timeout-construction">IO timeout 🚧</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/ten-years-programming/#today">Today</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓</p>
+<h2 id="learning-to-program-man-skin-tone-2-computer"><a class="zola-anchor" href="#learning-to-program-man-skin-tone-2-computer" aria-label="Anchor link for: learning-to-program-man-skin-tone-2-computer">🔗</a>Learning to program 👨🏻‍💻</h2>
 <p>I wrote my first <em>Hello, world</em> program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.</p>
 <p>I also discovered Linux around that time, and spent many nights playing with Linux commands. I started my journey to Linux with Centos and then Ubuntu 11.04. I think this started the loop I’m (still!) stuck in:
 <code>for {tryNewDistro()}</code>
 I’m pretty sure that if I wanted to go away from distributed systems, I would try to land a job around operating systems. So many things to learn 🤩</p>
 <p>After learning C, we started to learn web-based technologies like HTML/CSS/JS/PHP. I remember struggling to generate a calendar with PHP 🐘 I learned about APIs the week after the project 😅 I remember digging into cookies, and network calls from popular websites to see how they were using it.</p>
-<h2 id="java-and-hadoop-">Java and Hadoop 🐘</h2>
+<h2 id="java-and-hadoop-elephant"><a class="zola-anchor" href="#java-and-hadoop-elephant" aria-label="Anchor link for: java-and-hadoop-elephant">🔗</a>Java and Hadoop 🐘</h2>
 <p>I had the chance to land a part-time internship during the third year (out of five) of my engineering school. I joined the Systems team @ Arkea, a french bank.
 I remember spending a lot of time with my coworkers, learning things from them, from Hadoop to mainframes and Linux. It was my first time grasping the work around “system programming”.</p>
 <p>My first task was around writing an installer for a java app on windows, but my tutor tried to push me further. He saw my interest around some specific layers of their perimeter, such as Hadoop and Kafka. He gave to me a chance to work directly on those. A small API that was could load old monitoring data stored in HDFS and expose them back into the “real-time” visualization tool. I also used Kafka and even deployed a small HBase cluster for testing.</p>
-<p>I can&rsquo;t thank my tutor enough for giving me this chance, and for allowing me to discover what will become my focus: distributed systems.</p>
-<h2 id="lets-meet-other-people-">Let’s meet other people 👋</h2>
+<p>I can't thank my tutor enough for giving me this chance, and for allowing me to discover what will become my focus: distributed systems.</p>
+<h2 id="let-s-meet-other-people-wave"><a class="zola-anchor" href="#let-s-meet-other-people-wave" aria-label="Anchor link for: let-s-meet-other-people-wave">🔗</a>Let’s meet other people 👋</h2>
 <p>Around the same time, I discovered tech meetups and conferences. At that time, Google I/O was a major event with people jumping from a plane and streaming it through Google Glass. I found out there was a group of people watching the live together. And this is how I discovered my local GDG/JUG 🥳 I learned so many things by watching local talks, even if it was difficult to grasp everything at first. I remember taking 📝 about what I didn’t understand, to learn about it later.</p>
 <p>I also met amazing persons, that are now friends and/or mentors. I remember feeling humble to be able to learn from them.</p>
 <p>I also discovered more global tech conferences. I asked as a birthday 🎁 to go to Devoxx France and DotScale, in 2014. It was awesome 😎</p>
 <p>By dint of watching talks, I wanted to give some. I started small, giving talks at my engineering school, then moved to the JUG itself. I learned <strong>a lot</strong> by making a lot of mistakes, but I’m pretty happy how things turned out, as I’m now speaking at tech conferences as part of my current work.</p>
-<!-- raw HTML omitted -->
+<p><img src="/images/ten-years-programming/first-talk.jpg" alt="etcd image" /></p>
 <p>I also started to be involved in events and organizations such as:</p>
 <ul>
 <li>The JUG/GDG</li>
@@ -135,12 +267,12 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>Devoxx4kids</li>
 <li>DevFest du bout du monde</li>
 </ul>
-<h2 id="learning-big-data-">Learning big data 💾</h2>
+<h2 id="learning-big-data-floppy-disk"><a class="zola-anchor" href="#learning-big-data-floppy-disk" aria-label="Anchor link for: learning-big-data-floppy-disk">🔗</a>Learning big data 💾</h2>
 <p>After my graduation and a(nother) part-time internship at OVH, I started working on something called Metrics Data Platform. It is the platform massively used internally to store, query and alert on timeseries data. We avoid the Borgmon approach (deploying Prometheus’s like database for every team), instead we created a unique platform to ingest all OVHcloud’s datapoints using a big-data approach. Here’s the key point of Metrics:</p>
 <ul>
 <li><strong>multi-tenant</strong>: as we said before, a single metrics cluster is handling all telemetry, from servers to applications and smart data centers from OVHcloud.</li>
 <li><strong>scalable</strong>: today we are receiving around 1.8 million datapoints per second/s 🙈 for about 450 million timeseries 🙉. During European daytime, we are reading around 4.5 millions datapoints per seconds thank to Grafana’s auto-refresh mode 🙊</li>
-<li><strong>multi-protocol support</strong>: we didn&rsquo;t want to reflect our infrastructure choice to our users, so we wrote some proxies that can translate known protocols to our query language, so users can query and push data using OpenTSDB, Prometheus, InfluxDB and so on.</li>
+<li><strong>multi-protocol support</strong>: we didn't want to reflect our infrastructure choice to our users, so we wrote some proxies that can translate known protocols to our query language, so users can query and push data using OpenTSDB, Prometheus, InfluxDB and so on.</li>
 <li><strong>based on open source</strong> we are using Warp10 as the core of our infrastructure with Kafka and HBase. Alerting was built with Apache flink. We open sourced many software, from agent to our proxies. We also gave many talks about what we learnt.</li>
 </ul>
 <p>I had the chance to built Metrics from the ground. I started working on the management layer and proxies. Then I wanted to learn operations, so I learned it by deploying Hadoop clusters 🤯 it took me a while to be able to start doing on-calls. I cannot count how many nights I was up, trying to fix some buggy softwares, or yelling at HBase for an inconsistent <code>hbck</code>, or trying to find a way to handle a side effect of a loosing multiple racks.</p>
@@ -152,11 +284,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>We were only 4 to 6 to handle ~800 servers, 3 Hadoop clusters, and thousands of lines of Java/Go/Rust/Ansible codes.</li>
 </ul>
 <p>As always, things were not always magical, and i struggled more time than I can count. I learned that personal struggle is more difficult than technical, as you can always drill-down your tech problems by reading the code. The team was amazing 🚀, and we were helping each other a lot 🤝</p>
-<h2 id="searching-for-planets--">Searching for planets 🔭 🪐</h2>
+<h2 id="searching-for-planets-telescope-ringed-planet"><a class="zola-anchor" href="#searching-for-planets-telescope-ringed-planet" aria-label="Anchor link for: searching-for-planets-telescope-ringed-planet">🔗</a>Searching for planets 🔭 🪐</h2>
 <p>When I started working on Metrics, we did a lot of internal on boarding. At his core, metrics is usine Warp10, which is coming with his own language to analyze timeseries. This provides heavy query-capabilities, but as it is stack-based, getting started was difficult. I needed a project to dive into timeseries analysis.</p>
-<p>I love astronomy 🔭, but there’s too much ☁️ (not the servers) in my city. I decided to look for astronomical timeseries. Turns out there is a lot, but one use case triggered my interest: exoplanet’s search. Almost everything from NASA is Opendata, so we decided to create <a href="https://helloexo.world/" target="_blank" rel="noopener noreffer ">HelloExoWorld</a>.</p>
-<p>We imported the <strong>25TB dataset into a Warp10 instance</strong> and start writing some WarpScript to search for transits. We wrote a <a href="https://helloexoworld.github.io/hew-hands-on/" target="_blank" rel="noopener noreffer ">hands-on about it</a>. We also did several labs in french conferences like Devoxx and many others.</p>
-<h2 id="io-timeout-">IO timeout 🚧</h2>
+<p>I love astronomy 🔭, but there’s too much ☁️ (not the servers) in my city. I decided to look for astronomical timeseries. Turns out there is a lot, but one use case triggered my interest: exoplanet’s search. Almost everything from NASA is Opendata, so we decided to create <a href="https://helloexo.world/">HelloExoWorld</a>.</p>
+<p>We imported the <strong>25TB dataset into a Warp10 instance</strong> and start writing some WarpScript to search for transits. We wrote a <a href="https://helloexoworld.github.io/hew-hands-on/">hands-on about it</a>. We also did several labs in french conferences like Devoxx and many others.</p>
+<h2 id="io-timeout-construction"><a class="zola-anchor" href="#io-timeout-construction" aria-label="Anchor link for: io-timeout-construction">🔗</a>IO timeout 🚧</h2>
 <p>Around 2018, OVHcloud started Managed Kubernetes, a free K8S control-plane. With this product we saw more developers coming to OVHcloud. We started thinking about how we could help them. Running stateful systems is <strong>hard</strong>, so maybe we could offer them some databases or queues in a As-a-Service fashion. We started to design such products from our Metrics experience. We started the IO Vision to offer <code>popular Storage APIs in front of a scalable storage</code>. Does it sound familiar? 😇 I had a lot of fun working on that vision as a Technical Leader.</p>
 <p>We started with queuing with ioStream. We wanted something that was:</p>
 <ul>
@@ -166,52 +298,40 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>Less operation burden at scale than Kafka</li>
 </ul>
 <p>We built ioStream around Apache Pulsar, and opened the beta around September 2019. As the same time we were working on Kafka’s support as a proxy in Rust. Writing such a software capable of translating Kafka’s TCP frames to Pulsar with a state-machine was a <strong>fun and challenging work</strong>. Rust is really a nice language to write such software.</p>
-<p>Then we worked with Apache Pulsar’s PMC to introduce a Kafka protocol handler on Pulsar brokers. I had the chance to work closely to two PMCs, it was an amazing experience for me 🚀 You can read about our collaboration <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/" target="_blank" rel="noopener noreffer ">here</a>.</p>
+<p>Then we worked with Apache Pulsar’s PMC to introduce a Kafka protocol handler on Pulsar brokers. I had the chance to work closely to two PMCs, it was an amazing experience for me 🚀 You can read about our collaboration <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/">here</a>.</p>
 <p>Unfortunately as stated by the official communication, the project has been shut down:</p>
-<pre tabindex="0"><code>However, the limited success of the beta service and other strategic focuses,
-have resulted in us taking the very difficult decision to close it.
-</code></pre><p>I learned a lot of things, both technically and on the product-side, especially considering the fact that it was shutdown.</p>
-<h2 id="today">Today</h2>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>However, the limited success of the beta service and other strategic focuses,
+</span><span>have resulted in us taking the very difficult decision to close it.
+</span></code></pre>
+<p>I learned a lot of things, both technically and on the product-side, especially considering the fact that it was shutdown.</p>
+<h2 id="today"><a class="zola-anchor" href="#today" aria-label="Anchor link for: today">🔗</a>Today</h2>
 <p>After ioStream’s shutdown, most of the team moved to create a new LBaaS. I helped them wrote an operator to schedule HAProxy’s containers on a Kubernetes cluster. It was a nice introduction to operators.</p>
 <p>Then I decided to join the Managed Kubernetes ☸️ team. This is my current team now, where I’m having a lot of fun working around ETCD.</p>
 <p>I really hope the next 10 years will be as fun as the last 10 years 😇</p>
-<hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2020-09-30</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/ten-years-programming/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/ten-years-programming/" data-title="10 years of programming and counting 🚀"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+<hr />
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/personal/">#personal</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/announcing-record-store/" class="prev" rel="prev" title="Announcing Record-Store, a new (experimental) place for your data"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Announcing Record-Store, a new (experimental) place for your data</a>
-            <a href="/posts/notes-about-etcd/" class="next" rel="next" title="Notes about ETCD">Notes about ETCD<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>

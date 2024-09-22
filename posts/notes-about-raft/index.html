@@ -1,170 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Notes about Raft&#39;s paper - Pierre Zemb</title><meta name="Description" content="List of ressources gleaned about Raft"><meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-raft/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="Notes about Raft&#39;s paper">
-  <meta property="og:description" content="List of ressources gleaned about Raft">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2020-07-30T07:24:27+01:00">
-    <meta property="article:modified_time" content="2020-07-30T07:24:27+01:00">
-    <meta property="og:image" content="https://pierrezemb.fr/posts/notes-about-raft/images/raft.png">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes about Raft&#x27;s paper | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Notes about Raft&#x27;s paper">
+<meta name="description" content="List of ressources gleaned about Raft">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-raft/images/raft.png">
-  <meta name="twitter:title" content="Notes about Raft&#39;s paper">
-  <meta name="twitter:description" content="List of ressources gleaned about Raft">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-raft/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/announcing-kop/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Notes about Raft's paper",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/notes-about-raft\/"
-        },"genre": "posts","wordcount":  1780 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/notes-about-raft\/","datePublished": "2020-07-30T07:24:27+01:00","dateModified": "2020-07-30T07:24:27+01:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": "List of ressources gleaned about Raft"
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Notes about Raft&#x27;s paper">
+<meta property="og:description" content="List of ressources gleaned about Raft"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-raft/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about Raft's paper</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/raft/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Raft</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Notesabout</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2020-07-30">2020-07-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1780 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;9 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#abstract">Abstract</a></li>
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#replicated-state-machines">Replicated state machines</a></li>
-    <li><a href="#whats-wrong-with-paxos">What’s wrong with Paxos?</a></li>
-    <li><a href="#designing-for-understandability">Designing for understandability</a></li>
-    <li><a href="#the-raft-consensus-algorithm">The Raft consensus algorithm</a>
-      <ul>
-        <li><a href="#raft-basics">Raft basics</a></li>
-        <li><a href="#leader-election">Leader election</a></li>
-        <li><a href="#log-replication">Log replication</a></li>
-      </ul>
-    </li>
-    <li><a href="#safety">Safety</a>
-      <ul>
-        <li><a href="#leader-election-1">Leader election</a></li>
-        <li><a href="#committing-entries-from-previous-terms">Committing entries from previous terms</a></li>
-        <li><a href="#follower-and-candidate-crashes">Follower and candidate crashes</a></li>
-      </ul>
-    </li>
-    <li><a href="#cluster-membership-changes">Cluster membership changes</a></li>
-    <li><a href="#log-compaction">Log compaction</a></li>
-    <li><a href="#client-interaction">Client interaction</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/notes-about-raft/images/raft.png"
-        data-srcset="/posts/notes-about-raft/images/raft.png, /posts/notes-about-raft/images/raft.png 1.5x, /posts/notes-about-raft/images/raft.png 2x"
-        data-sizes="auto"
-        alt="/posts/notes-about-raft/images/raft.png"
-        title="raft_image" /></p>
-<p><a href="/tags/notesabout/" rel="">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover Raft&rsquo;s paper called &lsquo;In Search of an Understandable Consensus Algorithm&rsquo;.</p>
-<hr>
-<p>As I&rsquo;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener noreffer ">here</a> and I&rsquo;m also playing with the amazing <a href="https://github.com/pingcap/talent-plan/tree/master/courses/dss/raft" target="_blank" rel="noopener noreffer ">Raft labs made by PingCAP</a>.</p>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Notes about Raft&#x27;s paper</h1>
+      <p>
+        <i>
+          <time datetime="2020-07-30T07:24:27+01:00" pubdate>30 Jul, 2020</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#abstract">Abstract</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#replicated-state-machines">Replicated state machines</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#what-s-wrong-with-paxos">What’s wrong with Paxos?</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#designing-for-understandability">Designing for understandability</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#the-raft-consensus-algorithm">The Raft consensus algorithm</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#raft-basics">Raft basics</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#leader-election">Leader election</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#log-replication">Log replication</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#safety">Safety</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#leader-election-1">Leader election</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#committing-entries-from-previous-terms">Committing entries from previous terms</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-raft/#follower-and-candidate-crashes">Follower and candidate crashes</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#cluster-membership-changes">Cluster membership changes</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#log-compaction">Log compaction</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-raft/#client-interaction">Client interaction</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p><img src="/images/notes-about-raft/raft.png" alt="raft_image" /></p>
+<p><a href="/tags/notes-about/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover Raft's paper called 'In Search of an Understandable Consensus Algorithm'.</p>
+<hr />
+<p>As I'm digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located <a href="https://raft.github.io/raft.pdf">here</a> and I'm also playing with the amazing <a href="https://github.com/pingcap/talent-plan/tree/master/courses/dss/raft">Raft labs made by PingCAP</a>.</p>
 <blockquote>
-<p>These labs are derived from the <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html" target="_blank" rel="noopener noreffer ">lab2:raft</a> and <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html" target="_blank" rel="noopener noreffer ">lab3:kvraft</a> from the famous <a href="http://nil.csail.mit.edu/6.824/2018/index.html" target="_blank" rel="noopener noreffer ">MIT 6.824</a> course but rewritten in Rust.</p>
+<p>These labs are derived from the <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html">lab2:raft</a> and <a href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html">lab3:kvraft</a> from the famous <a href="http://nil.csail.mit.edu/6.824/2018/index.html">MIT 6.824</a> course but rewritten in Rust.</p>
 </blockquote>
-<h2 id="abstract">Abstract</h2>
+<h2 id="abstract"><a class="zola-anchor" href="#abstract" aria-label="Anchor link for: abstract">🔗</a>Abstract</h2>
 <blockquote>
 <p>Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.</p>
 </blockquote>
 <blockquote>
 <p>Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.</p>
 </blockquote>
-<h2 id="introduction">Introduction</h2>
+<h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">🔗</a>Introduction</h2>
 <blockquote>
 <p>Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.</p>
 </blockquote>
@@ -180,26 +302,26 @@
 <blockquote>
 <p>We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.</p>
 </blockquote>
-<h2 id="replicated-state-machines">Replicated state machines</h2>
-<p>The main idea is to compute identical copies of the same state (i.e <code>x:3, y:9</code>) in case of machines&rsquo;s failure. Most of the time, an ordered <code>wal</code> (write-ahead log) is used in the implementation, to hold the mutation (<code>x:4</code>). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.</p>
+<h2 id="replicated-state-machines"><a class="zola-anchor" href="#replicated-state-machines" aria-label="Anchor link for: replicated-state-machines">🔗</a>Replicated state machines</h2>
+<p>The main idea is to compute identical copies of the same state (i.e <code>x:3, y:9</code>) in case of machines's failure. Most of the time, an ordered <code>wal</code> (write-ahead log) is used in the implementation, to hold the mutation (<code>x:4</code>). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.</p>
 <p>Raft creates a true split between:</p>
 <ul>
 <li>the consensus module,</li>
 <li>the wal,</li>
 <li>the state machine.</li>
 </ul>
-<!-- raw HTML omitted -->
-<h2 id="whats-wrong-with-paxos">What’s wrong with Paxos?</h2>
+<img src="/images/notes-about-raft/fig_1.png" alt="fig1" class="center">
+<h2 id="what-s-wrong-with-paxos"><a class="zola-anchor" href="#what-s-wrong-with-paxos" aria-label="Anchor link for: what-s-wrong-with-paxos">🔗</a>What’s wrong with Paxos?</h2>
 <p>The paper is listing the drawbacks of Paxos:</p>
 <ul>
-<li>difficult to understand, and <a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf" target="_blank" rel="noopener noreffer ">I can&rsquo;t blame them</a></li>
+<li>difficult to understand, and <a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf">I can't blame them</a></li>
 <li>many details are missing from the paper to implement <code>Multi-Paxos</code> as the paper is mainly describing <code>single-decree Paxos</code></li>
 </ul>
 <blockquote>
 <p>It is simpler and more efficient to design a system around a log, where new entries are appended sequentially in a constrained order.</p>
 </blockquote>
 <blockquote>
-<p>As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf" target="_blank" rel="noopener noreffer ">Chubby</a> implementers is typical:</p>
+<p>As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf">Chubby</a> implementers is typical:</p>
 </blockquote>
 <blockquote>
 <blockquote>
@@ -207,7 +329,7 @@
 the final system will be based on an un-proven protocol [4].</p>
 </blockquote>
 </blockquote>
-<h2 id="designing-for-understandability">Designing for understandability</h2>
+<h2 id="designing-for-understandability"><a class="zola-anchor" href="#designing-for-understandability" aria-label="Anchor link for: designing-for-understandability">🔗</a>Designing for understandability</h2>
 <p>Beside all the others goals of Raft:</p>
 <ul>
 <li>a complete and practical foundation for system building,</li>
@@ -224,7 +346,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.</p>
 </blockquote>
-<h2 id="the-raft-consensus-algorithm">The Raft consensus algorithm</h2>
+<h2 id="the-raft-consensus-algorithm"><a class="zola-anchor" href="#the-raft-consensus-algorithm" aria-label="Anchor link for: the-raft-consensus-algorithm">🔗</a>The Raft consensus algorithm</h2>
 <p>Raft is heavily relying on the <code>leader</code> pattern:</p>
 <blockquote>
 <p>Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.</p>
@@ -238,7 +360,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <li>Log replication</li>
 <li>Safety</li>
 </ul>
-<h3 id="raft-basics">Raft basics</h3>
+<h3 id="raft-basics"><a class="zola-anchor" href="#raft-basics" aria-label="Anchor link for: raft-basics">🔗</a>Raft basics</h3>
 <p>Each server can be in one of the three states:</p>
 <ul>
 <li><strong>Leader</strong> handle all requests,</li>
@@ -257,8 +379,8 @@ the final system will be based on an un-proven protocol [4].</p>
 <li><strong>RequestVote RPCs</strong> are initiated by candidates during elections,</li>
 <li><strong>Append-Entries RPCs</strong> are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.</li>
 </ul>
-<h3 id="leader-election">Leader election</h3>
-<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#election" target="_blank" rel="noopener noreffer ">here</a>.</p>
+<h3 id="leader-election"><a class="zola-anchor" href="#leader-election" aria-label="Anchor link for: leader-election">🔗</a>Leader election</h3>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#election">here</a>.</p>
 <p>The key-point of the election are the fact that:</p>
 <ul>
 <li>nodes vote for themselves,</li>
@@ -276,8 +398,8 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).</p>
 </blockquote>
-<h3 id="log-replication">Log replication</h3>
-<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#replication" target="_blank" rel="noopener noreffer ">here</a>.</p>
+<h3 id="log-replication"><a class="zola-anchor" href="#log-replication" aria-label="Anchor link for: log-replication">🔗</a>Log replication</h3>
+<p>A good vizualization is available <a href="http://thesecretlivesofdata.com/raft/#replication">here</a>.</p>
 <blockquote>
 <p>Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.</p>
 </blockquote>
@@ -291,15 +413,15 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>When sending an AppendEntries RPC, the leader includes the index and term of the entry in its log that immediately precedes the new entries. If the follower does not find an entry in its log with the same index and term, then it refuses the new entries</p>
 </blockquote>
-<p>This is really interesting to be leader-failure proof. And for follower&rsquo;s failure:</p>
+<p>This is really interesting to be leader-failure proof. And for follower's failure:</p>
 <blockquote>
 <p>In Raft, the leader handles inconsistencies by forcing the followers’ logs to duplicate its own.</p>
 </blockquote>
 <blockquote>
 <p>To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.</p>
 </blockquote>
-<h2 id="safety">Safety</h2>
-<h3 id="leader-election-1">Leader election</h3>
+<h2 id="safety"><a class="zola-anchor" href="#safety" aria-label="Anchor link for: safety">🔗</a>Safety</h2>
+<h3 id="leader-election-1"><a class="zola-anchor" href="#leader-election-1" aria-label="Anchor link for: leader-election-1">🔗</a>Leader election</h3>
 <p>As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.</p>
 <blockquote>
 <p>Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.</p>
@@ -307,16 +429,16 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.</p>
 </blockquote>
-<h3 id="committing-entries-from-previous-terms">Committing entries from previous terms</h3>
+<h3 id="committing-entries-from-previous-terms"><a class="zola-anchor" href="#committing-entries-from-previous-terms" aria-label="Anchor link for: committing-entries-from-previous-terms">🔗</a>Committing entries from previous terms</h3>
 <blockquote>
 <p>Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.</p>
 </blockquote>
 <p>This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.</p>
-<h3 id="follower-and-candidate-crashes">Follower and candidate crashes</h3>
+<h3 id="follower-and-candidate-crashes"><a class="zola-anchor" href="#follower-and-candidate-crashes" aria-label="Anchor link for: follower-and-candidate-crashes">🔗</a>Follower and candidate crashes</h3>
 <blockquote>
 <p>If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.</p>
 </blockquote>
-<h2 id="cluster-membership-changes">Cluster membership changes</h2>
+<h2 id="cluster-membership-changes"><a class="zola-anchor" href="#cluster-membership-changes" aria-label="Anchor link for: cluster-membership-changes">🔗</a>Cluster membership changes</h2>
 <p>This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:</p>
 <blockquote>
 <p>In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:</p>
@@ -326,9 +448,9 @@ the final system will be based on an un-proven protocol [4].</p>
 <li>Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.</li>
 </ul>
 </blockquote>
-<h2 id="log-compaction">Log compaction</h2>
+<h2 id="log-compaction"><a class="zola-anchor" href="#log-compaction" aria-label="Anchor link for: log-compaction">🔗</a>Log compaction</h2>
 <p>As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:</p>
-<!-- raw HTML omitted -->
+<img src="/images/notes-about-raft/fig_3.png" alt="fig3" class="center">
 <blockquote>
 <p>the leader must occasionally send snapshots to followers that lag behind.</p>
 </blockquote>
@@ -336,47 +458,36 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.</p>
 </blockquote>
-<h2 id="client-interaction">Client interaction</h2>
+<h2 id="client-interaction"><a class="zola-anchor" href="#client-interaction" aria-label="Anchor link for: client-interaction">🔗</a>Client interaction</h2>
 <blockquote>
 <p>Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.</p>
 </blockquote>
-<hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2020-07-30</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-raft/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-raft/" data-title="Notes about Raft&#39;s paper"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+<hr />
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a>
+          <a href="https://pierrezemb.fr/tags/notes-about/">#notes-about</a>
+          <a href="https://pierrezemb.fr/tags/raft/">#raft</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/announcing-kop/" class="prev" rel="prev" title="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</a>
-            <a href="/posts/diving-into-etcd-linearizable/" class="next" rel="next" title="Diving into ETCD&#39;s linearizable reads">Diving into ETCD's linearizable reads<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>

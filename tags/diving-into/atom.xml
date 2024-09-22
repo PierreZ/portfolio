@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - diving-into</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/diving-into/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2019-11-17T10:24:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/diving-into/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Diving into Hbase&#x27;s MemStore</title>
+        <published>2019-11-17T10:24:27+01:00</published>
+        <updated>2019-11-17T10:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"/>
+        <id>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;code&gt;tl;dr:&lt;&#x2F;code&gt; Hbase is using the &lt;a href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-the-memstore&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-memstore&quot; aria-label=&quot;Anchor link for: what-is-the-memstore&quot;&gt;🔗&lt;&#x2F;a&gt;What is the MemStore?&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;code&gt;memtable&lt;&#x2F;code&gt; from the official &lt;a href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt; is the equivalent of the &lt;code&gt;MemStore&lt;&#x2F;code&gt; in Hbase.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;As rows are &lt;strong&gt;sorted lexicographically&lt;&#x2F;strong&gt; in Hbase, when data comes in, you need to have some kind of a &lt;strong&gt;in-memory buffer&lt;&#x2F;strong&gt; to order those keys. This is where the &lt;code&gt;MemStore&lt;&#x2F;code&gt; comes in. It absorbs the recent write (or put in Hbase semantics) operations. All the rest are immutable files called &lt;code&gt;HFile&lt;&#x2F;code&gt; stored in HDFS. There is one &lt;code&gt;MemStore&lt;&#x2F;code&gt; per &lt;code&gt;column family&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s dig into how the MemStore internally works in Hbase 1.X.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hbase-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-1&quot; aria-label=&quot;Anchor link for: hbase-1&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 1&lt;&#x2F;h2&gt;
+&lt;p&gt;All extract of code for this section are taken from &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;1.4.9&quot;&gt;rel&#x2F;1.4.9&lt;&#x2F;a&gt; tag.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;in-memory-storage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-storage&quot; aria-label=&quot;Anchor link for: in-memory-storage&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory storage&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L35&quot;&gt;MemStore interface&lt;&#x2F;a&gt; is giving us insight on how it is working internally.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;**
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * Write an update
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cell
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@return&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt; approximate size of the passed cell.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *&#x2F;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;long add(final Cell cell);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L68-L73&quot;&gt;add function on the MemStore&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The implementation is hold by &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;DefaultMemStore.java&quot;&gt;DefaultMemStore&lt;&#x2F;a&gt;. &lt;code&gt;add&lt;&#x2F;code&gt; is wrapped by several functions, but in the end, we are arriving here:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;private boolean &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;addToCellSet&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Cell&lt;&#x2F;span&gt;&lt;span&gt; e) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;boolean&lt;&#x2F;span&gt;&lt;span&gt; b = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;this&lt;&#x2F;span&gt;&lt;span&gt;.activeSection.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;getCellSkipListSet&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add&lt;&#x2F;span&gt;&lt;span&gt;(e);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;DefaultMemStore.java#L202-L213&quot;&gt;addToCellSet on the DefaultMemStore&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;CellSkipListSet.java#L33-L48&quot;&gt;CellSkipListSet class&lt;&#x2F;a&gt; is built on top of &lt;a href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;, which provide nice features:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;concurrency&lt;&#x2F;li&gt;
+&lt;li&gt;sorted elements&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;flush-on-hdfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#flush-on-hdfs&quot; aria-label=&quot;Anchor link for: flush-on-hdfs&quot;&gt;🔗&lt;&#x2F;a&gt;Flush on HDFS&lt;&#x2F;h3&gt;
+&lt;p&gt;As we seen above, the &lt;code&gt;MemStore&lt;&#x2F;code&gt; is supporting all the puts. When asked to flush, the current memstore is &lt;strong&gt;moved to snapshot and is cleared&lt;&#x2F;strong&gt;. Flushed file are called (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;io&#x2F;hfile&#x2F;HFile.java&quot;&gt;HFiles&lt;&#x2F;a&gt;) and they are similar to &lt;code&gt;SSTables&lt;&#x2F;code&gt; introduced by the official &lt;a href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt;. HFiles are flushed on the Hadoop Distributed File System called &lt;code&gt;HDFS&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you want deeper insight about SSTables, I recommend reading &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;facebook&#x2F;rocksdb&#x2F;wiki&#x2F;Rocksdb-BlockBasedTable-Format&quot;&gt;Table Format from the awesome RocksDB wiki&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#compaction&quot; aria-label=&quot;Anchor link for: compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Compaction&lt;&#x2F;h3&gt;
+&lt;p&gt;Compaction are only run on HFiles. It means that &lt;strong&gt;if hot data is continuously updated, we are overusing memory due to duplicate entries per row per MemStore&lt;&#x2F;strong&gt;. Accordion tends to solve this problem through &lt;em&gt;in-memory compactions&lt;&#x2F;em&gt;. Let&#x27;s have a look to Hbase 2.X!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hbase-2&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-2&quot; aria-label=&quot;Anchor link for: hbase-2&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 2&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;storing-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#storing-data&quot; aria-label=&quot;Anchor link for: storing-data&quot;&gt;🔗&lt;&#x2F;a&gt;storing data&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;All extract of code starting from here are taken from &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;2.1.2&quot;&gt;rel&#x2F;2.1.2&lt;&#x2F;a&gt; tag.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Does &lt;code&gt;MemStore&lt;&#x2F;code&gt; interface changed?&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;**
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * Write an update
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cell
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;memstoreSizing&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt; The delta in memstore size will be passed back via this.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *        This will include both data size and heap overhead delta.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *&#x2F;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;  void add(final Cell cell, MemStoreSizing memstoreSizing);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L67-L73&quot;&gt;add function in MemStore interface&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The signature changed a bit, to include passing a object instead of returning a long. Moving on.&lt;&#x2F;p&gt;
+&lt;p&gt;The new structure implementing MemStore is called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;AbstractMemStore.java#L42&quot;&gt;AbstractMemStore&lt;&#x2F;a&gt;. Again, we have some layers, where AbstractMemStore is writing to a &lt;code&gt;MutableSegment&lt;&#x2F;code&gt;, which itsef is wrapping &lt;code&gt;Segment&lt;&#x2F;code&gt;. If you dig far enough, you will find that data are stored into the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;CellSet.java#L35-L51&quot;&gt;CellSet class&lt;&#x2F;a&gt; which is also things built on top of &lt;strong&gt;ConcurrentSkipListMap&lt;&#x2F;strong&gt;!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;in-memory-compactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-compactions&quot; aria-label=&quot;Anchor link for: in-memory-compactions&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory Compactions&lt;&#x2F;h3&gt;
+&lt;p&gt;Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: &lt;a href=&quot;https:&#x2F;&#x2F;blogs.apache.org&#x2F;hbase&#x2F;entry&#x2F;accordion-hbase-breathes-with-in&quot;&gt;Accordion: HBase Breathes with In-Memory Compaction&lt;&#x2F;a&gt; and the &lt;a href=&quot;https:&#x2F;&#x2F;issues.apache.org&#x2F;jira&#x2F;secure&#x2F;attachment&#x2F;12709471&#x2F;HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf&quot;&gt;document design&lt;&#x2F;a&gt; is also available.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

@@ -1,235 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>The unseen treasures of Infrastructure Engineering: Academic Papers - Pierre Zemb</title><meta name="Description" content="Are you not using academic papers in your favorite RSS app? You should!"><meta property="og:url" content="https://pierrezemb.fr/posts/academic-conferences/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
-  <meta property="og:description" content="Are you not using academic papers in your favorite RSS app? You should!">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2024-01-22T15:37:27+01:00">
-    <meta property="article:modified_time" content="2024-01-22T15:37:27+01:00">
-    <meta property="og:image" content="https://pierrezemb.fr/posts/academic-conferences/papers.png">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The unseen treasures of Infrastructure Engineering: Academic Papers | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
+<meta name="description" content="Are you not using academic papers in your favorite RSS app? You should!">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://pierrezemb.fr/posts/academic-conferences/papers.png">
-  <meta name="twitter:title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
-  <meta name="twitter:description" content="Are you not using academic papers in your favorite RSS app? You should!">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/academic-conferences/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/distsys-resources/" /><link rel="next" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "The unseen treasures of Infrastructure Engineering: Academic Papers",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/academic-conferences\/"
-        },"genre": "posts","wordcount":  619 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/academic-conferences\/","datePublished": "2024-01-22T15:37:27+01:00","dateModified": "2024-01-22T15:37:27+01:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": "Are you not using academic papers in your favorite RSS app? You should!"
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
+<meta property="og:description" content="Are you not using academic papers in your favorite RSS app? You should!"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/academic-conferences/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">The unseen treasures of Infrastructure Engineering: Academic Papers</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/learning/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Learning</a>&nbsp;<a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Distributed-Systems</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-01-22">2024-01-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;619 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;3 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#the-usenix-community">The USENIX community</a>
-      <ul>
-        <li><a href="#osdi">OSDI</a></li>
-        <li><a href="#usenix-atc">Usenix ATC</a></li>
-      </ul>
-    </li>
-    <li><a href="#the-acm-family">The ACM family</a>
-      <ul>
-        <li><a href="#sigmod">SIGMOD</a></li>
-        <li><a href="#damon">DaMoN</a></li>
-        <li><a href="#socc">SoCC</a></li>
-        <li><a href="#sosp">SOSP</a></li>
-      </ul>
-    </li>
-    <li><a href="#others">Others</a>
-      <ul>
-        <li><a href="#vldb">VLDB</a></li>
-        <li><a href="#cidr">CIDR</a></li>
-      </ul>
-    </li>
-    <li><a href="#cool-papers-examples">Cool papers examples</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><figure><img src="/posts/academic-conferences/papers.png">
-</figure>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
 
-<p>I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there&rsquo;s another source of information I&rsquo;ve been using for a long time that not many people know about: <strong>academic papers</strong>.</p>
-<p>You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often <strong>dive deeper</strong> into specific aspects of infrastructure. They provide more in-depth information, uncovering details that are not commonly discussed. So, if you&rsquo;re interested in gaining a more comprehensive understanding of infrastructure-related topics, exploring academic papers can be really worthwile.</p>
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>The unseen treasures of Infrastructure Engineering: Academic Papers</h1>
+      <p>
+        <i>
+          <time datetime="2024-01-22T15:37:27+01:00" pubdate>22 Jan, 2024</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/academic-conferences/#the-usenix-community">The USENIX community</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#osdi">OSDI</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#usenix-atc">Usenix ATC</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/academic-conferences/#the-acm-family">The ACM family</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#sigmod">SIGMOD</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#damon">DaMoN</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#socc">SoCC</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#sosp">SOSP</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/academic-conferences/#others">Others</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#vldb">VLDB</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/academic-conferences/#cidr">CIDR</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/academic-conferences/#cool-papers-examples">Cool papers examples</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p><img src="/images/papers.png" alt="Academic paper created with AI" /></p>
+<p>I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there's another source of information I've been using for a long time that not many people know about: <strong>academic papers</strong>.</p>
+<p>You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often <strong>dive deeper</strong> into specific aspects of infrastructure. They provide more in-depth information, uncovering details that are not commonly discussed. So, if you're interested in gaining a more comprehensive understanding of infrastructure-related topics, exploring academic papers can be really worthwile.</p>
 <blockquote>
-<p>Sounds a bit too academic, doesn&rsquo;t it? 🤔</p>
+<p>Sounds a bit too academic, doesn't it? 🤔</p>
 </blockquote>
-<p>I don&rsquo;t think so!  It&rsquo;s true that academic research can sometimes seem distant from everyday industry needs, but following both academic and industry tracks is beneficial. R&amp;D from academia often lead to new ideas and technologies that eventually find their way into practical use.</p>
-<p>Moreover, numerous academic conferences feature a <strong>&ldquo;industry track&rdquo;</strong> that is essential to monitor.</p>
+<p>I don't think so!  It's true that academic research can sometimes seem distant from everyday industry needs, but following both academic and industry tracks is beneficial. R&amp;D from academia often lead to new ideas and technologies that eventually find their way into practical use.</p>
+<p>Moreover, numerous academic conferences feature a <strong>&quot;industry track&quot;</strong> that is essential to monitor.</p>
 <blockquote>
-<p>Aren&rsquo;t they too complex to read? 🤔</p>
+<p>Aren't they too complex to read? 🤔</p>
 </blockquote>
-<p>If you don&rsquo;t get everything right away, that&rsquo;s okay. Reading these smart papers might be a bit hard, but it&rsquo;s a skill that gets better with practice. And who knows, maybe you&rsquo;ll be inspired to write your own paper someday! 😉</p>
+<p>If you don't get everything right away, that's okay. Reading these smart papers might be a bit hard, but it's a skill that gets better with practice. And who knows, maybe you'll be inspired to write your own paper someday! 😉</p>
 <blockquote>
-<p>I&rsquo;m intrigued! Where should I start?</p>
+<p>I'm intrigued! Where should I start?</p>
 </blockquote>
-<p>Here&rsquo;s a short list of my go-to academic papers and conferences that you can follow for infrastructure engineering. Please note that many conferences exists on other subjects, like security and so.</p>
-<h2 id="the-usenix-community">The USENIX community</h2>
-<h3 id="osdi">OSDI</h3>
-<p>As part of the USENIX Association, the <a href="https://www.usenix.org/conferences" target="_blank" rel="noopener noreffer ">Operating Systems Design and Implementation</a> is an annual computer science conference that you shouldn&rsquo;t miss. You can catch most of the sessions online along with some useful slides.</p>
-<h3 id="usenix-atc">Usenix ATC</h3>
-<p>Similar to OSDI, the Usenix <a href="https://www.usenix.org/conferences" target="_blank" rel="noopener noreffer ">Annual Technical Conference</a> is another classic to follow.  has been awarded Best Paper in 2023, and it&rsquo;s a gem!</p>
-<h2 id="the-acm-family">The ACM family</h2>
-<h3 id="sigmod">SIGMOD</h3>
-<p>SIGMOD, or the <a href="https://sigmod.org/" target="_blank" rel="noopener noreffer ">Special Interest Group on Management of Data</a>, is an essential conference under the ACM umbrella, focusing on the management and organization of data.</p>
-<h3 id="damon">DaMoN</h3>
-<p>Held with ACM SIGMOD/PODS, you can also find the <a href="https://damon-db.org/" target="_blank" rel="noopener noreffer ">Data Management on New Hardware </a>.</p>
-<h3 id="socc">SoCC</h3>
-<p>The <a href="https://acmsocc.org/2023/" target="_blank" rel="noopener noreffer ">Symposium on Cloud Computing</a> or SoCC for short belongs to ACM. It has a bit less content, as videos are not published, but you should keep it in your watchlist.</p>
-<h3 id="sosp">SOSP</h3>
-<p>The <a href="http://sosp.org/" target="_blank" rel="noopener noreffer ">Symposium on Operating Systems Principles</a> is another noteworthy conference in the ACM family. It&rsquo;s a top-tier venue for discussing operating systems research. Stay tuned for updates on the latest breakthroughs and innovative ideas.</p>
-<h2 id="others">Others</h2>
-<h3 id="vldb">VLDB</h3>
-<p>Not belonging to USENIX or ACM, the <a href="https://vldb.org/" target="_blank" rel="noopener noreffer ">Very Large Data Bases</a> (VLDB) conference is a key event in the database community. It provides a platform for researchers and professionals to exchange ideas on managing and analyzing large-scale datasets.</p>
-<h3 id="cidr">CIDR</h3>
-<p>The <a href="https://www.cidrdb.org" target="_blank" rel="noopener noreffer ">Conference on Innovative Data Systems Research</a> (CIDR) is a systems-oriented conference, complementary in its mission to the mainstream database conferences like SIGMOD and VLDB, emphasizing the systems architecture perspective.</p>
-<h2 id="cool-papers-examples">Cool papers examples</h2>
+<p>Here's a short list of my go-to academic papers and conferences that you can follow for infrastructure engineering. Please note that many conferences exists on other subjects, like security and so.</p>
+<h2 id="the-usenix-community"><a class="zola-anchor" href="#the-usenix-community" aria-label="Anchor link for: the-usenix-community">🔗</a>The USENIX community</h2>
+<h3 id="osdi"><a class="zola-anchor" href="#osdi" aria-label="Anchor link for: osdi">🔗</a>OSDI</h3>
+<p>As part of the USENIX Association, the <a href="https://www.usenix.org/conferences">Operating Systems Design and Implementation</a> is an annual computer science conference that you shouldn't miss. You can catch most of the sessions online along with some useful slides.</p>
+<h3 id="usenix-atc"><a class="zola-anchor" href="#usenix-atc" aria-label="Anchor link for: usenix-atc">🔗</a>Usenix ATC</h3>
+<p>Similar to OSDI, the Usenix <a href="https://www.usenix.org/conferences">Annual Technical Conference</a> is another classic to follow.  has been awarded Best Paper in 2023, and it's a gem!</p>
+<h2 id="the-acm-family"><a class="zola-anchor" href="#the-acm-family" aria-label="Anchor link for: the-acm-family">🔗</a>The ACM family</h2>
+<h3 id="sigmod"><a class="zola-anchor" href="#sigmod" aria-label="Anchor link for: sigmod">🔗</a>SIGMOD</h3>
+<p>SIGMOD, or the <a href="https://sigmod.org/">Special Interest Group on Management of Data</a>, is an essential conference under the ACM umbrella, focusing on the management and organization of data.</p>
+<h3 id="damon"><a class="zola-anchor" href="#damon" aria-label="Anchor link for: damon">🔗</a>DaMoN</h3>
+<p>Held with ACM SIGMOD/PODS, you can also find the <a href="https://damon-db.org/">Data Management on New Hardware </a>.</p>
+<h3 id="socc"><a class="zola-anchor" href="#socc" aria-label="Anchor link for: socc">🔗</a>SoCC</h3>
+<p>The <a href="https://acmsocc.org/2023/">Symposium on Cloud Computing</a> or SoCC for short belongs to ACM. It has a bit less content, as videos are not published, but you should keep it in your watchlist.</p>
+<h3 id="sosp"><a class="zola-anchor" href="#sosp" aria-label="Anchor link for: sosp">🔗</a>SOSP</h3>
+<p>The <a href="http://sosp.org/">Symposium on Operating Systems Principles</a> is another noteworthy conference in the ACM family. It's a top-tier venue for discussing operating systems research. Stay tuned for updates on the latest breakthroughs and innovative ideas.</p>
+<h2 id="others"><a class="zola-anchor" href="#others" aria-label="Anchor link for: others">🔗</a>Others</h2>
+<h3 id="vldb"><a class="zola-anchor" href="#vldb" aria-label="Anchor link for: vldb">🔗</a>VLDB</h3>
+<p>Not belonging to USENIX or ACM, the <a href="https://vldb.org/">Very Large Data Bases</a> (VLDB) conference is a key event in the database community. It provides a platform for researchers and professionals to exchange ideas on managing and analyzing large-scale datasets.</p>
+<h3 id="cidr"><a class="zola-anchor" href="#cidr" aria-label="Anchor link for: cidr">🔗</a>CIDR</h3>
+<p>The <a href="https://www.cidrdb.org">Conference on Innovative Data Systems Research</a> (CIDR) is a systems-oriented conference, complementary in its mission to the mainstream database conferences like SIGMOD and VLDB, emphasizing the systems architecture perspective.</p>
+<h2 id="cool-papers-examples"><a class="zola-anchor" href="#cool-papers-examples" aria-label="Anchor link for: cool-papers-examples">🔗</a>Cool papers examples</h2>
 <blockquote>
 <p>This is a nice list, but how about some paper examples that <strong>you</strong> like?🤔</p>
 </blockquote>
-<p>Sure! Here&rsquo;s a quick list with some infrastructure-related informations:</p>
+<p>Sure! Here's a quick list with some infrastructure-related informations:</p>
 <ul>
-<li><a href="https://www.usenix.org/conference/atc23/presentation/brooker" target="_blank" rel="noopener noreffer ">On-demand Container Loading in AWS Lambda</a></li>
-<li><a href="https://www.cidrdb.org/cidr2024/papers/p63-helland.pdf" target="_blank" rel="noopener noreffer ">Scalable OLTP in the Cloud: What&rsquo;s the BIG DEAL?</a></li>
-<li><a href="https://www.confluent.io/blog/cloud-native-kafka-kora-vldb-award/" target="_blank" rel="noopener noreffer ">Kora: A Cloud-Native Event Streaming Platform For Kafka</a></li>
-<li><a href="https://www.youtube.com/watch?v=YdxvOPenjWI" target="_blank" rel="noopener noreffer ">Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3</a></li>
-<li><a href="https://www.foundationdb.org/blog/fdb-paper/" target="_blank" rel="noopener noreffer ">FoundationDB: A Distributed, Unbundled, Transactional Key Value Store</a></li>
-<li><a href="https://www.usenix.org/conference/osdi20/presentation/balakrishnan" target="_blank" rel="noopener noreffer ">Virtual consensus with Delos</a></li>
+<li><a href="https://www.usenix.org/conference/atc23/presentation/brooker">On-demand Container Loading in AWS Lambda</a></li>
+<li><a href="https://www.cidrdb.org/cidr2024/papers/p63-helland.pdf">Scalable OLTP in the Cloud: What's the BIG DEAL?</a></li>
+<li><a href="https://www.confluent.io/blog/cloud-native-kafka-kora-vldb-award/">Kora: A Cloud-Native Event Streaming Platform For Kafka</a></li>
+<li><a href="https://www.youtube.com/watch?v=YdxvOPenjWI">Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3</a></li>
+<li><a href="https://www.foundationdb.org/blog/fdb-paper/">FoundationDB: A Distributed, Unbundled, Transactional Key Value Store</a></li>
+<li><a href="https://www.usenix.org/conference/osdi20/presentation/balakrishnan">Virtual consensus with Delos</a></li>
 </ul>
-<p>I&rsquo;m also trying to organize them into my <a href="https://www.zotero.org/pierre.zemb/library" target="_blank" rel="noopener noreffer ">Zotero&rsquo;s library</a>.</p>
-<hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2024-01-22</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/academic-conferences/" data-title="The unseen treasures of Infrastructure Engineering: Academic Papers" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/academic-conferences/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/academic-conferences/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/academic-conferences/" data-title="The unseen treasures of Infrastructure Engineering: Academic Papers"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/academic-conferences/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/academic-conferences/" data-title="The unseen treasures of Infrastructure Engineering: Academic Papers"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/academic-conferences/" data-title="The unseen treasures of Infrastructure Engineering: Academic Papers"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+<p>I'm also trying to organize them into my <a href="https://www.zotero.org/pierre.zemb/library">Zotero's library</a>.</p>
+<hr />
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/learning/">#learning</a>
+          <a href="https://pierrezemb.fr/tags/academic/">#academic</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/distsys-resources/" class="prev" rel="prev" title="Best resources to learn about data and distributed systems"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Best resources to learn about data and distributed systems</a>
-            <a href="/posts/automatic-txn-fdb-730/" class="next" rel="next" title="True idempotent transactions with FoundationDB 7.3">True idempotent transactions with FoundationDB 7.3<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>

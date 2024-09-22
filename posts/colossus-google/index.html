@@ -1,157 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>What can be gleaned about GFS successor codenamed Colossus? - Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:url" content="https://pierrezemb.fr/posts/colossus-google/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="What can be gleaned about GFS successor codenamed Colossus?">
-  <meta property="og:description" content="In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
-Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like ‘What does the death of Hadoop mean for big data?’ Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2019-08-04T15:07:11+02:00">
-    <meta property="article:modified_time" content="2019-08-04T15:07:11+02:00">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What can be gleaned about GFS successor codenamed Colossus? | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="What can be gleaned about GFS successor codenamed Colossus?">
+<meta name="description" content="Pierre Zemb personal blog">
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="What can be gleaned about GFS successor codenamed Colossus?">
-  <meta name="twitter:description" content="In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:
-Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity with headlines like ‘What does the death of Hadoop mean for big data?’ Hadoop, as a distributed-system, is hard to operate, but can be essential for some type of workload. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/colossus-google/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/ttl-hbase/" /><link rel="next" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "What can be gleaned about GFS successor codenamed Colossus?",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/colossus-google\/"
-        },"genre": "posts","wordcount":  1241 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/colossus-google\/","datePublished": "2019-08-04T15:07:11+02:00","dateModified": "2019-08-04T15:07:11+02:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": ""
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="What can be gleaned about GFS successor codenamed Colossus?">
+<meta property="og:description" content="Pierre Zemb personal blog"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/colossus-google/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">What can be gleaned about GFS successor codenamed Colossus?</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/distributed-systems/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Distributed-Systems</a>&nbsp;<a href="/categories/hadoop/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Hadoop</a>&nbsp;<a href="/categories/colossus/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Colossus</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2019-08-04">2019-08-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1241 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;6 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#hadoops-story">Hadoop&rsquo;s story</a></li>
-    <li><a href="#is-hadoop-still-revelant">Is Hadoop still revelant?</a></li>
-    <li><a href="#well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes</a></li>
-    <li><a href="#how-gfs-evolved-within-google">How GFS evolved within Google</a>
-      <ul>
-        <li><a href="#technical-overview">Technical overview</a></li>
-        <li><a href="#deployments">Deployments</a></li>
-        <li><a href="#migration">Migration</a></li>
-      </ul>
-    </li>
-    <li><a href="#is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><a class="lightgallery" href="/posts/colossus-google/hadoop-logo.jpg" title="Hello Friend" data-thumbnail="/posts/colossus-google/hadoop-logo.jpg">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/posts/colossus-google/hadoop-logo.jpg"
-            data-srcset="/posts/colossus-google/hadoop-logo.jpg, /posts/colossus-google/hadoop-logo.jpg 1.5x, /posts/colossus-google/hadoop-logo.jpg 2x"
-            data-sizes="auto"
-            alt="Hello Friend" />
-    </a>
-<p>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:</p>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>What can be gleaned about GFS successor codenamed Colossus?</h1>
+      <p>
+        <i>
+          <time datetime="2019-08-04T15:07:11+02:00" pubdate>04 Aug, 2019</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/colossus-google/#hadoop-s-story">Hadoop&#x27;s story</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/colossus-google/#is-hadoop-still-revelant">Is Hadoop still revelant?</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/colossus-google/#well-let-s-put-hadoop-in-kubernetes">Well, let&#x27;s put Hadoop in Kubernetes</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/colossus-google/#how-gfs-evolved-within-google">How GFS evolved within Google</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/colossus-google/#technical-overview">Technical overview</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/colossus-google/#deployments">Deployments</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/colossus-google/#migration">Migration</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/colossus-google/#is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:</p>
 <ul>
-<li><a href="https://www.theregister.co.uk/2019/06/06/cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger/" target="_blank" rel="noopener noreffer ">Health of Hadoop-based companies are publicly bad</a></li>
-<li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/" target="_blank" rel="noopener noreffer ">&lsquo;What does the death of Hadoop mean for big data?&rsquo;</a></li>
+<li><a href="https://www.theregister.co.uk/2019/06/06/cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger/">Health of Hadoop-based companies are publicly bad</a></li>
+<li>Hadoop has a bad publicity with headlines like <a href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/">'What does the death of Hadoop mean for big data?'</a></li>
 </ul>
 <p>Hadoop, as a distributed-system, <strong>is hard to operate, but can be essential for some type of workload</strong>. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</p>
-<h2 id="hadoops-story">Hadoop&rsquo;s story</h2>
-<p>Hadoop is based on a Google&rsquo;s paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf" target="_blank" rel="noopener noreffer ">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
+<h2 id="hadoop-s-story"><a class="zola-anchor" href="#hadoop-s-story" aria-label="Anchor link for: hadoop-s-story">🔗</a>Hadoop's story</h2>
+<p>Hadoop is based on a Google's paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 <ul>
-<li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438" target="_blank" rel="noopener noreffer ">Borg</a>,</li>
-<li>to &ldquo;<a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank" rel="noopener noreffer ">simplify the overall design problem</a>&rdquo;, they:
+<li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
+<li>to &quot;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&quot;, they:
 <ul>
 <li>implemented a single master architecture</li>
 <li>dropped the idea of a full POSIX-compliant file system</li>
@@ -161,7 +266,7 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 <li>Datas are stored within chunkservers,</li>
 <li>There is no YARN or Map/Reduce or any kind of compute capabilities.</li>
 </ul>
-<h2 id="is-hadoop-still-revelant">Is Hadoop still revelant?</h2>
+<h2 id="is-hadoop-still-revelant"><a class="zola-anchor" href="#is-hadoop-still-revelant" aria-label="Anchor link for: is-hadoop-still-revelant">🔗</a>Is Hadoop still revelant?</h2>
 <p>Google with GFS and the rest of the world with Hadoop hit some issues:</p>
 <ul>
 <li>One (Metadata) machine is not large enough for large FS,</li>
@@ -169,52 +274,52 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 <li>Not appropriate for latency sensitive applications,</li>
 <li>Fault tolerant not HA,</li>
 <li>Unpredictable performance,</li>
-<li>Replication&rsquo;s cost,</li>
+<li>Replication's cost,</li>
 <li>HDFS Write-path pipelining,</li>
 <li>fixed-size of blocks,</li>
 <li>cost of operations,</li>
-<li>&hellip;</li>
+<li>...</li>
 </ul>
 <p>Despite all the issues, Hadoop is still relevant for some usecases, such as Map/Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:</p>
 <ul>
-<li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html" target="_blank" rel="noopener noreffer ">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
-<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank" rel="noopener noreffer ">&ldquo;Scaled to approximately 50M files, 10P&rdquo; to avoid &ldquo;added management overhead&rdquo; brought by the scaling.</a></li>
+<li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
+<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">&quot;Scaled to approximately 50M files, 10P&quot; to avoid &quot;added management overhead&quot; brought by the scaling.</a></li>
 </ul>
 <p>Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.</p>
-<p>Google&rsquo;s developers were/are deploying applications into &ldquo;containers&rdquo;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don&rsquo;t need to worry about replication</strong> (like Bigtable/HBase).</p>
-<p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a &ldquo;file-system&rdquo; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
+<p>Google's developers were/are deploying applications into &quot;containers&quot;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don't need to worry about replication</strong> (like Bigtable/HBase).</p>
+<p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a &quot;file-system&quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
 <ul>
 <li>How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?</li>
 <li>Should I be moving that persistent volume over my slow network?</li>
-<li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698" target="_blank" rel="noopener noreffer ">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
+<li>What is happening when <a href="https://github.com/dgraph-io/dgraph/issues/2698">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
 </ul>
-<h2 id="well-lets-put-hadoop-in-kubernetes">Well, let&rsquo;s put Hadoop in Kubernetes</h2>
+<h2 id="well-let-s-put-hadoop-in-kubernetes"><a class="zola-anchor" href="#well-let-s-put-hadoop-in-kubernetes" aria-label="Anchor link for: well-let-s-put-hadoop-in-kubernetes">🔗</a>Well, let's put Hadoop in Kubernetes</h2>
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 <ul>
-<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop" target="_blank" rel="noopener noreffer ">Helm chart for Hadoop is limited to YARN and Map/Reduce and &ldquo;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&rdquo;</a></li>
-<li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &ldquo;day-zero to day-two&rdquo; good experience,</li>
-<li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959" target="_blank" rel="noopener noreffer ">not be using the Operators design internally</a>.</li>
-<li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb" target="_blank" rel="noopener noreffer ">CouchDB developers</a> are saying that:
+<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and &quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;</a></li>
+<li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &quot;day-zero to day-two&quot; good experience,</li>
+<li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959">not be using the Operators design internally</a>.</li>
+<li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb">CouchDB developers</a> are saying that:
 <ul>
-<li>&ldquo;For certain workloads, the technology isn’t quite there yet&rdquo;</li>
-<li>&ldquo;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&rdquo;</li>
+<li>&quot;For certain workloads, the technology isn’t quite there yet&quot;</li>
+<li>&quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&quot;</li>
 </ul>
 </li>
 </ul>
-<h2 id="how-gfs-evolved-within-google">How GFS evolved within Google</h2>
-<h3 id="technical-overview">Technical overview</h3>
-<p>As GFS&rsquo;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here&rsquo;s what can be found online:</p>
+<h2 id="how-gfs-evolved-within-google"><a class="zola-anchor" href="#how-gfs-evolved-within-google" aria-label="Anchor link for: how-gfs-evolved-within-google">🔗</a>How GFS evolved within Google</h2>
+<h3 id="technical-overview"><a class="zola-anchor" href="#technical-overview" aria-label="Anchor link for: technical-overview">🔗</a>Technical overview</h3>
+<p>As GFS's paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here's what can be found online:</p>
 <ul>
 <li>
-<p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf" target="_blank" rel="noopener noreffer ">Storage Architecture and Challenges(2010)</a>:</p>
+<p>From <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">Storage Architecture and Challenges(2010)</a>:</p>
 <ul>
-<li>They moved from full-replication to <a href="https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction" target="_blank" rel="noopener noreffer ">Reed-Salomon</a>. This feature is acually in <a href="https://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html" target="_blank" rel="noopener noreffer ">Hadoop 3</a>,</li>
+<li>They moved from full-replication to <a href="https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction">Reed-Salomon</a>. This feature is acually in <a href="https://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html">Hadoop 3</a>,</li>
 <li>replication is handled by the client, instead of the pipelining,</li>
 <li>the metadata layer is automatically sharded. We can find more informations about that in the next ressource!</li>
 </ul>
 </li>
 <li>
-<p>From <a href="http://www.pdsw.org/pdsw-discs17/slides/PDSW-DISCS-Google-Keynote.pdf" target="_blank" rel="noopener noreffer ">Cluster-Level Storage @ Google(2017)</a>:</p>
+<p>From <a href="http://www.pdsw.org/pdsw-discs17/slides/PDSW-DISCS-Google-Keynote.pdf">Cluster-Level Storage @ Google(2017)</a>:</p>
 <ul>
 <li>GFS master replaced by Colossus</li>
 <li>GFS chunkserver replaced by D</li>
@@ -224,114 +329,103 @@ Health of Hadoop-based companies are publicly bad Hadoop has a bad publicity wit
 </ul>
 </li>
 </ul>
-<p>The &ldquo;all in RAM&rdquo; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&rsquo;t had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
+<p>The &quot;all in RAM&quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn't had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
 <ul>
 <li>automatic sharding of regions,</li>
-<li>scan capabilities for files in the same &ldquo;directory&rdquo;,</li>
+<li>scan capabilities for files in the same &quot;directory&quot;,</li>
 <li>lexical ordering,</li>
-<li>&hellip;</li>
+<li>...</li>
 </ul>
 <p>The funny part is that they now need a Colossus for Colossus. The only things saving them is that storing the metametametadata (the metadata of the metadata of the metadata) can be hold in Chubby.</p>
 <ul>
 <li>
-<p>From <a href="https://queue.acm.org/detail.cfm?id=1594206" target="_blank" rel="noopener noreffer ">GFS: Evolution on Fast-forward(2009)</a></p>
+<p>From <a href="https://queue.acm.org/detail.cfm?id=1594206">GFS: Evolution on Fast-forward(2009)</a></p>
 <ul>
 <li>they moved to chunks of 1MB of files, as the limitations of the master disappeared. This is also allowing Colossus to support latency sensitive applications,</li>
 </ul>
 </li>
 <li>
-<p>From <a href="https://github.com/cockroachdb/cockroach/issues/243#issuecomment-91575792" target="_blank" rel="noopener noreffer ">a Github comment on Colossus</a>:</p>
+<p>From <a href="https://github.com/cockroachdb/cockroach/issues/243#issuecomment-91575792">a Github comment on Colossus</a>:</p>
 <ul>
 <li>File reconstruction from Reed-Salomnon was performed on both client-side and server-side</li>
 <li>on-the-fly recovery of data is greatly enhanced by this data layout(Reed Salomon)</li>
 </ul>
 </li>
 <li>
-<p>From a <a href="https://news.ycombinator.com/item?id=20135927" target="_blank" rel="noopener noreffer ">Hacker News comment</a>:</p>
+<p>From a <a href="https://news.ycombinator.com/item?id=20135927">Hacker News comment</a>:</p>
 <ul>
 <li>Colossus and D are two separate things.</li>
 </ul>
 </li>
 <li>
-<p>From <a href="https://cloud.google.com/blog/products/storage-data-transfer/a-peek-behind-colossus-googles-file-system" target="_blank" rel="noopener noreffer ">Colossus under the hood: a peek into Google’s scalable storage system</a>:</p>
+<p>From <a href="https://cloud.google.com/blog/products/storage-data-transfer/a-peek-behind-colossus-googles-file-system">Colossus under the hood: a peek into Google’s scalable storage system</a>:</p>
 <ul>
-<li>Colossus&rsquo;s Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.</li>
+<li>Colossus's Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.</li>
 <li>background storage managers called Custodians, there are handling tasks like disk space balancing and RAID reconstruction.</li>
 <li>Applications needs to specifies I/O, availability, and durability requirements</li>
 </ul>
 </li>
 </ul>
-<p>What is that &ldquo;D&rdquo;?</p>
+<p>What is that &quot;D&quot;?</p>
 <ul>
 <li>
-<p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/" target="_blank" rel="noopener noreffer ">The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
+<p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/">The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
 <ul>
 <li>D stands for <em>Disk</em>,</li>
 <li>D is a fileserver running on almost all machines in a cluster.</li>
 </ul>
 </li>
 <li>
-<p>From <a href="https://medium.com/@jerub/the-production-environment-at-google-8a1aaece3767" target="_blank" rel="noopener noreffer ">The Production Environment at Google</a>:</p>
+<p>From <a href="https://medium.com/@jerub/the-production-environment-at-google-8a1aaece3767">The Production Environment at Google</a>:</p>
 <ul>
 <li>D is more of a block server than a file server</li>
 <li>It provides nothing apart from checksums.</li>
 </ul>
 </li>
 </ul>
-<h3 id="deployments">Deployments</h3>
-<!-- raw HTML omitted -->
+<h3 id="deployments"><a class="zola-anchor" href="#deployments" aria-label="Anchor link for: deployments">🔗</a>Deployments</h3>
+<!-- I think the team that's pushing the forefront of something k8s-like for persistency/durability is... the Colossus/D team at Google, who have been running storage servers managed by Borg for almost a decade now :) Problem is, it's not k8s. But could tell us what that roadmap is.  -->
 <p>How everything is deployed? Using Borg!</p>
-<h3 id="migration">Migration</h3>
-<p>The migration process is described in the now free <a href="https://static.googleusercontent.com/media/sre.google/en//static/pdf/case-studies-infrastructure-change-management.pdf" target="_blank" rel="noopener noreffer ">Case Studies in Infrastructure Change Management</a> book.</p>
-<h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?</h2>
-<p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs" target="_blank" rel="noopener noreffer ">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
-<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes" target="_blank" rel="noopener noreffer ">some work to add colossus&rsquo;s features in Hadoop</a> but based on the bad publicity Hadoop has now, I don&rsquo;t think there will be a lot of money to power those efforts.</p>
+<h3 id="migration"><a class="zola-anchor" href="#migration" aria-label="Anchor link for: migration">🔗</a>Migration</h3>
+<p>The migration process is described in the now free <a href="https://static.googleusercontent.com/media/sre.google/en//static/pdf/case-studies-infrastructure-change-management.pdf">Case Studies in Infrastructure Change Management</a> book.</p>
+<h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs"><a class="zola-anchor" href="#is-there-an-open-source-effort-to-create-a-colossus-like-dfs" aria-label="Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs">🔗</a>Is there an open-source effort to create a Colossus-like DFS?</h2>
+<p>I did not found any point towards a open-source version of Colossus, beside some work made for <a href="https://github.com/baidu/bfs">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
+<p>There is <a href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes">some work to add colossus's features in Hadoop</a> but based on the bad publicity Hadoop has now, I don't think there will be a lot of money to power those efforts.</p>
 <p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
 <ul>
-<li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums" target="_blank" rel="noopener noreffer ">OpenZFS checksums</a> seems pretty interesting.</li>
-<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/" target="_blank" rel="noopener noreffer ">Tikv</a> as a building block to provide an &ldquo;BigTable experience&rdquo; without the need of a distributed file-system underneath.</li>
+<li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums">OpenZFS checksums</a> seems pretty interesting.</li>
+<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/">Tikv</a> as a building block to provide an &quot;BigTable experience&quot; without the need of a distributed file-system underneath.</li>
 </ul>
 <p>But remember:</p>
 <blockquote>
 <p>Like crypto, Do not roll your own DFS!</p>
 </blockquote>
-<hr>
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ" target="_blank" rel="noopener noreffer ">Twitter</a> if needed.</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2019-08-04</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/colossus-google/" data-title="What can be gleaned about GFS successor codenamed Colossus?" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/colossus-google/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/colossus-google/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/colossus-google/" data-title="What can be gleaned about GFS successor codenamed Colossus?"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/colossus-google/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/colossus-google/" data-title="What can be gleaned about GFS successor codenamed Colossus?"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/colossus-google/" data-title="What can be gleaned about GFS successor codenamed Colossus?"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+<hr />
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/colossus/">#colossus</a>
+          <a href="https://pierrezemb.fr/tags/gfs/">#gfs</a>
+          <a href="https://pierrezemb.fr/tags/hadoop/">#hadoop</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/ttl-hbase/" class="prev" rel="prev" title="Playing with TTL in HBase"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Playing with TTL in HBase</a>
-            <a href="/posts/diving-into-hbase-memstore/" class="next" rel="next" title="Diving into Hbase&#39;s MemStore">Diving into Hbase's MemStore<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>

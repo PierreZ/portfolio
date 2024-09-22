@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - notes-about</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/notes-about/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2021-01-11T00:24:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/notes-about/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Notes about ETCD</title>
+        <published>2021-01-11T00:24:27+01:00</published>
+        <updated>2021-01-11T00:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-etcd/"/>
+        <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
+&lt;p&gt;As stated in the &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;history&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#history&quot; aria-label=&quot;Anchor link for: history&quot;&gt;🔗&lt;&#x2F;a&gt;History&lt;&#x2F;h2&gt;
+&lt;p&gt;ETCD was initially developed by CoreOS:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CoreOS built etcd to solve the problem of shared configuration and service discovery.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;July 23, 2013 - announcement&lt;&#x2F;li&gt;
+&lt;li&gt;December 27, 2013 - etcd 0.2.0 - new API, new modules and tons of improvements&lt;&#x2F;li&gt;
+&lt;li&gt;February 07, 2014 - etcd 0.3.0 - Improved Cluster Discovery, API Enhancements and Windows Support&lt;&#x2F;li&gt;
+&lt;li&gt;January 28, 2015 - etcd 2.0 - First Major Stable Release&lt;&#x2F;li&gt;
+&lt;li&gt;June 30, 2016 - etcd3 - A New Version of etcd from CoreOS&lt;&#x2F;li&gt;
+&lt;li&gt;June 09, 2017 - etcd 3.2 - etcd 3.2 now with massive watch scaling and easy locks&lt;&#x2F;li&gt;
+&lt;li&gt;February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more&lt;&#x2F;li&gt;
+&lt;li&gt;August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;overall-architecture&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overall-architecture&quot; aria-label=&quot;Anchor link for: overall-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;Overall architecture&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;using &lt;a href=&quot;&#x2F;posts&#x2F;notes-about-raft&#x2F;&quot;&gt;the raft consensus algorithm&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;a single group raft,&lt;&#x2F;li&gt;
+&lt;li&gt;using &lt;a href=&quot;https:&#x2F;&#x2F;grpc.io&#x2F;&quot;&gt;gRPC&lt;&#x2F;a&gt; for communication,&lt;&#x2F;li&gt;
+&lt;li&gt;using a self-made WAL implementation,&lt;&#x2F;li&gt;
+&lt;li&gt;storing key-values into bbolt,&lt;&#x2F;li&gt;
+&lt;li&gt;optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;PACELC_theorem&quot;&gt;in terms of the PACELC theorem&lt;&#x2F;a&gt;).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;consensus-raft&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consensus-raft&quot; aria-label=&quot;Anchor link for: consensus-raft&quot;&gt;🔗&lt;&#x2F;a&gt;Consensus? Raft?&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Raft is a consensus algorithm for managing a replicated log.&lt;&#x2F;li&gt;
+&lt;li&gt;consensus involves multiple servers agreeing on values.&lt;&#x2F;li&gt;
+&lt;li&gt;two common consensus algorithm are Paxos and Raft&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both system builders and students struggle with Paxos.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;A common alternative to Paxos&#x2F;Raft is a non-consensus (aka peer-to-peer) replication protocol.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD contains several raft optimizations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Read Index,&lt;&#x2F;li&gt;
+&lt;li&gt;Follower reads,&lt;&#x2F;li&gt;
+&lt;li&gt;Transfer leader,&lt;&#x2F;li&gt;
+&lt;li&gt;Learner role,&lt;&#x2F;li&gt;
+&lt;li&gt;Client-side load-balancing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;exposed-api&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#exposed-api&quot; aria-label=&quot;Anchor link for: exposed-api&quot;&gt;🔗&lt;&#x2F;a&gt;Exposed API&lt;&#x2F;h3&gt;
+&lt;p&gt;ETCD is exposing several APIs through different gRPC services:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Put(key, value),&lt;&#x2F;li&gt;
+&lt;li&gt;Delete(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Get(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Watch(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Transaction(if&#x2F;then&#x2F;else ops),&lt;&#x2F;li&gt;
+&lt;li&gt;Compact(revision),&lt;&#x2F;li&gt;
+&lt;li&gt;Lease:
+&lt;ul&gt;
+&lt;li&gt;Grant,&lt;&#x2F;li&gt;
+&lt;li&gt;Revoke,&lt;&#x2F;li&gt;
+&lt;li&gt;KeepAlive&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Key and values are bytes-oriented but ordered.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;transactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions&quot; aria-label=&quot;Anchor link for: transactions&quot;&gt;🔗&lt;&#x2F;a&gt;Transactions&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; From google paxosdb paper:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Our implementation hinges around a powerful primitive which we call MultiOp. All other database
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and consists of three components:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; for the absence or presence of a value, or compare with a given value. Two different tests in the guard
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; may apply to the same or different entries in the database. All tests in the guard are applied and
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; it executes f op (see item 3 below).
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; lookup operation, and applies to a single database entry. Two different operations in the list may apply
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; to the same or different entries in the database. These operations are executed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; if guard evaluates to
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; true.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;TxnRequest &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; compare is a list of predicates representing a conjunction of terms.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the comparisons succeed, then the success requests will be processed in order,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and the response will contain their respective responses in order.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the comparisons fail, then the failure requests will be processed in order,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and the response will contain their respective responses in order.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Compare compare &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; success is a list of requests which will be applied when compare evaluates to true.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestOp success &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; failure is a list of requests which will be applied when compare evaluates to false.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestOp failure &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;versioned-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#versioned-data&quot; aria-label=&quot;Anchor link for: versioned-data&quot;&gt;🔗&lt;&#x2F;a&gt;Versioned data&lt;&#x2F;h3&gt;
+&lt;p&gt;Each Key&#x2F;Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.&lt;&#x2F;p&gt;
+&lt;p&gt;In order to avoid having a growing keySpace, one can issue the &lt;code&gt;Compact&lt;&#x2F;code&gt; gRPC service:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;lease&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease&quot; aria-label=&quot;Anchor link for: lease&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this message represent a Lease
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Lease &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;TTL &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ID &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;insert_timestamp &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;watches&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watches&quot; aria-label=&quot;Anchor link for: watches&quot;&gt;🔗&lt;&#x2F;a&gt;Watches&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Watch &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; key is the key to register for watching.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  bytes &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;key &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; range_end is the end of the range [key, range_end) to watch. If range_end is not given,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; only the key argument is watched. If range_end is equal to &amp;#39;\0&amp;#39;, all keys greater than
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; or equal to the key argument are watched.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the range_end is one bit larger than the given key,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; then all keys with the prefix (the given key) will be watched.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  bytes &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;range_end &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If watch_id is provided and non-zero, it will be assigned to this watcher.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Since creating a watcher in etcd is not a synchronous operation,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this can be used ensure that ordering is correct when creating multiple
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; watchers on the same stream. Creating a watcher with an ID already in
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; use on the stream will cause an error to be returned.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;watch_id &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;7&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;linearizable-reads&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linearizable-reads&quot; aria-label=&quot;Anchor link for: linearizable-reads&quot;&gt;🔗&lt;&#x2F;a&gt;Linearizable reads&lt;&#x2F;h3&gt;
+&lt;p&gt;Section 8 of the raft paper explains the issue:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD implements &lt;code&gt;ReadIndex&lt;&#x2F;code&gt; read(more info on &lt;a href=&quot;&#x2F;posts&#x2F;diving-into-etcd-linearizable&#x2F;&quot;&gt;Diving into ETCD’s linearizable reads&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;how-etcd-is-using-bbolt&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-etcd-is-using-bbolt&quot; aria-label=&quot;Anchor link for: how-etcd-is-using-bbolt&quot;&gt;🔗&lt;&#x2F;a&gt;How ETCD is using bbolt&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;bbolt&quot;&gt;bbolt&lt;&#x2F;a&gt; is the underlying kv used in etcd. &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;kvstore_txn.go#L214&quot;&gt;A bucket called &lt;code&gt;key&lt;&#x2F;code&gt; is used to store data, and the key is the revision&lt;&#x2F;a&gt;. Then, to find keys, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;index.go#L68&quot;&gt;a B-Tree is used&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Bolt allows only one read-write transaction at a time but allows as many read-only transactions as you want at a time.&lt;&#x2F;li&gt;
+&lt;li&gt;Each transaction has a consistent view of the data as it existed when the transaction started.&lt;&#x2F;li&gt;
+&lt;li&gt;Bolt uses a B+tree internally and only a single file. Both approaches have trade-offs.&lt;&#x2F;li&gt;
+&lt;li&gt;If you require a high random write throughput (&amp;gt;10,000 w&#x2F;sec) or you need to use spinning disks then LevelDB could be a good choice. If your application is read-heavy or does a lot of range scans then Bolt could be a good choice.&lt;&#x2F;li&gt;
+&lt;li&gt;Try to avoid long running read transactions. Bolt uses copy-on-write so old pages cannot be reclaimed while an old transaction is using them.&lt;&#x2F;li&gt;
+&lt;li&gt;Bolt uses a memory-mapped file so the underlying operating system handles the caching of the data. Typically, the OS will cache as much of the file as it can in memory and will release memory as needed to other processes. This means that Bolt can show very high memory usage when working with large databases.&lt;&#x2F;li&gt;
+&lt;li&gt;Etcd implements multi-version-concurrency-control (MVCC) on top of Boltdb&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;12169#issuecomment-673292122&quot;&gt;From an Github issue&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note that the underlying &lt;code&gt;bbolt&lt;&#x2F;code&gt; mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;etcd-in-k8s&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#etcd-in-k8s&quot; aria-label=&quot;Anchor link for: etcd-in-k8s&quot;&gt;🔗&lt;&#x2F;a&gt;ETCD in K8S&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;blob&#x2F;master&#x2F;staging&#x2F;src&#x2F;k8s.io&#x2F;apiserver&#x2F;pkg&#x2F;storage&#x2F;interfaces.go#L159&quot;&gt;The interface can be found here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create use TTL and Txn&lt;&#x2F;li&gt;
+&lt;li&gt;Get use KV.Get&lt;&#x2F;li&gt;
+&lt;li&gt;Delete use Get and then for with a Txn&lt;&#x2F;li&gt;
+&lt;li&gt;GuaranteedUpdate uses Txn&lt;&#x2F;li&gt;
+&lt;li&gt;List uses Get&lt;&#x2F;li&gt;
+&lt;li&gt;Watch uses Watch with a channel&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;jepsen&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#jepsen&quot; aria-label=&quot;Anchor link for: jepsen&quot;&gt;🔗&lt;&#x2F;a&gt;Jepsen&lt;&#x2F;h2&gt;
+&lt;p&gt;The Jepsen team tested &lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;analyses&#x2F;etcd-3.4.3&quot;&gt;etcd-3.4.3&lt;&#x2F;a&gt;, here&#x27;s some quotes:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Watches appear correct, at least over single keys. So long as compaction does not destroy historical data while a watch isn’t running, watches appear to deliver every update to a key in order.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;However, etcd locks (like all distributed locks) do not provide mutual exclusion. Multiple processes can hold an etcd lock concurrently, even in healthy clusters with perfectly synchronized clocks.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;operation-notes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operation-notes&quot; aria-label=&quot;Anchor link for: operation-notes&quot;&gt;🔗&lt;&#x2F;a&gt;Operation notes&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;deployements-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployements-tips&quot; aria-label=&quot;Anchor link for: deployements-tips&quot;&gt;🔗&lt;&#x2F;a&gt;Deployements tips&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;docs&#x2F;v3.4.0&#x2F;faq&#x2F;&quot;&gt;From the official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Since etcd writes data to disk, SSD is highly recommended.
+To prevent performance degradation or unintentionally overloading the key-value store, etcd enforces a configurable storage size quota set to 2GB by default.
+To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
+8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;defrag&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#defrag&quot; aria-label=&quot;Anchor link for: defrag&quot;&gt;🔗&lt;&#x2F;a&gt;Defrag&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;After compacting the keyspace, the backend database may exhibit internal fragmentation.
+Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Defrag is basically &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;2b79442d8e9fc54b1ac27e7e230ac0e4c132a054&#x2F;mvcc&#x2F;backend&#x2F;backend.go#L349&quot;&gt;dumping the bbolt tree on disk and reopening it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;snapshot&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#snapshot&quot; aria-label=&quot;Anchor link for: snapshot&quot;&gt;🔗&lt;&#x2F;a&gt;Snapshot&lt;&#x2F;h3&gt;
+&lt;p&gt;An ETCD snapshot is related to Raft&#x27;s snapshot:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Snapshot can be saved using &lt;code&gt;etcdctl&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;etcdctl&lt;&#x2F;span&gt;&lt;span&gt; snapshot save backup.db
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;lease-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease-1&quot; aria-label=&quot;Anchor link for: lease-1&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;p&gt;Be careful on Leader&#x27;s change and lease, this can &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;issues&#x2F;65497&quot;&gt;create some issues&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;war-stories&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#war-stories&quot; aria-label=&quot;Anchor link for: war-stories&quot;&gt;🔗&lt;&#x2F;a&gt;War stories&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blog.cloudflare.com&#x2F;a-byzantine-failure-in-the-real-world&#x2F;&quot;&gt;An analysis of the Cloudflare API availability incident on 2020-11-02&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;grafana.com&#x2F;blog&#x2F;2020&#x2F;04&#x2F;07&#x2F;how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup&#x2F;&quot;&gt;How a production outage in Grafana Cloud&#x27;s Hosted Prometheus service was caused by a bad etcd client setup&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;11884&quot;&gt;Random performance issue on etcd 3.4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;2004.00372.pdf&quot;&gt;Impact of etcd deployment on Kubernetes, Istio, and application performance&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Notes about Raft&#x27;s paper</title>
+        <published>2020-07-30T07:24:27+01:00</published>
+        <updated>2020-07-30T07:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
+        <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;As I&#x27;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located &lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;raft.pdf&quot;&gt;here&lt;&#x2F;a&gt; and I&#x27;m also playing with the amazing &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;talent-plan&#x2F;tree&#x2F;master&#x2F;courses&#x2F;dss&#x2F;raft&quot;&gt;Raft labs made by PingCAP&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;These labs are derived from the &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-raft.html&quot;&gt;lab2:raft&lt;&#x2F;a&gt; and &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-kvraft.html&quot;&gt;lab3:kvraft&lt;&#x2F;a&gt; from the famous &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;index.html&quot;&gt;MIT 6.824&lt;&#x2F;a&gt; course but rewritten in Rust.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;abstract&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;Introduction&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Paxos has dominated the discussion of consensus algorithms over the last decade.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Unfortunately, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both systembuilders and students struggle with Paxos.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Our approach was unusual in that our primary goal was &lt;strong&gt;understandability&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;replicated-state-machines&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;Replicated state machines&lt;&#x2F;h2&gt;
+&lt;p&gt;The main idea is to compute identical copies of the same state (i.e &lt;code&gt;x:3, y:9&lt;&#x2F;code&gt;) in case of machines&#x27;s failure. Most of the time, an ordered &lt;code&gt;wal&lt;&#x2F;code&gt; (write-ahead log) is used in the implementation, to hold the mutation (&lt;code&gt;x:4&lt;&#x2F;code&gt;). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.&lt;&#x2F;p&gt;
+&lt;p&gt;Raft creates a true split between:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;the consensus module,&lt;&#x2F;li&gt;
+&lt;li&gt;the wal,&lt;&#x2F;li&gt;
+&lt;li&gt;the state machine.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_1.png&quot; alt=&quot;fig1&quot; class=&quot;center&quot;&gt;
+&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;What’s wrong with Paxos?&lt;&#x2F;h2&gt;
+&lt;p&gt;The paper is listing the drawbacks of Paxos:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;difficult to understand, and &lt;a href=&quot;https:&#x2F;&#x2F;www.microsoft.com&#x2F;en-us&#x2F;research&#x2F;uploads&#x2F;prod&#x2F;2016&#x2F;12&#x2F;The-Part-Time-Parliament.pdf&quot;&gt;I can&#x27;t blame them&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;many details are missing from the paper to implement &lt;code&gt;Multi-Paxos&lt;&#x2F;code&gt; as the paper is mainly describing &lt;code&gt;single-decree Paxos&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It is simpler and more efficient to design a system around a log, where new entries are appended sequentially in a constrained order.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;chubby-osdi06.pdf&quot;&gt;Chubby&lt;&#x2F;a&gt; implementers is typical:&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;There are significant gaps between the description of the Paxos algorithm and the needs of a real-world system
+the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;designing-for-understandability&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;Designing for understandability&lt;&#x2F;h2&gt;
+&lt;p&gt;Beside all the others goals of Raft:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;a complete and practical foundation for system building,&lt;&#x2F;li&gt;
+&lt;li&gt;must be safe under all conditions and available under typical operating conditions,&lt;&#x2F;li&gt;
+&lt;li&gt;must be efficient for common operations,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;understandability&lt;&#x2F;strong&gt; was the most difficult challenge:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It must be possible for a large audience to understand the algorithm comfortably. In addition, it must be possible to develop intuitions about the algorithm, so that system builders can make the extensions that are inevitable in real-world implementations.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;we divided problems into separate pieces that could be solved, explained, and understood relatively independently. For example, in Raft we separated leader election, log replication, safety, and membership changes.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;The Raft consensus algorithm&lt;&#x2F;h2&gt;
+&lt;p&gt;Raft is heavily relying on the &lt;code&gt;leader&lt;&#x2F;code&gt; pattern:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader accepts log entries from clients, replicates them on other servers, and tells servers when it is safe to apply log entries to their state machines.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Thanks to this pattern, Raft is splitting the consensus problem into 3:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Leader election&lt;&#x2F;li&gt;
+&lt;li&gt;Log replication&lt;&#x2F;li&gt;
+&lt;li&gt;Safety&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;raft-basics&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;Raft basics&lt;&#x2F;h3&gt;
+&lt;p&gt;Each server can be in one of the three states:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Leader&lt;&#x2F;strong&gt; handle all requests,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Follower&lt;&#x2F;strong&gt; passive member, they issue no requests on their own but simply respond to requests from leaders and candidates,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Candidate&lt;&#x2F;strong&gt; is used to elect a new leader.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Leader is elected through &lt;code&gt;election&lt;&#x2F;code&gt;: Each term (interval of time of arbitrary length packed with an number) begins with an election, in which one or more candidates attempt to become leader. If a candidate wins the election, then it serves as leader for the rest of the term. In the case of a split vote, the term will end with no leader; a new term (with a new election) will begin.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Terms act as a logical clock [14] in Raft.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Each server stores a current term number, which increases monotonically over time. Current terms are exchanged whenever servers communicate; if one server’s current term is smaller than the other’s, then it updates its current term to the larger value. If a candidate or leader discovers that its term is out of date, it immediately reverts to fol-lower state. If a server receives a request with a stale term number, it rejects the request.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;code&gt;RPC&lt;&#x2F;code&gt; is used for communications:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;RequestVote RPCs&lt;&#x2F;strong&gt; are initiated by candidates during elections,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Append-Entries RPCs&lt;&#x2F;strong&gt; are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;leader-election&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;p&gt;A good vizualization is available &lt;a href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#election&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The key-point of the election are the fact that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;nodes vote for themselves,&lt;&#x2F;li&gt;
+&lt;li&gt;the term number is used to recover from failure,&lt;&#x2F;li&gt;
+&lt;li&gt;election timeouts are randomized.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To begin an election, a follower increments its current term and transitions to candidate state. It then votes for itself and issues RequestVote RPCs in parallel to each of the other servers in the cluster. A candidate continues in this state until one of three things happens:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;(a) it wins the election,&lt;&#x2F;li&gt;
+&lt;li&gt;(b) another server establishes itself as leader,&lt;&#x2F;li&gt;
+&lt;li&gt;(c) a period of time goes by with no winner.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;log-replication&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;Log replication&lt;&#x2F;h3&gt;
+&lt;p&gt;A good vizualization is available &lt;a href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#replication&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The term numbers in log entries are used to detect inconsistencies between logs&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader decides when it is safe to apply a log entry to the state machines; such an entry is called committed. Raft guarantees that committed entries are durable and will eventually be executed by all of the available state machines.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Raft is implementing a lot of safety inside the log:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When sending an AppendEntries RPC, the leader includes the index and term of the entry in its log that immediately precedes the new entries. If the follower does not find an entry in its log with the same index and term, then it refuses the new entries&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is really interesting to be leader-failure proof. And for follower&#x27;s failure:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Raft, the leader handles inconsistencies by forcing the followers’ logs to duplicate its own.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;Safety&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;leader-election-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;p&gt;As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;Committing entries from previous terms&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;Follower and candidate crashes&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;Cluster membership changes&lt;&#x2F;h2&gt;
+&lt;p&gt;This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Log entries are replicated to all servers in both con-figurations,&lt;&#x2F;li&gt;
+&lt;li&gt;Any server from either configuration may serve asleader,&lt;&#x2F;li&gt;
+&lt;li&gt;Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;log-compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Log compaction&lt;&#x2F;h2&gt;
+&lt;p&gt;As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:&lt;&#x2F;p&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_3.png&quot; alt=&quot;fig3&quot; class=&quot;center&quot;&gt;
+&lt;blockquote&gt;
+&lt;p&gt;the leader must occasionally send snapshots to followers that lag behind.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is useful for slow follower or a new server joining the cluster.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;client-interaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;Client interaction&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Notes about FoundationDB</title>
+        <published>2020-01-30T10:24:27+01:00</published>
+        <updated>2020-01-30T10:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"/>
+        <id>https://pierrezemb.fr/posts/notes-about-foundationdb/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-foundationdb/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;fdb-white.jpg&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover FoundationDB.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;overview-of-foundationdb&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-foundationdb&quot; aria-label=&quot;Anchor link for: overview-of-foundationdb&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of FoundationDB&lt;&#x2F;h2&gt;
+&lt;p&gt;As stated in the &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;index.html&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations. It is especially well-suited for read&#x2F;write workloads but also has excellent performance for write-intensive workloads.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;It has strong key points:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Multi-model data store&lt;&#x2F;li&gt;
+&lt;li&gt;Easily scalable and fault tolerant&lt;&#x2F;li&gt;
+&lt;li&gt;Industry-leading performance&lt;&#x2F;li&gt;
+&lt;li&gt;Open source.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;From a database dialect, it provides:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;strict-serializable&quot;&gt;strict serializability&lt;&#x2F;a&gt;(operations appear to have occurred in some order),&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;spanner&#x2F;docs&#x2F;true-time-external-consistency&quot;&gt;external consistency&lt;&#x2F;a&gt;(For any two transactions, T1 and T2, if T2 starts to commit after T1 finishes committing, then the timestamp for T2 is greater than the timestamp for T1).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;the-story&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-story&quot; aria-label=&quot;Anchor link for: the-story&quot;&gt;🔗&lt;&#x2F;a&gt;The story&lt;&#x2F;h2&gt;
+&lt;p&gt;FoundationDB started as a company in 2009, and then &lt;a href=&quot;https:&#x2F;&#x2F;techcrunch.com&#x2F;2015&#x2F;03&#x2F;24&#x2F;apple-acquires-durable-database-company-foundationdb&#x2F;&quot;&gt;has been acquired in 2015 by Apple&lt;&#x2F;a&gt;. It &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=9259986&quot;&gt;was a bad public publicity for the database as the download were removed.&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;On April 19, 2018, Apple &lt;a href=&quot;https:&#x2F;&#x2F;www.foundationdb.org&#x2F;blog&#x2F;foundationdb-is-open-source&#x2F;&quot;&gt;open sourced the software, releasing it under the Apache 2.0 license&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tooling-before-coding&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#tooling-before-coding&quot; aria-label=&quot;Anchor link for: tooling-before-coding&quot;&gt;🔗&lt;&#x2F;a&gt;Tooling before coding&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;flow&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#flow&quot; aria-label=&quot;Anchor link for: flow&quot;&gt;🔗&lt;&#x2F;a&gt;Flow&lt;&#x2F;h3&gt;
+&lt;p&gt;From the &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;engineering.html&quot;&gt;Engineering page&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FoundationDB began with ambitious goals for both high performance per node and scalability. We knew that to achieve these goals we would face serious engineering challenges that would require tool breakthroughs. We’d need efficient asynchronous communicating processes like in Erlang or the Async in .NET, but we’d also need the raw speed, I&#x2F;O efficiency, and control of C++. To meet these challenges, we developed several new tools, the most important of which is &lt;strong&gt;Flow&lt;&#x2F;strong&gt;, a new programming language that brings actor-based concurrency to C++11.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Flow is more of a &lt;strong&gt;stateful distributed system framework&lt;&#x2F;strong&gt; than an asynchronous library. It takes a number of highly opinionated stances on how the overall distributed system should be written, and isn’t trying to be a widely reusable building block.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Flow adds about 10 keywords to C++11 and is technically a trans-compiler: the Flow compiler reads Flow code and compiles it down to raw C++11, which is then compiled to a native binary with a traditional toolchain.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Flow was developed before FDB, as stated in this &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=5319163&quot;&gt;2013&#x27;s post&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FoundationDB founder here. Flow sounds crazy. What hubris to think that you need a new programming language for your project? Three years later: Best decision we ever made.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We knew this was going to be a long project so we invested heavily in tools at the beginning. The first two weeks of FoundationDB were building this new programming language to give us the speed of C++ with high level tools for actor-model concurrency. But, the real magic is how Flow enables us to use our real code to do deterministic simulations of a cluster in a single thread. We have a white paper upcoming on this.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We&#x27;ve had quite a bit of interest in Flow over the years and I&#x27;ve given several talks on it at meetups&#x2F;conferences. We&#x27;ve always thought about open-sourcing it... It&#x27;s not as elegant as some other actor-model languages like Scala or Erlang (see: C++) but it&#x27;s nice and fast at run-time and really helps productivity vs. writing callbacks, etc.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;(Fun fact: We&#x27;ve only ever found two bugs in Flow. After the first, we decided that we never wanted a bug again in our programming language. So, we built a program in Python that generates random Flow code and independently-executes it to validate Flow&#x27;s behavior. This fuzz tester found one more bug, and we&#x27;ve never found another.)&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;A very good overview of Flow is available &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;flow.html&quot;&gt;here&lt;&#x2F;a&gt; and some details &lt;a href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;t&#x2F;why-was-flow-developed&#x2F;1711&#x2F;3&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;simulation-driven-development&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#simulation-driven-development&quot; aria-label=&quot;Anchor link for: simulation-driven-development&quot;&gt;🔗&lt;&#x2F;a&gt;Simulation-Driven development&lt;&#x2F;h3&gt;
+&lt;p&gt;One of Flow’s most important job is enabling &lt;strong&gt;Simulation&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We wanted FoundationDB to survive failures of machines, networks, disks, clocks, racks, data centers, file systems, etc., so we created a simulation framework closely tied to Flow. By replacing physical interfaces with shims, replacing the main epoll-based run loop with a time-based simulation, and running multiple logical processes as concurrent Flow Actors, Simulation is able to conduct a deterministic simulation of an entire FoundationDB cluster within a single-thread! Even better, we are able to execute this simulation in a deterministic way, enabling us to reproduce problems and add instrumentation ex post facto. This incredible capability enabled us to build FoundationDB exclusively in simulation for the first 18 months and ensure exceptional fault tolerance long before it sent its first real network packet. For a database with as strong a contract as the FoundationDB, testing is crucial, and over the years we have run the equivalent of a trillion CPU-hours of simulated stress testing.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;A good overview of the simulation can be found &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;here&lt;&#x2F;a&gt;. You can also have a look at this awesome talk!&lt;&#x2F;p&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;4fFDFbi3toc&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Simulation has been made possible by combining:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Single-threaded pseudo-concurrency,&lt;&#x2F;li&gt;
+&lt;li&gt;Simulated implementation of all external communication,&lt;&#x2F;li&gt;
+&lt;li&gt;determinism.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Here&#x27;s an example of a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;master&#x2F;tests&#x2F;slow&#x2F;SwizzledCycleTest.txt&quot;&gt;testfile&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;testTitle=SwizzledCycleTest
+&lt;&#x2F;span&gt;&lt;span&gt;    testName=Cycle
+&lt;&#x2F;span&gt;&lt;span&gt;    transactionsPerSecond=5000.0
+&lt;&#x2F;span&gt;&lt;span&gt;    testDuration=30.0
+&lt;&#x2F;span&gt;&lt;span&gt;    expectedRate=0.01
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    testName=RandomClogging
+&lt;&#x2F;span&gt;&lt;span&gt;    testDuration=30.0
+&lt;&#x2F;span&gt;&lt;span&gt;    swizzle = 1
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    testName=Attrition
+&lt;&#x2F;span&gt;&lt;span&gt;    machinesToKill=10
+&lt;&#x2F;span&gt;&lt;span&gt;    machinesToLeave=3
+&lt;&#x2F;span&gt;&lt;span&gt;    reboot=true
+&lt;&#x2F;span&gt;&lt;span&gt;    testDuration=30.0
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    testName=Attrition
+&lt;&#x2F;span&gt;&lt;span&gt;    machinesToKill=10
+&lt;&#x2F;span&gt;&lt;span&gt;    machinesToLeave=3
+&lt;&#x2F;span&gt;&lt;span&gt;    reboot=true
+&lt;&#x2F;span&gt;&lt;span&gt;    testDuration=30.0
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    testName=ChangeConfig
+&lt;&#x2F;span&gt;&lt;span&gt;    maxDelayBeforeChange=30.0
+&lt;&#x2F;span&gt;&lt;span&gt;    coordinators=auto
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The test is splitted into two parts:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The goal&lt;&#x2F;strong&gt;, for example doing transaction pointing to another with thousands of transactions per sec and there should be only 0.01% of success.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;What will be done to try to prevent the test to succeed&lt;&#x2F;strong&gt;. In this example it will &lt;strong&gt;at the same time&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;do random clogging. Which means that &lt;strong&gt;network connections will be stopped&lt;&#x2F;strong&gt; (preventing actors to send and receive packets). Swizzle flag means that a subset of network connections will be stopped and bring back in reverse order, 😳&lt;&#x2F;li&gt;
+&lt;li&gt;will &lt;strong&gt;poweroff&#x2F;reboot machines&lt;&#x2F;strong&gt; (attritions) pseudo-randomly while keeping a minimal of three machines, 🤯&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;change configuration&lt;&#x2F;strong&gt;, which means a coordination changes through multi-paxos for the whole cluster. 😱&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Keep in mind that all these failures will appears &lt;strong&gt;at the same time!&lt;&#x2F;strong&gt; Do you think that your current &lt;strong&gt;datastore has gone through the same test on a daily basis?&lt;&#x2F;strong&gt; &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;pull&#x2F;11308&quot;&gt;I think not&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Applications written using the FoundationDB simulator have hierarchy: &lt;code&gt;DataCenter -&amp;gt; Machine -&amp;gt; Process -&amp;gt; Interface&lt;&#x2F;code&gt;. &lt;strong&gt;Each of these can be killed&#x2F;freezed&#x2F;nuked&lt;&#x2F;strong&gt;. Even faulty admin commands fired by some DevOps are tested!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;known-limitations&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#known-limitations&quot; aria-label=&quot;Anchor link for: known-limitations&quot;&gt;🔗&lt;&#x2F;a&gt;Known limitations&lt;&#x2F;h3&gt;
+&lt;p&gt;Limitations are well described in the &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;known-limitations.html&quot;&gt;official documentation&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;recap&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#recap&quot; aria-label=&quot;Anchor link for: recap&quot;&gt;🔗&lt;&#x2F;a&gt;Recap&lt;&#x2F;h3&gt;
+&lt;p&gt;An awesome recap is available on the &lt;a href=&quot;https:&#x2F;&#x2F;softwareengineeringdaily.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;foundationdb-with-ryan-worl&#x2F;&quot;&gt;Software Engineering Daily podcast&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FoundationDB is tested in a very rigorous way using what&#x27;s called &lt;strong&gt;a deterministic simulation&lt;&#x2F;strong&gt;. The reason they needed a new programming language to do this, is that to get a deterministic simulation, you have to make something that is deterministic. It&#x27;s kind of obvious, but it&#x27;s hard to do.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For example, if your process interacts with the network, or disks, or clocks, it&#x27;s not deterministic. If you have multiple threads, not deterministic. So, they needed a way to write a concurrent program that could talk with networks and disks and that type of thing. They needed a way to write a concurrent program that does all of those things that you would think are non-deterministic in a deterministic way.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;So, all FoundationDB processes, and FoundationDB, it&#x27;s basically all written in Flow except a very small amount of it from the SQLite B-tree. The reason why that was useful is that when you use Flow, you get all of these higher level abstraction that let what you do what feels to you like asynchronous stuff, but under the hood, it&#x27;s all implemented using callbacks in C++, which you can make deterministic by running it in a single thread. So, there&#x27;s a scheduler that just calls these callbacks one after another and it&#x27;s very crazy looking C++ code, like you wouldn&#x27;t want to read it, but it&#x27;s because of Flow they were able to implement that deterministic simulation.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;the-architecture&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-architecture&quot; aria-label=&quot;Anchor link for: the-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;The Architecture&lt;&#x2F;h2&gt;
+&lt;p&gt;According to the &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;administration.html#fdbmonitor-and-fdbserver&quot;&gt;fdbmonitor and fdbserver&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The core FoundationDB server process is &lt;code&gt;fdbserver&lt;&#x2F;code&gt;. Each &lt;code&gt;fdbserver&lt;&#x2F;code&gt; process uses up to one full CPU core, so a production FoundationDB cluster will usually run N such processes on an N-core system.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To make configuring, starting, stopping, and restarting fdbserver processes easy, FoundationDB also comes with a singleton daemon process, &lt;code&gt;fdbmonitor&lt;&#x2F;code&gt;, which is started automatically on boot. &lt;code&gt;fdbmonitor&lt;&#x2F;code&gt; reads the &lt;code&gt;foundationdb.conf&lt;&#x2F;code&gt; file and starts the configured set of fdbserver processes. It is also responsible for starting backup-agent.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The whole architecture is designed to automatically:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;load-balanced data and traffic,&lt;&#x2F;li&gt;
+&lt;li&gt;self-healing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;microservices&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#microservices&quot; aria-label=&quot;Anchor link for: microservices&quot;&gt;🔗&lt;&#x2F;a&gt;Microservices&lt;&#x2F;h3&gt;
+&lt;p&gt;A typical FDB cluster is composed of different actors which are describe &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;master&#x2F;documentation&#x2F;sphinx&#x2F;source&#x2F;kv-architecture.rst&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The most important role in FDB is the &lt;code&gt;Coordinator&lt;&#x2F;code&gt;, it uses &lt;code&gt;Paxos&lt;&#x2F;code&gt; to manage membership on a quorum to do writes. The &lt;code&gt;Coordinator&lt;&#x2F;code&gt; is mostly only used to elect some peers and during recovery. You can view it as a Zookeeper-like stack.&lt;&#x2F;p&gt;
+&lt;p&gt;The Coordinator starts by electing a &lt;code&gt;Cluster Controller&lt;&#x2F;code&gt;. It provides administratives informations about the cluster(I have 4 storage processes). Every process needs to register to the &lt;code&gt;Cluster Controller&lt;&#x2F;code&gt; and then it will assign roles to them. It is the one that will heart-beat all the processes.&lt;&#x2F;p&gt;
+&lt;p&gt;Then a &lt;code&gt;Master&lt;&#x2F;code&gt; is elected. The &lt;code&gt;Master&lt;&#x2F;code&gt; process is reponsible for the &lt;code&gt;data distribution&lt;&#x2F;code&gt; algorithms. Fun fact, the mapping between keys and storage servers is stored within FDB, which is you can actually move data by running transactions like any other application. He is also the one providing &lt;code&gt;read versions&lt;&#x2F;code&gt; and &lt;code&gt;version number&lt;&#x2F;code&gt; internally. He is also acting as the &lt;code&gt;RateKeeper&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;The Proxies&lt;&#x2F;code&gt; are responsible for providing read versions, committing transactions, and tracking the storage servers responsible for each range of keys.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;The Transaction Resolvers&lt;&#x2F;code&gt; are responsible determining conflicts between transactions. A transaction conflicts if it reads a key that has been written between the transaction’s read version and commit version. The resolver does this by holding the last 5 seconds of committed writes in memory, and comparing a new transaction’s reads against this set of commits.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;architecture.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;read-and-write-path&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#read-and-write-path&quot; aria-label=&quot;Anchor link for: read-and-write-path&quot;&gt;🔗&lt;&#x2F;a&gt;Read and Write Path&lt;&#x2F;h3&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;EMwhsGsxfPU&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;&lt;h4 id=&quot;read-path&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#read-path&quot; aria-label=&quot;Anchor link for: read-path&quot;&gt;🔗&lt;&#x2F;a&gt;Read Path&lt;&#x2F;h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Retrieve a consistend read version for the transaction&lt;&#x2F;li&gt;
+&lt;li&gt;Do reads from a consistent MVCC snapshot at that read version on the storage node&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;write-path&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#write-path&quot; aria-label=&quot;Anchor link for: write-path&quot;&gt;🔗&lt;&#x2F;a&gt;Write Path&lt;&#x2F;h4&gt;
+&lt;ol&gt;
+&lt;li&gt;client is sending a bundle to the &lt;code&gt;proxy&lt;&#x2F;code&gt; containing:
+&lt;ul&gt;
+&lt;li&gt;read version for the transaction&lt;&#x2F;li&gt;
+&lt;li&gt;every readen key&lt;&#x2F;li&gt;
+&lt;li&gt;every mutation that you want to do&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;The proxy will assign a &lt;code&gt;Commit version&lt;&#x2F;code&gt; to a batch of transactions. &lt;code&gt;Commit version&lt;&#x2F;code&gt; is generated by the &lt;code&gt;Master&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Proxy is sending to the resolver. This will check if the data that you want to mutate has been changed between your &lt;code&gt;read Version&lt;&#x2F;code&gt; and your &lt;code&gt;Commit version&lt;&#x2F;code&gt;. They are sharded by key-range.&lt;&#x2F;li&gt;
+&lt;li&gt;Transaction is made durable within the &lt;code&gt;Transaction Logs&lt;&#x2F;code&gt; by &lt;code&gt;fsync&lt;&#x2F;code&gt;ing the data. Before the data is even written to disk it is forwarded to the &lt;code&gt;storage servers&lt;&#x2F;code&gt; responsible for that mutation. Internally, &lt;code&gt;Transactions Logs&lt;&#x2F;code&gt; are creating &lt;strong&gt;a stream per &lt;code&gt;Storage Server&lt;&#x2F;code&gt;&lt;&#x2F;strong&gt;. Once the &lt;code&gt;storage servers&lt;&#x2F;code&gt; have made the mutation durable, they pop it from the log. This generally happens roughly 6 seconds after the mutation was originally committed to the log.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;Storage servers&lt;&#x2F;code&gt; are lazily updating data on disk from the &lt;code&gt;Transaction logs&lt;&#x2F;code&gt;. They are keeping new write in-memory.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;Transaction Logs&lt;&#x2F;code&gt; is responding OK to the Proxy and then the proxy is replying OK to the client.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;You can find more diagrams about transactions &lt;a href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;t&#x2F;technical-overview-of-the-database&#x2F;135&#x2F;3&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;recovery&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#recovery&quot; aria-label=&quot;Anchor link for: recovery&quot;&gt;🔗&lt;&#x2F;a&gt;Recovery&lt;&#x2F;h3&gt;
+&lt;p&gt;Recovery processes are detailled at around 25min.&lt;&#x2F;p&gt;
+&lt;p&gt;During failure of a process (Except storage servers), the systems will try to create a new &lt;code&gt;generation&lt;&#x2F;code&gt;, so new &lt;code&gt;Master&lt;&#x2F;code&gt;, &lt;code&gt;proxies&lt;&#x2F;code&gt;, &lt;code&gt;resolvers&lt;&#x2F;code&gt; and &lt;code&gt;transactions logs&lt;&#x2F;code&gt;. New master will get a read version from transactions logs, and commit with &lt;code&gt;Paxos&lt;&#x2F;code&gt; the fact that starting from &lt;code&gt;Read version&lt;&#x2F;code&gt;, the new generation is the one in charge.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;Storage servers&lt;&#x2F;code&gt; are replicating data on failures.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-5-second-transaction-limit&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-5-second-transaction-limit&quot; aria-label=&quot;Anchor link for: the-5-second-transaction-limit&quot;&gt;🔗&lt;&#x2F;a&gt;The 5-second transaction limit&lt;&#x2F;h3&gt;
+&lt;p&gt;FoundationDB currently does not support transactions running for over five seconds. More details around 16min but the &lt;code&gt;tl;dr&lt;&#x2F;code&gt; is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Storage servers are caching latest read in-memory,&lt;&#x2F;li&gt;
+&lt;li&gt;Resolvers are caching the last 5 seconds transactions.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;ratekeeper&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#ratekeeper&quot; aria-label=&quot;Anchor link for: ratekeeper&quot;&gt;🔗&lt;&#x2F;a&gt;Ratekeeper&lt;&#x2F;h3&gt;
+&lt;p&gt;More details around 31min but the &lt;code&gt;tl;dr&lt;&#x2F;code&gt; is that when system is saturated, retrieving the &lt;code&gt;Read version&lt;&#x2F;code&gt; is slowed down.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;storage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#storage&quot; aria-label=&quot;Anchor link for: storage&quot;&gt;🔗&lt;&#x2F;a&gt;Storage&lt;&#x2F;h3&gt;
+&lt;p&gt;A lot of information are available in this talk:&lt;&#x2F;p&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;nlus1Z7TVTI&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;memory&lt;&#x2F;code&gt; is optimized for small databases. Data is stored in memory and logged to disk. In this storage engine, all data must be resident in memory at all times, and all reads are satisfied from memory.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;SSD&lt;&#x2F;code&gt; Storage Engine is based on SQLite B-Tree&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;Redwood&lt;&#x2F;code&gt; will be a new storage engine based on Versioned B+Tree&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;developer-experience&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#developer-experience&quot; aria-label=&quot;Anchor link for: developer-experience&quot;&gt;🔗&lt;&#x2F;a&gt;Developer experience&lt;&#x2F;h2&gt;
+&lt;p&gt;FoundationDB’s keys are ordered, making &lt;code&gt;tuples&lt;&#x2F;code&gt; a particularly useful tool for data modeling. FoundationDB provides a &lt;strong&gt;tuple layer&lt;&#x2F;strong&gt; (available in each language binding) that encodes tuples into keys. This layer lets you store data using a tuple like &lt;code&gt;(state, county)&lt;&#x2F;code&gt; as a key. Later, you can perform reads using a prefix like &lt;code&gt;(state,)&lt;&#x2F;code&gt;. The layer works by preserving the natural ordering of the tuples.&lt;&#x2F;p&gt;
+&lt;p&gt;Everything is wrapped into a transaction in FDB.&lt;&#x2F;p&gt;
+&lt;p&gt;You can have a nice overview by reading the README of &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;richardartoul&#x2F;tsdb-layer&#x2F;blob&#x2F;master&#x2F;README.md&quot;&gt;tsdb-layer&lt;&#x2F;a&gt;, an experiment combining Time Series and FoundationDB: Millions of writes&#x2F;s and 10x compression in under 2,000 lines of Go.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;fdb-one-more-things-layers&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#fdb-one-more-things-layers&quot; aria-label=&quot;Anchor link for: fdb-one-more-things-layers&quot;&gt;🔗&lt;&#x2F;a&gt;FDB One more things: Layers&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;concept-of-layers&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#concept-of-layers&quot; aria-label=&quot;Anchor link for: concept-of-layers&quot;&gt;🔗&lt;&#x2F;a&gt;Concept of layers&lt;&#x2F;h3&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;HLE8chgw6LI&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;FDB is resolving many distributed problems, but you still need things like &lt;strong&gt;security, multi-tenancy, query optimizations, schema, indexing&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;extract-layer-1.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Layers are designed to develop features &lt;strong&gt;above FDB.&lt;&#x2F;strong&gt; The record-layer provided by Apple is a good starting point to build things above it, as it provides &lt;strong&gt;structured schema, indexes, and (async) query planner.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;extract-layer-2.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;The record-layer provided by Apple is a good starting point to build things above it, as it provides &lt;strong&gt;structured schema, indexes, and (async) query planner.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;extract-layer-3.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;apple-s-record-layer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#apple-s-record-layer&quot; aria-label=&quot;Anchor link for: apple-s-record-layer&quot;&gt;🔗&lt;&#x2F;a&gt;Apple&#x27;s Record Layer&lt;&#x2F;h3&gt;
+&lt;p&gt;The paper is located &lt;a href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;1901.04452.pdf&quot;&gt;FoundationDB Record Layer:A Multi-Tenant Structured Datastore&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;SvoUHHM9IKU&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Record Layer was designed to solve CloudKit problem.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;record-extract-1.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Record allow multi-tenancy with schema above FDB&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;record-extract-2.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;record-extract-3.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Record Layers is providing stateless compute&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;record-extract-4.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;And streaming queries!&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;record-extract-5.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;kubernetes-operators&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#kubernetes-operators&quot; aria-label=&quot;Anchor link for: kubernetes-operators&quot;&gt;🔗&lt;&#x2F;a&gt;Kubernetes Operators&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;overview-of-the-operator&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-the-operator&quot; aria-label=&quot;Anchor link for: overview-of-the-operator&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of the operator&lt;&#x2F;h3&gt;
+&lt;div &gt;&lt;&#x2F;div&gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;A3U8M8pt3Ks&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;operator-extract-1.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;operator-extract-2.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Upgrade is done by &lt;strong&gt;bumping all processes at once&lt;&#x2F;strong&gt; 😱&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;operator-extract-3.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;operator-extract-4.png&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;combining-chaos-mesh-and-the-operator&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#combining-chaos-mesh-and-the-operator&quot; aria-label=&quot;Anchor link for: combining-chaos-mesh-and-the-operator&quot;&gt;🔗&lt;&#x2F;a&gt;Combining chaos-mesh and the operator&lt;&#x2F;h3&gt;
+&lt;p&gt;I played a bit with the operator by combining:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-kubernetes-operator&quot;&gt;FoundationDB&#x2F;fdb-kubernetes-operator&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;go-ycsb&quot;&gt;pingcap&#x2F;go-ycsb&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;chaos-mesh&quot;&gt;pingcap&#x2F;chaos-mesh&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;fdb-prometheus-exporter&#x2F;&quot;&gt;PierreZ&#x2F;fdb-prometheus-exporter&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The experiment is available &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;fdb-k8s-chaos&#x2F;&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;roadmap&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#roadmap&quot; aria-label=&quot;Anchor link for: roadmap&quot;&gt;🔗&lt;&#x2F;a&gt;Roadmap&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;wiki&#x2F;FoundationDB-Release-7.0-Planning&quot;&gt;FoundationDB Release 7.0 Planning&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - etcd</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/etcd/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2021-01-11T00:24:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/etcd/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Notes about ETCD</title>
+        <published>2021-01-11T00:24:27+01:00</published>
+        <updated>2021-01-11T00:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-etcd/"/>
+        <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
+&lt;p&gt;As stated in the &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;history&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#history&quot; aria-label=&quot;Anchor link for: history&quot;&gt;🔗&lt;&#x2F;a&gt;History&lt;&#x2F;h2&gt;
+&lt;p&gt;ETCD was initially developed by CoreOS:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CoreOS built etcd to solve the problem of shared configuration and service discovery.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;July 23, 2013 - announcement&lt;&#x2F;li&gt;
+&lt;li&gt;December 27, 2013 - etcd 0.2.0 - new API, new modules and tons of improvements&lt;&#x2F;li&gt;
+&lt;li&gt;February 07, 2014 - etcd 0.3.0 - Improved Cluster Discovery, API Enhancements and Windows Support&lt;&#x2F;li&gt;
+&lt;li&gt;January 28, 2015 - etcd 2.0 - First Major Stable Release&lt;&#x2F;li&gt;
+&lt;li&gt;June 30, 2016 - etcd3 - A New Version of etcd from CoreOS&lt;&#x2F;li&gt;
+&lt;li&gt;June 09, 2017 - etcd 3.2 - etcd 3.2 now with massive watch scaling and easy locks&lt;&#x2F;li&gt;
+&lt;li&gt;February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more&lt;&#x2F;li&gt;
+&lt;li&gt;August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;overall-architecture&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overall-architecture&quot; aria-label=&quot;Anchor link for: overall-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;Overall architecture&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;using &lt;a href=&quot;&#x2F;posts&#x2F;notes-about-raft&#x2F;&quot;&gt;the raft consensus algorithm&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;a single group raft,&lt;&#x2F;li&gt;
+&lt;li&gt;using &lt;a href=&quot;https:&#x2F;&#x2F;grpc.io&#x2F;&quot;&gt;gRPC&lt;&#x2F;a&gt; for communication,&lt;&#x2F;li&gt;
+&lt;li&gt;using a self-made WAL implementation,&lt;&#x2F;li&gt;
+&lt;li&gt;storing key-values into bbolt,&lt;&#x2F;li&gt;
+&lt;li&gt;optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;PACELC_theorem&quot;&gt;in terms of the PACELC theorem&lt;&#x2F;a&gt;).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;consensus-raft&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consensus-raft&quot; aria-label=&quot;Anchor link for: consensus-raft&quot;&gt;🔗&lt;&#x2F;a&gt;Consensus? Raft?&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Raft is a consensus algorithm for managing a replicated log.&lt;&#x2F;li&gt;
+&lt;li&gt;consensus involves multiple servers agreeing on values.&lt;&#x2F;li&gt;
+&lt;li&gt;two common consensus algorithm are Paxos and Raft&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both system builders and students struggle with Paxos.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;A common alternative to Paxos&#x2F;Raft is a non-consensus (aka peer-to-peer) replication protocol.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD contains several raft optimizations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Read Index,&lt;&#x2F;li&gt;
+&lt;li&gt;Follower reads,&lt;&#x2F;li&gt;
+&lt;li&gt;Transfer leader,&lt;&#x2F;li&gt;
+&lt;li&gt;Learner role,&lt;&#x2F;li&gt;
+&lt;li&gt;Client-side load-balancing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;exposed-api&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#exposed-api&quot; aria-label=&quot;Anchor link for: exposed-api&quot;&gt;🔗&lt;&#x2F;a&gt;Exposed API&lt;&#x2F;h3&gt;
+&lt;p&gt;ETCD is exposing several APIs through different gRPC services:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Put(key, value),&lt;&#x2F;li&gt;
+&lt;li&gt;Delete(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Get(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Watch(key, Optional(keyRangeEnd)),&lt;&#x2F;li&gt;
+&lt;li&gt;Transaction(if&#x2F;then&#x2F;else ops),&lt;&#x2F;li&gt;
+&lt;li&gt;Compact(revision),&lt;&#x2F;li&gt;
+&lt;li&gt;Lease:
+&lt;ul&gt;
+&lt;li&gt;Grant,&lt;&#x2F;li&gt;
+&lt;li&gt;Revoke,&lt;&#x2F;li&gt;
+&lt;li&gt;KeepAlive&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Key and values are bytes-oriented but ordered.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;transactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions&quot; aria-label=&quot;Anchor link for: transactions&quot;&gt;🔗&lt;&#x2F;a&gt;Transactions&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; From google paxosdb paper:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Our implementation hinges around a powerful primitive which we call MultiOp. All other database
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and consists of three components:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; for the absence or presence of a value, or compare with a given value. Two different tests in the guard
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; may apply to the same or different entries in the database. All tests in the guard are applied and
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; it executes f op (see item 3 below).
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; lookup operation, and applies to a single database entry. Two different operations in the list may apply
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; to the same or different entries in the database. These operations are executed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; if guard evaluates to
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; true.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;TxnRequest &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; compare is a list of predicates representing a conjunction of terms.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the comparisons succeed, then the success requests will be processed in order,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and the response will contain their respective responses in order.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the comparisons fail, then the failure requests will be processed in order,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and the response will contain their respective responses in order.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Compare compare &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; success is a list of requests which will be applied when compare evaluates to true.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestOp success &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; failure is a list of requests which will be applied when compare evaluates to false.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;repeated &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestOp failure &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;versioned-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#versioned-data&quot; aria-label=&quot;Anchor link for: versioned-data&quot;&gt;🔗&lt;&#x2F;a&gt;Versioned data&lt;&#x2F;h3&gt;
+&lt;p&gt;Each Key&#x2F;Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.&lt;&#x2F;p&gt;
+&lt;p&gt;In order to avoid having a growing keySpace, one can issue the &lt;code&gt;Compact&lt;&#x2F;code&gt; gRPC service:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;lease&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease&quot; aria-label=&quot;Anchor link for: lease&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this message represent a Lease
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Lease &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;TTL &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ID &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;insert_timestamp &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;watches&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watches&quot; aria-label=&quot;Anchor link for: watches&quot;&gt;🔗&lt;&#x2F;a&gt;Watches&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;proto&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-proto &quot;&gt;&lt;code class=&quot;language-proto&quot; data-lang=&quot;proto&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;message &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Watch &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; key is the key to register for watching.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  bytes &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;key &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; range_end is the end of the range [key, range_end) to watch. If range_end is not given,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; only the key argument is watched. If range_end is equal to &amp;#39;\0&amp;#39;, all keys greater than
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; or equal to the key argument are watched.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the range_end is one bit larger than the given key,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; then all keys with the prefix (the given key) will be watched.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  bytes &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;range_end &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If watch_id is provided and non-zero, it will be assigned to this watcher.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Since creating a watcher in etcd is not a synchronous operation,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this can be used ensure that ordering is correct when creating multiple
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; watchers on the same stream. Creating a watcher with an ID already in
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; use on the stream will cause an error to be returned.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;  int64 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;watch_id &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;7&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;linearizable-reads&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linearizable-reads&quot; aria-label=&quot;Anchor link for: linearizable-reads&quot;&gt;🔗&lt;&#x2F;a&gt;Linearizable reads&lt;&#x2F;h3&gt;
+&lt;p&gt;Section 8 of the raft paper explains the issue:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD implements &lt;code&gt;ReadIndex&lt;&#x2F;code&gt; read(more info on &lt;a href=&quot;&#x2F;posts&#x2F;diving-into-etcd-linearizable&#x2F;&quot;&gt;Diving into ETCD’s linearizable reads&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;how-etcd-is-using-bbolt&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-etcd-is-using-bbolt&quot; aria-label=&quot;Anchor link for: how-etcd-is-using-bbolt&quot;&gt;🔗&lt;&#x2F;a&gt;How ETCD is using bbolt&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;bbolt&quot;&gt;bbolt&lt;&#x2F;a&gt; is the underlying kv used in etcd. &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;kvstore_txn.go#L214&quot;&gt;A bucket called &lt;code&gt;key&lt;&#x2F;code&gt; is used to store data, and the key is the revision&lt;&#x2F;a&gt;. Then, to find keys, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;index.go#L68&quot;&gt;a B-Tree is used&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Bolt allows only one read-write transaction at a time but allows as many read-only transactions as you want at a time.&lt;&#x2F;li&gt;
+&lt;li&gt;Each transaction has a consistent view of the data as it existed when the transaction started.&lt;&#x2F;li&gt;
+&lt;li&gt;Bolt uses a B+tree internally and only a single file. Both approaches have trade-offs.&lt;&#x2F;li&gt;
+&lt;li&gt;If you require a high random write throughput (&amp;gt;10,000 w&#x2F;sec) or you need to use spinning disks then LevelDB could be a good choice. If your application is read-heavy or does a lot of range scans then Bolt could be a good choice.&lt;&#x2F;li&gt;
+&lt;li&gt;Try to avoid long running read transactions. Bolt uses copy-on-write so old pages cannot be reclaimed while an old transaction is using them.&lt;&#x2F;li&gt;
+&lt;li&gt;Bolt uses a memory-mapped file so the underlying operating system handles the caching of the data. Typically, the OS will cache as much of the file as it can in memory and will release memory as needed to other processes. This means that Bolt can show very high memory usage when working with large databases.&lt;&#x2F;li&gt;
+&lt;li&gt;Etcd implements multi-version-concurrency-control (MVCC) on top of Boltdb&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;12169#issuecomment-673292122&quot;&gt;From an Github issue&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note that the underlying &lt;code&gt;bbolt&lt;&#x2F;code&gt; mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;etcd-in-k8s&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#etcd-in-k8s&quot; aria-label=&quot;Anchor link for: etcd-in-k8s&quot;&gt;🔗&lt;&#x2F;a&gt;ETCD in K8S&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;blob&#x2F;master&#x2F;staging&#x2F;src&#x2F;k8s.io&#x2F;apiserver&#x2F;pkg&#x2F;storage&#x2F;interfaces.go#L159&quot;&gt;The interface can be found here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create use TTL and Txn&lt;&#x2F;li&gt;
+&lt;li&gt;Get use KV.Get&lt;&#x2F;li&gt;
+&lt;li&gt;Delete use Get and then for with a Txn&lt;&#x2F;li&gt;
+&lt;li&gt;GuaranteedUpdate uses Txn&lt;&#x2F;li&gt;
+&lt;li&gt;List uses Get&lt;&#x2F;li&gt;
+&lt;li&gt;Watch uses Watch with a channel&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;jepsen&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#jepsen&quot; aria-label=&quot;Anchor link for: jepsen&quot;&gt;🔗&lt;&#x2F;a&gt;Jepsen&lt;&#x2F;h2&gt;
+&lt;p&gt;The Jepsen team tested &lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;analyses&#x2F;etcd-3.4.3&quot;&gt;etcd-3.4.3&lt;&#x2F;a&gt;, here&#x27;s some quotes:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Watches appear correct, at least over single keys. So long as compaction does not destroy historical data while a watch isn’t running, watches appear to deliver every update to a key in order.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;However, etcd locks (like all distributed locks) do not provide mutual exclusion. Multiple processes can hold an etcd lock concurrently, even in healthy clusters with perfectly synchronized clocks.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;operation-notes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operation-notes&quot; aria-label=&quot;Anchor link for: operation-notes&quot;&gt;🔗&lt;&#x2F;a&gt;Operation notes&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;deployements-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployements-tips&quot; aria-label=&quot;Anchor link for: deployements-tips&quot;&gt;🔗&lt;&#x2F;a&gt;Deployements tips&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;docs&#x2F;v3.4.0&#x2F;faq&#x2F;&quot;&gt;From the official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Since etcd writes data to disk, SSD is highly recommended.
+To prevent performance degradation or unintentionally overloading the key-value store, etcd enforces a configurable storage size quota set to 2GB by default.
+To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
+8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;defrag&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#defrag&quot; aria-label=&quot;Anchor link for: defrag&quot;&gt;🔗&lt;&#x2F;a&gt;Defrag&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;After compacting the keyspace, the backend database may exhibit internal fragmentation.
+Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Defrag is basically &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;2b79442d8e9fc54b1ac27e7e230ac0e4c132a054&#x2F;mvcc&#x2F;backend&#x2F;backend.go#L349&quot;&gt;dumping the bbolt tree on disk and reopening it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;snapshot&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#snapshot&quot; aria-label=&quot;Anchor link for: snapshot&quot;&gt;🔗&lt;&#x2F;a&gt;Snapshot&lt;&#x2F;h3&gt;
+&lt;p&gt;An ETCD snapshot is related to Raft&#x27;s snapshot:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Snapshot can be saved using &lt;code&gt;etcdctl&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;etcdctl&lt;&#x2F;span&gt;&lt;span&gt; snapshot save backup.db
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;lease-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease-1&quot; aria-label=&quot;Anchor link for: lease-1&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;p&gt;Be careful on Leader&#x27;s change and lease, this can &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;issues&#x2F;65497&quot;&gt;create some issues&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;war-stories&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#war-stories&quot; aria-label=&quot;Anchor link for: war-stories&quot;&gt;🔗&lt;&#x2F;a&gt;War stories&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blog.cloudflare.com&#x2F;a-byzantine-failure-in-the-real-world&#x2F;&quot;&gt;An analysis of the Cloudflare API availability incident on 2020-11-02&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;grafana.com&#x2F;blog&#x2F;2020&#x2F;04&#x2F;07&#x2F;how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup&#x2F;&quot;&gt;How a production outage in Grafana Cloud&#x27;s Hosted Prometheus service was caused by a bad etcd client setup&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;11884&quot;&gt;Random performance issue on etcd 3.4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;2004.00372.pdf&quot;&gt;Impact of etcd deployment on Kubernetes, Istio, and application performance&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+</feed>

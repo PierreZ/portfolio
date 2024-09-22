@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - learning</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/learning/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-01-22T15:37:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/learning/atom.xml</id>
+    <entry xml:lang="en">
+        <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
+        <published>2024-01-22T15:37:27+01:00</published>
+        <updated>2024-01-22T15:37:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/academic-conferences/"/>
+        <id>https://pierrezemb.fr/posts/academic-conferences/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/academic-conferences/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;papers.png&quot; alt=&quot;Academic paper created with AI&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there&#x27;s another source of information I&#x27;ve been using for a long time that not many people know about: &lt;strong&gt;academic papers&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often &lt;strong&gt;dive deeper&lt;&#x2F;strong&gt; into specific aspects of infrastructure. They provide more in-depth information, uncovering details that are not commonly discussed. So, if you&#x27;re interested in gaining a more comprehensive understanding of infrastructure-related topics, exploring academic papers can be really worthwile.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Sounds a bit too academic, doesn&#x27;t it? 🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I don&#x27;t think so!  It&#x27;s true that academic research can sometimes seem distant from everyday industry needs, but following both academic and industry tracks is beneficial. R&amp;amp;D from academia often lead to new ideas and technologies that eventually find their way into practical use.&lt;&#x2F;p&gt;
+&lt;p&gt;Moreover, numerous academic conferences feature a &lt;strong&gt;&amp;quot;industry track&amp;quot;&lt;&#x2F;strong&gt; that is essential to monitor.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Aren&#x27;t they too complex to read? 🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;If you don&#x27;t get everything right away, that&#x27;s okay. Reading these smart papers might be a bit hard, but it&#x27;s a skill that gets better with practice. And who knows, maybe you&#x27;ll be inspired to write your own paper someday! 😉&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I&#x27;m intrigued! Where should I start?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Here&#x27;s a short list of my go-to academic papers and conferences that you can follow for infrastructure engineering. Please note that many conferences exists on other subjects, like security and so.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-usenix-community&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-usenix-community&quot; aria-label=&quot;Anchor link for: the-usenix-community&quot;&gt;🔗&lt;&#x2F;a&gt;The USENIX community&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;osdi&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#osdi&quot; aria-label=&quot;Anchor link for: osdi&quot;&gt;🔗&lt;&#x2F;a&gt;OSDI&lt;&#x2F;h3&gt;
+&lt;p&gt;As part of the USENIX Association, the &lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conferences&quot;&gt;Operating Systems Design and Implementation&lt;&#x2F;a&gt; is an annual computer science conference that you shouldn&#x27;t miss. You can catch most of the sessions online along with some useful slides.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;usenix-atc&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#usenix-atc&quot; aria-label=&quot;Anchor link for: usenix-atc&quot;&gt;🔗&lt;&#x2F;a&gt;Usenix ATC&lt;&#x2F;h3&gt;
+&lt;p&gt;Similar to OSDI, the Usenix &lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conferences&quot;&gt;Annual Technical Conference&lt;&#x2F;a&gt; is another classic to follow.  has been awarded Best Paper in 2023, and it&#x27;s a gem!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-acm-family&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-acm-family&quot; aria-label=&quot;Anchor link for: the-acm-family&quot;&gt;🔗&lt;&#x2F;a&gt;The ACM family&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;sigmod&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sigmod&quot; aria-label=&quot;Anchor link for: sigmod&quot;&gt;🔗&lt;&#x2F;a&gt;SIGMOD&lt;&#x2F;h3&gt;
+&lt;p&gt;SIGMOD, or the &lt;a href=&quot;https:&#x2F;&#x2F;sigmod.org&#x2F;&quot;&gt;Special Interest Group on Management of Data&lt;&#x2F;a&gt;, is an essential conference under the ACM umbrella, focusing on the management and organization of data.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;damon&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#damon&quot; aria-label=&quot;Anchor link for: damon&quot;&gt;🔗&lt;&#x2F;a&gt;DaMoN&lt;&#x2F;h3&gt;
+&lt;p&gt;Held with ACM SIGMOD&#x2F;PODS, you can also find the &lt;a href=&quot;https:&#x2F;&#x2F;damon-db.org&#x2F;&quot;&gt;Data Management on New Hardware &lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;socc&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#socc&quot; aria-label=&quot;Anchor link for: socc&quot;&gt;🔗&lt;&#x2F;a&gt;SoCC&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;acmsocc.org&#x2F;2023&#x2F;&quot;&gt;Symposium on Cloud Computing&lt;&#x2F;a&gt; or SoCC for short belongs to ACM. It has a bit less content, as videos are not published, but you should keep it in your watchlist.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sosp&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sosp&quot; aria-label=&quot;Anchor link for: sosp&quot;&gt;🔗&lt;&#x2F;a&gt;SOSP&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;http:&#x2F;&#x2F;sosp.org&#x2F;&quot;&gt;Symposium on Operating Systems Principles&lt;&#x2F;a&gt; is another noteworthy conference in the ACM family. It&#x27;s a top-tier venue for discussing operating systems research. Stay tuned for updates on the latest breakthroughs and innovative ideas.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;others&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#others&quot; aria-label=&quot;Anchor link for: others&quot;&gt;🔗&lt;&#x2F;a&gt;Others&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;vldb&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#vldb&quot; aria-label=&quot;Anchor link for: vldb&quot;&gt;🔗&lt;&#x2F;a&gt;VLDB&lt;&#x2F;h3&gt;
+&lt;p&gt;Not belonging to USENIX or ACM, the &lt;a href=&quot;https:&#x2F;&#x2F;vldb.org&#x2F;&quot;&gt;Very Large Data Bases&lt;&#x2F;a&gt; (VLDB) conference is a key event in the database community. It provides a platform for researchers and professionals to exchange ideas on managing and analyzing large-scale datasets.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cidr&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cidr&quot; aria-label=&quot;Anchor link for: cidr&quot;&gt;🔗&lt;&#x2F;a&gt;CIDR&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;www.cidrdb.org&quot;&gt;Conference on Innovative Data Systems Research&lt;&#x2F;a&gt; (CIDR) is a systems-oriented conference, complementary in its mission to the mainstream database conferences like SIGMOD and VLDB, emphasizing the systems architecture perspective.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;cool-papers-examples&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cool-papers-examples&quot; aria-label=&quot;Anchor link for: cool-papers-examples&quot;&gt;🔗&lt;&#x2F;a&gt;Cool papers examples&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This is a nice list, but how about some paper examples that &lt;strong&gt;you&lt;&#x2F;strong&gt; like?🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Sure! Here&#x27;s a quick list with some infrastructure-related informations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conference&#x2F;atc23&#x2F;presentation&#x2F;brooker&quot;&gt;On-demand Container Loading in AWS Lambda&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.cidrdb.org&#x2F;cidr2024&#x2F;papers&#x2F;p63-helland.pdf&quot;&gt;Scalable OLTP in the Cloud: What&#x27;s the BIG DEAL?&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.confluent.io&#x2F;blog&#x2F;cloud-native-kafka-kora-vldb-award&#x2F;&quot;&gt;Kora: A Cloud-Native Event Streaming Platform For Kafka&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=YdxvOPenjWI&quot;&gt;Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.foundationdb.org&#x2F;blog&#x2F;fdb-paper&#x2F;&quot;&gt;FoundationDB: A Distributed, Unbundled, Transactional Key Value Store&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conference&#x2F;osdi20&#x2F;presentation&#x2F;balakrishnan&quot;&gt;Virtual consensus with Delos&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I&#x27;m also trying to organize them into my &lt;a href=&quot;https:&#x2F;&#x2F;www.zotero.org&#x2F;pierre.zemb&#x2F;library&quot;&gt;Zotero&#x27;s library&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Best resources to learn about data and distributed systems</title>
+        <published>2022-01-17T01:37:27+01:00</published>
+        <updated>2022-01-17T01:37:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/distsys-resources/"/>
+        <id>https://pierrezemb.fr/posts/distsys-resources/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/distsys-resources/">&lt;p&gt;Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you to get started.  Here&#x27;s a list of resources I used to learn distributed systems. I will keep this blogpost up-to-date with books, conferences, and so on.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;distsys-resources&#x2F;books.jpeg&quot; alt=&quot;&#x2F;posts&#x2F;distsys-resources&#x2F;books.jpeg&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A distributed system is one in which the failure of a computer you didn&#x27;t even know existed can render your own computer unusable.&lt;&#x2F;p&gt;
+&lt;p&gt;-Lamport, 1987&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;reading-books&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reading-books&quot; aria-label=&quot;Anchor link for: reading-books&quot;&gt;🔗&lt;&#x2F;a&gt;Reading 📚&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;designing-data-intensive-applications&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-data-intensive-applications&quot; aria-label=&quot;Anchor link for: designing-data-intensive-applications&quot;&gt;🔗&lt;&#x2F;a&gt;Designing Data-Intensive Applications&lt;&#x2F;h3&gt;
+&lt;p&gt;Let&#x27;s start by one of my favorite book, &lt;a href=&quot;https:&#x2F;&#x2F;dataintensive.net&#x2F;&quot;&gt;Designing Data-Intensive Applications&lt;&#x2F;a&gt;, written by &lt;a href=&quot;https:&#x2F;&#x2F;martin.kleppmann.com&#x2F;&quot;&gt;Martin Kleppmann&lt;&#x2F;a&gt;. This is by far the most practical book you will ever find about distributed systems. It covers:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Data models, query languages and encoding,&lt;&#x2F;li&gt;
+&lt;li&gt;Replication, partitioning, the associated troubles, consistency, consensus,&lt;&#x2F;li&gt;
+&lt;li&gt;batch and stream processing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NoSQL… Big Data… Scalability… CAP Theorem… Eventual Consistency… Sharding…&lt;&#x2F;p&gt;
+&lt;p&gt;Nice buzzwords, but how does the stuff actually work?&lt;&#x2F;p&gt;
+&lt;p&gt;As software engineers, we need to build applications that are reliable, scalable and maintainable in the long run. We need to understand the range of available tools and their trade-offs. For that, we have to dig deeper than buzzwords.&lt;&#x2F;p&gt;
+&lt;p&gt;This book will help you navigate the diverse and fast-changing landscape of technologies for storing and processing data. We compare a broad variety of tools and approaches, so that you can see the strengths and weaknesses of each, and decide what’s best for your application.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;database-internals&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#database-internals&quot; aria-label=&quot;Anchor link for: database-internals&quot;&gt;🔗&lt;&#x2F;a&gt;Database Internals&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.databass.dev&#x2F;&quot;&gt;Database Internals&lt;&#x2F;a&gt;, written by &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;ifesdjeen&quot;&gt;Alex Petrov&lt;&#x2F;a&gt;, is a fantastic book for anyone wondering how a database works. I recommend reading it after &lt;code&gt;Designing Data-Intensive Applications&lt;&#x2F;code&gt;, as the author dives in more details compared to Martin&#x27;s book.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Have you ever wanted to learn more about Databases but did not know where to start? This is a book just for you.&lt;&#x2F;p&gt;
+&lt;p&gt;We can treat databases and other infrastructure components as black boxes, but it doesn’t have to be that way. Sometimes we have to take a closer look at what’s going on because of performance issues. Sometimes databases misbehave, and we need to find out what exactly is going on. Some of us want to work in infrastructure and develop databases. This book’s main intention is to introduce you to the cornerstone concepts and help you understand how databases work.&lt;&#x2F;p&gt;
+&lt;p&gt;The book consists of two parts: Storage Engines and Distributed Systems since that’s where most of the differences between the vast majority of databases is coming from.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;distributed-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#distributed-systems&quot; aria-label=&quot;Anchor link for: distributed-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Distributed Systems&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.distributed-systems.net&#x2F;index.php&#x2F;me&#x2F;&quot;&gt;Maarten van Steen&lt;&#x2F;a&gt; wrote a book called &lt;a href=&quot;https:&#x2F;&#x2F;www.distributed-systems.net&#x2F;&quot;&gt;Distributed Systems 3rd edition&lt;&#x2F;a&gt;. It is a nice book which you can get a digital copy of this book for free.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Distributed systems are like 3D brain teasers: easy to disassemble; hard to put together.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;understanding-distributed-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#understanding-distributed-systems&quot; aria-label=&quot;Anchor link for: understanding-distributed-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Understanding Distributed Systems&lt;&#x2F;h3&gt;
+&lt;p&gt;If you are not a backend engineer but still curious about distributed systems, I highly recommend &lt;a href=&quot;https:&#x2F;&#x2F;understandingdistributed.systems&#x2F;&quot;&gt;Understanding Distributed Systems&lt;&#x2F;a&gt;. &lt;a href=&quot;https:&#x2F;&#x2F;robertovitillo.com&#x2F;&quot;&gt;Roberto Vitillo&lt;&#x2F;a&gt; is doing an insane job to vulgarize the subject.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Want to learn how to build scalable and fault-tolerant cloud applications?&lt;&#x2F;p&gt;
+&lt;p&gt;This book will teach you the core principles of distributed systems so that you don’t have to spend countless hours trying to understand how everything fits together.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;the-internals-of-postgresql&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-internals-of-postgresql&quot; aria-label=&quot;Anchor link for: the-internals-of-postgresql&quot;&gt;🔗&lt;&#x2F;a&gt;The Internals of PostgreSQL&lt;&#x2F;h3&gt;
+&lt;p&gt;PostgreSQL is getting a lot of love and traction these years, and &lt;a href=&quot;https:&#x2F;&#x2F;www.interdb.jp&#x2F;&quot;&gt;Hironobu Suzuki&lt;&#x2F;a&gt; wrote a terrific book the about the &lt;a href=&quot;https:&#x2F;&#x2F;www.interdb.jp&#x2F;pg&#x2F;index.html&quot;&gt;The Internals of PostgreSQL&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PostgreSQL is a well-designed open-source multi-purpose relational database system which is widely used throughout the world. It is one huge system with the integrated subsystems, each of which has a particular complex feature and works with each other cooperatively. Although understanding of the internal mechanism is crucial for both administration and integration using PostgreSQL, its hugeness and complexity prevent it. The main purposes of this document are to explain how each subsystem works, and to provide the whole picture of PostgreSQL.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;jepsen-blog&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#jepsen-blog&quot; aria-label=&quot;Anchor link for: jepsen-blog&quot;&gt;🔗&lt;&#x2F;a&gt;Jepsen blog&lt;&#x2F;h3&gt;
+&lt;p&gt;We are often using databases as a source of truth, but they are also pieces of software with bugs in it. Kyle Kingsbury is the most famous database-breaker with &lt;a href=&quot;http:&#x2F;&#x2F;jepsen.io&#x2F;&quot;&gt;Jepsen&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Jepsen is an effort to improve the safety of distributed databases, queues, consensus systems, etc. We maintain an open source software library for systems testing, as well as blog posts and conference talks exploring particular systems’ failure modes. In each analysis we explore whether the system lives up to its documentation’s claims, file new bugs, and suggest recommendations for operators.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;You will find analysis on many databases, such as CockroachDB, etcd, Kafka, MongoDB, and so on.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;aphyr-distsys-class-notes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#aphyr-distsys-class-notes&quot; aria-label=&quot;Anchor link for: aphyr-distsys-class-notes&quot;&gt;🔗&lt;&#x2F;a&gt;Aphyr distsys class notes&lt;&#x2F;h3&gt;
+&lt;p&gt;Following Jepsen, here&#x27;s a great bonus: Kyle is also teaching distributed systems, and his notes are &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;aphyr&#x2F;distsys-class#an-introduction-to-distributed-systems&quot;&gt;available&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;distributed-systems-for-fun-and-profit&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#distributed-systems-for-fun-and-profit&quot; aria-label=&quot;Anchor link for: distributed-systems-for-fun-and-profit&quot;&gt;🔗&lt;&#x2F;a&gt;Distributed systems for fun and profit&lt;&#x2F;h3&gt;
+&lt;p&gt;Despite being free, &lt;a href=&quot;http:&#x2F;&#x2F;book.mixu.net&#x2F;distsys&#x2F;&quot;&gt;Distributed systems for fun and profit&lt;&#x2F;a&gt; is an awesome book. The author, &lt;a href=&quot;http:&#x2F;&#x2F;mixu.net&#x2F;&quot;&gt;Mikito Takada&lt;&#x2F;a&gt; has done a terrific work to vulgarize distributed systems.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I wanted a text that would bring together the ideas behind many of the more recent distributed systems - systems such as Amazon&#x27;s Dynamo, Google&#x27;s BigTable and MapReduce, Apache&#x27;s Hadoop and so on.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In this text I&#x27;ve tried to provide a more accessible introduction to distributed systems. To me, that means two things: introducing the key concepts that you will need in order to have a good time reading more serious texts, and providing a narrative that covers things in enough detail that you get a gist of what&#x27;s going on without getting stuck on details.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;translucent-databases&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#translucent-databases&quot; aria-label=&quot;Anchor link for: translucent-databases&quot;&gt;🔗&lt;&#x2F;a&gt;Translucent Databases&lt;&#x2F;h3&gt;
+&lt;p&gt;I really like the pitch of the book:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Do you have personal information in your database?&lt;&#x2F;p&gt;
+&lt;p&gt;Do you keep files on your customers, your employees, or anyone else?&lt;&#x2F;p&gt;
+&lt;p&gt;Do you need to worry about European laws restricting the information you keep?&lt;&#x2F;p&gt;
+&lt;p&gt;Do you keep copies of credit card numbers, social security numbers, or other information that might be useful to identity thieves or insurance fraudsters?&lt;&#x2F;p&gt;
+&lt;p&gt;Do you deal with medical records or personal secrets?&lt;&#x2F;p&gt;
+&lt;p&gt;Most database administrators have some of these worries. Some have all of them. That&#x27;s why database security is so important.&lt;&#x2F;p&gt;
+&lt;p&gt;This new book, Translucent Databases, describes a different attitude toward protecting the information.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http:&#x2F;&#x2F;wayner.org&#x2F;node&#x2F;46&quot;&gt;Translucent Databases&lt;&#x2F;a&gt; is a short book, focus on how to store sensitive data. You will find several dozen examples of interesting case studies on how to efficiently and privately store sensitive data. A must-have.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-art-of-postgresql&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-art-of-postgresql&quot; aria-label=&quot;Anchor link for: the-art-of-postgresql&quot;&gt;🔗&lt;&#x2F;a&gt;The Art of PostgreSQL&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;theartofpostgresql.com&#x2F;&quot;&gt;The Art of PostgreSQL&lt;&#x2F;a&gt; is all about showing the power of both SQL and PostgreSQL. It explains the how&#x27;s and why&#x27;s of using Postgres&#x27;s many feature, and how you, as a developers, can take advantages of it. A brilliant book that should be read by every developer.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This book is for developers, covering advanced SQL techniques for data processing. Learn how to get exactly the result set you need in your application’s code!&lt;&#x2F;p&gt;
+&lt;p&gt;Learn advanced SQL with practical examples and datasets that help you get the most of the book! Every query solves a practical use case and is given in context.&lt;&#x2F;p&gt;
+&lt;p&gt;The book covers (de-)normalisation with simple practical examples to dive into this seemingly complex topic, including Caching and Indexing Strategy.&lt;&#x2F;p&gt;
+&lt;p&gt;Writing efficient SQL is easier than it looks, and begins with database modeling and writing clear code. The book teaches you how to write fast queries!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;readings-in-database-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readings-in-database-systems&quot; aria-label=&quot;Anchor link for: readings-in-database-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Readings in Database Systems&lt;&#x2F;h3&gt;
+&lt;p&gt;Another free book, &lt;a href=&quot;http:&#x2F;&#x2F;www.redbook.io&#x2F;&quot;&gt;Readings in Database Systems&lt;&#x2F;a&gt; is a great read if you are looking for an opinionated and short review on subject like architecture, engines, analytics and so on.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Readings in Database Systems (commonly known as the &amp;quot;Red Book&amp;quot;) has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;watching-tv&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watching-tv&quot; aria-label=&quot;Anchor link for: watching-tv&quot;&gt;🔗&lt;&#x2F;a&gt;Watching 📺&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;cmu-database-group&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cmu-database-group&quot; aria-label=&quot;Anchor link for: cmu-database-group&quot;&gt;🔗&lt;&#x2F;a&gt;CMU Database Group&lt;&#x2F;h3&gt;
+&lt;p&gt;The Database Group at Carnegie Mellon University have been publishing a lot of contents, including:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjZaHA6QcxDfJ0SIWBzQFKEG&quot;&gt;Intro to Database Systems lecture&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjasmrEd2_Yi1deeE360zv5O&quot;&gt;Advanced Database Systems lecture&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;which are the best lectures about database in my opinion.&lt;&#x2F;p&gt;
+&lt;p&gt;I also recommend their Quarantine database talks playlists:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;the &amp;quot;Quarantine Database Tech Talks&amp;quot; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjbeqnfuvp30VrI7VXiFuOXS&quot;&gt;Vaccination Database Tech Talks First Dose&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjbDOFN4U4-Uv95-N8sgzs5D&quot;&gt;Vaccination Database Tech Talks Second Dose&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;distributed-systems-lecture-series&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#distributed-systems-lecture-series&quot; aria-label=&quot;Anchor link for: distributed-systems-lecture-series&quot;&gt;🔗&lt;&#x2F;a&gt;Distributed Systems lecture series&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;martin.kleppmann.com&#x2F;&quot;&gt;Martin Kleppmann&lt;&#x2F;a&gt;(&lt;code&gt;Designing Data Intensive applications&lt;&#x2F;code&gt;&#x27;s author) published an &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB&quot;&gt;8-lecture series on distributed systems&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This video is part of an 8-lecture series on distributed systems, given as part of the undergraduate computer science course at the University of Cambridge.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;academic-conferences&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#academic-conferences&quot; aria-label=&quot;Anchor link for: academic-conferences&quot;&gt;🔗&lt;&#x2F;a&gt;Academic conferences&lt;&#x2F;h3&gt;
+&lt;p&gt;Keeping track of the academic world is not easy, but thankfully, we can keep track of several academic conferences which are data-related, including:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;cidrdb.org&quot;&gt;CIDR&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;sigmod.org&#x2F;&quot;&gt;SIGMOD&#x2F;PODS&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;vldb.org&quot;&gt;VLDB&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;papoc-workshop.github.io&#x2F;2022&#x2F;&quot;&gt;PaPoC&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;industrial-conference&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#industrial-conference&quot; aria-label=&quot;Anchor link for: industrial-conference&quot;&gt;🔗&lt;&#x2F;a&gt;Industrial conference&lt;&#x2F;h3&gt;
+&lt;p&gt;There is not much database-focused conferences, but you will be interested to see talks from:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hydraconf.com&#x2F;&quot;&gt;HydraConf&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.hytradboi.com&#x2F;&quot;&gt;HYTRADBOI&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;distsys-reading-group-sessions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#distsys-reading-group-sessions&quot; aria-label=&quot;Anchor link for: distsys-reading-group-sessions&quot;&gt;🔗&lt;&#x2F;a&gt;DistSys Reading Group sessions&lt;&#x2F;h3&gt;
+&lt;p&gt;If you are looking for explanations about a distributed systems paper, you may be interested in the &lt;a href=&quot;http:&#x2F;&#x2F;charap.co&#x2F;category&#x2F;reading-group&#x2F;&quot;&gt;DistSys Reading Group&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Every week we present and discuss one distributed systems paper. We try to focus on relatively new papers, although we occasionally break this rule for some important older publications. The main objective of this group is to share knowledge through the discussion. Our participants come from academia and industry and often carry a unique perspective and expertise on the subject matter.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Every session can be found on their &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;channel&#x2F;UCMKIroHVXvMQRIBhENE6RhQ&quot;&gt;YouTube channel&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;coding-adult-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#coding-adult-computer&quot; aria-label=&quot;Anchor link for: coding-adult-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Coding 🧑‍💻&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;maelstrom&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#maelstrom&quot; aria-label=&quot;Anchor link for: maelstrom&quot;&gt;🔗&lt;&#x2F;a&gt;Maelstrom&lt;&#x2F;h3&gt;
+&lt;p&gt;Ever wonder to develop your own toy distributed systems? Fear no more, you can use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jepsen-io&#x2F;maelstrom&quot;&gt;Maelstrom&lt;&#x2F;a&gt; for that!&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &amp;quot;a commutative set&amp;quot; or &amp;quot;a transactional key-value store&amp;quot;, and lets you learn by writing implementations which those test suites can exercise. It&#x27;s used as a part of a distributed systems workshop by Jepsen.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Maelstrom provides a range of tests for different kinds of distributed systems, built on top of a simple JSON protocol via STDIN and STDOUT. Users write servers in any language. Maelstrom runs those servers, sends them requests, routes messages via a simulated network, and checks that clients observe expected behavior. You want to write Plumtree in Bash? Byzantine Paxos in Intercal? Maelstrom is for you.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;pingcap-s-talent-plan&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#pingcap-s-talent-plan&quot; aria-label=&quot;Anchor link for: pingcap-s-talent-plan&quot;&gt;🔗&lt;&#x2F;a&gt;PingCAP&#x27;s Talent Plan&lt;&#x2F;h3&gt;
+&lt;p&gt;PingCAP is the company behind the tidb&#x2F;tikv stack, a new distributed systems. They developed their own &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;talent-plan&quot;&gt;open source training program&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Talent Plan is an open source training program initiated by PingCAP. It aims to create or combine some open source learning materials for people interested in open source, distributed systems, Rust, Golang, and other infrastructure knowledge. As such, it provides a series of courses focused on open source collaboration, rust programming, distributed database and systems.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I went through the Raft project in Rust and I learned a lot!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;patterns-of-distributed-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#patterns-of-distributed-systems&quot; aria-label=&quot;Anchor link for: patterns-of-distributed-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Patterns of Distributed Systems&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;unmeshjoshi&quot;&gt;Unmesh Joshi&lt;&#x2F;a&gt; is writing an on-going serie called &lt;a href=&quot;https:&#x2F;&#x2F;martinfowler.com&#x2F;articles&#x2F;patterns-of-distributed-systems&#x2F;&quot;&gt;Patterns of Distributed Systems&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Distributed systems provide a particular challenge to program. They often require us to have multiple copies of data, which need to keep synchronized. Yet we cannot rely on processing nodes working reliably, and network delays can easily lead to inconsistencies. Despite this, many organizations rely on a range of core distributed software handling data storage, messaging, system management, and compute capability. These systems face common problems which they solve with similar solutions. This article recognizes and develops these solutions as patterns, with which we can build up an understanding of how to better understand, communicate and teach distributed system design.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;reading-lists-eyes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reading-lists-eyes&quot; aria-label=&quot;Anchor link for: reading-lists-eyes&quot;&gt;🔗&lt;&#x2F;a&gt;Reading lists 👀&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;dan-creswell-s-reading-list&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dan-creswell-s-reading-list&quot; aria-label=&quot;Anchor link for: dan-creswell-s-reading-list&quot;&gt;🔗&lt;&#x2F;a&gt;Dan Creswell&#x27;s reading List&lt;&#x2F;h3&gt;
+&lt;p&gt;If you want more contents, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dancres&quot;&gt;Dan Creswell&lt;&#x2F;a&gt; has a nice &lt;a href=&quot;https:&#x2F;&#x2F;dancres.github.io&#x2F;Pages&#x2F;&quot;&gt;Distributed Systems Reading List&lt;&#x2F;a&gt; 🚀&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, you can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

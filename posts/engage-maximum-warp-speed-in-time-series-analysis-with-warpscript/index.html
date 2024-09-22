@@ -1,152 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Engage maximum warp speed in time series analysis with WarpScript - Pierre Zemb</title><meta name="Description" content="Pierre Zemb&#39;s personal blog"><meta property="og:url" content="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="Engage maximum warp speed in time series analysis with WarpScript">
-  <meta property="og:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2017-10-08T20:43:05+00:00">
-    <meta property="article:modified_time" content="2019-01-10T21:57:19+01:00">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engage maximum warp speed in time series analysis with WarpScript | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Engage maximum warp speed in time series analysis with WarpScript">
+<meta name="description" content="Pierre Zemb personal blog">
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Engage maximum warp speed in time series analysis with WarpScript">
-  <meta name="twitter:description" content="update 2019: this is a repost on my own blog. original article can be read on medium.
-We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open source Time Series database. You may not know it because it’s not as famous as Prometheus or InfluxDB but Warp10 is the most powerful and generic solution to store and analyze sensor data. It’s the core of Metrics, and many internal teams from OVH are using Metrics Data Platform to monitor their infrastructure.">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" rel="canonical" />
-<link rel="prev" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/" /><link rel="next" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Engage maximum warp speed in time series analysis with WarpScript",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript\/"
-        },"genre": "posts","wordcount":  1403 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript\/","datePublished": "2017-10-08T20:43:05+00:00","dateModified": "2019-01-10T21:57:19+01:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": ""
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Engage maximum warp speed in time series analysis with WarpScript">
+<meta property="og:description" content="Pierre Zemb personal blog"> 
+
+
+<link rel="canonical" href="https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" />
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Engage maximum warp speed in time series analysis with WarpScript</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/timeseries/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Timeseries</a>&nbsp;<a href="/categories/warp10/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Warp10</a>&nbsp;<a href="/categories/analytics/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Analytics</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2017-10-08">2017-10-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1403 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;7 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li></li>
-        <li><a href="#geez-give-me-an-example">Geez, give me an example</a></li>
-        <li><a href="#what-about-a-more-complex-example">What about a more complex example?</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016" target="_blank" rel="noopener noreffer ">medium</a>.</p>
-<hr>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png"
-        data-srcset="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png 1.5x, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png 2x"
-        data-sizes="auto"
-        alt="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/1.png"
-        title="image" /></p>
-<p>We, at <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer ">Metrics Data Platform</a>, are working everyday with <a href="http://www.warp10.io/" target="_blank" rel="noopener noreffer ">Warp10 Platform</a>, an open source Time Series database. You may not know it because it’s not as famous as <a href="https://prometheus.io/" target="_blank" rel="noopener noreffer ">Prometheus</a> or <a href="https://docs.influxdata.com/influxdb/" target="_blank" rel="noopener noreffer ">InfluxDB</a> but Warp10 is the most <strong>powerful and generic solution</strong> to store and analyze sensor data. It’s the <strong>core</strong> of Metrics, and many internal teams from OVH are using <a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer ">Metrics Data Platform</a> to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24/7/365, as you can see below:</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png"
-        data-srcset="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png 1.5x, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png 2x"
-        data-sizes="auto"
-        alt="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/6.png"
-        title="image" /></p>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Engage maximum warp speed in time series analysis with WarpScript</h1>
+      <p>
+        <i>
+          <time datetime="2017-10-08T20:43:05.198+00:00" pubdate>08 Oct, 2017</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#security-first-design">Security-first design</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#high-level-analysis-capabilities">High level analysis capabilities</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#server-side-calculation">Server-side calculation</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#dataflow-language">Dataflow language</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#rich-programming-capabilities">Rich programming capabilities</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#geo-fencing-capabilities">Geo-Fencing capabilities</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#unified-language">Unified Language</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#geez-give-me-an-example">Geez, give me an example</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/#what-about-a-more-complex-example">What about a more complex example?</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p><strong>update 2019:</strong> this is a repost on my own blog. original article can be read on <a href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016">medium</a>.</p>
+<hr />
+<p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/1.png" alt="image" /></p>
+<p>We, at <a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a>, are working everyday with <a href="http://www.warp10.io/">Warp10 Platform</a>, an open source Time Series database. You may not know it because it’s not as famous as <a href="https://prometheus.io/">Prometheus</a> or <a href="https://docs.influxdata.com/influxdb/">InfluxDB</a> but Warp10 is the most <strong>powerful and generic solution</strong> to store and analyze sensor data. It’s the <strong>core</strong> of Metrics, and many internal teams from OVH are using <a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a> to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24/7/365, as you can see below:</p>
+<p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/6.png" alt="image" /></p>
 <p>Not only Warp10 allows us to reach an unbelievable scalability but it also comes with his own language called <strong>WarpScript</strong>, to manipulate and perform heavy time series analysis. Before digging into the need of a new language, let’s talk a bit about the need of time series analysis.### What is a time serie ?</p>
 <p><strong>A time serie, or sensor data, is simply a sequence of measurements over time</strong>. The definition is quite generic, because many things can be represented as a time serie:</p>
 <ul>
@@ -185,7 +292,7 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <li><strong>query scalability</strong>, i.e. how to query in a raisonnable amount of time</li>
 <li><strong>delete capability</strong>, i.e. how to handle deletes without stopping ingestion and query</li>
 </ul>
-<p>Frustration with existing open source monitoring tools like <strong>Nagios</strong> and <strong>Ganglia</strong> is why the giants created their own tools — <strong>Google has Borgmon</strong> and <strong>Facebook has</strong> <a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf" target="_blank" rel="noopener noreffer "><strong>Gorilla</strong></a>, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the <strong>former Googlers who decided to rewrite Borgmon</strong> outside Google.### Why another time series database?</p>
+<p>Frustration with existing open source monitoring tools like <strong>Nagios</strong> and <strong>Ganglia</strong> is why the giants created their own tools — <strong>Google has Borgmon</strong> and <strong>Facebook has</strong> <a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf"><strong>Gorilla</strong></a>, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the <strong>former Googlers who decided to rewrite Borgmon</strong> outside Google.### Why another time series database?</p>
 <p>Now the time series ecosystem is bigger than ever, here’s a short list of what you can find to handle time series data:</p>
 <ul>
 <li>InfluxDB.</li>
@@ -194,23 +301,16 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <li>OpenTSDB.</li>
 </ul>
 <p>Then there’s <strong>Warp10</strong>. The difference is quite simple, Warp10 is <strong>a platform</strong> whereas all the time series listed above are <strong>stores</strong>. This is game changing, for multiples reasons.</p>
-<h4 id="security-first-design">Security-first design</h4>
-<p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html" target="_blank" rel="noopener noreffer ">Macaroons</a>.</p>
-<h4 id="high-level-analysis-capabilities">High level analysis capabilities</h4>
+<h4 id="security-first-design"><a class="zola-anchor" href="#security-first-design" aria-label="Anchor link for: security-first-design">🔗</a>Security-first design</h4>
+<p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a href="https://research.google.com/pubs/pub41892.html">Macaroons</a>.</p>
+<h4 id="high-level-analysis-capabilities"><a class="zola-anchor" href="#high-level-analysis-capabilities" aria-label="Anchor link for: high-level-analysis-capabilities">🔗</a>High level analysis capabilities</h4>
 <p>Using classical time series database, <strong>high level analysis must be done elsewhere</strong>, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just <strong>submit your script</strong> and <em>voilà</em>!</p>
-<h4 id="server-side-calculation">Server-side calculation</h4>
+<h4 id="server-side-calculation"><a class="zola-anchor" href="#server-side-calculation" aria-label="Anchor link for: server-side-calculation">🔗</a>Server-side calculation</h4>
 <p>Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit <strong>limitations</strong> on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be <strong>scalable</strong>, analysis must be done <strong>server-side</strong>.### Meet WarpScript</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png"
-        data-srcset="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png 1.5x, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png 2x"
-        data-sizes="auto"
-        alt="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/2.png"
-        title="image" /></p>
-<p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language" target="_blank" rel="noopener noreffer "><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
+<p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/2.png" alt="image" /></p>
+<p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
 <p>Yes, you’ll be able to run that <strong>awesome query that is fetching millions of datapoints</strong> and only get the result. You need all the data, or just the timestamp of a weird datapoint? <strong>The result of the script is simply what’s left on the stack</strong>.</p>
-<h4 id="dataflow-language">Dataflow language</h4>
+<h4 id="dataflow-language"><a class="zola-anchor" href="#dataflow-language" aria-label="Anchor link for: dataflow-language">🔗</a>Dataflow language</h4>
 <p>WarpScript is really easy to code, <strong>because of the stack design</strong>. You’ll be <strong>pushing elements into the stack and consume them</strong>. Coding became logical. First you need to <strong>fetch</strong> your points, then <strong>applying some downsampling</strong> and then <strong>aggregate</strong>. These 3 steps are translated into <strong>3 lines of WarpScript</strong>:</p>
 <ul>
 <li><strong>FETCH</strong> will push the needed Geo Time Series into the stack</li>
@@ -218,101 +318,77 @@ We, at Metrics Data Platform, are working everyday with Warp10 Platform, an open
 <li><strong>REDUCE</strong> will take the Geo Time Series from the stack, aggregate them, and push them back into the stack</li>
 </ul>
 <p>Debugguing as never be that easy, just use the keyword <strong>STOP</strong> to see the stack at any moment.</p>
-<h4 id="rich-programming-capabilities">Rich programming capabilities</h4>
+<h4 id="rich-programming-capabilities"><a class="zola-anchor" href="#rich-programming-capabilities" aria-label="Anchor link for: rich-programming-capabilities">🔗</a>Rich programming capabilities</h4>
 <p>WarpScript is coming with more than <strong>800 functions</strong>, ready to use. Things like <strong>Patterns and outliers detections, rolling average, FFT, IDWT</strong> are built-in.</p>
-<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities</h4>
+<h4 id="geo-fencing-capabilities"><a class="zola-anchor" href="#geo-fencing-capabilities" aria-label="Anchor link for: geo-fencing-capabilities">🔗</a>Geo-Fencing capabilities</h4>
 <p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
-<h4 id="unified-language">Unified Language</h4>
+<h4 id="unified-language"><a class="zola-anchor" href="#unified-language" aria-label="Anchor link for: unified-language">🔗</a>Unified Language</h4>
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
-<h3 id="geez-give-me-an-example">Geez, give me an example</h3>
+<h3 id="geez-give-me-an-example"><a class="zola-anchor" href="#geez-give-me-an-example" aria-label="Anchor link for: geez-give-me-an-example">🔗</a>Geez, give me an example</h3>
 <p>Here’s an example of a simple but advanced query:</p>
-<pre tabindex="0"><code>// Fetching all values  
-[ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
-[ SWAP bucketizer.max 0 1 m 0 ] BUCKETIZE // Round to nearest long  
-[ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by &#39;buildingID&#39;  
-[ SWAP [ &#39;buildingID&#39; ] reducer.max ] REDUCE
-</code></pre><p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
-<h3 id="what-about-a-more-complex-example">What about a more complex example?</h3>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>// Fetching all values  
+</span><span>[ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  
+</span><span>[ SWAP bucketizer.max 0 1 m 0 ] BUCKETIZE // Round to nearest long  
+</span><span>[ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by &#39;buildingID&#39;  
+</span><span>[ SWAP [ &#39;buildingID&#39; ] reducer.max ] REDUCE
+</span></code></pre>
+<p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
+<h3 id="what-about-a-more-complex-example"><a class="zola-anchor" href="#what-about-a-more-complex-example" aria-label="Anchor link for: what-about-a-more-complex-example">🔗</a>What about a more complex example?</h3>
 <p>You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png"
-        data-srcset="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png 1.5x, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png 2x"
-        data-sizes="auto"
-        alt="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/3.png"
-        title="image" /></p>
+<p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/3.png" alt="image" /></p>
 <p>I want to <strong>detect the green part</strong> of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a <strong>2 functions calls</strong>:</p>
 <ul>
 <li><strong>PATTERNS</strong> is generating a list of motifs.</li>
 <li><strong>PATTERNDETECTION</strong> is running the list of motifs on all the time series you have.</li>
 </ul>
 <p>Here’s the code</p>
-<pre tabindex="0"><code>// defining some variables  
-32 &#39;windowSize&#39; STORE  
-8 &#39;patternLength&#39; STORE  
-16 &#39;quantizationScale&#39; STORE  
-
-// Generate patterns   
-$pattern.to.detect 0 GET   
-$windowSize $patternLength $quantizationScale PATTERNS  
-VALUES &#39;patterns&#39; STORE  
-
-// Running the patterns through a list of GTS (Geo Time Series)  
-$list.of.gts $patterns   
-$windowSize $patternLength $quantizationScale  PATTERNDETECTION
-</code></pre><p>Here’s the result:</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png"
-        data-srcset="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png 1.5x, /posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png 2x"
-        data-sizes="auto"
-        alt="/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/images/4.png"
-        title="image" /></p>
-<p>As you can see, <strong>PATTERNDETECTION</strong> is working even with the increasing amplitude! You can discover this example by yourself by using <a href="https://home.cityzendata.net/quantum/preview/#/plot/TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU&#43;IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=/eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=" target="_blank" rel="noopener noreffer ">Quantum</a>, the official web-based IDE for WarpScript. <strong>You need to switch X-axis scale to Timestamp in order to see the courbe</strong>.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>// defining some variables  
+</span><span>32 &#39;windowSize&#39; STORE  
+</span><span>8 &#39;patternLength&#39; STORE  
+</span><span>16 &#39;quantizationScale&#39; STORE  
+</span><span>
+</span><span>// Generate patterns   
+</span><span>$pattern.to.detect 0 GET   
+</span><span>$windowSize $patternLength $quantizationScale PATTERNS  
+</span><span>VALUES &#39;patterns&#39; STORE  
+</span><span>
+</span><span>// Running the patterns through a list of GTS (Geo Time Series)  
+</span><span>$list.of.gts $patterns   
+</span><span>$windowSize $patternLength $quantizationScale  PATTERNDETECTION
+</span></code></pre>
+<p>Here’s the result:</p>
+<p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/4.png" alt="image" /></p>
+<p>As you can see, <strong>PATTERNDETECTION</strong> is working even with the increasing amplitude! You can discover this example by yourself by using <a href="https://home.cityzendata.net/quantum/preview/#/plot/TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU+IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=/eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=">Quantum</a>, the official web-based IDE for WarpScript. <strong>You need to switch X-axis scale to Timestamp in order to see the courbe</strong>.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:</p>
 <ul>
-<li><a href="https://www.ovh.com/fr/data-platforms/metrics/" target="_blank" rel="noopener noreffer ">Metrics Data Platform</a>, our product</li>
-<li><a href="http://warp10.io/" target="_blank" rel="noopener noreffer ">Warp10 official documentation</a></li>
-<li><a href="http://tour.warp10.io/" target="_blank" rel="noopener noreffer ">Warp10 tour</a>, similar to “The Go Tour”</li>
-<li><a href="https://www.youtube.com/watch?v=mNkfBR9KofY" target="_blank" rel="noopener noreffer ">Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont</a></li>
-<li><a href="https://groups.google.com/forum/#!forum/warp10-users" target="_blank" rel="noopener noreffer ">Warp10 Google Groups</a></li>
+<li><a href="https://www.ovh.com/fr/data-platforms/metrics/">Metrics Data Platform</a>, our product</li>
+<li><a href="http://warp10.io/">Warp10 official documentation</a></li>
+<li><a href="http://tour.warp10.io/">Warp10 tour</a>, similar to “The Go Tour”</li>
+<li><a href="https://www.youtube.com/watch?v=mNkfBR9KofY">Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont</a></li>
+<li><a href="https://groups.google.com/forum/#!forum/warp10-users">Warp10 Google Groups</a></li>
 </ul>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2019-01-10</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" data-title="Engage maximum warp speed in time series analysis with WarpScript" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" data-title="Engage maximum warp speed in time series analysis with WarpScript"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" data-title="Engage maximum warp speed in time series analysis with WarpScript"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/" data-title="Engage maximum warp speed in time series analysis with WarpScript"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/warp10/">#warp10</a>
+          <a href="https://pierrezemb.fr/tags/warpscript/">#warpscript</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/eventdriven-architecture-101/" class="prev" rel="prev" title="Event-driven architecture 101"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Event-driven architecture 101</a>
-            <a href="/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/" class="next" rel="next" title="Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>

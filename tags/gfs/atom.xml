@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - gfs</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/gfs/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2020-09-18T05:24:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/gfs/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Diving into ETCD&#x27;s linearizable reads</title>
+        <published>2020-09-18T05:24:27+01:00</published>
+        <updated>2020-09-18T05:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/"/>
+        <id>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;what-is-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;What is ETCD?&lt;&#x2F;h2&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;the official website&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &amp;quot;Aphyr&amp;quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;why&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;Why?&lt;&#x2F;h2&gt;
+&lt;p&gt;ETCD is using &lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;&quot;&gt;Raft&lt;&#x2F;a&gt;, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here&#x27;s an example:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; is &lt;code&gt;leader&lt;&#x2F;code&gt; and heartbeating properly to &lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;network partition is happening, and &lt;code&gt;node1&lt;&#x2F;code&gt; is isolated from the others.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;At this moment, all the actions are depending on timeouts and settings. In a (close) future, all nodes will go into &lt;strong&gt;election mode&lt;&#x2F;strong&gt; and node 2 and 3 will be able to create a quorum. This can lead to this situation:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; thinks he is a leader as heartbeat timeouts and retry are not yet reached, so he can serve reads 😱&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt; have elected a new leader and are working again, accepting writes.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This situation is violating Linearizable reads, as reads going through &lt;code&gt;node1&lt;&#x2F;code&gt; will not see the last updates from the current leader.&lt;&#x2F;p&gt;
+&lt;p&gt;How can we solve this? One way is to use &lt;code&gt;ReadIndex&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;readindex&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;ReadIndex&lt;&#x2F;h2&gt;
+&lt;p&gt;The basic idea behind this is to confirm that the &lt;strong&gt;leader is true leader or not&lt;&#x2F;strong&gt; by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&#x27;s dive into the implementation!&lt;&#x2F;p&gt;
+&lt;p&gt;All codes are from the current latest release &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;releases&#x2F;tag&#x2F;v3.4.13&quot;&gt;v3.4.13&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L114-L120&quot;&gt;Let&#x27;s take a Range operation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Serializable &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;linearizableReadNotify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;trace&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Step&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;agreement among raft nodes before linearized reading&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err &lt;&#x2F;span&gt;&lt;span&gt;!= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;EtcdServer&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;linearizableReadNotify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx context&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Context&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;error &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readMu&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RLock&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readNotifier
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readMu&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUnlock&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; signal linearizable loop for current notify if it hasn&amp;#39;t been already
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readwaitc &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct&lt;&#x2F;span&gt;&lt;span&gt;{}{}:
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;default&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; wait for read state notification
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;c&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Done&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Err&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ErrStopped
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L773-L793&quot;&gt;linearizableReadNotify&lt;&#x2F;a&gt;, we are waiting for a signal. &lt;code&gt;readwaitc&lt;&#x2F;code&gt; is used in another goroutine called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;. This goroutines will call this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;n &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;node&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;ReadIndex&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx context&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Context&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rctx &lt;&#x2F;span&gt;&lt;span&gt;[]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;error &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;step&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: []&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entry&lt;&#x2F;span&gt;&lt;span&gt;{{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rctx&lt;&#x2F;span&gt;&lt;span&gt;}}})
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;that will create a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message that will be handled in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;raft&#x2F;raft.go#L994&quot;&gt;stepLeader&lt;&#x2F;a&gt;, who will send the message to the followers, like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If more than the local vote is needed, go through a full broadcast,
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; otherwise optimize.
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;prs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;IsSingleton&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;switch &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;option &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlySafe&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;addRequest&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;raftLog&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;committed&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; The local node automatically acks the request.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recvAck&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;bcastHeartbeatWithCtx&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlyLeaseBased&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;raftLog&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;committed
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;|| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; from local member
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;append&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadState&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndexResp&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So, the &lt;code&gt;leader&lt;&#x2F;code&gt; is sending a heartbeat in &lt;code&gt;ReadOnlySafe&lt;&#x2F;code&gt; mode. Turns out there is two modes:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadOnlySafe guarantees the linearizability of the read only request by
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; communicating with the quorum. It is the default and suggested option.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlySafe &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;ReadOnlyOption &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;iota
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadOnlyLeaseBased ensures linearizability of the read only request by
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; relying on the leader lease. It can be affected by clock drift.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the clock drift is unbounded, leader might keep the lease longer than it
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; should (clock can move backward&#x2F;pause without any bound). ReadIndex is not safe
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; in that case.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlyLeaseBased
+&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Responses from the followers will be handled here:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgHeartbeatResp&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rss &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;advance&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;range &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rss &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;|| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; from local member
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;append&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadState&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;index&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;   } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndexResp&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;index&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We are storing things into a &lt;code&gt;ReadState&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadState provides state for read only query.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; It&amp;#39;s caller&amp;#39;s responsibility to call ReadIndex first before getting
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this state from ready, it&amp;#39;s also caller&amp;#39;s duty to differentiate if this
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; state is what it requests through RequestCtx, eg. given a unique id as
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; RequestCtx
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;ReadState &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;uint64
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx &lt;&#x2F;span&gt;&lt;span&gt;[]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now that the state has been updated, we need to unblock our &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;timeout &lt;&#x2F;span&gt;&lt;span&gt;&amp;amp;&amp;amp; !&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs &lt;&#x2F;span&gt;&lt;span&gt;= &amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStateC&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Cool, another channel! Turns out, &lt;code&gt;readStateC&lt;&#x2F;code&gt; is updated in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;raft.go#L162&quot;&gt;one of the main goroutine&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; start prepares and starts raftNode in a new goroutine. It is no longer safe
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; to modify the fields after it has been started.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;raftNode&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rh &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;raftReadyHandler&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;internalTimeout &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;time&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Second
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;go func&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;defer &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;onStop&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;islead &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ticker&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;C&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tick&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd &lt;&#x2F;span&gt;&lt;span&gt;:= &amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Ready&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;) != &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStateC &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]:
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Perfect, now &lt;code&gt;readStateC&lt;&#x2F;code&gt; is notified, and we can continue on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ai &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;getAppliedIndex&lt;&#x2F;span&gt;&lt;span&gt;(); &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ai &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;applyWait&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Wait&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;stopping&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; unblock all l-reads requested at indices before rs.Index
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nr&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;notify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The first part is a safety measure to makes sure the applied index is lower that the index stored in &lt;code&gt;ReadState&lt;&#x2F;code&gt;. And then finally we are unlocking all pending reads 🤩&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;One more thing: Follower read&lt;&#x2F;h2&gt;
+&lt;p&gt;We went through &lt;code&gt;stepLeader&lt;&#x2F;code&gt; a lot, be there is something interesting in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v4.3.13&#x2F;raft&#x2F;raft.go#L1320&quot;&gt;&lt;code&gt;stepFollower&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;lead &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;logger&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Infof&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; no leader at term &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%d&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;; dropping index reading msg&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Term&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;lead
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This means that a follower can send a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message to perform the same kind of checks than a leader. This small features is in fact enabling &lt;strong&gt;follower-reads&lt;&#x2F;strong&gt; on ETCD 🤩 That is why you can see &lt;code&gt;Range&lt;&#x2F;code&gt; requests from a &lt;code&gt;follower&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;operational-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;operational tips&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;If you are running etcd &amp;lt;= 3.4, make sure &lt;strong&gt;logger=zap&lt;&#x2F;strong&gt; is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;level&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;info&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ts&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:56.181Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;caller&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;traceutil&#x2F;trace.go:145&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;msg&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;trace[677217921] range&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;detail&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{range_begin:&#x2F;...redacted...; range_end:; response_count:1; response_revision:2725080604; }&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;duration&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;1.553047811s&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:54.628Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:56.181Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;trace[677217921] &amp;#39;agreement among raft nodes before linearized reading&amp;#39;  (duration: 1.534322015s)&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot; 
+&lt;&#x2F;span&gt;&lt;span&gt;  ]
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;there is &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;11884&quot;&gt;a random performance issue on etcd 3.4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;there is some metrics than you can watch for ReadIndex issues:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;etcd_server_read_indexes_failed_total&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;etcd_server_slow_read_indexes_total&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Diving into Hbase&#x27;s MemStore</title>
+        <published>2019-11-17T10:24:27+01:00</published>
+        <updated>2019-11-17T10:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"/>
+        <id>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;code&gt;tl;dr:&lt;&#x2F;code&gt; Hbase is using the &lt;a href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-the-memstore&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-memstore&quot; aria-label=&quot;Anchor link for: what-is-the-memstore&quot;&gt;🔗&lt;&#x2F;a&gt;What is the MemStore?&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;code&gt;memtable&lt;&#x2F;code&gt; from the official &lt;a href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt; is the equivalent of the &lt;code&gt;MemStore&lt;&#x2F;code&gt; in Hbase.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;As rows are &lt;strong&gt;sorted lexicographically&lt;&#x2F;strong&gt; in Hbase, when data comes in, you need to have some kind of a &lt;strong&gt;in-memory buffer&lt;&#x2F;strong&gt; to order those keys. This is where the &lt;code&gt;MemStore&lt;&#x2F;code&gt; comes in. It absorbs the recent write (or put in Hbase semantics) operations. All the rest are immutable files called &lt;code&gt;HFile&lt;&#x2F;code&gt; stored in HDFS. There is one &lt;code&gt;MemStore&lt;&#x2F;code&gt; per &lt;code&gt;column family&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s dig into how the MemStore internally works in Hbase 1.X.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hbase-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-1&quot; aria-label=&quot;Anchor link for: hbase-1&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 1&lt;&#x2F;h2&gt;
+&lt;p&gt;All extract of code for this section are taken from &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;1.4.9&quot;&gt;rel&#x2F;1.4.9&lt;&#x2F;a&gt; tag.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;in-memory-storage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-storage&quot; aria-label=&quot;Anchor link for: in-memory-storage&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory storage&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L35&quot;&gt;MemStore interface&lt;&#x2F;a&gt; is giving us insight on how it is working internally.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;**
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * Write an update
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cell
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@return&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt; approximate size of the passed cell.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *&#x2F;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;long add(final Cell cell);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L68-L73&quot;&gt;add function on the MemStore&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The implementation is hold by &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;DefaultMemStore.java&quot;&gt;DefaultMemStore&lt;&#x2F;a&gt;. &lt;code&gt;add&lt;&#x2F;code&gt; is wrapped by several functions, but in the end, we are arriving here:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;private boolean &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;addToCellSet&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Cell&lt;&#x2F;span&gt;&lt;span&gt; e) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;boolean&lt;&#x2F;span&gt;&lt;span&gt; b = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;this&lt;&#x2F;span&gt;&lt;span&gt;.activeSection.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;getCellSkipListSet&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add&lt;&#x2F;span&gt;&lt;span&gt;(e);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;DefaultMemStore.java#L202-L213&quot;&gt;addToCellSet on the DefaultMemStore&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;CellSkipListSet.java#L33-L48&quot;&gt;CellSkipListSet class&lt;&#x2F;a&gt; is built on top of &lt;a href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;, which provide nice features:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;concurrency&lt;&#x2F;li&gt;
+&lt;li&gt;sorted elements&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;flush-on-hdfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#flush-on-hdfs&quot; aria-label=&quot;Anchor link for: flush-on-hdfs&quot;&gt;🔗&lt;&#x2F;a&gt;Flush on HDFS&lt;&#x2F;h3&gt;
+&lt;p&gt;As we seen above, the &lt;code&gt;MemStore&lt;&#x2F;code&gt; is supporting all the puts. When asked to flush, the current memstore is &lt;strong&gt;moved to snapshot and is cleared&lt;&#x2F;strong&gt;. Flushed file are called (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;io&#x2F;hfile&#x2F;HFile.java&quot;&gt;HFiles&lt;&#x2F;a&gt;) and they are similar to &lt;code&gt;SSTables&lt;&#x2F;code&gt; introduced by the official &lt;a href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt;. HFiles are flushed on the Hadoop Distributed File System called &lt;code&gt;HDFS&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you want deeper insight about SSTables, I recommend reading &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;facebook&#x2F;rocksdb&#x2F;wiki&#x2F;Rocksdb-BlockBasedTable-Format&quot;&gt;Table Format from the awesome RocksDB wiki&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#compaction&quot; aria-label=&quot;Anchor link for: compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Compaction&lt;&#x2F;h3&gt;
+&lt;p&gt;Compaction are only run on HFiles. It means that &lt;strong&gt;if hot data is continuously updated, we are overusing memory due to duplicate entries per row per MemStore&lt;&#x2F;strong&gt;. Accordion tends to solve this problem through &lt;em&gt;in-memory compactions&lt;&#x2F;em&gt;. Let&#x27;s have a look to Hbase 2.X!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hbase-2&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-2&quot; aria-label=&quot;Anchor link for: hbase-2&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 2&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;storing-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#storing-data&quot; aria-label=&quot;Anchor link for: storing-data&quot;&gt;🔗&lt;&#x2F;a&gt;storing data&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;All extract of code starting from here are taken from &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;2.1.2&quot;&gt;rel&#x2F;2.1.2&lt;&#x2F;a&gt; tag.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Does &lt;code&gt;MemStore&lt;&#x2F;code&gt; interface changed?&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;**
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * Write an update
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cell
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@param &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;memstoreSizing&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt; The delta in memstore size will be passed back via this.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *        This will include both data size and heap overhead delta.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;   *&#x2F;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;  void add(final Cell cell, MemStoreSizing memstoreSizing);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L67-L73&quot;&gt;add function in MemStore interface&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The signature changed a bit, to include passing a object instead of returning a long. Moving on.&lt;&#x2F;p&gt;
+&lt;p&gt;The new structure implementing MemStore is called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;AbstractMemStore.java#L42&quot;&gt;AbstractMemStore&lt;&#x2F;a&gt;. Again, we have some layers, where AbstractMemStore is writing to a &lt;code&gt;MutableSegment&lt;&#x2F;code&gt;, which itsef is wrapping &lt;code&gt;Segment&lt;&#x2F;code&gt;. If you dig far enough, you will find that data are stored into the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;CellSet.java#L35-L51&quot;&gt;CellSet class&lt;&#x2F;a&gt; which is also things built on top of &lt;strong&gt;ConcurrentSkipListMap&lt;&#x2F;strong&gt;!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;in-memory-compactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-compactions&quot; aria-label=&quot;Anchor link for: in-memory-compactions&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory Compactions&lt;&#x2F;h3&gt;
+&lt;p&gt;Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: &lt;a href=&quot;https:&#x2F;&#x2F;blogs.apache.org&#x2F;hbase&#x2F;entry&#x2F;accordion-hbase-breathes-with-in&quot;&gt;Accordion: HBase Breathes with In-Memory Compaction&lt;&#x2F;a&gt; and the &lt;a href=&quot;https:&#x2F;&#x2F;issues.apache.org&#x2F;jira&#x2F;secure&#x2F;attachment&#x2F;12709471&#x2F;HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf&quot;&gt;document design&lt;&#x2F;a&gt; is also available.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>What can be gleaned about GFS successor codenamed Colossus?</title>
+        <published>2019-08-04T15:07:11+02:00</published>
+        <updated>2019-08-04T15:07:11+02:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/colossus-google/"/>
+        <id>https://pierrezemb.fr/posts/colossus-google/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/colossus-google/">&lt;p&gt;In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.theregister.co.uk&#x2F;2019&#x2F;06&#x2F;06&#x2F;cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger&#x2F;&quot;&gt;Health of Hadoop-based companies are publicly bad&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Hadoop has a bad publicity with headlines like &lt;a href=&quot;https:&#x2F;&#x2F;techwireasia.com&#x2F;2019&#x2F;07&#x2F;what-does-the-death-of-hadoop-mean-for-big-data&#x2F;&quot;&gt;&#x27;What does the death of Hadoop mean for big data?&#x27;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Hadoop, as a distributed-system, &lt;strong&gt;is hard to operate, but can be essential for some type of workload&lt;&#x2F;strong&gt;. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hadoop-s-story&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hadoop-s-story&quot; aria-label=&quot;Anchor link for: hadoop-s-story&quot;&gt;🔗&lt;&#x2F;a&gt;Hadoop&#x27;s story&lt;&#x2F;h2&gt;
+&lt;p&gt;Hadoop is based on a Google&#x27;s paper called &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;gfs-sosp2003.pdf&quot;&gt;The Google File System&lt;&#x2F;a&gt; published in 2003. There are some key-elements on this paper:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;It was designed to be deployed with &lt;a href=&quot;https:&#x2F;&#x2F;ai.google&#x2F;research&#x2F;pubs&#x2F;pub43438&quot;&gt;Borg&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;to &amp;quot;&lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;simplify the overall design problem&lt;&#x2F;a&gt;&amp;quot;, they:
+&lt;ul&gt;
+&lt;li&gt;implemented a single master architecture&lt;&#x2F;li&gt;
+&lt;li&gt;dropped the idea of a full POSIX-compliant file system&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Metadatas are stored in RAM in the master,&lt;&#x2F;li&gt;
+&lt;li&gt;Datas are stored within chunkservers,&lt;&#x2F;li&gt;
+&lt;li&gt;There is no YARN or Map&#x2F;Reduce or any kind of compute capabilities.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;is-hadoop-still-revelant&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-hadoop-still-revelant&quot; aria-label=&quot;Anchor link for: is-hadoop-still-revelant&quot;&gt;🔗&lt;&#x2F;a&gt;Is Hadoop still revelant?&lt;&#x2F;h2&gt;
+&lt;p&gt;Google with GFS and the rest of the world with Hadoop hit some issues:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;One (Metadata) machine is not large enough for large FS,&lt;&#x2F;li&gt;
+&lt;li&gt;Single bottleneck for metadata operations,&lt;&#x2F;li&gt;
+&lt;li&gt;Not appropriate for latency sensitive applications,&lt;&#x2F;li&gt;
+&lt;li&gt;Fault tolerant not HA,&lt;&#x2F;li&gt;
+&lt;li&gt;Unpredictable performance,&lt;&#x2F;li&gt;
+&lt;li&gt;Replication&#x27;s cost,&lt;&#x2F;li&gt;
+&lt;li&gt;HDFS Write-path pipelining,&lt;&#x2F;li&gt;
+&lt;li&gt;fixed-size of blocks,&lt;&#x2F;li&gt;
+&lt;li&gt;cost of operations,&lt;&#x2F;li&gt;
+&lt;li&gt;...&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Despite all the issues, Hadoop is still relevant for some usecases, such as Map&#x2F;Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blog.twitter.com&#x2F;engineering&#x2F;en_us&#x2F;topics&#x2F;infrastructure&#x2F;2017&#x2F;the-infrastructure-behind-twitter-scale.html&quot;&gt;Twitter has multiple clusters storing over 500 PB (2017)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;whereas Google prefered to &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;&amp;quot;Scaled to approximately 50M files, 10P&amp;quot; to avoid &amp;quot;added management overhead&amp;quot; brought by the scaling.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.&lt;&#x2F;p&gt;
+&lt;p&gt;Google&#x27;s developers were&#x2F;are deploying applications into &amp;quot;containers&amp;quot;, meaning that &lt;strong&gt;any process could be spawned somewhere into the cloud&lt;&#x2F;strong&gt;. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that &lt;strong&gt;processes don&#x27;t need to worry about replication&lt;&#x2F;strong&gt; (like Bigtable&#x2F;HBase).&lt;&#x2F;p&gt;
+&lt;p&gt;This is a promise that, I think, was forgotten. In a world where Kubernetes &lt;em&gt;seems&lt;&#x2F;em&gt; to be the standard, &lt;strong&gt;the need of a global distributed file-system is now higher than before&lt;&#x2F;strong&gt;. By providing a &amp;quot;file-system&amp;quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?&lt;&#x2F;li&gt;
+&lt;li&gt;Should I be moving that persistent volume over my slow network?&lt;&#x2F;li&gt;
+&lt;li&gt;What is happening when &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dgraph-io&#x2F;dgraph&#x2F;issues&#x2F;2698&quot;&gt;Kubernetes killed an alpha pod in the middle of retrieving snapshot&lt;&#x2F;a&gt;?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;well-let-s-put-hadoop-in-kubernetes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#well-let-s-put-hadoop-in-kubernetes&quot; aria-label=&quot;Anchor link for: well-let-s-put-hadoop-in-kubernetes&quot;&gt;🔗&lt;&#x2F;a&gt;Well, let&#x27;s put Hadoop in Kubernetes&lt;&#x2F;h2&gt;
+&lt;p&gt;Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;helm&#x2F;charts&#x2F;tree&#x2F;master&#x2F;stable&#x2F;hadoop&quot;&gt;Helm chart for Hadoop is limited to YARN and Map&#x2F;Reduce and &amp;quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&amp;quot;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &amp;quot;day-zero to day-two&amp;quot; good experience,&lt;&#x2F;li&gt;
+&lt;li&gt;Google seems to &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=16971959&quot;&gt;not be using the Operators design internally&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.ibm.com&#x2F;cloud&#x2F;blog&#x2F;new-builders&#x2F;database-deep-dives-couchdb&quot;&gt;CouchDB developers&lt;&#x2F;a&gt; are saying that:
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;For certain workloads, the technology isn’t quite there yet&amp;quot;&lt;&#x2F;li&gt;
+&lt;li&gt;&amp;quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&amp;quot;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;how-gfs-evolved-within-google&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-gfs-evolved-within-google&quot; aria-label=&quot;Anchor link for: how-gfs-evolved-within-google&quot;&gt;🔗&lt;&#x2F;a&gt;How GFS evolved within Google&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;technical-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#technical-overview&quot; aria-label=&quot;Anchor link for: technical-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Technical overview&lt;&#x2F;h3&gt;
+&lt;p&gt;As GFS&#x27;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed &lt;code&gt;Colossus&lt;&#x2F;code&gt;. There is no papers, and not a lot informations available, here&#x27;s what can be found online:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;Storage Architecture and Challenges(2010)&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;They moved from full-replication to &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Reed%E2%80%93Solomon_error_correction&quot;&gt;Reed-Salomon&lt;&#x2F;a&gt;. This feature is acually in &lt;a href=&quot;https:&#x2F;&#x2F;hadoop.apache.org&#x2F;docs&#x2F;r3.0.0&#x2F;hadoop-project-dist&#x2F;hadoop-hdfs&#x2F;HDFSErasureCoding.html&quot;&gt;Hadoop 3&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;replication is handled by the client, instead of the pipelining,&lt;&#x2F;li&gt;
+&lt;li&gt;the metadata layer is automatically sharded. We can find more informations about that in the next ressource!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;http:&#x2F;&#x2F;www.pdsw.org&#x2F;pdsw-discs17&#x2F;slides&#x2F;PDSW-DISCS-Google-Keynote.pdf&quot;&gt;Cluster-Level Storage @ Google(2017)&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;GFS master replaced by Colossus&lt;&#x2F;li&gt;
+&lt;li&gt;GFS chunkserver replaced by D&lt;&#x2F;li&gt;
+&lt;li&gt;Colossus rebalances old, cold data&lt;&#x2F;li&gt;
+&lt;li&gt;distributes newly written data evenly across disks&lt;&#x2F;li&gt;
+&lt;li&gt;Metadatas are stored into BigTable. each Bigtable row corresponds to a single file.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The &amp;quot;all in RAM&amp;quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&#x27;t had a lof of options for a scalable and rock-solid datastore &lt;strong&gt;beside BigTable&lt;&#x2F;strong&gt;. When you think about it, a key&#x2F;value datastore is a great replacement for a distributed file-system master:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;automatic sharding of regions,&lt;&#x2F;li&gt;
+&lt;li&gt;scan capabilities for files in the same &amp;quot;directory&amp;quot;,&lt;&#x2F;li&gt;
+&lt;li&gt;lexical ordering,&lt;&#x2F;li&gt;
+&lt;li&gt;...&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The funny part is that they now need a Colossus for Colossus. The only things saving them is that storing the metametametadata (the metadata of the metadata of the metadata) can be hold in Chubby.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;GFS: Evolution on Fast-forward(2009)&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;they moved to chunks of 1MB of files, as the limitations of the master disappeared. This is also allowing Colossus to support latency sensitive applications,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;cockroachdb&#x2F;cockroach&#x2F;issues&#x2F;243#issuecomment-91575792&quot;&gt;a Github comment on Colossus&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;File reconstruction from Reed-Salomnon was performed on both client-side and server-side&lt;&#x2F;li&gt;
+&lt;li&gt;on-the-fly recovery of data is greatly enhanced by this data layout(Reed Salomon)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From a &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=20135927&quot;&gt;Hacker News comment&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Colossus and D are two separate things.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;blog&#x2F;products&#x2F;storage-data-transfer&#x2F;a-peek-behind-colossus-googles-file-system&quot;&gt;Colossus under the hood: a peek into Google’s scalable storage system&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Colossus&#x27;s Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.&lt;&#x2F;li&gt;
+&lt;li&gt;background storage managers called Custodians, there are handling tasks like disk space balancing and RAID reconstruction.&lt;&#x2F;li&gt;
+&lt;li&gt;Applications needs to specifies I&#x2F;O, availability, and durability requirements&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;What is that &amp;quot;D&amp;quot;?&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;landing.google.com&#x2F;sre&#x2F;sre-book&#x2F;chapters&#x2F;production-environment&#x2F;&quot;&gt;The Production Environment at Google, from the Viewpoint of an SRE&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;D stands for &lt;em&gt;Disk&lt;&#x2F;em&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;D is a fileserver running on almost all machines in a cluster.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@jerub&#x2F;the-production-environment-at-google-8a1aaece3767&quot;&gt;The Production Environment at Google&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;D is more of a block server than a file server&lt;&#x2F;li&gt;
+&lt;li&gt;It provides nothing apart from checksums.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;deployments&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployments&quot; aria-label=&quot;Anchor link for: deployments&quot;&gt;🔗&lt;&#x2F;a&gt;Deployments&lt;&#x2F;h3&gt;
+&lt;!-- I think the team that&#x27;s pushing the forefront of something k8s-like for persistency&#x2F;durability is... the Colossus&#x2F;D team at Google, who have been running storage servers managed by Borg for almost a decade now :) Problem is, it&#x27;s not k8s. But could tell us what that roadmap is.  --&gt;
+&lt;p&gt;How everything is deployed? Using Borg!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;migration&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#migration&quot; aria-label=&quot;Anchor link for: migration&quot;&gt;🔗&lt;&#x2F;a&gt;Migration&lt;&#x2F;h3&gt;
+&lt;p&gt;The migration process is described in the now free &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;sre.google&#x2F;en&#x2F;&#x2F;static&#x2F;pdf&#x2F;case-studies-infrastructure-change-management.pdf&quot;&gt;Case Studies in Infrastructure Change Management&lt;&#x2F;a&gt; book.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot; aria-label=&quot;Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;🔗&lt;&#x2F;a&gt;Is there an open-source effort to create a Colossus-like DFS?&lt;&#x2F;h2&gt;
+&lt;p&gt;I did not found any point towards a open-source version of Colossus, beside some work made for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;baidu&#x2F;bfs&quot;&gt;The Baidu File System&lt;&#x2F;a&gt; in which the Nameserver is implemented as a raft group.&lt;&#x2F;p&gt;
+&lt;p&gt;There is &lt;a href=&quot;https:&#x2F;&#x2F;www.slideshare.net&#x2F;HadoopSummit&#x2F;scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes&quot;&gt;some work to add colossus&#x27;s features in Hadoop&lt;&#x2F;a&gt; but based on the bad publicity Hadoop has now, I don&#x27;t think there will be a lot of money to power those efforts.&lt;&#x2F;p&gt;
+&lt;p&gt;I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reimplement D may be easy, my current question is &lt;strong&gt;how far can we use modern FS such as OpenZFS&lt;&#x2F;strong&gt; to facilitate the work? FS capabilities such as &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;zfsonlinux&#x2F;zfs&#x2F;wiki&#x2F;Checksums&quot;&gt;OpenZFS checksums&lt;&#x2F;a&gt; seems pretty interesting.&lt;&#x2F;li&gt;
+&lt;li&gt;To resolve the distributed master issue, we could use &lt;a href=&quot;https:&#x2F;&#x2F;tikv.org&#x2F;&quot;&gt;Tikv&lt;&#x2F;a&gt; as a building block to provide an &amp;quot;BigTable experience&amp;quot; without the need of a distributed file-system underneath.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;But remember:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Like crypto, Do not roll your own DFS!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

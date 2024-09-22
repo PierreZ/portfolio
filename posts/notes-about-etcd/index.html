@@ -1,166 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Notes about ETCD - Pierre Zemb</title><meta name="Description" content="List of ressources gleaned about ETCD"><meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-etcd/">
-  <meta property="og:site_name" content="Pierre Zemb">
-  <meta property="og:title" content="Notes about ETCD">
-  <meta property="og:description" content="List of ressources gleaned about ETCD">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2021-01-11T00:24:27+01:00">
-    <meta property="article:modified_time" content="2021-01-11T00:24:27+01:00">
-    <meta property="og:image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes about ETCD | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Notes about ETCD">
+<meta name="description" content="List of ressources gleaned about ETCD">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://pierrezemb.fr/posts/notes-about-etcd/images/etcd.png">
-  <meta name="twitter:title" content="Notes about ETCD">
-  <meta name="twitter:description" content="List of ressources gleaned about ETCD">
-      <meta name="twitter:site" content="@PierreZ">
-<meta name="application-name" content="Pierre Zemb">
-<meta name="apple-mobile-web-app-title" content="Pierre Zemb"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest">
-<link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-etcd/" />
-<link rel="prev" href="https://pierrezemb.fr/posts/ten-years-programming/" /><link rel="next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/" /><link rel="stylesheet" href="/css/style.min.cf6878db51c51b2d04ae155284a4403dbee8db33e16c066f954c95279c271fcd.css" integrity="sha256-z2h421HFGy0ErhVShKRAPb7o2zPhbAZvlUyVJ5wnH80="><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/plausible.js"></script><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Notes about ETCD",
-        "inLanguage": "en",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/pierrezemb.fr\/posts\/notes-about-etcd\/"
-        },"genre": "posts","wordcount":  2034 ,
-        "url": "https:\/\/pierrezemb.fr\/posts\/notes-about-etcd\/","datePublished": "2021-01-11T00:24:27+01:00","dateModified": "2021-01-11T00:24:27+01:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Pierre Zemb"
-            },"description": "List of ressources gleaned about ETCD"
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Notes about ETCD">
+<meta property="og:description" content="List of ressources gleaned about ETCD"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-etcd/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
     }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+  }
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-1" class="typeit"></span></a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="/posts/"> Blog </a><a class="menu-item" href="/podcasts/">️ Podcasts </a><a class="menu-item" href="/talks/"> Talks </a><a class="menu-item" href="/categories/">️ Categories </a><a class="menu-item" href="/cv.pdf"> Resume </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="Pierre Zemb"><span class="header-title-pre">👨‍💻</span><span id="id-2" class="typeit"></span></a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
-                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
-                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        Cancel
-                    </a>
-                </div><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="/posts/" title="">Blog</a><a class="menu-item" href="/podcasts/" title="">️Podcasts</a><a class="menu-item" href="/talks/" title="">Talks</a><a class="menu-item" href="/categories/" title="">️Categories</a><a class="menu-item" href="/cv.pdf" title="">Resume</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><div class="search-dropdown desktop">
-        <div id="search-dropdown-desktop"></div>
-    </div>
-    <div class="search-dropdown mobile">
-        <div id="search-dropdown-mobile"></div>
-    </div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Notes about ETCD</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Pierre Zemb</a></span>&nbsp;<span class="post-category">included in <a href="/categories/etcd/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Etcd</a>&nbsp;<a href="/categories/notesabout/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Notesabout</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2021-01-11">2021-01-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;2034 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;10 minutes&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#overview-of-etcd">Overview of ETCD</a></li>
-    <li><a href="#history">History</a></li>
-    <li><a href="#overall-architecture">Overall architecture</a>
-      <ul>
-        <li><a href="#consensus-raft">Consensus? Raft?</a></li>
-        <li><a href="#exposed-api">Exposed API</a></li>
-        <li><a href="#transactions">Transactions</a></li>
-        <li><a href="#versioned-data">Versioned data</a></li>
-        <li><a href="#lease">Lease</a></li>
-        <li><a href="#watches">Watches</a></li>
-        <li><a href="#linearizable-reads">Linearizable reads</a></li>
-        <li><a href="#how-etcd-is-using-bbolt">How ETCD is using bbolt</a></li>
-      </ul>
-    </li>
-    <li><a href="#etcd-in-k8s">ETCD in K8S</a></li>
-    <li><a href="#jepsen">Jepsen</a></li>
-    <li><a href="#operation-notes">Operation notes</a>
-      <ul>
-        <li><a href="#deployements-tips">Deployements tips</a></li>
-        <li><a href="#defrag">Defrag</a></li>
-        <li><a href="#snapshot">Snapshot</a></li>
-        <li><a href="#lease-1">Lease</a></li>
-        <li><a href="#war-stories">War stories</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/posts/notes-about-etcd/images/etcd.png"
-        data-srcset="/posts/notes-about-etcd/images/etcd.png, /posts/notes-about-etcd/images/etcd.png 1.5x, /posts/notes-about-etcd/images/etcd.png 2x"
-        data-sizes="auto"
-        alt="/posts/notes-about-etcd/images/etcd.png"
-        title="etcd image" /></p>
-<p><a href="/tags/notesabout/" rel="">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover ETCD.</p>
-<h2 id="overview-of-etcd">Overview of ETCD</h2>
-<p>As stated in the <a href="https://etcd.io/" target="_blank" rel="noopener noreffer ">official documentation</a>:</p>
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+<script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Notes about ETCD</h1>
+      <p>
+        <i>
+          <time datetime="2021-01-11T00:24:27+01:00" pubdate>11 Jan, 2021</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#overview-of-etcd">Overview of ETCD</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#history">History</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#overall-architecture">Overall architecture</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#consensus-raft">Consensus? Raft?</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#exposed-api">Exposed API</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#transactions">Transactions</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#versioned-data">Versioned data</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#lease">Lease</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#watches">Watches</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#linearizable-reads">Linearizable reads</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#how-etcd-is-using-bbolt">How ETCD is using bbolt</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#etcd-in-k8s">ETCD in K8S</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#jepsen">Jepsen</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/notes-about-etcd/#operation-notes">Operation notes</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#deployements-tips">Deployements tips</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#defrag">Defrag</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#snapshot">Snapshot</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#lease-1">Lease</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/notes-about-etcd/#war-stories">War stories</a>
+            </li>
+        </ul>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p><img src="/images/notes-about-etcd/images/etcd.png" alt="etcd image" /></p>
+<p><a href="/tags/notes-about/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover ETCD.</p>
+<h2 id="overview-of-etcd"><a class="zola-anchor" href="#overview-of-etcd" aria-label="Anchor link for: overview-of-etcd">🔗</a>Overview of ETCD</h2>
+<p>As stated in the <a href="https://etcd.io/">official documentation</a>:</p>
 <blockquote>
 <p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
 </blockquote>
-<h2 id="history">History</h2>
+<h2 id="history"><a class="zola-anchor" href="#history" aria-label="Anchor link for: history">🔗</a>History</h2>
 <p>ETCD was initially developed by CoreOS:</p>
 <blockquote>
 <p>CoreOS built etcd to solve the problem of shared configuration and service discovery.</p>
@@ -175,20 +303,20 @@
 <li>February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more</li>
 <li>August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member</li>
 </ul>
-<h2 id="overall-architecture">Overall architecture</h2>
+<h2 id="overall-architecture"><a class="zola-anchor" href="#overall-architecture" aria-label="Anchor link for: overall-architecture">🔗</a>Overall architecture</h2>
 <blockquote>
 <p>The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.</p>
 </blockquote>
 <p>ETCD is:</p>
 <ul>
-<li>using <a href="/posts/notes-about-raft/" rel="">the raft consensus algorithm</a>,</li>
+<li>using <a href="/posts/notes-about-raft/">the raft consensus algorithm</a>,</li>
 <li>a single group raft,</li>
-<li>using <a href="https://grpc.io/" target="_blank" rel="noopener noreffer ">gRPC</a> for communication,</li>
+<li>using <a href="https://grpc.io/">gRPC</a> for communication,</li>
 <li>using a self-made WAL implementation,</li>
 <li>storing key-values into bbolt,</li>
-<li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a href="https://en.wikipedia.org/wiki/PACELC_theorem" target="_blank" rel="noopener noreffer ">in terms of the PACELC theorem</a>).</li>
+<li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a href="https://en.wikipedia.org/wiki/PACELC_theorem">in terms of the PACELC theorem</a>).</li>
 </ul>
-<h3 id="consensus-raft">Consensus? Raft?</h3>
+<h3 id="consensus-raft"><a class="zola-anchor" href="#consensus-raft" aria-label="Anchor link for: consensus-raft">🔗</a>Consensus? Raft?</h3>
 <ul>
 <li>Raft is a consensus algorithm for managing a replicated log.</li>
 <li>consensus involves multiple servers agreeing on values.</li>
@@ -211,7 +339,7 @@
 <li>Learner role,</li>
 <li>Client-side load-balancing.</li>
 </ul>
-<h3 id="exposed-api">Exposed API</h3>
+<h3 id="exposed-api"><a class="zola-anchor" href="#exposed-api" aria-label="Anchor link for: exposed-api">🔗</a>Exposed API</h3>
 <p>ETCD is exposing several APIs through different gRPC services:</p>
 <ul>
 <li>Put(key, value),</li>
@@ -229,77 +357,80 @@
 </li>
 </ul>
 <p>Key and values are bytes-oriented but ordered.</p>
-<h3 id="transactions">Transactions</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="c1">// From google paxosdb paper:
-</span></span></span><span class="line"><span class="cl"><span class="c1">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
-</span></span></span><span class="line"><span class="cl"><span class="c1">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
-</span></span></span><span class="line"><span class="cl"><span class="c1">// and consists of three components:
-</span></span></span><span class="line"><span class="cl"><span class="c1">// 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
-</span></span></span><span class="line"><span class="cl"><span class="c1">// for the absence or presence of a value, or compare with a given value. Two different tests in the guard
-</span></span></span><span class="line"><span class="cl"><span class="c1">// may apply to the same or different entries in the database. All tests in the guard are applied and
-</span></span></span><span class="line"><span class="cl"><span class="c1">// MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
-</span></span></span><span class="line"><span class="cl"><span class="c1">// it executes f op (see item 3 below).
-</span></span></span><span class="line"><span class="cl"><span class="c1">// 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
-</span></span></span><span class="line"><span class="cl"><span class="c1">// lookup operation, and applies to a single database entry. Two different operations in the list may apply
-</span></span></span><span class="line"><span class="cl"><span class="c1">// to the same or different entries in the database. These operations are executed
-</span></span></span><span class="line"><span class="cl"><span class="c1">// if guard evaluates to
-</span></span></span><span class="line"><span class="cl"><span class="c1">// true.
-</span></span></span><span class="line"><span class="cl"><span class="c1">// 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">message</span> <span class="nc">TxnRequest</span> <span class="p">{</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// compare is a list of predicates representing a conjunction of terms.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the comparisons succeed, then the success requests will be processed in order,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the comparisons fail, then the failure requests will be processed in order,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// and the response will contain their respective responses in order.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">Compare</span> <span class="n">compare</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// success is a list of requests which will be applied when compare evaluates to true.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">success</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// failure is a list of requests which will be applied when compare evaluates to false.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">repeated</span> <span class="n">RequestOp</span> <span class="n">failure</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
-</span></span></span></code></pre></div><h3 id="versioned-data">Versioned data</h3>
+<h3 id="transactions"><a class="zola-anchor" href="#transactions" aria-label="Anchor link for: transactions">🔗</a>Transactions</h3>
+<pre data-lang="proto" style="background-color:#2b303b;color:#c0c5ce;" class="language-proto "><code class="language-proto" data-lang="proto"><span style="color:#65737e;">// From google paxosdb paper:
+</span><span style="color:#65737e;">// Our implementation hinges around a powerful primitive which we call MultiOp. All other database
+</span><span style="color:#65737e;">// operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically
+</span><span style="color:#65737e;">// and consists of three components:
+</span><span style="color:#65737e;">// 1. A list of tests called guard. Each test in guard checks a single entry in the database. It may check
+</span><span style="color:#65737e;">// for the absence or presence of a value, or compare with a given value. Two different tests in the guard
+</span><span style="color:#65737e;">// may apply to the same or different entries in the database. All tests in the guard are applied and
+</span><span style="color:#65737e;">// MultiOp returns the results. If all tests are true, MultiOp executes t op (see item 2 below), otherwise
+</span><span style="color:#65737e;">// it executes f op (see item 3 below).
+</span><span style="color:#65737e;">// 2. A list of database operations called t op. Each operation in the list is either an insert, delete, or
+</span><span style="color:#65737e;">// lookup operation, and applies to a single database entry. Two different operations in the list may apply
+</span><span style="color:#65737e;">// to the same or different entries in the database. These operations are executed
+</span><span style="color:#65737e;">// if guard evaluates to
+</span><span style="color:#65737e;">// true.
+</span><span style="color:#65737e;">// 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
+</span><span style="color:#b48ead;">message </span><span style="color:#ebcb8b;">TxnRequest </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// compare is a list of predicates representing a conjunction of terms.
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// If the comparisons succeed, then the success requests will be processed in order,
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// and the response will contain their respective responses in order.
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// If the comparisons fail, then the failure requests will be processed in order,
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// and the response will contain their respective responses in order.
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">repeated </span><span style="color:#bf616a;">Compare compare </span><span>= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// success is a list of requests which will be applied when compare evaluates to true.
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">repeated </span><span style="color:#bf616a;">RequestOp success </span><span>= </span><span style="color:#d08770;">2</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// failure is a list of requests which will be applied when compare evaluates to false.
+</span><span style="color:#eff1f5;">  </span><span style="color:#b48ead;">repeated </span><span style="color:#bf616a;">RequestOp failure </span><span>= </span><span style="color:#d08770;">3</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">}
+</span></code></pre>
+<h3 id="versioned-data"><a class="zola-anchor" href="#versioned-data" aria-label="Anchor link for: versioned-data">🔗</a>Versioned data</h3>
 <p>Each Key/Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.</p>
 <p>In order to avoid having a growing keySpace, one can issue the <code>Compact</code> gRPC service:</p>
 <blockquote>
 <p>Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision</p>
 </blockquote>
-<h3 id="lease">Lease</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="c1">// this message represent a Lease
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">message</span> <span class="nc">Lease</span> <span class="p">{</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">TTL</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">ID</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="kt">int64</span> <span class="n">insert_timestamp</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
-</span></span></span></code></pre></div><h3 id="watches">Watches</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-proto" data-lang="proto"><span class="line"><span class="cl"><span class="kd">message</span> <span class="nc">Watch</span> <span class="p">{</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// key is the key to register for watching.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// range_end is the end of the range [key, range_end) to watch. If range_end is not given,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// or equal to the key argument are watched.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// If the range_end is one bit larger than the given key,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// then all keys with the prefix (the given key) will be watched.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">bytes</span> <span class="n">range_end</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span>  <span class="c1">// If watch_id is provided and non-zero, it will be assigned to this watcher.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// Since creating a watcher in etcd is not a synchronous operation,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// this can be used ensure that ordering is correct when creating multiple
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// watchers on the same stream. Creating a watcher with an ID already in
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// use on the stream will cause an error to be returned.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int64</span> <span class="n">watch_id</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
-</span></span></span></code></pre></div><h3 id="linearizable-reads">Linearizable reads</h3>
+<h3 id="lease"><a class="zola-anchor" href="#lease" aria-label="Anchor link for: lease">🔗</a>Lease</h3>
+<pre data-lang="proto" style="background-color:#2b303b;color:#c0c5ce;" class="language-proto "><code class="language-proto" data-lang="proto"><span style="color:#65737e;">// this message represent a Lease
+</span><span style="color:#b48ead;">message </span><span style="color:#ebcb8b;">Lease </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+</span><span style="color:#eff1f5;">  int64 </span><span style="color:#bf616a;">TTL </span><span>= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
+</span><span style="color:#eff1f5;">  int64 </span><span style="color:#bf616a;">ID </span><span>= </span><span style="color:#d08770;">2</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">  int64 </span><span style="color:#bf616a;">insert_timestamp </span><span>= </span><span style="color:#d08770;">3</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">}
+</span></code></pre>
+<h3 id="watches"><a class="zola-anchor" href="#watches" aria-label="Anchor link for: watches">🔗</a>Watches</h3>
+<pre data-lang="proto" style="background-color:#2b303b;color:#c0c5ce;" class="language-proto "><code class="language-proto" data-lang="proto"><span style="color:#b48ead;">message </span><span style="color:#ebcb8b;">Watch </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// key is the key to register for watching.
+</span><span style="color:#eff1f5;">  bytes </span><span style="color:#bf616a;">key </span><span>= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// range_end is the end of the range [key, range_end) to watch. If range_end is not given,
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// or equal to the key argument are watched.
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// If the range_end is one bit larger than the given key,
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// then all keys with the prefix (the given key) will be watched.
+</span><span style="color:#eff1f5;">  bytes </span><span style="color:#bf616a;">range_end </span><span>= </span><span style="color:#d08770;">2</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// If watch_id is provided and non-zero, it will be assigned to this watcher.
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// Since creating a watcher in etcd is not a synchronous operation,
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// this can be used ensure that ordering is correct when creating multiple
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// watchers on the same stream. Creating a watcher with an ID already in
+</span><span style="color:#eff1f5;">  </span><span style="color:#65737e;">// use on the stream will cause an error to be returned.
+</span><span style="color:#eff1f5;">  int64 </span><span style="color:#bf616a;">watch_id </span><span>= </span><span style="color:#d08770;">7</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">}
+</span></code></pre>
+<h3 id="linearizable-reads"><a class="zola-anchor" href="#linearizable-reads" aria-label="Anchor link for: linearizable-reads">🔗</a>Linearizable reads</h3>
 <p>Section 8 of the raft paper explains the issue:</p>
 <blockquote>
 <p>Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.</p>
 </blockquote>
-<p>ETCD implements <code>ReadIndex</code> read(more info on <a href="/posts/diving-into-etcd-linearizable/" rel="">Diving into ETCD’s linearizable reads</a>).</p>
-<h3 id="how-etcd-is-using-bbolt">How ETCD is using bbolt</h3>
-<p><a href="https://github.com/etcd-io/bbolt" target="_blank" rel="noopener noreffer ">bbolt</a> is the underlying kv used in etcd. <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214" target="_blank" rel="noopener noreffer ">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68" target="_blank" rel="noopener noreffer ">a B-Tree is used</a>.</p>
+<p>ETCD implements <code>ReadIndex</code> read(more info on <a href="/posts/diving-into-etcd-linearizable/">Diving into ETCD’s linearizable reads</a>).</p>
+<h3 id="how-etcd-is-using-bbolt"><a class="zola-anchor" href="#how-etcd-is-using-bbolt" aria-label="Anchor link for: how-etcd-is-using-bbolt">🔗</a>How ETCD is using bbolt</h3>
+<p><a href="https://github.com/etcd-io/bbolt">bbolt</a> is the underlying kv used in etcd. <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68">a B-Tree is used</a>.</p>
 <blockquote>
 <ul>
 <li>Bolt allows only one read-write transaction at a time but allows as many read-only transactions as you want at a time.</li>
@@ -311,16 +442,12 @@
 <li>Etcd implements multi-version-concurrency-control (MVCC) on top of Boltdb</li>
 </ul>
 </blockquote>
-<p><a href="https://github.com/etcd-io/etcd/issues/12169#issuecomment-673292122" target="_blank" rel="noopener noreffer ">From an Github issue</a>:</p>
+<p><a href="https://github.com/etcd-io/etcd/issues/12169#issuecomment-673292122">From an Github issue</a>:</p>
 <blockquote>
 <p>Note that the underlying <code>bbolt</code> mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.</p>
 </blockquote>
-<h2 id="etcd-in-k8s">ETCD in K8S</h2>
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">We built Kubernetes upon Etcd due to its similarities to Chubby and to the Omega store. When we exposed Etcd&#39;s watch (<a href="https://t.co/7rdNCKHjbO">https://t.co/7rdNCKHjbO</a>) through the K8s API, we let more Etcd details bleed through than originally intended. We need to clean up some of those details soon</p>&mdash; Brian Grant (@bgrant0607) <a href="https://twitter.com/bgrant0607/status/1118273986956120064?ref_src=twsrc%5Etfw">April 16, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-
-<p><a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159" target="_blank" rel="noopener noreffer ">The interface can be found here</a>.</p>
+<h2 id="etcd-in-k8s"><a class="zola-anchor" href="#etcd-in-k8s" aria-label="Anchor link for: etcd-in-k8s">🔗</a>ETCD in K8S</h2>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159">The interface can be found here</a>.</p>
 <ul>
 <li>Create use TTL and Txn</li>
 <li>Get use KV.Get</li>
@@ -329,8 +456,8 @@
 <li>List uses Get</li>
 <li>Watch uses Watch with a channel</li>
 </ul>
-<h2 id="jepsen">Jepsen</h2>
-<p>The Jepsen team tested <a href="https://jepsen.io/analyses/etcd-3.4.3" target="_blank" rel="noopener noreffer ">etcd-3.4.3</a>, here&rsquo;s some quotes:</p>
+<h2 id="jepsen"><a class="zola-anchor" href="#jepsen" aria-label="Anchor link for: jepsen">🔗</a>Jepsen</h2>
+<p>The Jepsen team tested <a href="https://jepsen.io/analyses/etcd-3.4.3">etcd-3.4.3</a>, here's some quotes:</p>
 <blockquote>
 <p>In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.</p>
 </blockquote>
@@ -343,75 +470,64 @@
 <blockquote>
 <p>If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.</p>
 </blockquote>
-<h2 id="operation-notes">Operation notes</h2>
-<h3 id="deployements-tips">Deployements tips</h3>
-<p><a href="https://etcd.io/docs/v3.4.0/faq/" target="_blank" rel="noopener noreffer ">From the official documentation</a>:</p>
+<h2 id="operation-notes"><a class="zola-anchor" href="#operation-notes" aria-label="Anchor link for: operation-notes">🔗</a>Operation notes</h2>
+<h3 id="deployements-tips"><a class="zola-anchor" href="#deployements-tips" aria-label="Anchor link for: deployements-tips">🔗</a>Deployements tips</h3>
+<p><a href="https://etcd.io/docs/v3.4.0/faq/">From the official documentation</a>:</p>
 <blockquote>
 <p>Since etcd writes data to disk, SSD is highly recommended.
 To prevent performance degradation or unintentionally overloading the key-value store, etcd enforces a configurable storage size quota set to 2GB by default.
 To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
 8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.</p>
 </blockquote>
-<h3 id="defrag">Defrag</h3>
+<h3 id="defrag"><a class="zola-anchor" href="#defrag" aria-label="Anchor link for: defrag">🔗</a>Defrag</h3>
 <blockquote>
 <p>After compacting the keyspace, the backend database may exhibit internal fragmentation.
 Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.</p>
 </blockquote>
-<p>Defrag is basically <a href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349" target="_blank" rel="noopener noreffer ">dumping the bbolt tree on disk and reopening it</a>.</p>
-<h3 id="snapshot">Snapshot</h3>
-<p>An ETCD snapshot is related to Raft&rsquo;s snapshot:</p>
+<p>Defrag is basically <a href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349">dumping the bbolt tree on disk and reopening it</a>.</p>
+<h3 id="snapshot"><a class="zola-anchor" href="#snapshot" aria-label="Anchor link for: snapshot">🔗</a>Snapshot</h3>
+<p>An ETCD snapshot is related to Raft's snapshot:</p>
 <blockquote>
 <p>Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded</p>
 </blockquote>
 <p>Snapshot can be saved using <code>etcdctl</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">etcdctl snapshot save backup.db
-</span></span></code></pre></div><h3 id="lease-1">Lease</h3>
-<p>Be careful on Leader&rsquo;s change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497" target="_blank" rel="noopener noreffer ">create some issues</a>:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">etcdctl</span><span> snapshot save backup.db
+</span></code></pre>
+<h3 id="lease-1"><a class="zola-anchor" href="#lease-1" aria-label="Anchor link for: lease-1">🔗</a>Lease</h3>
+<p>Be careful on Leader's change and lease, this can <a href="https://github.com/kubernetes/kubernetes/issues/65497">create some issues</a>:</p>
 <blockquote>
 <p>The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.</p>
 </blockquote>
-<h3 id="war-stories">War stories</h3>
+<h3 id="war-stories"><a class="zola-anchor" href="#war-stories" aria-label="Anchor link for: war-stories">🔗</a>War stories</h3>
 <ul>
-<li><a href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/" target="_blank" rel="noopener noreffer ">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
-<li><a href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/" target="_blank" rel="noopener noreffer ">How a production outage in Grafana Cloud&rsquo;s Hosted Prometheus service was caused by a bad etcd client setup</a></li>
-<li><a href="https://github.com/etcd-io/etcd/issues/11884" target="_blank" rel="noopener noreffer ">Random performance issue on etcd 3.4</a></li>
-<li><a href="https://arxiv.org/pdf/2004.00372.pdf" target="_blank" rel="noopener noreffer ">Impact of etcd deployment on Kubernetes, Istio, and application performance</a></li>
+<li><a href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
+<li><a href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/">How a production outage in Grafana Cloud's Hosted Prometheus service was caused by a bad etcd client setup</a></li>
+<li><a href="https://github.com/etcd-io/etcd/issues/11884">Random performance issue on etcd 3.4</a></li>
+<li><a href="https://arxiv.org/pdf/2004.00372.pdf">Impact of etcd deployment on Kubernetes, Istio, and application performance</a></li>
 </ul>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2021-01-11</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD" data-via="PierreZ"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://pierrezemb.fr/posts/notes-about-etcd/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://pierrezemb.fr/posts/notes-about-etcd/" data-title="Notes about ETCD"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/notes-about/">#notes-about</a>
+          <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a>
+  </p>
+<footer>
+    <p>© 2024 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i data-feather="twitter"></i></a>
+        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i data-feather="rss"></i></a>
     </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/ten-years-programming/" class="prev" rel="prev" title="10 years of programming and counting 🚀"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>10 years of programming and counting 🚀</a>
-            <a href="/posts/crafting-keys-in-fdb/" class="next" rel="next" title="Crafting row keys in FoundationDB">Crafting row keys in FoundationDB<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-</article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.131.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2015 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Pierre Zemb</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"data":{"id-1":"~/blog","id-2":"~/blog"},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.d7121d72cd85153ec9d35a888cee3eb28c2700ca763f649a538f6c772d750021.js" integrity="sha256-1xIdcs2FFT7J01qIjO4+sownAMp2P2SaU49sdy11ACE="></script></body>
+</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
 </html>
