@@ -23,7 +23,45 @@
     width: 100%;
 }
 
-@media screen and (max-width: 768px) {
+code {
+    background-color: #00d992; 
+    color: #070f11;
+}
+
+::selection {
+    background-color: #00d992; 
+    color: #070f11; 
+}
+
+:root {
+  --background-color: rgb(26, 29, 33);
+  --heading-color: #eee;
+  --text-color: #ddd;
+  --link-color: #00d992;
+  --visited-color: #00d992;;
+  --code-background-color: #000;
+  --code-color: #ddd;
+  --blockquote-color: #ccc;
+}
+
+.flex-container {
+    display: flex;
+  
+    /* Then we define the flow direction 
+       and if we allow the items to wrap 
+     * Remember this is the same as:
+     * flex-direction: row;
+     * flex-wrap: wrap;
+     */
+    flex-flow: row wrap;
+  
+  }
+  
+  .flex-item {
+    width: 50%;
+  }
+
+  @media screen and (max-width: 768px) {
     .home-container {
         flex-direction: column;
         align-items: center;
@@ -53,25 +91,7 @@
         margin: 0 auto;
         /* Centers the image */
     }
-}
-
-code {
-    background-color: #00d992; 
-    color: #070f11;
-}
-
-::selection {
-    background-color: #00d992; 
-    color: #070f11; 
-}
-
-:root {
-  --background-color: rgb(26, 29, 33);
-  --heading-color: #eee;
-  --text-color: #ddd;
-  --link-color: #00d992;
-  --visited-color: #00d992;;
-  --code-background-color: #000;
-  --code-color: #ddd;
-  --blockquote-color: #ccc;
+  .flex-item {
+    width: 100%;
+  }
 }
