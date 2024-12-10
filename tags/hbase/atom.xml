@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -120,7 +120,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -197,7 +197,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -308,7 +308,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -319,7 +319,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;Apache HBase™&lt;&#x2F;a&gt; is a type of &amp;quot;NoSQL&amp;quot; database. &amp;quot;NoSQL&amp;quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;quot;Data Store&amp;quot; than &amp;quot;Data Base&amp;quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;Apache HBase™&lt;&#x2F;a&gt; is a type of &quot;NoSQL&quot; database. &quot;NoSQL&quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#arch.overview.nosql&quot;&gt;Hbase architecture overview&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;hbase-data-model&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-data-model&quot; aria-label=&quot;Anchor link for: hbase-data-model&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase data model&lt;&#x2F;h2&gt;
@@ -333,7 +333,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;li&gt;Values are stored into what we call a &lt;strong&gt;cell&lt;&#x2F;strong&gt; and are versioned with a timestamp.&lt;&#x2F;li&gt;
 &lt;li&gt;A column is divided between a &lt;strong&gt;Column Family&lt;&#x2F;strong&gt; and a &lt;strong&gt;Column Qualifier&lt;&#x2F;strong&gt;. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is &lt;strong&gt;static&lt;&#x2F;strong&gt;, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;p&gt;Not as easy as you thought? Here&#x27;s an example! Let&#x27;s say that we&#x27;re trying to &lt;strong&gt;save the whole internet&lt;&#x2F;strong&gt;. To do this, we need to store the content of each pages, and versioned it. We can use &lt;strong&gt;the page address as the row key&lt;&#x2F;strong&gt; and store the contents in a &lt;strong&gt;column called &amp;quot;Contents&amp;quot;&lt;&#x2F;strong&gt;. Nowadays, website &lt;strong&gt;contents can be anything&lt;&#x2F;strong&gt;, from a HTML file to a binary such as a PDF. To handle that, we can create as many &lt;strong&gt;qualifiers&lt;&#x2F;strong&gt; as we want, such as &amp;quot;content:html&amp;quot; or &amp;quot;content:video&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Not as easy as you thought? Here&#x27;s an example! Let&#x27;s say that we&#x27;re trying to &lt;strong&gt;save the whole internet&lt;&#x2F;strong&gt;. To do this, we need to store the content of each pages, and versioned it. We can use &lt;strong&gt;the page address as the row key&lt;&#x2F;strong&gt; and store the contents in a &lt;strong&gt;column called &quot;Contents&quot;&lt;&#x2F;strong&gt;. Nowadays, website &lt;strong&gt;contents can be anything&lt;&#x2F;strong&gt;, from a HTML file to a binary such as a PDF. To handle that, we can create as many &lt;strong&gt;qualifiers&lt;&#x2F;strong&gt; as we want, such as &quot;content:html&quot; or &quot;content:video&quot;.&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
 &lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;fr.pierrezemb.www&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Row key
 &lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;contents&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {                 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Column family
@@ -352,7 +352,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;&#x2F;span&gt;&lt;span&gt;}
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;h2 id=&quot;key-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design&quot; aria-label=&quot;Anchor link for: key-design&quot;&gt;🔗&lt;&#x2F;a&gt;Key design&lt;&#x2F;h2&gt;
-&lt;p&gt;Hbase is most efficient at queries when we&#x27;re getting a &lt;strong&gt;single row key&lt;&#x2F;strong&gt;, or during &lt;strong&gt;row range&lt;&#x2F;strong&gt;, ie. getting a block of contiguous data because keys are &lt;strong&gt;sorted lexicographically by row key&lt;&#x2F;strong&gt;. For example, my website &lt;code&gt;fr.pierrezemb.www&lt;&#x2F;code&gt; and &lt;code&gt;org.pierrezemb.www&lt;&#x2F;code&gt; would not be &amp;quot;near&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Hbase is most efficient at queries when we&#x27;re getting a &lt;strong&gt;single row key&lt;&#x2F;strong&gt;, or during &lt;strong&gt;row range&lt;&#x2F;strong&gt;, ie. getting a block of contiguous data because keys are &lt;strong&gt;sorted lexicographically by row key&lt;&#x2F;strong&gt;. For example, my website &lt;code&gt;fr.pierrezemb.www&lt;&#x2F;code&gt; and &lt;code&gt;org.pierrezemb.www&lt;&#x2F;code&gt; would not be &quot;near&quot;.&lt;&#x2F;p&gt;
 &lt;p&gt;As such, the &lt;strong&gt;key design&lt;&#x2F;strong&gt; is really important:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;If your data are too spread, you will have poor performance.&lt;&#x2F;li&gt;
@@ -367,7 +367,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;h2 id=&quot;be-warned&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#be-warned&quot; aria-label=&quot;Anchor link for: be-warned&quot;&gt;🔗&lt;&#x2F;a&gt;Be warned&lt;&#x2F;h2&gt;
 &lt;p&gt;I have been working with Hbase for the past three years, &lt;strong&gt;including operation and on-call duty.&lt;&#x2F;strong&gt; It is a really nice data store, but it diverges from classical RDBMS. Here&#x27;s some warnings extracted from the well-written documentation:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;HBase is really more a &amp;quot;Data Store&amp;quot; than &amp;quot;Data Base&amp;quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.&lt;&#x2F;p&gt;
+&lt;p&gt;HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#arch.overview.nosql&quot;&gt;NoSQL?&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;

@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -33,7 +33,7 @@
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
-&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &amp;quot;Aphyr&amp;quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &quot;Aphyr&quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -238,7 +238,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -419,7 +419,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>

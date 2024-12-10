@@ -20,6 +20,8 @@
 
 
 <meta property="og:url" content="https://pierrezemb.fr/posts/announcing-kop/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
   <style>
     :root {
     --width: 800px;
@@ -279,7 +281,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </blockquote>
 <p>This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by <a href="https://twitter.com/sijieg">Sijie Guo</a>, <a href="https://twitter.com/Jia_Zhai">Jia Zhai</a> and <a href="https://twitter.com/PierreZ">Pierre Zemb</a>. Thanks <a href="https://twitter.com/LostInBrittany">Horacio Gonzalez</a> for the illustrations!</p>
 <p><img src="/images/announcing-kop/kop-1.png" alt="hbase image" /></p>
-<p>We are excited to announce that StreamNative and OVHcloud are open-sourcing &quot;Kafka on Pulsar&quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar's powerful features, such as:</p>
+<p>We are excited to announce that StreamNative and OVHcloud are open-sourcing "Kafka on Pulsar" (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar's powerful features, such as:</p>
 <ul>
 <li>Streamlined operations with enterprise-grade multi-tenancy</li>
 <li>Simplified operations with a rebalance-free architecture</li>
@@ -297,7 +299,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>As a result, OVHcloud decided to shift and build the foundation of their topic-as-a-service product, called ioStream, on Pulsar instead of Kafka. Pulsar's multi-tenancy and the overall architecture with Apache Bookkeeper simplified operations compared to Kafka.</p>
 <p>After spawning the first region, OVHcloud decided to implement it as a proof-of-concept proxy capable of transforming the Kafka protocol to Pulsar on the fly. During this process, OVHcloud discovered that StreamNative was working on bringing the Kafka protocol natively to Pulsar, and they joined forces to develop KoP.</p>
 <p><img src="/images/announcing-kop/kop-2.png" alt="kop image" /></p>
-<p>KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper's event stream storage infrastructure and Pulsar's pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &quot;kafka&quot;. It can be installed and configured to run as part of Pulsar brokers.</p>
+<p>KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper's event stream storage infrastructure and Pulsar's pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name "kafka". It can be installed and configured to run as part of Pulsar brokers.</p>
 <h2 id="the-distributed-log"><a class="zola-anchor" href="#the-distributed-log" aria-label="Anchor link for: the-distributed-log">🔗</a>The distributed log</h2>
 <p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar's <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
 <p>Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar's distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).</p>
@@ -352,10 +354,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
     <div class="social-links">
         <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
         <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrez.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
     </div>
-</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({

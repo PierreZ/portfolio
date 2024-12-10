@@ -20,6 +20,8 @@
 
 
 <meta property="og:url" content="https://pierrezemb.fr/posts/ovh-alerts-flink/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
   <style>
     :root {
     --width: 800px;
@@ -255,7 +257,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     </ul>
     </details>
   <main>
-    <p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH's alerts with Apache Flink">OVH's official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+    <p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH&#39;s alerts with Apache Flink">OVH's official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
 <h1 id="handling-ovh-s-alerts-with-apache-flink"><a class="zola-anchor" href="#handling-ovh-s-alerts-with-apache-flink" aria-label="Anchor link for: handling-ovh-s-alerts-with-apache-flink">🔗</a>Handling OVH's alerts with Apache Flink</h1>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472" alt="OVH &amp; Apache Flink" /></p>
 <p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/">**Metrics Data Platform</a>.<strong>By relying on <a href="https://hbase.apache.org/">**Apache Hbase</a>, <a href="https://kafka.apache.org/">Apache Kafka</a></strong> and <a href="https://www.warp10.io/"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
@@ -341,10 +343,11 @@ moving from operators to another.</p>
     <div class="social-links">
         <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
         <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrez.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
     </div>
-</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({

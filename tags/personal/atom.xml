@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -24,7 +24,7 @@
         <id>https://pierrezemb.fr/posts/ten-years-programming/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/ten-years-programming/">&lt;p&gt;I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;learning-to-program-man-skin-tone-2-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-to-program-man-skin-tone-2-computer&quot; aria-label=&quot;Anchor link for: learning-to-program-man-skin-tone-2-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Learning to program 👨🏻‍💻&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;learning-to-program-man-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-to-program-man-computer&quot; aria-label=&quot;Anchor link for: learning-to-program-man-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Learning to program 👨🏻‍💻&lt;&#x2F;h2&gt;
 &lt;p&gt;I wrote my first &lt;em&gt;Hello, world&lt;&#x2F;em&gt; program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.&lt;&#x2F;p&gt;
 &lt;p&gt;I also discovered Linux around that time, and spent many nights playing with Linux commands. I started my journey to Linux with Centos and then Ubuntu 11.04. I think this started the loop I’m (still!) stuck in:
 &lt;code&gt;for {tryNewDistro()}&lt;&#x2F;code&gt;

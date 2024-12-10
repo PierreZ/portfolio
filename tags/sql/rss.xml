@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - sql</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/sql/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Sun, 03 Feb 2019 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>What are ACID transactions?</title>
+          <pubDate>Sun, 03 Feb 2019 00:00:00 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/acid-transactions/</link>
+          <guid>https://pierrezemb.fr/posts/acid-transactions/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/acid-transactions/">&lt;h1 id=&quot;transaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transaction&quot; aria-label=&quot;Anchor link for: transaction&quot;&gt;🔗&lt;&#x2F;a&gt;Transaction?&lt;&#x2F;h1&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&amp;quot;Programming should be about transforming data&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;--- Programming Elixir 1.3 by Dave Thomas&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;As developers, we are interacting oftenly with data, whenever handling it from an API or a messaging consumer. To store it, we started to create softwares called &lt;strong&gt;relational database management system&lt;&#x2F;strong&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Relational_database_management_system&quot;&gt;RDBMS&lt;&#x2F;a&gt;. Thanks to them, we, as developers, can develop applications pretty easily, &lt;strong&gt;without the need to implement our own storage solution&lt;&#x2F;strong&gt;. Interacting with &lt;a href=&quot;https:&#x2F;&#x2F;www.mysql.com&#x2F;&quot;&gt;mySQL&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;www.postgresql.org&#x2F;&quot;&gt;PostgreSQL&lt;&#x2F;a&gt; have now become a &lt;strong&gt;commodity&lt;&#x2F;strong&gt;. Handling a database is not that easy though, because anything can happen, from failures to concurrency isssues:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;How can we interact with &lt;strong&gt;datastores that can fail?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;What is happening if two users are  &lt;strong&gt;updating a value at the same time?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;As a database user, we are using &lt;code&gt;transactions&lt;&#x2F;code&gt; to answer these questions. As a developer, a transaction is a &lt;strong&gt;single unit of logic or work&lt;&#x2F;strong&gt;, sometimes made up of multiple operations. It is mainly an &lt;strong&gt;abstraction&lt;&#x2F;strong&gt; that we are using to &lt;strong&gt;hide underlying problems&lt;&#x2F;strong&gt;, such as concurrency or hardware faults.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;ACID&lt;&#x2F;code&gt; appears in a paper published in 1983 called &lt;a href=&quot;https:&#x2F;&#x2F;sites.fas.harvard.edu&#x2F;~cs265&#x2F;papers&#x2F;haerder-1983.pdf&quot;&gt;&quot;Principles of transaction-oriented database recovery&quot;&lt;&#x2F;a&gt; written by &lt;em&gt;Theo Haerder&lt;&#x2F;em&gt; and &lt;em&gt;Andreas Reuter&lt;&#x2F;em&gt;. This paper introduce a terminology of properties for a transaction:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;A&lt;&#x2F;strong&gt;tomic, &lt;strong&gt;C&lt;&#x2F;strong&gt;onsistency, &lt;strong&gt;I&lt;&#x2F;strong&gt;solation, &lt;strong&gt;D&lt;&#x2F;strong&gt;urability&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;atomic&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#atomic&quot; aria-label=&quot;Anchor link for: atomic&quot;&gt;🔗&lt;&#x2F;a&gt;Atomic&lt;&#x2F;h2&gt;
+&lt;p&gt;Atomic, as you may have guessed, &lt;code&gt;atomic&lt;&#x2F;code&gt; represents something that &lt;strong&gt;cannot be splitted&lt;&#x2F;strong&gt;. In the database transaction world, it means for example that if a transaction with several writes is &lt;strong&gt;started and failed&lt;&#x2F;strong&gt; at some point, &lt;strong&gt;none of the write will be committed&lt;&#x2F;strong&gt;. As stated by many, the word &lt;code&gt;atomic&lt;&#x2F;code&gt; could be reword as &lt;code&gt;abortability&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;consistency&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consistency&quot; aria-label=&quot;Anchor link for: consistency&quot;&gt;🔗&lt;&#x2F;a&gt;Consistency&lt;&#x2F;h2&gt;
+&lt;p&gt;You will hear about &lt;code&gt;consistency&lt;&#x2F;code&gt; a lot of this serie. Unfortunately, this word can be used in a lot of context. In the ACID definition, it refers to the fact that a transaction will &lt;strong&gt;bring the database from one valid state to another.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;isolation&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#isolation&quot; aria-label=&quot;Anchor link for: isolation&quot;&gt;🔗&lt;&#x2F;a&gt;Isolation&lt;&#x2F;h2&gt;
+&lt;p&gt;Think back to your database. Were you the only user on it? I don&#x27;t think so. Maybe they were concurrent transactions at the same time, beside yours. &lt;strong&gt;Isolation while keeping good performance is the most difficult item on the list.&lt;&#x2F;strong&gt; There&#x27;s a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;isolation-by-the-theory&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#isolation-by-the-theory&quot; aria-label=&quot;Anchor link for: isolation-by-the-theory&quot;&gt;🔗&lt;&#x2F;a&gt;Isolation by the theory&lt;&#x2F;h3&gt;
+&lt;p&gt;The SQL standard defines four isolation levels: &lt;code&gt;Serializable&lt;&#x2F;code&gt;, &lt;code&gt;Repeatable Read&lt;&#x2F;code&gt;, &lt;code&gt;Read Commited&lt;&#x2F;code&gt; and &lt;code&gt;Read Uncommited&lt;&#x2F;code&gt;. The strongest isolation is &lt;code&gt;Serializable&lt;&#x2F;code&gt; where transaction are &lt;strong&gt;not runned in parallel&lt;&#x2F;strong&gt;. As you may have guessed, it is also the slowest. &lt;strong&gt;Weaker isolation level are trading speed against anomalies&lt;&#x2F;strong&gt; that can be sum-up like this:&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Isolation level&lt;&#x2F;th&gt;&lt;th&gt;&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Isolation_(database_systems)#Dirty_reads&quot;&gt;dirty reads&lt;&#x2F;a&gt;&lt;&#x2F;th&gt;&lt;th&gt;&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Isolation_%28database_systems%29#Non-repeatable_reads&quot;&gt;Non-repeatable reads&lt;&#x2F;a&gt;&lt;&#x2F;th&gt;&lt;th&gt;&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Isolation_(database_systems)#Phantom_reads&quot;&gt;Phantom reads&lt;&#x2F;a&gt;&lt;&#x2F;th&gt;&lt;th&gt;Performance&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Serializable&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;👍&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Repeatable Read&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;👍👍&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Read Commited&lt;&#x2F;td&gt;&lt;td&gt;😎&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;👍👍👍&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Read uncommited&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;😱&lt;&#x2F;td&gt;&lt;td&gt;👍👍👍👍&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I encourage you to click on all the links within the table to &lt;strong&gt;see everything that could go wrong in a weak database!&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;isolation-in-real-databases&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#isolation-in-real-databases&quot; aria-label=&quot;Anchor link for: isolation-in-real-databases&quot;&gt;🔗&lt;&#x2F;a&gt;Isolation in Real Databases&lt;&#x2F;h3&gt;
+&lt;p&gt;Now that we saw some theory, let&#x27;s have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (&lt;strong&gt;Multiversion Concurrency Control, MVCC&lt;&#x2F;strong&gt;).&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;--- &lt;a href=&quot;https:&#x2F;&#x2F;www.postgresql.org&#x2F;docs&#x2F;current&#x2F;mvcc-intro.html&quot;&gt;Concurrency Control introduction&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: &lt;strong&gt;Snapshot Isolation&lt;&#x2F;strong&gt;. Instead of locking that row for reading when somebody starts working on it, it ensures that &lt;strong&gt;any transaction will see a version of the data that is corresponding to the start of the query&lt;&#x2F;strong&gt;. As it is providing a good balance between &lt;strong&gt;performance and consistency&lt;&#x2F;strong&gt;, it became &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;List_of_databases_using_MVCC&quot;&gt;a standard used by the industry&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;durability&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#durability&quot; aria-label=&quot;Anchor link for: durability&quot;&gt;🔗&lt;&#x2F;a&gt;Durability&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;code&gt;Durability&lt;&#x2F;code&gt; ensure that your database is a &lt;strong&gt;safe place&lt;&#x2F;strong&gt; where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;that-s-it&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#that-s-it&quot; aria-label=&quot;Anchor link for: that-s-it&quot;&gt;🔗&lt;&#x2F;a&gt;That&#x27;s it?&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;strong&gt;All these properties may seems obvious to you&lt;&#x2F;strong&gt; but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, &lt;strong&gt;the distributed transaction field&lt;&#x2F;strong&gt; is even more complicated, but we will get to it in another blogpost!&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

@@ -18,6 +18,8 @@
 
 
 <meta property="og:url" content="https://pierrezemb.fr/posts/colossus-google/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
   <style>
     :root {
     --width: 800px;
@@ -261,7 +263,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>Hadoop is based on a Google's paper called <a href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 <ul>
 <li>It was designed to be deployed with <a href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
-<li>to &quot;<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>&quot;, they:
+<li>to "<a href="https://queue.acm.org/detail.cfm?id=1594206">simplify the overall design problem</a>", they:
 <ul>
 <li>implemented a single master architecture</li>
 <li>dropped the idea of a full POSIX-compliant file system</li>
@@ -288,11 +290,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>Despite all the issues, Hadoop is still relevant for some usecases, such as Map/Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:</p>
 <ul>
 <li><a href="https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale.html">Twitter has multiple clusters storing over 500 PB (2017)</a></li>
-<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">&quot;Scaled to approximately 50M files, 10P&quot; to avoid &quot;added management overhead&quot; brought by the scaling.</a></li>
+<li>whereas Google prefered to <a href="https://cloud.google.com/files/storage_architecture_and_challenges.pdf">"Scaled to approximately 50M files, 10P" to avoid "added management overhead" brought by the scaling.</a></li>
 </ul>
 <p>Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.</p>
-<p>Google's developers were/are deploying applications into &quot;containers&quot;, meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don't need to worry about replication</strong> (like Bigtable/HBase).</p>
-<p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a &quot;file-system&quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
+<p>Google's developers were/are deploying applications into "containers", meaning that <strong>any process could be spawned somewhere into the cloud</strong>. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that <strong>processes don't need to worry about replication</strong> (like Bigtable/HBase).</p>
+<p>This is a promise that, I think, was forgotten. In a world where Kubernetes <em>seems</em> to be the standard, <strong>the need of a global distributed file-system is now higher than before</strong>. By providing a "file-system" abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:</p>
 <ul>
 <li>How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?</li>
 <li>Should I be moving that persistent volume over my slow network?</li>
@@ -301,13 +303,13 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h2 id="well-let-s-put-hadoop-in-kubernetes"><a class="zola-anchor" href="#well-let-s-put-hadoop-in-kubernetes" aria-label="Anchor link for: well-let-s-put-hadoop-in-kubernetes">🔗</a>Well, let's put Hadoop in Kubernetes</h2>
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 <ul>
-<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and &quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;</a></li>
-<li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &quot;day-zero to day-two&quot; good experience,</li>
+<li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and "Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift."</a></li>
+<li>Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a "day-zero to day-two" good experience,</li>
 <li>Google seems to <a href="https://news.ycombinator.com/item?id=16971959">not be using the Operators design internally</a>.</li>
 <li><a href="https://www.ibm.com/cloud/blog/new-builders/database-deep-dives-couchdb">CouchDB developers</a> are saying that:
 <ul>
-<li>&quot;For certain workloads, the technology isn’t quite there yet&quot;</li>
-<li>&quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&quot;</li>
+<li>"For certain workloads, the technology isn’t quite there yet"</li>
+<li>"In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain."</li>
 </ul>
 </li>
 </ul>
@@ -334,10 +336,10 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </ul>
 </li>
 </ul>
-<p>The &quot;all in RAM&quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn't had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
+<p>The "all in RAM" GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn't had a lof of options for a scalable and rock-solid datastore <strong>beside BigTable</strong>. When you think about it, a key/value datastore is a great replacement for a distributed file-system master:</p>
 <ul>
 <li>automatic sharding of regions,</li>
-<li>scan capabilities for files in the same &quot;directory&quot;,</li>
+<li>scan capabilities for files in the same "directory",</li>
 <li>lexical ordering,</li>
 <li>...</li>
 </ul>
@@ -371,7 +373,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </ul>
 </li>
 </ul>
-<p>What is that &quot;D&quot;?</p>
+<p>What is that "D"?</p>
 <ul>
 <li>
 <p>From <a href="https://landing.google.com/sre/sre-book/chapters/production-environment/">The Production Environment at Google, from the Viewpoint of an SRE</a>:</p>
@@ -399,7 +401,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
 <ul>
 <li>Reimplement D may be easy, my current question is <strong>how far can we use modern FS such as OpenZFS</strong> to facilitate the work? FS capabilities such as <a href="https://github.com/zfsonlinux/zfs/wiki/Checksums">OpenZFS checksums</a> seems pretty interesting.</li>
-<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/">Tikv</a> as a building block to provide an &quot;BigTable experience&quot; without the need of a distributed file-system underneath.</li>
+<li>To resolve the distributed master issue, we could use <a href="https://tikv.org/">Tikv</a> as a building block to provide an "BigTable experience" without the need of a distributed file-system underneath.</li>
 </ul>
 <p>But remember:</p>
 <blockquote>
@@ -420,10 +422,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     <div class="social-links">
         <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
         <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrez.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
     </div>
-</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({

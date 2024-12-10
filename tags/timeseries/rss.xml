@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - timeseries</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/timeseries/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Wed, 11 Oct 2017 10:23:11 +0000</lastBuildDate>
+      <item>
+          <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
+          <pubDate>Wed, 11 Oct 2017 10:23:11 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</link>
+          <guid>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;helloexoworld&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow-e50f6e669915&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;1.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;
+&lt;em&gt;Artist’s impression of the super-Earth exoplanet LHS 1140b By &lt;a href=&quot;https:&#x2F;&#x2F;www.eso.org&#x2F;public&#x2F;images&#x2F;eso1712a&#x2F;&quot;&gt;ESO&#x2F;spaceengine.org&lt;&#x2F;a&gt; — &lt;a href=&quot;http:&#x2F;&#x2F;creativecommons.org&#x2F;licenses&#x2F;by&#x2F;4.0&quot;&gt;CC BY 4.0&lt;&#x2F;a&gt;&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;My passion for programming was kind of late, I typed my first line of code at my engineering school. It then became a &lt;strong&gt;passion&lt;&#x2F;strong&gt;, something I’m willing to do at work, on my free-time, at night or the week-end. But before discovering C and other languages, I had another passion: &lt;strong&gt;astronomy&lt;&#x2F;strong&gt;. Every summer, I was participating at the &lt;a href=&quot;https:&#x2F;&#x2F;www.afastronomie.fr&#x2F;les-nuits-des-etoiles&quot;&gt;&lt;strong&gt;Nuit des Etoiles&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, a &lt;strong&gt;global french event&lt;&#x2F;strong&gt; organized by numerous clubs of astronomers offering several hundreds (between 300 and 500 depending on the year) of free animation sites for the general public.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;2.png&quot; alt=&quot;image&quot; &#x2F;&gt;
+&lt;em&gt;As you can see below, I was &lt;strong&gt;kind of young at the time&lt;&#x2F;strong&gt;!&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;But the sad truth is that I didn’t do any astronomy during my studies. But now, &lt;strong&gt;I want to get back to it and look at the sky again&lt;&#x2F;strong&gt;. There were two obstacles:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The price of equipments&lt;&#x2F;li&gt;
+&lt;li&gt;The local weather&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;I was looking for something that would unit my two passions: computer and astronomy&lt;&#x2F;strong&gt;. So I started googling:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;3.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would &lt;strong&gt;motivate me&lt;&#x2F;strong&gt; over the time. So I started typing over keywords, more work-related, such as &lt;em&gt;&lt;strong&gt;time series&lt;&#x2F;strong&gt;&lt;&#x2F;em&gt; or &lt;em&gt;&lt;strong&gt;analytics&lt;&#x2F;strong&gt;&lt;&#x2F;em&gt;. I found many papers related to astrophysics, but there was two keywords that were coming back: &lt;strong&gt;exoplanet detection&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-is-an-exoplanet-and-how-to-detect-it&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-an-exoplanet-and-how-to-detect-it&quot; aria-label=&quot;Anchor link for: what-is-an-exoplanet-and-how-to-detect-it&quot;&gt;🔗&lt;&#x2F;a&gt;What is an exoplanet and how to detect it?&lt;&#x2F;h3&gt;
+&lt;p&gt;Let’s quote our good old friend &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Exoplanet&quot;&gt;&lt;strong&gt;Wikipedia&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;An exoplanet or extrasolar planet is a planet outside of our solar system that orbits a star.&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;do you know how many exoplanets that have been discovered? &lt;a href=&quot;https:&#x2F;&#x2F;exoplanetarchive.ipac.caltech.edu&#x2F;&quot;&gt;&lt;strong&gt;3,529 confirmed planets&lt;&#x2F;strong&gt; as of 10&#x2F;09&#x2F;2017&lt;&#x2F;a&gt;. I was amazed by the number of them. I started digging into the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Methods_of_detecting_exoplanets&quot;&gt;&lt;strong&gt;detection methods&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;. Turns out there is one method heavily used, called &lt;strong&gt;the transit method&lt;&#x2F;strong&gt;. It’s like a eclipse: when the exoplanet is passing in front of the star, the photometry is varying during the transit, as shown below:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;4.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. &lt;em&gt;&lt;strong&gt;Credits: NASA’s Goddard Space Flight Center&lt;&#x2F;strong&gt;&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;To recap, exoplanet detection using the transit method are in reality a &lt;strong&gt;time series analysis problem&lt;&#x2F;strong&gt;. As I’m starting to be familiar with that type of analytics thanks to my current work at OVH in &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;&lt;strong&gt;Metrics Data Platform&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, I wanted to give it a try.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;kepler-k2-mission&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#kepler-k2-mission&quot; aria-label=&quot;Anchor link for: kepler-k2-mission&quot;&gt;🔗&lt;&#x2F;a&gt;Kepler&#x2F;K2 mission&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;5.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;Image Credit: NASA Ames&#x2F;W. Stenzel&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Kepler is a &lt;strong&gt;space observatory&lt;&#x2F;strong&gt; launched by NASA in March 2009 to &lt;strong&gt;discover Earth-sized planets orbiting other stars&lt;&#x2F;strong&gt;. &lt;a href=&quot;https:&#x2F;&#x2F;www.nasa.gov&#x2F;feature&#x2F;ames&#x2F;nasas-k2-mission-the-kepler-space-telescopes-second-chance-to-shine&quot;&gt;The loss of a second of the four reaction wheels during May 2013&lt;&#x2F;a&gt; put an end to the original mission. Fortunately, scientists decided to create an &lt;strong&gt;entirely community-driven mission&lt;&#x2F;strong&gt; called K2, to &lt;strong&gt;reuse the Kepler spacecraft and its assets&lt;&#x2F;strong&gt;. But furthermore, the community is also encouraged to exploit the mission’s unique &lt;strong&gt;open&lt;&#x2F;strong&gt; data archive. Every image taken by the satellite can be &lt;strong&gt;downloaded and analyzed by anyone&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;More information about the telescope itself can be found &lt;a href=&quot;https:&#x2F;&#x2F;keplerscience.arc.nasa.gov&#x2F;the-kepler-space-telescope.html&quot;&gt;&lt;strong&gt;here&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;where-i-m-going&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#where-i-m-going&quot; aria-label=&quot;Anchor link for: where-i-m-going&quot;&gt;🔗&lt;&#x2F;a&gt;Where I’m going&lt;&#x2F;h3&gt;
+&lt;p&gt;The goal of my project is to see if &lt;strong&gt;I can contribute to the exoplanets search&lt;&#x2F;strong&gt; using new tools such as &lt;a href=&quot;http:&#x2F;&#x2F;www.warp10.io&quot;&gt;&lt;strong&gt;Warp10&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;tensorflow.org&#x2F;&quot;&gt;&lt;strong&gt;TensorFlow&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;. Using &lt;strong&gt;Deep Learning to search for anomalies could be much more effective&lt;&#x2F;strong&gt; than writing WarpScript, because it is the &lt;strong&gt;neural network&#x27;s job to learn&lt;&#x2F;strong&gt; by itself &lt;strong&gt;how&lt;&#x2F;strong&gt; to detect the exoplanets.&lt;&#x2F;p&gt;
+&lt;p&gt;As I’m currently following &lt;a href=&quot;https:&#x2F;&#x2F;www.coursera.org&#x2F;learn&#x2F;neural-networks-deep-learning&quot;&gt;&lt;strong&gt;Andrew Ng courses about Deep Learning&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, it is also a great opportunity for me to play with &lt;strong&gt;Tensorflow&lt;&#x2F;strong&gt; in a personal project. The project can be divided into several steps:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Import&lt;&#x2F;strong&gt; the data&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Analyze&lt;&#x2F;strong&gt; the data using WarpScript&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;&#x2F;strong&gt; a neural network to search for exoplanets&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Let&#x27;s see how the import was done!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;importing-kepler-and-k2-dataset&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#importing-kepler-and-k2-dataset&quot; aria-label=&quot;Anchor link for: importing-kepler-and-k2-dataset&quot;&gt;🔗&lt;&#x2F;a&gt;Importing Kepler and K2 dataset&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;step-0-find-the-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#step-0-find-the-data&quot; aria-label=&quot;Anchor link for: step-0-find-the-data&quot;&gt;🔗&lt;&#x2F;a&gt;Step 0: Find the data&lt;&#x2F;h4&gt;
+&lt;p&gt;As mentioned previously, data are available from The Mikulski Archive for Space Telescopes or &lt;a href=&quot;https:&#x2F;&#x2F;archive.stsci.edu&#x2F;&quot;&gt;MAST&lt;&#x2F;a&gt;. It’s a &lt;strong&gt;NASA funded project&lt;&#x2F;strong&gt; to support and provide the astronomical community with a variety of astronomical data archives. Both Kepler and K2 dataset are &lt;strong&gt;available&lt;&#x2F;strong&gt; through &lt;strong&gt;campaigns&lt;&#x2F;strong&gt;. Each campaign has a collection of tar files, which are containing the FITS files associated. A &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;FITS&quot;&gt;&lt;strong&gt;FITS&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; file is an &lt;strong&gt;open format&lt;&#x2F;strong&gt; for images which is also &lt;strong&gt;containing scientific data&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;6.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;FITS file representation.&lt;&#x2F;em&gt; &lt;a href=&quot;https:&#x2F;&#x2F;keplerscience.arc.nasa.gov&#x2F;k2-observing.html&quot;&gt;&lt;em&gt;Image Credit: KEPLER &amp;amp; K2 Science Center&lt;&#x2F;em&gt;&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;step-1-etl-extract-transform-and-load-into-warp10&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#step-1-etl-extract-transform-and-load-into-warp10&quot; aria-label=&quot;Anchor link for: step-1-etl-extract-transform-and-load-into-warp10&quot;&gt;🔗&lt;&#x2F;a&gt;Step 1: ETL (Extract, Transform and Load) into Warp10&lt;&#x2F;h4&gt;
+&lt;p&gt;To speed-up acquisition, I developed &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;kepler-lens&quot;&gt;&lt;strong&gt;kepler-lens&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; to &lt;strong&gt;automatically&lt;&#x2F;strong&gt; &lt;strong&gt;download Kepler&#x2F;K2 datasets and extract the needed time series&lt;&#x2F;strong&gt; into a CSV format. &lt;strong&gt;Kepler-lens&lt;&#x2F;strong&gt; is using two awesome libraries:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;KeplerGO&#x2F;PyKE&quot;&gt;&lt;strong&gt;pyKe&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; to export the data from the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;FITS&quot;&gt;&lt;strong&gt;FITS&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; files to CSV (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;KeplerGO&#x2F;PyKE&#x2F;pull&#x2F;69&quot;&gt;&lt;strong&gt;#PR69&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;KeplerGO&#x2F;PyKE&#x2F;pull&#x2F;76&quot;&gt;&lt;strong&gt;#PR76&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;  have been merged).&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dfm&#x2F;kplr&quot;&gt;&lt;strong&gt;kplr&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; is used to &lt;strong&gt;tag&lt;&#x2F;strong&gt; the dataset. With it, I can easily &lt;strong&gt;find stars&lt;&#x2F;strong&gt; with &lt;strong&gt;confirmed&lt;&#x2F;strong&gt; exoplanets or &lt;strong&gt;candidates&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Then &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;kepler2warp10&quot;&gt;&lt;strong&gt;Kepler2Warp10&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; is used to &lt;strong&gt;push the CSV files generated by kepler-lens to Warp10&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;To ease importation, an &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;kepler2warp10-ansible&quot;&gt;&lt;strong&gt;Ansible role&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;  has been made, to spread the work across multiples small &lt;strong&gt;virtual machines&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;550k distincts stars&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;around &lt;strong&gt;50k datapoints per star&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;That&#x27;s around &lt;strong&gt;27,5 billions of measures&lt;&#x2F;strong&gt; (300GB of LevelDB files), imported on a &lt;strong&gt;standalone&lt;&#x2F;strong&gt; instance. The Warp10 instance is &lt;strong&gt;self-hosted&lt;&#x2F;strong&gt; on a dedicated &lt;a href=&quot;https:&#x2F;&#x2F;www.kimsufi.com&#x2F;&quot;&gt;&lt;strong&gt;Kimsufi&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; server at OVH. Here’s the full specifications for the curious ones:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;7.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now that the data are &lt;strong&gt;available&lt;&#x2F;strong&gt;, we are ready to &lt;strong&gt;dive into the dataset&lt;&#x2F;strong&gt; and &lt;strong&gt;look for exoplanets&lt;&#x2F;strong&gt;! Let&#x27;s use WarpScript&lt;&#x2F;p&gt;
+&lt;p&gt;!### Let&#x27;s see a transit using WarpScript&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;8.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;WarpScript logo&lt;&#x2F;p&gt;
+&lt;p&gt;For those who don’t know WarpScript, I recommend reading my previous blogpost “&lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016&quot;&gt;&lt;strong&gt;Engage maximum warp speed in time series analysis with WarpScript&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;”.&lt;&#x2F;p&gt;
+&lt;p&gt;Let’s first plot the data! We are going to take a well-known star called &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Kepler-11&quot;&gt;&lt;strong&gt;Kepler-11&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;. It has (at least) 6 confirmed exoplanets. Let&#x27;s write our first WarpScript:&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;a href=&quot;http:&#x2F;&#x2F;www.warp10.io&#x2F;reference&#x2F;functions&#x2F;function_FETCH&quot;&gt;FETCH&lt;&#x2F;a&gt; function retrieves &lt;strong&gt;raw datapoints&lt;&#x2F;strong&gt; from Warp10. Let’s plot the result of our script:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;9.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Mmmmh, the straight lines are representing &lt;strong&gt;empties period with no datapoints&lt;&#x2F;strong&gt;; they correspond to &lt;strong&gt;different observations&lt;&#x2F;strong&gt;. &lt;strong&gt;Let&#x27;s divide the data&lt;&#x2F;strong&gt; and generate &lt;strong&gt;one time series per observation&lt;&#x2F;strong&gt; using &lt;a href=&quot;http:&#x2F;&#x2F;www.warp10.io&#x2F;reference&#x2F;functions&#x2F;function_TIMESPLIT&#x2F;&quot;&gt;TIMESPLIT&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;p&gt;To ease the display, 0 GET is used to &lt;strong&gt;get only the first observation&lt;&#x2F;strong&gt;. Let&#x27;s see the result:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;10.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Much better. Do you see the dropouts? &lt;strong&gt;Those are transiting exoplanets!&lt;&#x2F;strong&gt; Now we’ll need to &lt;strong&gt;write a WarpScript to automatically detect transits.&lt;&#x2F;strong&gt; But that was enough for today, so we’ll cover this **in the next blogpost!**Thank you for reading! Feel free to &lt;strong&gt;comment&lt;&#x2F;strong&gt; and to &lt;strong&gt;subscribe&lt;&#x2F;strong&gt; to the &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;helloexoworld&quot;&gt;twitter account&lt;&#x2F;a&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;11.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets&lt;&#x2F;strong&gt;. Image Credit: By &lt;a href=&quot;http:&#x2F;&#x2F;www.eso.org&#x2F;public&#x2F;images&#x2F;eso1615b&#x2F;&quot;&gt;ESO&#x2F;M. Kornmesser&lt;&#x2F;a&gt; — &lt;a href=&quot;https:&#x2F;&#x2F;creativecommons.org&#x2F;licenses&#x2F;by-sa&#x2F;4.0&quot;&gt;CC BY-SA 4.0&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Engage maximum warp speed in time series analysis with WarpScript</title>
+          <pubDate>Sun, 08 Oct 2017 20:43:05 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</link>
+          <guid>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;We, at &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;Metrics Data Platform&lt;&#x2F;a&gt;, are working everyday with &lt;a href=&quot;http:&#x2F;&#x2F;www.warp10.io&#x2F;&quot;&gt;Warp10 Platform&lt;&#x2F;a&gt;, an open source Time Series database. You may not know it because it’s not as famous as &lt;a href=&quot;https:&#x2F;&#x2F;prometheus.io&#x2F;&quot;&gt;Prometheus&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;docs.influxdata.com&#x2F;influxdb&#x2F;&quot;&gt;InfluxDB&lt;&#x2F;a&gt; but Warp10 is the most &lt;strong&gt;powerful and generic solution&lt;&#x2F;strong&gt; to store and analyze sensor data. It’s the &lt;strong&gt;core&lt;&#x2F;strong&gt; of Metrics, and many internal teams from OVH are using &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;Metrics Data Platform&lt;&#x2F;a&gt; to monitor their infrastructure. As a result, we are handling a pretty nice traffic 24&#x2F;7&#x2F;365, as you can see below:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;6.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Not only Warp10 allows us to reach an unbelievable scalability but it also comes with his own language called &lt;strong&gt;WarpScript&lt;&#x2F;strong&gt;, to manipulate and perform heavy time series analysis. Before digging into the need of a new language, let’s talk a bit about the need of time series analysis.### What is a time serie ?&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;A time serie, or sensor data, is simply a sequence of measurements over time&lt;&#x2F;strong&gt;. The definition is quite generic, because many things can be represented as a time serie:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;the evolution of the stock exchange or a bank account&lt;&#x2F;li&gt;
+&lt;li&gt;the number of calls on a webserver&lt;&#x2F;li&gt;
+&lt;li&gt;the fuel consumption of a car&lt;&#x2F;li&gt;
+&lt;li&gt;the time to insert a value into a database&lt;&#x2F;li&gt;
+&lt;li&gt;the time a customer is taking to register on your website&lt;&#x2F;li&gt;
+&lt;li&gt;the heart rate of a person measured through a smartwatch&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;From an historical point of view, time series appeared shortly after the creation of the Web, to &lt;strong&gt;help engineers monitor the networks&lt;&#x2F;strong&gt;. It quickly expands to also monitors servers. With the right monitoring system, you can have &lt;strong&gt;insights&lt;&#x2F;strong&gt; and &lt;strong&gt;KPIs&lt;&#x2F;strong&gt; about your service:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Analysis of long-term trend&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;How fast is my database growing?&lt;&#x2F;li&gt;
+&lt;li&gt;At what speed my number of active user accounts grows?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;The comparison over time&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;My queries run faster with the new version of my library? Is my site slower than last week?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;Alerts&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Trigger alerts based on advanced queries&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;Displaying data through dashboards&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dashboards help answer basic questions on the service, and in particular the 4 indispensable metrics: &lt;strong&gt;latency, traffic, errors and service saturation&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;The possibility of designing retrospective&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Our latency is doubling, what’s going on?### Time series are complicated to handle&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Storage, retrieval and analysis of time series cannot be done through standard relational databases. Generally, highly scalable databases are used to support volumetry. For example, the &lt;strong&gt;300,000 Airbus A380 sensors on board can generate an average of 16 TB of data per flight&lt;&#x2F;strong&gt;. On a smaller scale, &lt;strong&gt;a single sensor that measures every second generates 31.5 million values per year&lt;&#x2F;strong&gt;. Handling time series at scale is difficult, because you’re running into advanced distributed systems issues, such as:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ingestion scalability&lt;&#x2F;strong&gt;, i.e. how to absorb all the datapoints 24⁄7&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;query scalability&lt;&#x2F;strong&gt;, i.e. how to query in a raisonnable amount of time&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;delete capability&lt;&#x2F;strong&gt;, i.e. how to handle deletes without stopping ingestion and query&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Frustration with existing open source monitoring tools like &lt;strong&gt;Nagios&lt;&#x2F;strong&gt; and &lt;strong&gt;Ganglia&lt;&#x2F;strong&gt; is why the giants created their own tools — &lt;strong&gt;Google has Borgmon&lt;&#x2F;strong&gt; and &lt;strong&gt;Facebook has&lt;&#x2F;strong&gt; &lt;a href=&quot;http:&#x2F;&#x2F;www.vldb.org&#x2F;pvldb&#x2F;vol8&#x2F;p1816-teller.pdf&quot;&gt;&lt;strong&gt;Gorilla&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, just to name two. They are closed sources but the idea of treating time-series data as a data source for generating alerts is now accessible to everyone, thanks to the &lt;strong&gt;former Googlers who decided to rewrite Borgmon&lt;&#x2F;strong&gt; outside Google.### Why another time series database?&lt;&#x2F;p&gt;
+&lt;p&gt;Now the time series ecosystem is bigger than ever, here’s a short list of what you can find to handle time series data:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;InfluxDB.&lt;&#x2F;li&gt;
+&lt;li&gt;Prometheus.&lt;&#x2F;li&gt;
+&lt;li&gt;Riak TS.&lt;&#x2F;li&gt;
+&lt;li&gt;OpenTSDB.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Then there’s &lt;strong&gt;Warp10&lt;&#x2F;strong&gt;. The difference is quite simple, Warp10 is &lt;strong&gt;a platform&lt;&#x2F;strong&gt; whereas all the time series listed above are &lt;strong&gt;stores&lt;&#x2F;strong&gt;. This is game changing, for multiples reasons.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;security-first-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#security-first-design&quot; aria-label=&quot;Anchor link for: security-first-design&quot;&gt;🔗&lt;&#x2F;a&gt;Security-first design&lt;&#x2F;h4&gt;
+&lt;p&gt;Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to &lt;a href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;pubs&#x2F;pub41892.html&quot;&gt;Macaroons&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;high-level-analysis-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#high-level-analysis-capabilities&quot; aria-label=&quot;Anchor link for: high-level-analysis-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;High level analysis capabilities&lt;&#x2F;h4&gt;
+&lt;p&gt;Using classical time series database, &lt;strong&gt;high level analysis must be done elsewhere&lt;&#x2F;strong&gt;, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just &lt;strong&gt;submit your script&lt;&#x2F;strong&gt; and &lt;em&gt;voilà&lt;&#x2F;em&gt;!&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;server-side-calculation&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#server-side-calculation&quot; aria-label=&quot;Anchor link for: server-side-calculation&quot;&gt;🔗&lt;&#x2F;a&gt;Server-side calculation&lt;&#x2F;h4&gt;
+&lt;p&gt;Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit &lt;strong&gt;limitations&lt;&#x2F;strong&gt; on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be &lt;strong&gt;scalable&lt;&#x2F;strong&gt;, analysis must be done &lt;strong&gt;server-side&lt;&#x2F;strong&gt;.### Meet WarpScript&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;2.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Warp10 folks created WarpScript, an &lt;strong&gt;extensible&lt;&#x2F;strong&gt; &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Stack-oriented_programming_language&quot;&gt;&lt;strong&gt;stack oriented programming language&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; which offers more than &lt;strong&gt;800 functions&lt;&#x2F;strong&gt; and &lt;strong&gt;several high level frameworks&lt;&#x2F;strong&gt; to ease and speed your data analysis. Simply &lt;strong&gt;create scripts&lt;&#x2F;strong&gt; containing your data analysis code and &lt;strong&gt;submit them to the platform&lt;&#x2F;strong&gt;, they will &lt;strong&gt;execute close to where the data resides&lt;&#x2F;strong&gt; and you will get the result of that analysis as a &lt;strong&gt;JSON object&lt;&#x2F;strong&gt; that you can &lt;strong&gt;integrate into your application&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Yes, you’ll be able to run that &lt;strong&gt;awesome query that is fetching millions of datapoints&lt;&#x2F;strong&gt; and only get the result. You need all the data, or just the timestamp of a weird datapoint? &lt;strong&gt;The result of the script is simply what’s left on the stack&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;dataflow-language&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dataflow-language&quot; aria-label=&quot;Anchor link for: dataflow-language&quot;&gt;🔗&lt;&#x2F;a&gt;Dataflow language&lt;&#x2F;h4&gt;
+&lt;p&gt;WarpScript is really easy to code, &lt;strong&gt;because of the stack design&lt;&#x2F;strong&gt;. You’ll be &lt;strong&gt;pushing elements into the stack and consume them&lt;&#x2F;strong&gt;. Coding became logical. First you need to &lt;strong&gt;fetch&lt;&#x2F;strong&gt; your points, then &lt;strong&gt;applying some downsampling&lt;&#x2F;strong&gt; and then &lt;strong&gt;aggregate&lt;&#x2F;strong&gt;. These 3 steps are translated into &lt;strong&gt;3 lines of WarpScript&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;FETCH&lt;&#x2F;strong&gt; will push the needed Geo Time Series into the stack&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;BUCKETIZE&lt;&#x2F;strong&gt; will take the Geo Time Series from the stack, apply some downsampling, and push the result into the stack&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;REDUCE&lt;&#x2F;strong&gt; will take the Geo Time Series from the stack, aggregate them, and push them back into the stack&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Debugguing as never be that easy, just use the keyword &lt;strong&gt;STOP&lt;&#x2F;strong&gt; to see the stack at any moment.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;rich-programming-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#rich-programming-capabilities&quot; aria-label=&quot;Anchor link for: rich-programming-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;Rich programming capabilities&lt;&#x2F;h4&gt;
+&lt;p&gt;WarpScript is coming with more than &lt;strong&gt;800 functions&lt;&#x2F;strong&gt;, ready to use. Things like &lt;strong&gt;Patterns and outliers detections, rolling average, FFT, IDWT&lt;&#x2F;strong&gt; are built-in.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;geo-fencing-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#geo-fencing-capabilities&quot; aria-label=&quot;Anchor link for: geo-fencing-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;Geo-Fencing capabilities&lt;&#x2F;h4&gt;
+&lt;p&gt;Both &lt;strong&gt;space&lt;&#x2F;strong&gt; (location) and &lt;strong&gt;time&lt;&#x2F;strong&gt; are considered &lt;strong&gt;first class citizens&lt;&#x2F;strong&gt;. Complex searches like “&lt;strong&gt;find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon&lt;&#x2F;strong&gt;” can be done without involving expensive joins between separate time series for the same source.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;unified-language&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#unified-language&quot; aria-label=&quot;Anchor link for: unified-language&quot;&gt;🔗&lt;&#x2F;a&gt;Unified Language&lt;&#x2F;h4&gt;
+&lt;p&gt;WarpScript can be used in &lt;strong&gt;batch&lt;&#x2F;strong&gt; mode, or in &lt;strong&gt;real-time&lt;&#x2F;strong&gt;, because you need both of them in the real world.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;geez-give-me-an-example&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#geez-give-me-an-example&quot; aria-label=&quot;Anchor link for: geez-give-me-an-example&quot;&gt;🔗&lt;&#x2F;a&gt;Geez, give me an example&lt;&#x2F;h3&gt;
+&lt;p&gt;Here’s an example of a simple but advanced query:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&#x2F;&#x2F; Fetching all values  
+&lt;&#x2F;span&gt;&lt;span&gt;[ $token ‘temperature’ {} NOW 1 h ] FETCH &#x2F;&#x2F; Get max value for each minute  
+&lt;&#x2F;span&gt;&lt;span&gt;[ SWAP bucketizer.max 0 1 m 0 ] BUCKETIZE &#x2F;&#x2F; Round to nearest long  
+&lt;&#x2F;span&gt;&lt;span&gt;[ SWAP mapper.round 0 0 0 ] MAP &#x2F;&#x2F; reduce the data by keeping the max, grouping by &amp;#39;buildingID&amp;#39;  
+&lt;&#x2F;span&gt;&lt;span&gt;[ SWAP [ &amp;#39;buildingID&amp;#39; ] reducer.max ] REDUCE
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Have you guessed the goal? The result will &lt;strong&gt;display the temperature from now to 1 hour of the hottest room per buildingID&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-about-a-more-complex-example&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-a-more-complex-example&quot; aria-label=&quot;Anchor link for: what-about-a-more-complex-example&quot;&gt;🔗&lt;&#x2F;a&gt;What about a more complex example?&lt;&#x2F;h3&gt;
+&lt;p&gt;You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;3.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I want to &lt;strong&gt;detect the green part&lt;&#x2F;strong&gt; of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a &lt;strong&gt;2 functions calls&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PATTERNS&lt;&#x2F;strong&gt; is generating a list of motifs.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;PATTERNDETECTION&lt;&#x2F;strong&gt; is running the list of motifs on all the time series you have.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Here’s the code&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&#x2F;&#x2F; defining some variables  
+&lt;&#x2F;span&gt;&lt;span&gt;32 &amp;#39;windowSize&amp;#39; STORE  
+&lt;&#x2F;span&gt;&lt;span&gt;8 &amp;#39;patternLength&amp;#39; STORE  
+&lt;&#x2F;span&gt;&lt;span&gt;16 &amp;#39;quantizationScale&amp;#39; STORE  
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&#x2F; Generate patterns   
+&lt;&#x2F;span&gt;&lt;span&gt;$pattern.to.detect 0 GET   
+&lt;&#x2F;span&gt;&lt;span&gt;$windowSize $patternLength $quantizationScale PATTERNS  
+&lt;&#x2F;span&gt;&lt;span&gt;VALUES &amp;#39;patterns&amp;#39; STORE  
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&#x2F; Running the patterns through a list of GTS (Geo Time Series)  
+&lt;&#x2F;span&gt;&lt;span&gt;$list.of.gts $patterns   
+&lt;&#x2F;span&gt;&lt;span&gt;$windowSize $patternLength $quantizationScale  PATTERNDETECTION
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here’s the result:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;4.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;As you can see, &lt;strong&gt;PATTERNDETECTION&lt;&#x2F;strong&gt; is working even with the increasing amplitude! You can discover this example by yourself by using &lt;a href=&quot;https:&#x2F;&#x2F;home.cityzendata.net&#x2F;quantum&#x2F;preview&#x2F;#&#x2F;plot&#x2F;TkVXR1RTICdjb3MnIFJFTkFNRQoxIDEwODAKPCUgRFVQICdpJyBTVE9SRSBEVVAgMiAqIFBJICogMzYwIC8gQ09TICRpICogTmFOIE5hTiBOYU4gNCBST0xMIEFERFZBTFVFICU+IEZPUgoKWyBTV0FQIGJ1Y2tldGl6ZXIubGFzdCAxMDgwIDEgMCBdIEJVQ0tFVElaRSAnY29zJyBTVE9SRQoKTkVXR1RTICdwYXR0ZXJuLnRvLmRldGVjdCcgUkVOQU1FCjIwMCAzNzAKPCUgIERVUCAnaScgU1RPUkUgRFVQIDIgKiBQSSAqIDM2MCAvIENPUyAkaSAqIE5hTiBOYU4gTmFOIDQgUk9MTCBBRERWQUxVRSAlPiBGT1IKClsgU1dBUCBidWNrZXRpemVyLmxhc3QgMjE2MCAxIDAgXSBCVUNLRVRJWkUgJ3BhdHRlcm4udG8uZGV0ZWN0JyBTVE9SRQoKLy8gQ3JlYXRlIFBhdHRlcm4KMzIgJ3dpbmRvd1NpemUnIFNUT1JFCjggJ3BhdHRlcm5MZW5ndGgnIFNUT1JFCjE2ICdxdWFudGl6YXRpb25TY2FsZScgU1RPUkUKCiRwYXR0ZXJuLnRvLmRldGVjdCAwIEdFVCAkd2luZG93U2l6ZSAkcGF0dGVybkxlbmd0aCAkcXVhbnRpemF0aW9uU2NhbGUgUEFUVEVSTlMgVkFMVUVTICdwYXR0ZXJucycgU1RPUkUKCiRjb3MgJHBhdHRlcm5zICR3aW5kb3dTaXplICRwYXR0ZXJuTGVuZ3RoICRxdWFudGl6YXRpb25TY2FsZSAgUEFUVEVSTkRFVEVDVElPTiAnY29zLmRldGVjdGlvbicgUkVOQU1FICdjb3MuZGV0ZWN0aW9uJyBTVE9SRQoKJGNvcy5kZXRlY3Rpb24KLy8gTGV0J3MgY3JlYXRlIGEgZ3RzIGZvciBlYWNoIHRyaXAKMTAgICAgICAgLy8gIFF1aWV0IHBlcmlvZAo1ICAgICAgICAgLy8gTWluIG51bWJlciBvZiB2YWx1ZXMKJ3N1YlBhdHRlcm4nICAvLyBMYWJlbApUSU1FU1BMSVQKCiRjb3M=&#x2F;eyJ1cmwiOiJodHRwczovL3dhcnAuY2l0eXplbmRhdGEubmV0L2FwaS92MCIsImhlYWRlck5hbWUiOiJYLUNpdHl6ZW5EYXRhIn0=&quot;&gt;Quantum&lt;&#x2F;a&gt;, the official web-based IDE for WarpScript. &lt;strong&gt;You need to switch X-axis scale to Timestamp in order to see the courbe&lt;&#x2F;strong&gt;.Thanks for reading, here’s a nice list of additionnals informations about the time series subject and Warp10:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;Metrics Data Platform&lt;&#x2F;a&gt;, our product&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;warp10.io&#x2F;&quot;&gt;Warp10 official documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;tour.warp10.io&#x2F;&quot;&gt;Warp10 tour&lt;&#x2F;a&gt;, similar to “The Go Tour”&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=mNkfBR9KofY&quot;&gt;Presentation of the Warp 10 Time Series Platform at the 42 US school in Fremont&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;groups.google.com&#x2F;forum&#x2F;#!forum&#x2F;warp10-users&quot;&gt;Warp10 Google Groups&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</description>
+      </item>
+    </channel>
+</rss>

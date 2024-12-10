@@ -18,6 +18,8 @@
 
 
 <meta property="og:url" content="https://pierrezemb.fr/posts/crafting-keys-in-fdb/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
   <style>
     :root {
     --width: 800px;
@@ -256,11 +258,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </ul>
 <p>If you need more information on <code>row keys</code>, I recommend going through these links before moving on:</p>
 <ul>
-<li><a href="https://cloud.google.com/bigtable/docs/schema-design">&quot;Designing your schema&quot; BigTable documentation</a></li>
-<li><a href="https://hbase.apache.org/book.html#rowkey.design">&quot;Rowkey Design&quot; HBase documentation</a></li>
+<li><a href="https://cloud.google.com/bigtable/docs/schema-design">"Designing your schema" BigTable documentation</a></li>
+<li><a href="https://hbase.apache.org/book.html#rowkey.design">"Rowkey Design" HBase documentation</a></li>
 </ul>
 <h2 id="hand-crafting-row-keys"><a class="zola-anchor" href="#hand-crafting-row-keys" aria-label="Anchor link for: hand-crafting-row-keys">🔗</a>Hand-crafting row keys</h2>
-<p>Most of the time, you will need to craft the <code>row key</code> &quot;by hand&quot;, like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase's app</a>:</p>
+<p>Most of the time, you will need to craft the <code>row key</code> "by hand", like this for <a href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase's app</a>:</p>
 <pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#65737e;">// Prefix + classId + labelsId + timestamp
 </span><span style="color:#65737e;">// 128 bits
 </span><span style="color:#b48ead;">byte[]</span><span> rowkey = </span><span style="color:#b48ead;">new byte</span><span>[</span><span style="color:#ebcb8b;">Constants</span><span>.</span><span style="color:#d08770;">HBASE_RAW_DATA_KEY_PREFIX</span><span>.length + </span><span style="color:#d08770;">8 </span><span>+ </span><span style="color:#d08770;">8 </span><span>+ </span><span style="color:#d08770;">8</span><span>];
@@ -385,7 +387,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span>    0xFF, // biggest possible byte
 </span><span>]
 </span></code></pre>
-<p>Which make sens, if we take <code>(&quot;tenant-1&quot;, 42)</code> as a prefix, then the range for this subspace will be between <code>(&quot;tenant-1&quot;, 42, 0x00)</code> and <code>(&quot;tenant-1&quot;, 42, 0xFF)</code></p>
+<p>Which make sens, if we take <code>("tenant-1", 42)</code> as a prefix, then the range for this subspace will be between <code>("tenant-1", 42, 0x00)</code> and <code>("tenant-1", 42, 0xFF)</code></p>
 <h3 id="directory"><a class="zola-anchor" href="#directory" aria-label="Anchor link for: directory">🔗</a>Directory</h3>
 <p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I'm working on, which is the <code>Directory</code>. Let's have a look at the relevant <a href="https://apple.github.io/foundationdb/developer-guide.html#directories">documentation</a>:</p>
 <blockquote>
@@ -403,7 +405,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#d08770;">%+v</span><span style="color:#96b5b4;">\n</span><span>&quot;, </span><span style="color:#bf616a;">subspace</span><span>.</span><span style="color:#bf616a;">Bytes</span><span>())
 </span><span style="color:#65737e;">// [21 18]
 </span></code></pre>
-<p>We can see that we have a shorter subspace! The <code>directory</code> allows you to generate some integer that will be bind to a path, like here <code>&quot;application&quot;, &quot;my-app&quot;, &quot;tenant&quot;, &quot;tenant-42&quot;</code>.</p>
+<p>We can see that we have a shorter subspace! The <code>directory</code> allows you to generate some integer that will be bind to a path, like here <code>"application", "my-app", "tenant", "tenant-42"</code>.</p>
 <p>There are two advantages to this:</p>
 <ul>
 <li>shorter keys,</li>
@@ -445,10 +447,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     <div class="social-links">
         <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
         <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrez.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
     </div>
-</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({

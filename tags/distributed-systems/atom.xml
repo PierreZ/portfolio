@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -105,7 +105,7 @@
 &lt;h3 id=&quot;readings-in-database-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readings-in-database-systems&quot; aria-label=&quot;Anchor link for: readings-in-database-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Readings in Database Systems&lt;&#x2F;h3&gt;
 &lt;p&gt;Another free book, &lt;a href=&quot;http:&#x2F;&#x2F;www.redbook.io&#x2F;&quot;&gt;Readings in Database Systems&lt;&#x2F;a&gt; is a great read if you are looking for an opinionated and short review on subject like architecture, engines, analytics and so on.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Readings in Database Systems (commonly known as the &amp;quot;Red Book&amp;quot;) has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.&lt;&#x2F;p&gt;
+&lt;p&gt;Readings in Database Systems (commonly known as the &quot;Red Book&quot;) has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;h2 id=&quot;watching-tv&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watching-tv&quot; aria-label=&quot;Anchor link for: watching-tv&quot;&gt;🔗&lt;&#x2F;a&gt;Watching 📺&lt;&#x2F;h2&gt;
 &lt;h3 id=&quot;cmu-database-group&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cmu-database-group&quot; aria-label=&quot;Anchor link for: cmu-database-group&quot;&gt;🔗&lt;&#x2F;a&gt;CMU Database Group&lt;&#x2F;h3&gt;
@@ -117,7 +117,7 @@
 &lt;p&gt;which are the best lectures about database in my opinion.&lt;&#x2F;p&gt;
 &lt;p&gt;I also recommend their Quarantine database talks playlists:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;the &amp;quot;Quarantine Database Tech Talks&amp;quot; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.&lt;&#x2F;p&gt;
+&lt;p&gt;the &quot;Quarantine Database Tech Talks&quot; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjbeqnfuvp30VrI7VXiFuOXS&quot;&gt;Vaccination Database Tech Talks First Dose&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -152,7 +152,7 @@
 &lt;h3 id=&quot;maelstrom&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#maelstrom&quot; aria-label=&quot;Anchor link for: maelstrom&quot;&gt;🔗&lt;&#x2F;a&gt;Maelstrom&lt;&#x2F;h3&gt;
 &lt;p&gt;Ever wonder to develop your own toy distributed systems? Fear no more, you can use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jepsen-io&#x2F;maelstrom&quot;&gt;Maelstrom&lt;&#x2F;a&gt; for that!&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &amp;quot;a commutative set&amp;quot; or &amp;quot;a transactional key-value store&amp;quot;, and lets you learn by writing implementations which those test suites can exercise. It&#x27;s used as a part of a distributed systems workshop by Jepsen.&lt;&#x2F;p&gt;
+&lt;p&gt;Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &quot;a commutative set&quot; or &quot;a transactional key-value store&quot;, and lets you learn by writing implementations which those test suites can exercise. It&#x27;s used as a part of a distributed systems workshop by Jepsen.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Maelstrom provides a range of tests for different kinds of distributed systems, built on top of a simple JSON protocol via STDIN and STDOUT. Users write servers in any language. Maelstrom runs those servers, sends them requests, routes messages via a simulated network, and checks that clients observe expected behavior. You want to write Plumtree in Bash? Byzantine Paxos in Intercal? Maelstrom is for you.&lt;&#x2F;p&gt;

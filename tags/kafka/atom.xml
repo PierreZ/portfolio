@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -28,7 +28,7 @@
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;sijieg&quot;&gt;Sijie Guo&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;Jia_Zhai&quot;&gt;Jia Zhai&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Pierre Zemb&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the illustrations!&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-1.png&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;quot;Kafka on Pulsar&amp;quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&#x27;s powerful features, such as:&lt;&#x2F;p&gt;
+&lt;p&gt;We are excited to announce that StreamNative and OVHcloud are open-sourcing &quot;Kafka on Pulsar&quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&#x27;s powerful features, such as:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Streamlined operations with enterprise-grade multi-tenancy&lt;&#x2F;li&gt;
 &lt;li&gt;Simplified operations with a rebalance-free architecture&lt;&#x2F;li&gt;
@@ -46,7 +46,7 @@
 &lt;p&gt;As a result, OVHcloud decided to shift and build the foundation of their topic-as-a-service product, called ioStream, on Pulsar instead of Kafka. Pulsar&#x27;s multi-tenancy and the overall architecture with Apache Bookkeeper simplified operations compared to Kafka.&lt;&#x2F;p&gt;
 &lt;p&gt;After spawning the first region, OVHcloud decided to implement it as a proof-of-concept proxy capable of transforming the Kafka protocol to Pulsar on the fly. During this process, OVHcloud discovered that StreamNative was working on bringing the Kafka protocol natively to Pulsar, and they joined forces to develop KoP.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-2.png&quot; alt=&quot;kop image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &amp;quot;kafka&amp;quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
+&lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &quot;kafka&quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-distributed-log&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-distributed-log&quot; aria-label=&quot;Anchor link for: the-distributed-log&quot;&gt;🔗&lt;&#x2F;a&gt;The distributed log&lt;&#x2F;h2&gt;
 &lt;p&gt;Both Pulsar and Kafka share a very similar data model around &lt;strong&gt;log&lt;&#x2F;strong&gt; for both pub&#x2F;sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a &lt;strong&gt;segment&lt;&#x2F;strong&gt;-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&#x27;s &lt;em&gt;segment&lt;&#x2F;em&gt; based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in &lt;a href=&quot;https:&#x2F;&#x2F;www.splunk.com&#x2F;en_us&#x2F;blog&#x2F;it&#x2F;comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html&quot;&gt;this Splunk blog&lt;&#x2F;a&gt; and in &lt;a href=&quot;http:&#x2F;&#x2F;bookkeeper.apache.org&#x2F;distributedlog&#x2F;technical-review&#x2F;2016&#x2F;09&#x2F;19&#x2F;kafka-vs-distributedlog.html&quot;&gt;this blog from the Bookkeeper project&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar&#x27;s distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).&lt;&#x2F;p&gt;
@@ -100,7 +100,7 @@ The following figure illustrates how we add the Kafka protocol support within Pu
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>

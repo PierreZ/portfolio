@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - raft</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/raft/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Fri, 18 Sep 2020 05:24:27 +0100</lastBuildDate>
+      <item>
+          <title>Diving into ETCD&#x27;s linearizable reads</title>
+          <pubDate>Fri, 18 Sep 2020 05:24:27 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</link>
+          <guid>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;what-is-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;What is ETCD?&lt;&#x2F;h2&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;the official website&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &quot;Aphyr&quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;why&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;Why?&lt;&#x2F;h2&gt;
+&lt;p&gt;ETCD is using &lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;&quot;&gt;Raft&lt;&#x2F;a&gt;, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here&#x27;s an example:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; is &lt;code&gt;leader&lt;&#x2F;code&gt; and heartbeating properly to &lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;network partition is happening, and &lt;code&gt;node1&lt;&#x2F;code&gt; is isolated from the others.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;At this moment, all the actions are depending on timeouts and settings. In a (close) future, all nodes will go into &lt;strong&gt;election mode&lt;&#x2F;strong&gt; and node 2 and 3 will be able to create a quorum. This can lead to this situation:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; thinks he is a leader as heartbeat timeouts and retry are not yet reached, so he can serve reads 😱&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt; have elected a new leader and are working again, accepting writes.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This situation is violating Linearizable reads, as reads going through &lt;code&gt;node1&lt;&#x2F;code&gt; will not see the last updates from the current leader.&lt;&#x2F;p&gt;
+&lt;p&gt;How can we solve this? One way is to use &lt;code&gt;ReadIndex&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;readindex&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;ReadIndex&lt;&#x2F;h2&gt;
+&lt;p&gt;The basic idea behind this is to confirm that the &lt;strong&gt;leader is true leader or not&lt;&#x2F;strong&gt; by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&#x27;s dive into the implementation!&lt;&#x2F;p&gt;
+&lt;p&gt;All codes are from the current latest release &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;releases&#x2F;tag&#x2F;v3.4.13&quot;&gt;v3.4.13&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L114-L120&quot;&gt;Let&#x27;s take a Range operation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Serializable &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;linearizableReadNotify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;trace&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Step&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;agreement among raft nodes before linearized reading&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err &lt;&#x2F;span&gt;&lt;span&gt;!= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;EtcdServer&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;linearizableReadNotify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx context&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Context&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;error &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readMu&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RLock&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readNotifier
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readMu&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUnlock&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; signal linearizable loop for current notify if it hasn&amp;#39;t been already
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readwaitc &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct&lt;&#x2F;span&gt;&lt;span&gt;{}{}:
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;default&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; wait for read state notification
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;c&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nc&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;err
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Done&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Err&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ErrStopped
+&lt;&#x2F;span&gt;&lt;span&gt; }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L773-L793&quot;&gt;linearizableReadNotify&lt;&#x2F;a&gt;, we are waiting for a signal. &lt;code&gt;readwaitc&lt;&#x2F;code&gt; is used in another goroutine called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;. This goroutines will call this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;n &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;node&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;ReadIndex&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx context&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Context&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rctx &lt;&#x2F;span&gt;&lt;span&gt;[]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;error &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;step&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: []&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entry&lt;&#x2F;span&gt;&lt;span&gt;{{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rctx&lt;&#x2F;span&gt;&lt;span&gt;}}})
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;that will create a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message that will be handled in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;raft&#x2F;raft.go#L994&quot;&gt;stepLeader&lt;&#x2F;a&gt;, who will send the message to the followers, like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If more than the local vote is needed, go through a full broadcast,
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; otherwise optimize.
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;prs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;IsSingleton&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;switch &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;option &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlySafe&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;addRequest&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;raftLog&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;committed&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; The local node automatically acks the request.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recvAck&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;bcastHeartbeatWithCtx&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlyLeaseBased&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;raftLog&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;committed
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;|| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; from local member
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;append&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadState&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndexResp&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ri&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So, the &lt;code&gt;leader&lt;&#x2F;code&gt; is sending a heartbeat in &lt;code&gt;ReadOnlySafe&lt;&#x2F;code&gt; mode. Turns out there is two modes:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadOnlySafe guarantees the linearizability of the read only request by
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; communicating with the quorum. It is the default and suggested option.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlySafe &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;ReadOnlyOption &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;iota
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadOnlyLeaseBased ensures linearizability of the read only request by
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; relying on the leader lease. It can be affected by clock drift.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; If the clock drift is unbounded, leader might keep the lease longer than it
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; should (clock can move backward&#x2F;pause without any bound). ReadIndex is not safe
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; in that case.
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadOnlyLeaseBased
+&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Responses from the followers will be handled here:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgHeartbeatResp&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rss &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readOnly&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;advance&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;range &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rss &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;|| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; from local member
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;append&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStates&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadState&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;index&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Data&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;   } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Message&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;From&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndexResp&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;index&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Entries&lt;&#x2F;span&gt;&lt;span&gt;})
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We are storing things into a &lt;code&gt;ReadState&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ReadState provides state for read only query.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; It&amp;#39;s caller&amp;#39;s responsibility to call ReadIndex first before getting
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; this state from ready, it&amp;#39;s also caller&amp;#39;s duty to differentiate if this
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; state is what it requests through RequestCtx, eg. given a unique id as
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; RequestCtx
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;ReadState &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;uint64
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RequestCtx &lt;&#x2F;span&gt;&lt;span&gt;[]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now that the state has been updated, we need to unblock our &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;timeout &lt;&#x2F;span&gt;&lt;span&gt;&amp;amp;&amp;amp; !&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs &lt;&#x2F;span&gt;&lt;span&gt;= &amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStateC&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Cool, another channel! Turns out, &lt;code&gt;readStateC&lt;&#x2F;code&gt; is updated in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;raft.go#L162&quot;&gt;one of the main goroutine&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; start prepares and starts raftNode in a new goroutine. It is no longer safe
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; to modify the fields after it has been started.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;func &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;raftNode&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rh &lt;&#x2F;span&gt;&lt;span&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;raftReadyHandler&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;internalTimeout &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;time&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Second
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;go func&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;defer &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;onStop&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;islead &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ticker&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;C&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tick&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd &lt;&#x2F;span&gt;&lt;span&gt;:= &amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Ready&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PZ: omitting some code here
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;) != &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;readStateC &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rd&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ReadStates&lt;&#x2F;span&gt;&lt;span&gt;)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]:
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Perfect, now &lt;code&gt;readStateC&lt;&#x2F;code&gt; is notified, and we can continue on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L672-L771&quot;&gt;linearizableReadLoop&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ai &lt;&#x2F;span&gt;&lt;span&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;getAppliedIndex&lt;&#x2F;span&gt;&lt;span&gt;(); &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ai &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;select &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;applyWait&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Wait&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Index&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;stopping&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return
+&lt;&#x2F;span&gt;&lt;span&gt;   }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; unblock all l-reads requested at indices before rs.Index
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nr&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;notify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The first part is a safety measure to makes sure the applied index is lower that the index stored in &lt;code&gt;ReadState&lt;&#x2F;code&gt;. And then finally we are unlocking all pending reads 🤩&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;One more thing: Follower read&lt;&#x2F;h2&gt;
+&lt;p&gt;We went through &lt;code&gt;stepLeader&lt;&#x2F;code&gt; a lot, be there is something interesting in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v4.3.13&#x2F;raft&#x2F;raft.go#L1320&quot;&gt;&lt;code&gt;stepFollower&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;go&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-go &quot;&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;case &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;lead &lt;&#x2F;span&gt;&lt;span&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;logger&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Infof&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; no leader at term &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%d&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;; dropping index reading msg&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Term&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;nil
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;To &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;lead
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This means that a follower can send a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message to perform the same kind of checks than a leader. This small features is in fact enabling &lt;strong&gt;follower-reads&lt;&#x2F;strong&gt; on ETCD 🤩 That is why you can see &lt;code&gt;Range&lt;&#x2F;code&gt; requests from a &lt;code&gt;follower&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;operational-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;operational tips&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;If you are running etcd &amp;lt;= 3.4, make sure &lt;strong&gt;logger=zap&lt;&#x2F;strong&gt; is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;level&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;info&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ts&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:56.181Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;caller&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;traceutil&#x2F;trace.go:145&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;msg&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;trace[677217921] range&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;detail&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{range_begin:&#x2F;...redacted...; range_end:; response_count:1; response_revision:2725080604; }&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;duration&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;1.553047811s&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:54.628Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;2020-08-12T08:24:56.181Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;trace[677217921] &amp;#39;agreement among raft nodes before linearized reading&amp;#39;  (duration: 1.534322015s)&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot; 
+&lt;&#x2F;span&gt;&lt;span&gt;  ]
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;there is &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;issues&#x2F;11884&quot;&gt;a random performance issue on etcd 3.4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;there is some metrics than you can watch for ReadIndex issues:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;etcd_server_read_indexes_failed_total&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;etcd_server_slow_read_indexes_total&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Notes about Raft&#x27;s paper</title>
+          <pubDate>Thu, 30 Jul 2020 07:24:27 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/notes-about-raft/</link>
+          <guid>https://pierrezemb.fr/posts/notes-about-raft/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;As I&#x27;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located &lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;raft.pdf&quot;&gt;here&lt;&#x2F;a&gt; and I&#x27;m also playing with the amazing &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;talent-plan&#x2F;tree&#x2F;master&#x2F;courses&#x2F;dss&#x2F;raft&quot;&gt;Raft labs made by PingCAP&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;These labs are derived from the &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-raft.html&quot;&gt;lab2:raft&lt;&#x2F;a&gt; and &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-kvraft.html&quot;&gt;lab3:kvraft&lt;&#x2F;a&gt; from the famous &lt;a href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;index.html&quot;&gt;MIT 6.824&lt;&#x2F;a&gt; course but rewritten in Rust.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;abstract&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;Introduction&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Paxos has dominated the discussion of consensus algorithms over the last decade.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Unfortunately, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both systembuilders and students struggle with Paxos.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Our approach was unusual in that our primary goal was &lt;strong&gt;understandability&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;replicated-state-machines&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;Replicated state machines&lt;&#x2F;h2&gt;
+&lt;p&gt;The main idea is to compute identical copies of the same state (i.e &lt;code&gt;x:3, y:9&lt;&#x2F;code&gt;) in case of machines&#x27;s failure. Most of the time, an ordered &lt;code&gt;wal&lt;&#x2F;code&gt; (write-ahead log) is used in the implementation, to hold the mutation (&lt;code&gt;x:4&lt;&#x2F;code&gt;). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.&lt;&#x2F;p&gt;
+&lt;p&gt;Raft creates a true split between:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;the consensus module,&lt;&#x2F;li&gt;
+&lt;li&gt;the wal,&lt;&#x2F;li&gt;
+&lt;li&gt;the state machine.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_1.png&quot; alt=&quot;fig1&quot; class=&quot;center&quot;&gt;
+&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;What’s wrong with Paxos?&lt;&#x2F;h2&gt;
+&lt;p&gt;The paper is listing the drawbacks of Paxos:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;difficult to understand, and &lt;a href=&quot;https:&#x2F;&#x2F;www.microsoft.com&#x2F;en-us&#x2F;research&#x2F;uploads&#x2F;prod&#x2F;2016&#x2F;12&#x2F;The-Part-Time-Parliament.pdf&quot;&gt;I can&#x27;t blame them&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;many details are missing from the paper to implement &lt;code&gt;Multi-Paxos&lt;&#x2F;code&gt; as the paper is mainly describing &lt;code&gt;single-decree Paxos&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It is simpler and more efficient to design a system around a log, where new entries are appended sequentially in a constrained order.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;As a result, practical systems bear little resemblance to Paxos. Each implementation begins with Paxos, discovers the difficulties in implementing it, and then develops a significantly different architecture. This is time-consuming and error-prone, and the difficulties of understanding Paxos exacerbate the problem. The following com-ment from the &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;chubby-osdi06.pdf&quot;&gt;Chubby&lt;&#x2F;a&gt; implementers is typical:&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;There are significant gaps between the description of the Paxos algorithm and the needs of a real-world system
+the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;designing-for-understandability&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;Designing for understandability&lt;&#x2F;h2&gt;
+&lt;p&gt;Beside all the others goals of Raft:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;a complete and practical foundation for system building,&lt;&#x2F;li&gt;
+&lt;li&gt;must be safe under all conditions and available under typical operating conditions,&lt;&#x2F;li&gt;
+&lt;li&gt;must be efficient for common operations,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;understandability&lt;&#x2F;strong&gt; was the most difficult challenge:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It must be possible for a large audience to understand the algorithm comfortably. In addition, it must be possible to develop intuitions about the algorithm, so that system builders can make the extensions that are inevitable in real-world implementations.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;we divided problems into separate pieces that could be solved, explained, and understood relatively independently. For example, in Raft we separated leader election, log replication, safety, and membership changes.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;The Raft consensus algorithm&lt;&#x2F;h2&gt;
+&lt;p&gt;Raft is heavily relying on the &lt;code&gt;leader&lt;&#x2F;code&gt; pattern:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader accepts log entries from clients, replicates them on other servers, and tells servers when it is safe to apply log entries to their state machines.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Thanks to this pattern, Raft is splitting the consensus problem into 3:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Leader election&lt;&#x2F;li&gt;
+&lt;li&gt;Log replication&lt;&#x2F;li&gt;
+&lt;li&gt;Safety&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;raft-basics&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;Raft basics&lt;&#x2F;h3&gt;
+&lt;p&gt;Each server can be in one of the three states:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Leader&lt;&#x2F;strong&gt; handle all requests,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Follower&lt;&#x2F;strong&gt; passive member, they issue no requests on their own but simply respond to requests from leaders and candidates,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Candidate&lt;&#x2F;strong&gt; is used to elect a new leader.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Leader is elected through &lt;code&gt;election&lt;&#x2F;code&gt;: Each term (interval of time of arbitrary length packed with an number) begins with an election, in which one or more candidates attempt to become leader. If a candidate wins the election, then it serves as leader for the rest of the term. In the case of a split vote, the term will end with no leader; a new term (with a new election) will begin.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Terms act as a logical clock [14] in Raft.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Each server stores a current term number, which increases monotonically over time. Current terms are exchanged whenever servers communicate; if one server’s current term is smaller than the other’s, then it updates its current term to the larger value. If a candidate or leader discovers that its term is out of date, it immediately reverts to fol-lower state. If a server receives a request with a stale term number, it rejects the request.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;code&gt;RPC&lt;&#x2F;code&gt; is used for communications:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;RequestVote RPCs&lt;&#x2F;strong&gt; are initiated by candidates during elections,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Append-Entries RPCs&lt;&#x2F;strong&gt; are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;leader-election&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;p&gt;A good vizualization is available &lt;a href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#election&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The key-point of the election are the fact that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;nodes vote for themselves,&lt;&#x2F;li&gt;
+&lt;li&gt;the term number is used to recover from failure,&lt;&#x2F;li&gt;
+&lt;li&gt;election timeouts are randomized.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To begin an election, a follower increments its current term and transitions to candidate state. It then votes for itself and issues RequestVote RPCs in parallel to each of the other servers in the cluster. A candidate continues in this state until one of three things happens:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;(a) it wins the election,&lt;&#x2F;li&gt;
+&lt;li&gt;(b) another server establishes itself as leader,&lt;&#x2F;li&gt;
+&lt;li&gt;(c) a period of time goes by with no winner.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;log-replication&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;Log replication&lt;&#x2F;h3&gt;
+&lt;p&gt;A good vizualization is available &lt;a href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#replication&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The term numbers in log entries are used to detect inconsistencies between logs&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader decides when it is safe to apply a log entry to the state machines; such an entry is called committed. Raft guarantees that committed entries are durable and will eventually be executed by all of the available state machines.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Raft is implementing a lot of safety inside the log:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When sending an AppendEntries RPC, the leader includes the index and term of the entry in its log that immediately precedes the new entries. If the follower does not find an entry in its log with the same index and term, then it refuses the new entries&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is really interesting to be leader-failure proof. And for follower&#x27;s failure:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Raft, the leader handles inconsistencies by forcing the followers’ logs to duplicate its own.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;Safety&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;leader-election-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;p&gt;As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;Committing entries from previous terms&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;Follower and candidate crashes&lt;&#x2F;h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;Cluster membership changes&lt;&#x2F;h2&gt;
+&lt;p&gt;This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Log entries are replicated to all servers in both con-figurations,&lt;&#x2F;li&gt;
+&lt;li&gt;Any server from either configuration may serve asleader,&lt;&#x2F;li&gt;
+&lt;li&gt;Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;log-compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Log compaction&lt;&#x2F;h2&gt;
+&lt;p&gt;As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:&lt;&#x2F;p&gt;
+&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_3.png&quot; alt=&quot;fig3&quot; class=&quot;center&quot;&gt;
+&lt;blockquote&gt;
+&lt;p&gt;the leader must occasionally send snapshots to followers that lag behind.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is useful for slow follower or a new server joining the cluster.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;client-interaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;Client interaction&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

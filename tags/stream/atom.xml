@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -23,7 +23,7 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"/>
         <id>https://pierrezemb.fr/posts/ovh-alerts-flink/</id>
         
-        <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&#x27;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
+        <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&amp;#39;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;h1 id=&quot;handling-ovh-s-alerts-with-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-ovh-s-alerts-with-apache-flink&quot; aria-label=&quot;Anchor link for: handling-ovh-s-alerts-with-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;Handling OVH&#x27;s alerts with Apache Flink&lt;&#x2F;h1&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;001-1.png?x70472&quot; alt=&quot;OVH &amp;amp; Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;OVH relies extensively on &lt;strong&gt;metrics&lt;&#x2F;strong&gt; to effectively monitor its entire stack. Whether they are &lt;strong&gt;low-level&lt;&#x2F;strong&gt; or &lt;strong&gt;business&lt;&#x2F;strong&gt; centric, they allow teams to gain &lt;strong&gt;insight&lt;&#x2F;strong&gt; into how our services are operating on a daily basis. The need to store &lt;strong&gt;millions of datapoints per second&lt;&#x2F;strong&gt; has produced the need to create a dedicated team to build a operate a product to handle that load: &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;**Metrics Data Platform&lt;&#x2F;a&gt;.&lt;strong&gt;By relying on &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;**Apache Hbase&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;&quot;&gt;Apache Kafka&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;www.warp10.io&#x2F;&quot;&gt;&lt;strong&gt;Warp 10&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!&lt;&#x2F;p&gt;

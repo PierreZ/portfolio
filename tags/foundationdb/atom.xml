@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -71,7 +71,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -132,7 +132,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -151,11 +151,11 @@
 &lt;&#x2F;ul&gt;
 &lt;p&gt;If you need more information on &lt;code&gt;row keys&lt;&#x2F;code&gt;, I recommend going through these links before moving on:&lt;&#x2F;p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;bigtable&#x2F;docs&#x2F;schema-design&quot;&gt;&amp;quot;Designing your schema&amp;quot; BigTable documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#rowkey.design&quot;&gt;&amp;quot;Rowkey Design&amp;quot; HBase documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;bigtable&#x2F;docs&#x2F;schema-design&quot;&gt;&quot;Designing your schema&quot; BigTable documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#rowkey.design&quot;&gt;&quot;Rowkey Design&quot; HBase documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;h2 id=&quot;hand-crafting-row-keys&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hand-crafting-row-keys&quot; aria-label=&quot;Anchor link for: hand-crafting-row-keys&quot;&gt;🔗&lt;&#x2F;a&gt;Hand-crafting row keys&lt;&#x2F;h2&gt;
-&lt;p&gt;Most of the time, you will need to craft the &lt;code&gt;row key&lt;&#x2F;code&gt; &amp;quot;by hand&amp;quot;, like this for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;senx&#x2F;warp10-platform&#x2F;blob&#x2F;879734d7f63791b487f3e535cd79ac4c23e99377&#x2F;warp10&#x2F;src&#x2F;main&#x2F;java&#x2F;io&#x2F;warp10&#x2F;continuum&#x2F;store&#x2F;Store.java#L1215-L1222&quot;&gt;an HBase&#x27;s app&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;p&gt;Most of the time, you will need to craft the &lt;code&gt;row key&lt;&#x2F;code&gt; &quot;by hand&quot;, like this for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;senx&#x2F;warp10-platform&#x2F;blob&#x2F;879734d7f63791b487f3e535cd79ac4c23e99377&#x2F;warp10&#x2F;src&#x2F;main&#x2F;java&#x2F;io&#x2F;warp10&#x2F;continuum&#x2F;store&#x2F;Store.java#L1215-L1222&quot;&gt;an HBase&#x27;s app&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Prefix + classId + labelsId + timestamp
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 128 bits
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte[]&lt;&#x2F;span&gt;&lt;span&gt; rowkey = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new byte&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Constants&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;HBASE_RAW_DATA_KEY_PREFIX&lt;&#x2F;span&gt;&lt;span&gt;.length + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8 &lt;&#x2F;span&gt;&lt;span&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8 &lt;&#x2F;span&gt;&lt;span&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;];
@@ -280,7 +280,7 @@
 &lt;&#x2F;span&gt;&lt;span&gt;    0xFF, &#x2F;&#x2F; biggest possible byte
 &lt;&#x2F;span&gt;&lt;span&gt;]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;Which make sens, if we take &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42)&lt;&#x2F;code&gt; as a prefix, then the range for this subspace will be between &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42, 0x00)&lt;&#x2F;code&gt; and &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42, 0xFF)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Which make sens, if we take &lt;code&gt;(&quot;tenant-1&quot;, 42)&lt;&#x2F;code&gt; as a prefix, then the range for this subspace will be between &lt;code&gt;(&quot;tenant-1&quot;, 42, 0x00)&lt;&#x2F;code&gt; and &lt;code&gt;(&quot;tenant-1&quot;, 42, 0xFF)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;directory&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#directory&quot; aria-label=&quot;Anchor link for: directory&quot;&gt;🔗&lt;&#x2F;a&gt;Directory&lt;&#x2F;h3&gt;
 &lt;p&gt;Now that we know our way around &lt;code&gt;Tuples&lt;&#x2F;code&gt; and &lt;code&gt;Subspaces&lt;&#x2F;code&gt;, we can now talk about what I&#x27;m working on, which is the &lt;code&gt;Directory&lt;&#x2F;code&gt;. Let&#x27;s have a look at the relevant &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;developer-guide.html#directories&quot;&gt;documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -298,7 +298,7 @@
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fmt&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Printf&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%+v&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;\n&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;subspace&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Bytes&lt;&#x2F;span&gt;&lt;span&gt;())
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; [21 18]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;We can see that we have a shorter subspace! The &lt;code&gt;directory&lt;&#x2F;code&gt; allows you to generate some integer that will be bind to a path, like here &lt;code&gt;&amp;quot;application&amp;quot;, &amp;quot;my-app&amp;quot;, &amp;quot;tenant&amp;quot;, &amp;quot;tenant-42&amp;quot;&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;We can see that we have a shorter subspace! The &lt;code&gt;directory&lt;&#x2F;code&gt; allows you to generate some integer that will be bind to a path, like here &lt;code&gt;&quot;application&quot;, &quot;my-app&quot;, &quot;tenant&quot;, &quot;tenant-42&quot;&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;There are two advantages to this:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;shorter keys,&lt;&#x2F;li&gt;
@@ -340,7 +340,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -410,7 +410,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>

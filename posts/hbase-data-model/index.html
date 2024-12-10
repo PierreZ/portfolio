@@ -18,6 +18,8 @@
 
 
 <meta property="og:url" content="https://pierrezemb.fr/posts/hbase-data-model/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
   <style>
     :root {
     --width: 800px;
@@ -240,7 +242,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     <h2 id="hbase"><a class="zola-anchor" href="#hbase" aria-label="Anchor link for: hbase">🔗</a>HBase?</h2>
 <p><img src="/images/hbase-data-model/hbase.jpg" alt="hbase image" /></p>
 <blockquote>
-<p><a href="https://hbase.apache.org/">Apache HBase™</a> is a type of &quot;NoSQL&quot; database. &quot;NoSQL&quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
+<p><a href="https://hbase.apache.org/">Apache HBase™</a> is a type of "NoSQL" database. "NoSQL" is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
 </blockquote>
 <p>-- <a href="https://hbase.apache.org/book.html#arch.overview.nosql">Hbase architecture overview</a></p>
 <h2 id="hbase-data-model"><a class="zola-anchor" href="#hbase-data-model" aria-label="Anchor link for: hbase-data-model">🔗</a>Hbase data model</h2>
@@ -254,7 +256,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <li>Values are stored into what we call a <strong>cell</strong> and are versioned with a timestamp.</li>
 <li>A column is divided between a <strong>Column Family</strong> and a <strong>Column Qualifier</strong>. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is <strong>static</strong>, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.</li>
 </ul>
-<p>Not as easy as you thought? Here's an example! Let's say that we're trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called &quot;Contents&quot;</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as &quot;content:html&quot; or &quot;content:video&quot;.</p>
+<p>Not as easy as you thought? Here's an example! Let's say that we're trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called "Contents"</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as "content:html" or "content:video".</p>
 <pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
 </span><span>  &quot;</span><span style="color:#a3be8c;">fr.pierrezemb.www</span><span>&quot;: {          </span><span style="color:#65737e;">// Row key
 </span><span>    &quot;</span><span style="color:#a3be8c;">contents</span><span>&quot;: {                 </span><span style="color:#65737e;">// Column family
@@ -273,7 +275,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span>}
 </span></code></pre>
 <h2 id="key-design"><a class="zola-anchor" href="#key-design" aria-label="Anchor link for: key-design">🔗</a>Key design</h2>
-<p>Hbase is most efficient at queries when we're getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be &quot;near&quot;.</p>
+<p>Hbase is most efficient at queries when we're getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be "near".</p>
 <p>As such, the <strong>key design</strong> is really important:</p>
 <ul>
 <li>If your data are too spread, you will have poor performance.</li>
@@ -288,7 +290,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h2 id="be-warned"><a class="zola-anchor" href="#be-warned" aria-label="Anchor link for: be-warned">🔗</a>Be warned</h2>
 <p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here's some warnings extracted from the well-written documentation:</p>
 <blockquote>
-<p>HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
+<p>HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
 </blockquote>
 <p>-- <a href="https://hbase.apache.org/book.html#arch.overview.nosql">NoSQL?</a></p>
 <blockquote>
@@ -309,10 +311,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     <div class="social-links">
         <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
         <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrez.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/posts/atom.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
     </div>
-</footer><script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({

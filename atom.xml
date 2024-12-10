@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
-    <title>Pierre Zemb&#x27;s Blog - Posts</title>
+    <title>Pierre Zemb&#x27;s Blog</title>
     <subtitle>Pierre Zemb personal blog</subtitle>
-    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/posts/atom.xml"/>
-    <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/"/>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
     <updated>2024-04-22T00:37:27+01:00</updated>
-    <id>https://pierrezemb.fr/posts/atom.xml</id>
+    <id>https://pierrezemb.fr/atom.xml</id>
     <entry xml:lang="en">
         <title>Redwood’s memory tuning in FoundationDB</title>
         <published>2024-04-22T00:37:27+01:00</published>
@@ -15,7 +15,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -71,7 +71,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -132,7 +132,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -147,7 +147,7 @@
 &lt;p&gt;Sounds a bit too academic, doesn&#x27;t it? 🤔&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;I don&#x27;t think so!  It&#x27;s true that academic research can sometimes seem distant from everyday industry needs, but following both academic and industry tracks is beneficial. R&amp;amp;D from academia often lead to new ideas and technologies that eventually find their way into practical use.&lt;&#x2F;p&gt;
-&lt;p&gt;Moreover, numerous academic conferences feature a &lt;strong&gt;&amp;quot;industry track&amp;quot;&lt;&#x2F;strong&gt; that is essential to monitor.&lt;&#x2F;p&gt;
+&lt;p&gt;Moreover, numerous academic conferences feature a &lt;strong&gt;&quot;industry track&quot;&lt;&#x2F;strong&gt; that is essential to monitor.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Aren&#x27;t they too complex to read? 🤔&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -204,7 +204,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -294,7 +294,7 @@
 &lt;h3 id=&quot;readings-in-database-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readings-in-database-systems&quot; aria-label=&quot;Anchor link for: readings-in-database-systems&quot;&gt;🔗&lt;&#x2F;a&gt;Readings in Database Systems&lt;&#x2F;h3&gt;
 &lt;p&gt;Another free book, &lt;a href=&quot;http:&#x2F;&#x2F;www.redbook.io&#x2F;&quot;&gt;Readings in Database Systems&lt;&#x2F;a&gt; is a great read if you are looking for an opinionated and short review on subject like architecture, engines, analytics and so on.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Readings in Database Systems (commonly known as the &amp;quot;Red Book&amp;quot;) has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.&lt;&#x2F;p&gt;
+&lt;p&gt;Readings in Database Systems (commonly known as the &quot;Red Book&quot;) has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;h2 id=&quot;watching-tv&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watching-tv&quot; aria-label=&quot;Anchor link for: watching-tv&quot;&gt;🔗&lt;&#x2F;a&gt;Watching 📺&lt;&#x2F;h2&gt;
 &lt;h3 id=&quot;cmu-database-group&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cmu-database-group&quot; aria-label=&quot;Anchor link for: cmu-database-group&quot;&gt;🔗&lt;&#x2F;a&gt;CMU Database Group&lt;&#x2F;h3&gt;
@@ -306,7 +306,7 @@
 &lt;p&gt;which are the best lectures about database in my opinion.&lt;&#x2F;p&gt;
 &lt;p&gt;I also recommend their Quarantine database talks playlists:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;the &amp;quot;Quarantine Database Tech Talks&amp;quot; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.&lt;&#x2F;p&gt;
+&lt;p&gt;the &quot;Quarantine Database Tech Talks&quot; is a on-line seminar series at Carnegie Mellon University with leading developers and researchers of database systems. Each speaker will present the implementation details of their respective systems and examples of the technical challenges that they faced when working with real-world customers.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLSE8ODhjZXjbeqnfuvp30VrI7VXiFuOXS&quot;&gt;Vaccination Database Tech Talks First Dose&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -341,7 +341,7 @@
 &lt;h3 id=&quot;maelstrom&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#maelstrom&quot; aria-label=&quot;Anchor link for: maelstrom&quot;&gt;🔗&lt;&#x2F;a&gt;Maelstrom&lt;&#x2F;h3&gt;
 &lt;p&gt;Ever wonder to develop your own toy distributed systems? Fear no more, you can use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jepsen-io&#x2F;maelstrom&quot;&gt;Maelstrom&lt;&#x2F;a&gt; for that!&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &amp;quot;a commutative set&amp;quot; or &amp;quot;a transactional key-value store&amp;quot;, and lets you learn by writing implementations which those test suites can exercise. It&#x27;s used as a part of a distributed systems workshop by Jepsen.&lt;&#x2F;p&gt;
+&lt;p&gt;Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like &quot;a commutative set&quot; or &quot;a transactional key-value store&quot;, and lets you learn by writing implementations which those test suites can exercise. It&#x27;s used as a part of a distributed systems workshop by Jepsen.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Maelstrom provides a range of tests for different kinds of distributed systems, built on top of a simple JSON protocol via STDIN and STDOUT. Users write servers in any language. Maelstrom runs those servers, sends them requests, routes messages via a simulated network, and checks that clients observe expected behavior. You want to write Plumtree in Bash? Byzantine Paxos in Intercal? Maelstrom is for you.&lt;&#x2F;p&gt;
@@ -373,7 +373,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -392,11 +392,11 @@
 &lt;&#x2F;ul&gt;
 &lt;p&gt;If you need more information on &lt;code&gt;row keys&lt;&#x2F;code&gt;, I recommend going through these links before moving on:&lt;&#x2F;p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;bigtable&#x2F;docs&#x2F;schema-design&quot;&gt;&amp;quot;Designing your schema&amp;quot; BigTable documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#rowkey.design&quot;&gt;&amp;quot;Rowkey Design&amp;quot; HBase documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;bigtable&#x2F;docs&#x2F;schema-design&quot;&gt;&quot;Designing your schema&quot; BigTable documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#rowkey.design&quot;&gt;&quot;Rowkey Design&quot; HBase documentation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;h2 id=&quot;hand-crafting-row-keys&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hand-crafting-row-keys&quot; aria-label=&quot;Anchor link for: hand-crafting-row-keys&quot;&gt;🔗&lt;&#x2F;a&gt;Hand-crafting row keys&lt;&#x2F;h2&gt;
-&lt;p&gt;Most of the time, you will need to craft the &lt;code&gt;row key&lt;&#x2F;code&gt; &amp;quot;by hand&amp;quot;, like this for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;senx&#x2F;warp10-platform&#x2F;blob&#x2F;879734d7f63791b487f3e535cd79ac4c23e99377&#x2F;warp10&#x2F;src&#x2F;main&#x2F;java&#x2F;io&#x2F;warp10&#x2F;continuum&#x2F;store&#x2F;Store.java#L1215-L1222&quot;&gt;an HBase&#x27;s app&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;p&gt;Most of the time, you will need to craft the &lt;code&gt;row key&lt;&#x2F;code&gt; &quot;by hand&quot;, like this for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;senx&#x2F;warp10-platform&#x2F;blob&#x2F;879734d7f63791b487f3e535cd79ac4c23e99377&#x2F;warp10&#x2F;src&#x2F;main&#x2F;java&#x2F;io&#x2F;warp10&#x2F;continuum&#x2F;store&#x2F;Store.java#L1215-L1222&quot;&gt;an HBase&#x27;s app&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Prefix + classId + labelsId + timestamp
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; 128 bits
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;byte[]&lt;&#x2F;span&gt;&lt;span&gt; rowkey = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new byte&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Constants&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;HBASE_RAW_DATA_KEY_PREFIX&lt;&#x2F;span&gt;&lt;span&gt;.length + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8 &lt;&#x2F;span&gt;&lt;span&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8 &lt;&#x2F;span&gt;&lt;span&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;];
@@ -521,7 +521,7 @@
 &lt;&#x2F;span&gt;&lt;span&gt;    0xFF, &#x2F;&#x2F; biggest possible byte
 &lt;&#x2F;span&gt;&lt;span&gt;]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;Which make sens, if we take &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42)&lt;&#x2F;code&gt; as a prefix, then the range for this subspace will be between &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42, 0x00)&lt;&#x2F;code&gt; and &lt;code&gt;(&amp;quot;tenant-1&amp;quot;, 42, 0xFF)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Which make sens, if we take &lt;code&gt;(&quot;tenant-1&quot;, 42)&lt;&#x2F;code&gt; as a prefix, then the range for this subspace will be between &lt;code&gt;(&quot;tenant-1&quot;, 42, 0x00)&lt;&#x2F;code&gt; and &lt;code&gt;(&quot;tenant-1&quot;, 42, 0xFF)&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;directory&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#directory&quot; aria-label=&quot;Anchor link for: directory&quot;&gt;🔗&lt;&#x2F;a&gt;Directory&lt;&#x2F;h3&gt;
 &lt;p&gt;Now that we know our way around &lt;code&gt;Tuples&lt;&#x2F;code&gt; and &lt;code&gt;Subspaces&lt;&#x2F;code&gt;, we can now talk about what I&#x27;m working on, which is the &lt;code&gt;Directory&lt;&#x2F;code&gt;. Let&#x27;s have a look at the relevant &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;developer-guide.html#directories&quot;&gt;documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -539,7 +539,7 @@
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fmt&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Printf&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;%+v&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;\n&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;subspace&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Bytes&lt;&#x2F;span&gt;&lt;span&gt;())
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; [21 18]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;We can see that we have a shorter subspace! The &lt;code&gt;directory&lt;&#x2F;code&gt; allows you to generate some integer that will be bind to a path, like here &lt;code&gt;&amp;quot;application&amp;quot;, &amp;quot;my-app&amp;quot;, &amp;quot;tenant&amp;quot;, &amp;quot;tenant-42&amp;quot;&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;We can see that we have a shorter subspace! The &lt;code&gt;directory&lt;&#x2F;code&gt; allows you to generate some integer that will be bind to a path, like here &lt;code&gt;&quot;application&quot;, &quot;my-app&quot;, &quot;tenant&quot;, &quot;tenant-42&quot;&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;There are two advantages to this:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;shorter keys,&lt;&#x2F;li&gt;
@@ -581,7 +581,7 @@
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -824,7 +824,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -833,7 +833,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <id>https://pierrezemb.fr/posts/ten-years-programming/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/ten-years-programming/">&lt;p&gt;I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;learning-to-program-man-skin-tone-2-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-to-program-man-skin-tone-2-computer&quot; aria-label=&quot;Anchor link for: learning-to-program-man-skin-tone-2-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Learning to program 👨🏻‍💻&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;learning-to-program-man-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-to-program-man-computer&quot; aria-label=&quot;Anchor link for: learning-to-program-man-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Learning to program 👨🏻‍💻&lt;&#x2F;h2&gt;
 &lt;p&gt;I wrote my first &lt;em&gt;Hello, world&lt;&#x2F;em&gt; program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.&lt;&#x2F;p&gt;
 &lt;p&gt;I also discovered Linux around that time, and spent many nights playing with Linux commands. I started my journey to Linux with Centos and then Ubuntu 11.04. I think this started the loop I’m (still!) stuck in:
 &lt;code&gt;for {tryNewDistro()}&lt;&#x2F;code&gt;
@@ -912,7 +912,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -982,7 +982,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -1000,7 +1000,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
-&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &amp;quot;Aphyr&amp;quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &quot;Aphyr&quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -1205,7 +1205,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -1416,7 +1416,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -1429,7 +1429,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;sijieg&quot;&gt;Sijie Guo&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;Jia_Zhai&quot;&gt;Jia Zhai&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Pierre Zemb&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the illustrations!&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-1.png&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;We are excited to announce that StreamNative and OVHcloud are open-sourcing &amp;quot;Kafka on Pulsar&amp;quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&#x27;s powerful features, such as:&lt;&#x2F;p&gt;
+&lt;p&gt;We are excited to announce that StreamNative and OVHcloud are open-sourcing &quot;Kafka on Pulsar&quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&#x27;s powerful features, such as:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Streamlined operations with enterprise-grade multi-tenancy&lt;&#x2F;li&gt;
 &lt;li&gt;Simplified operations with a rebalance-free architecture&lt;&#x2F;li&gt;
@@ -1447,7 +1447,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;p&gt;As a result, OVHcloud decided to shift and build the foundation of their topic-as-a-service product, called ioStream, on Pulsar instead of Kafka. Pulsar&#x27;s multi-tenancy and the overall architecture with Apache Bookkeeper simplified operations compared to Kafka.&lt;&#x2F;p&gt;
 &lt;p&gt;After spawning the first region, OVHcloud decided to implement it as a proof-of-concept proxy capable of transforming the Kafka protocol to Pulsar on the fly. During this process, OVHcloud discovered that StreamNative was working on bringing the Kafka protocol natively to Pulsar, and they joined forces to develop KoP.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-2.png&quot; alt=&quot;kop image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &amp;quot;kafka&amp;quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
+&lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &quot;kafka&quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-distributed-log&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-distributed-log&quot; aria-label=&quot;Anchor link for: the-distributed-log&quot;&gt;🔗&lt;&#x2F;a&gt;The distributed log&lt;&#x2F;h2&gt;
 &lt;p&gt;Both Pulsar and Kafka share a very similar data model around &lt;strong&gt;log&lt;&#x2F;strong&gt; for both pub&#x2F;sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a &lt;strong&gt;segment&lt;&#x2F;strong&gt;-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&#x27;s &lt;em&gt;segment&lt;&#x2F;em&gt; based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in &lt;a href=&quot;https:&#x2F;&#x2F;www.splunk.com&#x2F;en_us&#x2F;blog&#x2F;it&#x2F;comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html&quot;&gt;this Splunk blog&lt;&#x2F;a&gt; and in &lt;a href=&quot;http:&#x2F;&#x2F;bookkeeper.apache.org&#x2F;distributedlog&#x2F;technical-review&#x2F;2016&#x2F;09&#x2F;19&#x2F;kafka-vs-distributedlog.html&quot;&gt;this blog from the Bookkeeper project&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar&#x27;s distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).&lt;&#x2F;p&gt;
@@ -1501,7 +1501,7 @@ The following figure illustrates how we add the Kafka protocol support within Pu
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -1606,7 +1606,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -1910,7 +1910,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2091,7 +2091,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2168,7 +2168,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2186,7 +2186,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;p&gt;Hadoop is based on a Google&#x27;s paper called &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;gfs-sosp2003.pdf&quot;&gt;The Google File System&lt;&#x2F;a&gt; published in 2003. There are some key-elements on this paper:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;It was designed to be deployed with &lt;a href=&quot;https:&#x2F;&#x2F;ai.google&#x2F;research&#x2F;pubs&#x2F;pub43438&quot;&gt;Borg&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
-&lt;li&gt;to &amp;quot;&lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;simplify the overall design problem&lt;&#x2F;a&gt;&amp;quot;, they:
+&lt;li&gt;to &quot;&lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;simplify the overall design problem&lt;&#x2F;a&gt;&quot;, they:
 &lt;ul&gt;
 &lt;li&gt;implemented a single master architecture&lt;&#x2F;li&gt;
 &lt;li&gt;dropped the idea of a full POSIX-compliant file system&lt;&#x2F;li&gt;
@@ -2213,11 +2213,11 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;p&gt;Despite all the issues, Hadoop is still relevant for some usecases, such as Map&#x2F;Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blog.twitter.com&#x2F;engineering&#x2F;en_us&#x2F;topics&#x2F;infrastructure&#x2F;2017&#x2F;the-infrastructure-behind-twitter-scale.html&quot;&gt;Twitter has multiple clusters storing over 500 PB (2017)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;whereas Google prefered to &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;&amp;quot;Scaled to approximately 50M files, 10P&amp;quot; to avoid &amp;quot;added management overhead&amp;quot; brought by the scaling.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;whereas Google prefered to &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;&quot;Scaled to approximately 50M files, 10P&quot; to avoid &quot;added management overhead&quot; brought by the scaling.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.&lt;&#x2F;p&gt;
-&lt;p&gt;Google&#x27;s developers were&#x2F;are deploying applications into &amp;quot;containers&amp;quot;, meaning that &lt;strong&gt;any process could be spawned somewhere into the cloud&lt;&#x2F;strong&gt;. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that &lt;strong&gt;processes don&#x27;t need to worry about replication&lt;&#x2F;strong&gt; (like Bigtable&#x2F;HBase).&lt;&#x2F;p&gt;
-&lt;p&gt;This is a promise that, I think, was forgotten. In a world where Kubernetes &lt;em&gt;seems&lt;&#x2F;em&gt; to be the standard, &lt;strong&gt;the need of a global distributed file-system is now higher than before&lt;&#x2F;strong&gt;. By providing a &amp;quot;file-system&amp;quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:&lt;&#x2F;p&gt;
+&lt;p&gt;Google&#x27;s developers were&#x2F;are deploying applications into &quot;containers&quot;, meaning that &lt;strong&gt;any process could be spawned somewhere into the cloud&lt;&#x2F;strong&gt;. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that &lt;strong&gt;processes don&#x27;t need to worry about replication&lt;&#x2F;strong&gt; (like Bigtable&#x2F;HBase).&lt;&#x2F;p&gt;
+&lt;p&gt;This is a promise that, I think, was forgotten. In a world where Kubernetes &lt;em&gt;seems&lt;&#x2F;em&gt; to be the standard, &lt;strong&gt;the need of a global distributed file-system is now higher than before&lt;&#x2F;strong&gt;. By providing a &quot;file-system&quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?&lt;&#x2F;li&gt;
 &lt;li&gt;Should I be moving that persistent volume over my slow network?&lt;&#x2F;li&gt;
@@ -2226,13 +2226,13 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;h2 id=&quot;well-let-s-put-hadoop-in-kubernetes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#well-let-s-put-hadoop-in-kubernetes&quot; aria-label=&quot;Anchor link for: well-let-s-put-hadoop-in-kubernetes&quot;&gt;🔗&lt;&#x2F;a&gt;Well, let&#x27;s put Hadoop in Kubernetes&lt;&#x2F;h2&gt;
 &lt;p&gt;Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:&lt;&#x2F;p&gt;
 &lt;ul&gt;
-&lt;li&gt;Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;helm&#x2F;charts&#x2F;tree&#x2F;master&#x2F;stable&#x2F;hadoop&quot;&gt;Helm chart for Hadoop is limited to YARN and Map&#x2F;Reduce and &amp;quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&amp;quot;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &amp;quot;day-zero to day-two&amp;quot; good experience,&lt;&#x2F;li&gt;
+&lt;li&gt;Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;helm&#x2F;charts&#x2F;tree&#x2F;master&#x2F;stable&#x2F;hadoop&quot;&gt;Helm chart for Hadoop is limited to YARN and Map&#x2F;Reduce and &quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &quot;day-zero to day-two&quot; good experience,&lt;&#x2F;li&gt;
 &lt;li&gt;Google seems to &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=16971959&quot;&gt;not be using the Operators design internally&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.ibm.com&#x2F;cloud&#x2F;blog&#x2F;new-builders&#x2F;database-deep-dives-couchdb&quot;&gt;CouchDB developers&lt;&#x2F;a&gt; are saying that:
 &lt;ul&gt;
-&lt;li&gt;&amp;quot;For certain workloads, the technology isn’t quite there yet&amp;quot;&lt;&#x2F;li&gt;
-&lt;li&gt;&amp;quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&amp;quot;&lt;&#x2F;li&gt;
+&lt;li&gt;&quot;For certain workloads, the technology isn’t quite there yet&quot;&lt;&#x2F;li&gt;
+&lt;li&gt;&quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&quot;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
@@ -2259,10 +2259,10 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;p&gt;The &amp;quot;all in RAM&amp;quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&#x27;t had a lof of options for a scalable and rock-solid datastore &lt;strong&gt;beside BigTable&lt;&#x2F;strong&gt;. When you think about it, a key&#x2F;value datastore is a great replacement for a distributed file-system master:&lt;&#x2F;p&gt;
+&lt;p&gt;The &quot;all in RAM&quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&#x27;t had a lof of options for a scalable and rock-solid datastore &lt;strong&gt;beside BigTable&lt;&#x2F;strong&gt;. When you think about it, a key&#x2F;value datastore is a great replacement for a distributed file-system master:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;automatic sharding of regions,&lt;&#x2F;li&gt;
-&lt;li&gt;scan capabilities for files in the same &amp;quot;directory&amp;quot;,&lt;&#x2F;li&gt;
+&lt;li&gt;scan capabilities for files in the same &quot;directory&quot;,&lt;&#x2F;li&gt;
 &lt;li&gt;lexical ordering,&lt;&#x2F;li&gt;
 &lt;li&gt;...&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
@@ -2296,7 +2296,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;p&gt;What is that &amp;quot;D&amp;quot;?&lt;&#x2F;p&gt;
+&lt;p&gt;What is that &quot;D&quot;?&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;landing.google.com&#x2F;sre&#x2F;sre-book&#x2F;chapters&#x2F;production-environment&#x2F;&quot;&gt;The Production Environment at Google, from the Viewpoint of an SRE&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -2324,7 +2324,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;p&gt;I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Reimplement D may be easy, my current question is &lt;strong&gt;how far can we use modern FS such as OpenZFS&lt;&#x2F;strong&gt; to facilitate the work? FS capabilities such as &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;zfsonlinux&#x2F;zfs&#x2F;wiki&#x2F;Checksums&quot;&gt;OpenZFS checksums&lt;&#x2F;a&gt; seems pretty interesting.&lt;&#x2F;li&gt;
-&lt;li&gt;To resolve the distributed master issue, we could use &lt;a href=&quot;https:&#x2F;&#x2F;tikv.org&#x2F;&quot;&gt;Tikv&lt;&#x2F;a&gt; as a building block to provide an &amp;quot;BigTable experience&amp;quot; without the need of a distributed file-system underneath.&lt;&#x2F;li&gt;
+&lt;li&gt;To resolve the distributed master issue, we could use &lt;a href=&quot;https:&#x2F;&#x2F;tikv.org&#x2F;&quot;&gt;Tikv&lt;&#x2F;a&gt; as a building block to provide an &quot;BigTable experience&quot; without the need of a distributed file-system underneath.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;But remember:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -2343,7 +2343,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2454,7 +2454,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2462,7 +2462,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"/>
         <id>https://pierrezemb.fr/posts/ovh-alerts-flink/</id>
         
-        <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&#x27;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
+        <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&amp;#39;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;h1 id=&quot;handling-ovh-s-alerts-with-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-ovh-s-alerts-with-apache-flink&quot; aria-label=&quot;Anchor link for: handling-ovh-s-alerts-with-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;Handling OVH&#x27;s alerts with Apache Flink&lt;&#x2F;h1&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;001-1.png?x70472&quot; alt=&quot;OVH &amp;amp; Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;OVH relies extensively on &lt;strong&gt;metrics&lt;&#x2F;strong&gt; to effectively monitor its entire stack. Whether they are &lt;strong&gt;low-level&lt;&#x2F;strong&gt; or &lt;strong&gt;business&lt;&#x2F;strong&gt; centric, they allow teams to gain &lt;strong&gt;insight&lt;&#x2F;strong&gt; into how our services are operating on a daily basis. The need to store &lt;strong&gt;millions of datapoints per second&lt;&#x2F;strong&gt; has produced the need to create a dedicated team to build a operate a product to handle that load: &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;**Metrics Data Platform&lt;&#x2F;a&gt;.&lt;strong&gt;By relying on &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;**Apache Hbase&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;&quot;&gt;Apache Kafka&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;www.warp10.io&#x2F;&quot;&gt;&lt;strong&gt;Warp 10&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!&lt;&#x2F;p&gt;
@@ -2547,7 +2547,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2566,7 +2566,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;li&gt;What is happening if two users are  &lt;strong&gt;updating a value at the same time?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;As a database user, we are using &lt;code&gt;transactions&lt;&#x2F;code&gt; to answer these questions. As a developer, a transaction is a &lt;strong&gt;single unit of logic or work&lt;&#x2F;strong&gt;, sometimes made up of multiple operations. It is mainly an &lt;strong&gt;abstraction&lt;&#x2F;strong&gt; that we are using to &lt;strong&gt;hide underlying problems&lt;&#x2F;strong&gt;, such as concurrency or hardware faults.&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;code&gt;ACID&lt;&#x2F;code&gt; appears in a paper published in 1983 called &lt;a href=&quot;https:&#x2F;&#x2F;sites.fas.harvard.edu&#x2F;~cs265&#x2F;papers&#x2F;haerder-1983.pdf&quot;&gt;&amp;quot;Principles of transaction-oriented database recovery&amp;quot;&lt;&#x2F;a&gt; written by &lt;em&gt;Theo Haerder&lt;&#x2F;em&gt; and &lt;em&gt;Andreas Reuter&lt;&#x2F;em&gt;. This paper introduce a terminology of properties for a transaction:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;ACID&lt;&#x2F;code&gt; appears in a paper published in 1983 called &lt;a href=&quot;https:&#x2F;&#x2F;sites.fas.harvard.edu&#x2F;~cs265&#x2F;papers&#x2F;haerder-1983.pdf&quot;&gt;&quot;Principles of transaction-oriented database recovery&quot;&lt;&#x2F;a&gt; written by &lt;em&gt;Theo Haerder&lt;&#x2F;em&gt; and &lt;em&gt;Andreas Reuter&lt;&#x2F;em&gt;. This paper introduce a terminology of properties for a transaction:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;A&lt;&#x2F;strong&gt;tomic, &lt;strong&gt;C&lt;&#x2F;strong&gt;onsistency, &lt;strong&gt;I&lt;&#x2F;strong&gt;solation, &lt;strong&gt;D&lt;&#x2F;strong&gt;urability&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -2614,7 +2614,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2625,7 +2625,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;Apache HBase™&lt;&#x2F;a&gt; is a type of &amp;quot;NoSQL&amp;quot; database. &amp;quot;NoSQL&amp;quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &amp;quot;Data Store&amp;quot; than &amp;quot;Data Base&amp;quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;Apache HBase™&lt;&#x2F;a&gt; is a type of &quot;NoSQL&quot; database. &quot;NoSQL&quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#arch.overview.nosql&quot;&gt;Hbase architecture overview&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;hbase-data-model&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-data-model&quot; aria-label=&quot;Anchor link for: hbase-data-model&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase data model&lt;&#x2F;h2&gt;
@@ -2639,7 +2639,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;li&gt;Values are stored into what we call a &lt;strong&gt;cell&lt;&#x2F;strong&gt; and are versioned with a timestamp.&lt;&#x2F;li&gt;
 &lt;li&gt;A column is divided between a &lt;strong&gt;Column Family&lt;&#x2F;strong&gt; and a &lt;strong&gt;Column Qualifier&lt;&#x2F;strong&gt;. Long story short, a Column Family is kind of like a column in classic SQL, and a qualifier is a sub-structure inside a Colum family. A column Family is &lt;strong&gt;static&lt;&#x2F;strong&gt;, you need to create it during table creation, whereas Column Qualifiers can be created on the fly.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;p&gt;Not as easy as you thought? Here&#x27;s an example! Let&#x27;s say that we&#x27;re trying to &lt;strong&gt;save the whole internet&lt;&#x2F;strong&gt;. To do this, we need to store the content of each pages, and versioned it. We can use &lt;strong&gt;the page address as the row key&lt;&#x2F;strong&gt; and store the contents in a &lt;strong&gt;column called &amp;quot;Contents&amp;quot;&lt;&#x2F;strong&gt;. Nowadays, website &lt;strong&gt;contents can be anything&lt;&#x2F;strong&gt;, from a HTML file to a binary such as a PDF. To handle that, we can create as many &lt;strong&gt;qualifiers&lt;&#x2F;strong&gt; as we want, such as &amp;quot;content:html&amp;quot; or &amp;quot;content:video&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Not as easy as you thought? Here&#x27;s an example! Let&#x27;s say that we&#x27;re trying to &lt;strong&gt;save the whole internet&lt;&#x2F;strong&gt;. To do this, we need to store the content of each pages, and versioned it. We can use &lt;strong&gt;the page address as the row key&lt;&#x2F;strong&gt; and store the contents in a &lt;strong&gt;column called &quot;Contents&quot;&lt;&#x2F;strong&gt;. Nowadays, website &lt;strong&gt;contents can be anything&lt;&#x2F;strong&gt;, from a HTML file to a binary such as a PDF. To handle that, we can create as many &lt;strong&gt;qualifiers&lt;&#x2F;strong&gt; as we want, such as &quot;content:html&quot; or &quot;content:video&quot;.&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
 &lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;fr.pierrezemb.www&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Row key
 &lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;contents&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {                 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Column family
@@ -2658,7 +2658,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;&#x2F;span&gt;&lt;span&gt;}
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;h2 id=&quot;key-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design&quot; aria-label=&quot;Anchor link for: key-design&quot;&gt;🔗&lt;&#x2F;a&gt;Key design&lt;&#x2F;h2&gt;
-&lt;p&gt;Hbase is most efficient at queries when we&#x27;re getting a &lt;strong&gt;single row key&lt;&#x2F;strong&gt;, or during &lt;strong&gt;row range&lt;&#x2F;strong&gt;, ie. getting a block of contiguous data because keys are &lt;strong&gt;sorted lexicographically by row key&lt;&#x2F;strong&gt;. For example, my website &lt;code&gt;fr.pierrezemb.www&lt;&#x2F;code&gt; and &lt;code&gt;org.pierrezemb.www&lt;&#x2F;code&gt; would not be &amp;quot;near&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Hbase is most efficient at queries when we&#x27;re getting a &lt;strong&gt;single row key&lt;&#x2F;strong&gt;, or during &lt;strong&gt;row range&lt;&#x2F;strong&gt;, ie. getting a block of contiguous data because keys are &lt;strong&gt;sorted lexicographically by row key&lt;&#x2F;strong&gt;. For example, my website &lt;code&gt;fr.pierrezemb.www&lt;&#x2F;code&gt; and &lt;code&gt;org.pierrezemb.www&lt;&#x2F;code&gt; would not be &quot;near&quot;.&lt;&#x2F;p&gt;
 &lt;p&gt;As such, the &lt;strong&gt;key design&lt;&#x2F;strong&gt; is really important:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;If your data are too spread, you will have poor performance.&lt;&#x2F;li&gt;
@@ -2673,7 +2673,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;be-warned&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#be-warned&quot; aria-label=&quot;Anchor link for: be-warned&quot;&gt;🔗&lt;&#x2F;a&gt;Be warned&lt;&#x2F;h2&gt;
 &lt;p&gt;I have been working with Hbase for the past three years, &lt;strong&gt;including operation and on-call duty.&lt;&#x2F;strong&gt; It is a really nice data store, but it diverges from classical RDBMS. Here&#x27;s some warnings extracted from the well-written documentation:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;HBase is really more a &amp;quot;Data Store&amp;quot; than &amp;quot;Data Base&amp;quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.&lt;&#x2F;p&gt;
+&lt;p&gt;HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;-- &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#arch.overview.nosql&quot;&gt;NoSQL?&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -2693,7 +2693,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2783,7 +2783,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2919,7 +2919,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
@@ -2997,7 +2997,7 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <author>
           <name>
             
-              Unknown
+              Pierre Zemb
             
           </name>
         </author>
