@@ -7,7 +7,20 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/personal/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Wed, 30 Sep 2020 00:24:27 +0100</lastBuildDate>
+      <lastBuildDate>Wed, 15 Jan 2025 00:37:27 +0100</lastBuildDate>
+      <item>
+          <title>Back in engineering!</title>
+          <pubDate>Wed, 15 Jan 2025 00:37:27 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/back-engineering/</link>
+          <guid>https://pierrezemb.fr/posts/back-engineering/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/back-engineering/">&lt;p&gt;Time flies—it’s already 2025! Looking back, 2024 was an incredibly fast-paced year for me professionally as an Engineering Manager. This year, I’ve decided to take a new direction and return to a more engineering-focused role.&lt;&#x2F;p&gt;
+&lt;p&gt;I moved in a management position early 2023. It was a time where my company was growing fast (from 20-ish to 60-ish), and we needed coordination to ship things out in parallel, but also to &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;company&#x2F;2023&#x2F;12&#x2F;21&#x2F;our-journey-to-a-better-clever-cloud&#x2F;&quot;&gt;migrate customers (and ourselves!) to new datacenters&lt;&#x2F;a&gt;. With my on-call experience, I helped our CTO, Steven, bootstrap two data-oriented teams and later led the Materia team, shaping its technology.&lt;&#x2F;p&gt;
+&lt;p&gt;During this time, we successfully launched &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;features&#x2F;2024&#x2F;06&#x2F;11&#x2F;materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all&#x2F;&quot;&gt;Materia KV in its Alpha version&lt;&#x2F;a&gt; and built strong internal trust in FoundationDB. Our largest cluster effortlessly handles hundreds of thousands of writes per second, and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;tree&#x2F;main&#x2F;foundationdb-simulation&quot;&gt;the ability to simulate Rust code within FDB’s simulation framework&lt;&#x2F;a&gt; has significantly boosted our developers&#x27; confidence.&lt;&#x2F;p&gt;
+&lt;p&gt;Management is a rewarding challenge, like unlocking a new skill tree to walk through. Resources like &lt;a href=&quot;https:&#x2F;&#x2F;www.oreilly.com&#x2F;library&#x2F;view&#x2F;the-managers-path&#x2F;9781491973882&#x2F;&quot;&gt;The Manager&#x27;s Path&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;www.engmanagement.dev&quot;&gt;Engineering Management for the Rest of Us&lt;&#x2F;a&gt; can give you a head-start and should be read by anyone. Blogs like &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;tag&#x2F;management&#x2F;page&#x2F;2&#x2F;&quot;&gt;Charity Majors&lt;&#x2F;a&gt; are also useful to read, especially &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;2017&#x2F;05&#x2F;11&#x2F;the-engineer-manager-pendulum&#x2F;&quot;&gt;The Engineer&#x2F;Manager Pendulum&lt;&#x2F;a&gt; and its &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;2019&#x2F;01&#x2F;04&#x2F;engineering-management-the-pendulum-or-the-ladder&#x2F;&quot;&gt;follow-up&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;After nearly two years, I feel it&#x27;s the right time to return to core engineering. I just miss it.  From the start, my manager and I had an understanding that I could transition back whenever I wanted to—and that time is now. I&#x27;ve found an excellent manager to lead the team, giving me the space to focus on the technical side of Materia. I also should have more time to work around open-source, and I&#x27;m looking forward to it.&lt;&#x2F;p&gt;
+</description>
+      </item>
       <item>
           <title>10 years of programming and counting 🚀</title>
           <pubDate>Wed, 30 Sep 2020 00:24:27 +0100</pubDate>
