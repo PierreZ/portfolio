@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
+<meta name="description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
+<meta property="og:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate"> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/providing-safety-fdb-rs/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Ensuring Safety in FoundationDB&#x27;s Rust Crate</h1>
+      <p>
+        <i>
+          <time datetime="2025-02-11T00:00:00+01:00" pubdate>11 Feb, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#crate-overview">Crate Overview</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#libfdb-safety">libfdb Safety</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#classic-testing-suite">Classic testing suite</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#the-bindingtester">The BindingTester</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#user-safety">User Safety</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#closing-words">Closing words</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>As we approach 5 million downloads of the <a href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.</p>
+<h2 id="crate-overview"><a class="zola-anchor" href="#crate-overview" aria-label="Anchor link for: crate-overview">🔗</a>Crate Overview</h2>
+<p>The Rust crate, <code>foundationdb-rs</code>, provides bindings to interact with FoundationDB's C API (<code>libfdb</code>). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:</p>
+<ul>
+<li>The underlying client, <code>libfdb</code>,</li>
+<li>The crate itself,</li>
+<li>The code that uses the crate.</li>
+</ul>
+<p>Let's dig into each of these areas.</p>
+<h2 id="libfdb-safety"><a class="zola-anchor" href="#libfdb-safety" aria-label="Anchor link for: libfdb-safety">🔗</a>libfdb Safety</h2>
+<p>This is the simplest part. <code>libfdb</code>'s safety is guaranteed by FoundationDB's <a href="https://apple.github.io/foundationdb/testing.html">simulation framework</a>. Therefore, we can consider it safe.</p>
+<h3 id="classic-testing-suite"><a class="zola-anchor" href="#classic-testing-suite" aria-label="Anchor link for: classic-testing-suite">🔗</a>Classic testing suite</h3>
+<p>Since we are using a C library, we need to use FFI (Foreign Function Interface) and unsafe code blocks. With around 130 unsafe blocks, we must be extra careful when calling C code, ensuring all preconditions are met. Naturally, we conduct extensive testing, but most importantly, we run tests in high-variety environments:</p>
+<ul>
+<li>On multiple operating systems (Ubuntu, macOS)</li>
+<li>On multiple FoundationDB versions (from FDB 6.1 to 7.3)</li>
+<li>On multiple Rust compiler versions (Minimum Supported Rust Version or MSRV, stable, beta, nightly)</li>
+</ul>
+<p>The most useful tests are run on the nightly Rust compiler, as we can catch <a href="https://github.com/foundationdb-rs/foundationdb-rs/issues/90">new behaviors in the Rust compiler early</a>.</p>
+<p>While these testing practices provide significant coverage, the most powerful tool we utilize comes from FoundationDB’s maintainers: the <code>BindingTester</code>.</p>
+<h3 id="the-bindingtester"><a class="zola-anchor" href="#the-bindingtester" aria-label="Anchor link for: the-bindingtester">🔗</a>The BindingTester</h3>
+<p>FoundationDB is renowned for its <a href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
+<p>The BindingTester uses <a href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
+<p>It looks like this:</p>
+<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>./bindings/bindingtester/bindingtester.py --num-ops 1000 --api-version 730 --test-name api --compare python rust
+</span><span>
+</span><span>Creating test at API version 730
+</span><span>Generating api test at seed 3208032894 with 1000 op(s) and 1 concurrent tester(s)...
+</span><span>
+</span><span># Inserting Rust tests
+</span><span>Inserting test into database...
+</span><span>Running tester &#39;/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730&#39;...
+</span><span>
+</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
+</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
+</span><span>
+</span><span># Inserting Python tests
+</span><span>Inserting test into database...
+</span><span>Running tester &#39;python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730&#39;...
+</span><span>
+</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
+</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
+</span><span>
+</span><span># Comparing the results
+</span><span>Comparing results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
+</span><span>Comparing results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
+</span><span>Test with seed 3208032894 and concurrency 1 had 0 incorrect result(s) and 0 error(s) at API version 730
+</span><span>Completed api test with random seed 3208032894 and 1000 operations
+</span></code></pre>
+<p>The great advantage of this method is that the tests are seeded, meaning the operations are:</p>
+<ul>
+<li>randomly selected to cover all binding usages,</li>
+<li>deterministic, so a failing seed can be replayed locally.</li>
+</ul>
+<p>Combined with code coverage, this gives us a good idea of what has been tested (though code coverage may vary).</p>
+<p>We run the <code>BindingTester</code> <strong>every hour</strong> on our GitHub actions, amounting to <strong>around 219 days of continuous testing each month</strong> (316,335 minutes of correctness last month according to Github).</p>
+<h2 id="user-safety"><a class="zola-anchor" href="#user-safety" aria-label="Anchor link for: user-safety">🔗</a>User Safety</h2>
+<p>Thanks to <code>libfdb</code> and the <code>BindingTester</code>, we can ensure that the library is quite safe. But what about the user's code? How can we help users ensure their code can handle all of FoundationDB's caveats, such as <a href="/posts/automatic-txn-fdb-730/#transactions-with-unknown-results">commit_unknown_result</a>? We added a great feature: the ability to include Rust code <strong>within FDB's simulation framework</strong>.</p>
+<p>We can implement an Rust workload with the following Trait:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub trait </span><span>RustWorkload {
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">description</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; String;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">setup</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">start</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">check</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get_metrics</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; Vec&lt;Metric&gt;;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get_check_timeout</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; </span><span style="color:#b48ead;">f64</span><span>;
+</span><span>}
+</span></code></pre>
+<p>Which can be runned inside the simulation while injecting some faults:</p>
+<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>fdbserver -r simulation -f /root/atomic.toml -b on --trace-format json
+</span><span>
+</span><span># Choosing a random seed
+</span><span>Random seed is 394378360...
+</span><span>
+</span><span># Then, everything is derived from the seed, including:
+</span><span># * cluster topology,
+</span><span># * cluster configuration,
+</span><span># * timing to inject faults,
+</span><span># * operations to run
+</span><span># * ...
+</span><span>Datacenter 0: 3/12 machines, 1/1 coordinators
+</span><span>Datacenter 1: 3/12 machines, 0/1 coordinators
+</span><span>Datacenter 2: 3/12 machines, 0/1 coordinators
+</span><span>Datacenter 3: 3/12 machines, 0/1 coordinators
+</span><span>
+</span><span># Starting the Atomic workload
+</span><span>Run test:AtomicWorkload start
+</span><span>
+</span><span>AtomicWorkload complete
+</span><span>checking test (AtomicWorkload)...
+</span><span>
+</span><span>5 test clients passed; 0 test clients failed
+</span><span>Run test:AtomicWorkload Done.
+</span><span>
+</span><span>1 tests passed; 0 tests failed.
+</span><span>
+</span><span>Unseed: 66324
+</span><span>Elapsed: 405.055622 simsec, 30.342000 real seconds
+</span></code></pre>
+<p>This has been a <strong>major keypoint</strong> for us to develop and operate <a href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
+<h2 id="closing-words"><a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a>Closing words</h2>
+<p>As with any open-source project, there is always more to accomplish, but I am quite satisfied with the current level of safety provided by the crate. I would like to express my gratitude to the FoundationDB community for developing the BindingTester, and former contributors to the crate.</p>
+<p>I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.</p>
+<p>There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the <a href="/tags/simulation/">simulation tags</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
