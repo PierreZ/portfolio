@@ -15,7 +15,7 @@
           <link>https://pierrezemb.fr/posts/fdb-data-distributor/</link>
           <guid>https://pierrezemb.fr/posts/fdb-data-distributor/</guid>
           <description xml:base="https://pierrezemb.fr/posts/fdb-data-distributor/">&lt;p&gt;FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt; plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.&lt;&#x2F;p&gt;
-&lt;p&gt;In this post, we dive into the &lt;strong&gt;Data Distributor&#x27;s&lt;&#x2F;strong&gt; internals, along with practical lessons we learned after debugging during a recent &lt;del&gt;outage&lt;&#x2F;del&gt; deb.&lt;&#x2F;p&gt;
+&lt;p&gt;In this post, we dive into the &lt;strong&gt;Data Distributor&#x27;s&lt;&#x2F;strong&gt; internals, along with practical lessons we learned during a outage.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-the-data-distributor&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-data-distributor&quot; aria-label=&quot;Anchor link for: what-is-the-data-distributor&quot;&gt;🔗&lt;&#x2F;a&gt;What is the Data Distributor?&lt;&#x2F;h2&gt;
 &lt;p&gt;The &lt;strong&gt;Data Distributor (DD)&lt;&#x2F;strong&gt; is &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;architecture.html&quot;&gt;a subsystem&lt;&#x2F;a&gt; responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:&lt;&#x2F;p&gt;
 &lt;ul&gt;

@@ -254,7 +254,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     </details>
   <main>
     <p>FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the <strong>Data Distributor</strong> plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.</p>
-<p>In this post, we dive into the <strong>Data Distributor's</strong> internals, along with practical lessons we learned after debugging during a recent <del>outage</del> deb.</p>
+<p>In this post, we dive into the <strong>Data Distributor's</strong> internals, along with practical lessons we learned during a outage.</p>
 <h2 id="what-is-the-data-distributor"><a class="zola-anchor" href="#what-is-the-data-distributor" aria-label="Anchor link for: what-is-the-data-distributor">🔗</a>What is the Data Distributor?</h2>
 <p>The <strong>Data Distributor (DD)</strong> is <a href="https://apple.github.io/foundationdb/architecture.html">a subsystem</a> responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:</p>
 <ul>
