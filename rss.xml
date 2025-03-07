@@ -7,7 +7,109 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Tue, 11 Feb 2025 00:00:00 +0100</lastBuildDate>
+      <lastBuildDate>Fri, 07 Mar 2025 00:00:00 +0100</lastBuildDate>
+      <item>
+          <title>Debugging FoundationDB&#x27;s Data Distributor</title>
+          <pubDate>Fri, 07 Mar 2025 00:00:00 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/fdb-data-distributor/</link>
+          <guid>https://pierrezemb.fr/posts/fdb-data-distributor/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/fdb-data-distributor/">&lt;p&gt;FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt; plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.&lt;&#x2F;p&gt;
+&lt;p&gt;In this post, we dive into the &lt;strong&gt;Data Distributor&#x27;s&lt;&#x2F;strong&gt; internals, along with practical lessons we learned after debugging during a recent &lt;del&gt;outage&lt;&#x2F;del&gt; deb.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-the-data-distributor&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-data-distributor&quot; aria-label=&quot;Anchor link for: what-is-the-data-distributor&quot;&gt;🔗&lt;&#x2F;a&gt;What is the Data Distributor?&lt;&#x2F;h2&gt;
+&lt;p&gt;The &lt;strong&gt;Data Distributor (DD)&lt;&#x2F;strong&gt; is &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;architecture.html&quot;&gt;a subsystem&lt;&#x2F;a&gt; responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Balancing load across servers&lt;&#x2F;li&gt;
+&lt;li&gt;Handling failures by redistributing data&lt;&#x2F;li&gt;
+&lt;li&gt;Ensuring optimal data placement for performance reliability&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;data-distributor-wording&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#data-distributor-wording&quot; aria-label=&quot;Anchor link for: data-distributor-wording&quot;&gt;🔗&lt;&#x2F;a&gt;Data Distributor wording&lt;&#x2F;h2&gt;
+&lt;p&gt;The architecture and behavior of the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt; are documented in the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;release-7.3&#x2F;design&#x2F;data-distributor-internals.md&quot;&gt;official design document&lt;&#x2F;a&gt;, and introduce the following concepts:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Machine&lt;&#x2F;strong&gt;: A failure domain in FoundationDB, often considered equivalent to a rack.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Shard&lt;&#x2F;strong&gt;: A range of key-values—essentially a contiguous block of the database keyspace.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Server Team&lt;&#x2F;strong&gt;: A group of &lt;code&gt;k&lt;&#x2F;code&gt; processes (where &lt;code&gt;k&lt;&#x2F;code&gt; is the replication factor) hosting the same shard.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Machine Team&lt;&#x2F;strong&gt;: A collection of &lt;code&gt;k&lt;&#x2F;code&gt; machines, ensuring fault isolation for redundancy.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The term &quot;machine&quot; in FoundationDB’s documentation &lt;strong&gt;often translates better as &quot;rack&quot;&lt;&#x2F;strong&gt; in many practical cases. Using racks makes the Machine Team&#x27;s role clearer: it ensures fault isolation by storing copies of data in different racks.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;debug-dd-with-status-json&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#debug-dd-with-status-json&quot; aria-label=&quot;Anchor link for: debug-dd-with-status-json&quot;&gt;🔗&lt;&#x2F;a&gt;Debug DD with &lt;code&gt;status json&lt;&#x2F;code&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Your first input point should be to have a look at the &lt;code&gt;team_trackers&lt;&#x2F;code&gt; key in the &lt;code&gt;status json&lt;&#x2F;code&gt;. The JSON should contain enough information for basic monitoring:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;team_trackers&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;  {
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;primary&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;unhealthy_servers&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;state&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;healthy&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;healthy_rebalancing&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;debug-dd-with-trace-events&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#debug-dd-with-trace-events&quot; aria-label=&quot;Anchor link for: debug-dd-with-trace-events&quot;&gt;🔗&lt;&#x2F;a&gt;Debug DD with Trace events&lt;&#x2F;h2&gt;
+&lt;p&gt;FoundationDB provides a robust tracing system where each process generates detailed events in either XML or JSON formats. To troubleshoot the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt;, you first need to locate the process it has been elected to. From there, trace events can be analyzed to understand shard movements, priorities, and failures.&lt;&#x2F;p&gt;
+&lt;p&gt;One particularly important attribute in these events is the &lt;code&gt;Priority&lt;&#x2F;code&gt; field. This field determines the precedence of shard placement or redistribution tasks:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_RECOVER_MOVE, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;110 &lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_REBALANCE_UNDERUTILIZED_TEAM, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;120 &lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_REBALANCE_OVERUTILIZED_TEAM, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;122 &lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_TEAM_UNHEALTHY, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;700&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_SPLIT_SHARD, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;950 &lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;A full list of defined priorities can be found in the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;release-7.3&#x2F;fdbclient&#x2F;ServerKnobs.cpp#L155-L173&quot;&gt;Knobs file&lt;&#x2F;a&gt;, providing useful insights into how tasks are scheduled.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;serverteaminfo-event&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#serverteaminfo-event&quot; aria-label=&quot;Anchor link for: serverteaminfo-event&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;code&gt;ServerTeamInfo&lt;&#x2F;code&gt; Event&lt;&#x2F;h3&gt;
+&lt;p&gt;Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The &lt;code&gt;fdbcli&lt;&#x2F;code&gt; command &lt;code&gt;triggerddteaminfolog&lt;&#x2F;code&gt; triggers informative logs by invoking &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;release-7.3&#x2F;fdbserver&#x2F;DDTeamCollection.actor.cpp#L3425&quot;&gt;printSnapshotTeamsInfo&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ServerTeamInfo&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Priority&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;709&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Healthy&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamSize&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;MemberIDs&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;5a69... 5fc1... 8718...&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;LoadBytes&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;1135157527&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;MinAvailableSpaceRatio&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;0.94108&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;serverteamprioritychange-event&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#serverteamprioritychange-event&quot; aria-label=&quot;Anchor link for: serverteamprioritychange-event&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;code&gt;ServerTeamPriorityChange&lt;&#x2F;code&gt; Event&lt;&#x2F;h3&gt;
+&lt;p&gt;This event is logged when server team priorities change, often indicating server failures or rebalancing actions.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ServerTeamPriorityChange&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Priority&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;950&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamID&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;e9b362decbafbd81&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;relocateshard-event&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#relocateshard-event&quot; aria-label=&quot;Anchor link for: relocateshard-event&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;code&gt;RelocateShard&lt;&#x2F;code&gt; Event&lt;&#x2F;h3&gt;
+&lt;p&gt;This event tracks shard movement between teams to maintain balance.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;RelocateShard&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Priority&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;120&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; PRIORITY_REBALANCE_UNDERUTILIZED_TEAM
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;RelocationID&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3f1290654949771e&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Again, the most useful field is the priority, indicating why it is relocated.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;valleyfiller-and-mountainchopper-mechanisms&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#valleyfiller-and-mountainchopper-mechanisms&quot; aria-label=&quot;Anchor link for: valleyfiller-and-mountainchopper-mechanisms&quot;&gt;🔗&lt;&#x2F;a&gt;&quot;ValleyFiller&quot; and &quot;MountainChopper&quot; Mechanisms&lt;&#x2F;h3&gt;
+&lt;p&gt;To optimize shard placement, FoundationDB employs two balancing strategies:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ValleyFiller&lt;&#x2F;strong&gt;: Fills underutilized servers (the &lt;strong&gt;valleys&lt;&#x2F;strong&gt;) with data to balance the load.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;MountainChopper&lt;&#x2F;strong&gt;: Redistributes shards from overutilized servers (the &lt;strong&gt;mountains&lt;&#x2F;strong&gt;) to spread the load evenly.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Both logs will have a &lt;code&gt;SourceTeam&lt;&#x2F;code&gt; and &lt;code&gt;DestTeam&lt;&#x2F;code&gt; to use in other traces:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;BgDDValleyFiller&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;QueuedRelocations&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;SourceTeam&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamID 95819f0d3d7ea40d&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;DestTeam&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamID 0817e6fe3135e6f6&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ShardBytes&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;398281250&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;BgDDMountainChopper&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;QueuedRelocations&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;SourceTeam&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamID 95819f0d3d7ea40d&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;DestTeam&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;TeamID e17dcecd86547e09&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ShardBytes&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;308000000&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
       <item>
           <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate</title>
           <pubDate>Tue, 11 Feb 2025 00:00:00 +0100</pubDate>

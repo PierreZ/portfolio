@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debugging FoundationDB&#x27;s Data Distributor | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Debugging FoundationDB&#x27;s Data Distributor">
+<meta name="description" content="A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities.">
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Debugging FoundationDB&#x27;s Data Distributor">
+<meta property="og:description" content="A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities."> 
+
+
+
+<meta property="og:url" content="https://pierrezemb.fr/posts/fdb-data-distributor/"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Debugging FoundationDB&#x27;s Data Distributor</h1>
+      <p>
+        <i>
+          <time datetime="2025-03-07T00:00:00+01:00" pubdate>07 Mar, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#what-is-the-data-distributor">What is the Data Distributor?</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#data-distributor-wording">Data Distributor wording</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#debug-dd-with-status-json">Debug DD with status json</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#debug-dd-with-trace-events">Debug DD with Trace events</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#serverteaminfo-event">ServerTeamInfo Event</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#serverteamprioritychange-event">ServerTeamPriorityChange Event</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#relocateshard-event">RelocateShard Event</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/fdb-data-distributor/#valleyfiller-and-mountainchopper-mechanisms">&quot;ValleyFiller&quot; and &quot;MountainChopper&quot; Mechanisms</a>
+            </li>
+        </ul>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the <strong>Data Distributor</strong> plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.</p>
+<p>In this post, we dive into the <strong>Data Distributor's</strong> internals, along with practical lessons we learned after debugging during a recent <del>outage</del> deb.</p>
+<h2 id="what-is-the-data-distributor"><a class="zola-anchor" href="#what-is-the-data-distributor" aria-label="Anchor link for: what-is-the-data-distributor">🔗</a>What is the Data Distributor?</h2>
+<p>The <strong>Data Distributor (DD)</strong> is <a href="https://apple.github.io/foundationdb/architecture.html">a subsystem</a> responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:</p>
+<ul>
+<li>Balancing load across servers</li>
+<li>Handling failures by redistributing data</li>
+<li>Ensuring optimal data placement for performance reliability</li>
+</ul>
+<h2 id="data-distributor-wording"><a class="zola-anchor" href="#data-distributor-wording" aria-label="Anchor link for: data-distributor-wording">🔗</a>Data Distributor wording</h2>
+<p>The architecture and behavior of the <strong>Data Distributor</strong> are documented in the <a href="https://github.com/apple/foundationdb/blob/release-7.3/design/data-distributor-internals.md">official design document</a>, and introduce the following concepts:</p>
+<ul>
+<li><strong>Machine</strong>: A failure domain in FoundationDB, often considered equivalent to a rack.</li>
+<li><strong>Shard</strong>: A range of key-values—essentially a contiguous block of the database keyspace.</li>
+<li><strong>Server Team</strong>: A group of <code>k</code> processes (where <code>k</code> is the replication factor) hosting the same shard.</li>
+<li><strong>Machine Team</strong>: A collection of <code>k</code> machines, ensuring fault isolation for redundancy.</li>
+</ul>
+<p>The term "machine" in FoundationDB’s documentation <strong>often translates better as "rack"</strong> in many practical cases. Using racks makes the Machine Team's role clearer: it ensures fault isolation by storing copies of data in different racks.</p>
+<h2 id="debug-dd-with-status-json"><a class="zola-anchor" href="#debug-dd-with-status-json" aria-label="Anchor link for: debug-dd-with-status-json">🔗</a>Debug DD with <code>status json</code></h2>
+<p>Your first input point should be to have a look at the <code>team_trackers</code> key in the <code>status json</code>. The JSON should contain enough information for basic monitoring:</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>&quot;</span><span style="color:#a3be8c;">team_trackers</span><span>&quot;: [
+</span><span>  {
+</span><span>    &quot;</span><span style="color:#a3be8c;">primary</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">unhealthy_servers</span><span>&quot;: </span><span style="color:#d08770;">0</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">state</span><span>&quot;: {
+</span><span>      &quot;</span><span style="color:#a3be8c;">healthy</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
+</span><span>      &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">healthy_rebalancing</span><span>&quot;
+</span><span>    }
+</span><span>  }
+</span></code></pre>
+<h2 id="debug-dd-with-trace-events"><a class="zola-anchor" href="#debug-dd-with-trace-events" aria-label="Anchor link for: debug-dd-with-trace-events">🔗</a>Debug DD with Trace events</h2>
+<p>FoundationDB provides a robust tracing system where each process generates detailed events in either XML or JSON formats. To troubleshoot the <strong>Data Distributor</strong>, you first need to locate the process it has been elected to. From there, trace events can be analyzed to understand shard movements, priorities, and failures.</p>
+<p>One particularly important attribute in these events is the <code>Priority</code> field. This field determines the precedence of shard placement or redistribution tasks:</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#bf616a;">init</span><span>( PRIORITY_RECOVER_MOVE, </span><span style="color:#d08770;">110 </span><span>);
+</span><span style="color:#bf616a;">init</span><span>( PRIORITY_REBALANCE_UNDERUTILIZED_TEAM, </span><span style="color:#d08770;">120 </span><span>);
+</span><span style="color:#bf616a;">init</span><span>( PRIORITY_REBALANCE_OVERUTILIZED_TEAM, </span><span style="color:#d08770;">122 </span><span>);
+</span><span style="color:#bf616a;">init</span><span>( PRIORITY_TEAM_UNHEALTHY, </span><span style="color:#d08770;">700</span><span>);
+</span><span style="color:#bf616a;">init</span><span>( PRIORITY_SPLIT_SHARD, </span><span style="color:#d08770;">950 </span><span>);
+</span></code></pre>
+<p>A full list of defined priorities can be found in the <a href="https://github.com/apple/foundationdb/blob/release-7.3/fdbclient/ServerKnobs.cpp#L155-L173">Knobs file</a>, providing useful insights into how tasks are scheduled.</p>
+<h3 id="serverteaminfo-event"><a class="zola-anchor" href="#serverteaminfo-event" aria-label="Anchor link for: serverteaminfo-event">🔗</a><code>ServerTeamInfo</code> Event</h3>
+<p>Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The <code>fdbcli</code> command <code>triggerddteaminfolog</code> triggers informative logs by invoking <a href="https://github.com/apple/foundationdb/blob/release-7.3/fdbserver/DDTeamCollection.actor.cpp#L3425">printSnapshotTeamsInfo</a>.</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">ServerTeamInfo</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">Priority</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">709</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">Healthy</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">TeamSize</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">3</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">MemberIDs</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">5a69... 5fc1... 8718...</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">LoadBytes</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">1135157527</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">MinAvailableSpaceRatio</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0.94108</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<h3 id="serverteamprioritychange-event"><a class="zola-anchor" href="#serverteamprioritychange-event" aria-label="Anchor link for: serverteamprioritychange-event">🔗</a><code>ServerTeamPriorityChange</code> Event</h3>
+<p>This event is logged when server team priorities change, often indicating server failures or rebalancing actions.</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">ServerTeamPriorityChange</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">Priority</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">950</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">TeamID</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">e9b362decbafbd81</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<h3 id="relocateshard-event"><a class="zola-anchor" href="#relocateshard-event" aria-label="Anchor link for: relocateshard-event">🔗</a><code>RelocateShard</code> Event</h3>
+<p>This event tracks shard movement between teams to maintain balance.</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">RelocateShard</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">Priority</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">120</span><span>&quot;, </span><span style="color:#65737e;">// PRIORITY_REBALANCE_UNDERUTILIZED_TEAM
+</span><span>  &quot;</span><span style="color:#a3be8c;">RelocationID</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">3f1290654949771e</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<p>Again, the most useful field is the priority, indicating why it is relocated.</p>
+<h3 id="valleyfiller-and-mountainchopper-mechanisms"><a class="zola-anchor" href="#valleyfiller-and-mountainchopper-mechanisms" aria-label="Anchor link for: valleyfiller-and-mountainchopper-mechanisms">🔗</a>"ValleyFiller" and "MountainChopper" Mechanisms</h3>
+<p>To optimize shard placement, FoundationDB employs two balancing strategies:</p>
+<ul>
+<li><strong>ValleyFiller</strong>: Fills underutilized servers (the <strong>valleys</strong>) with data to balance the load.</li>
+<li><strong>MountainChopper</strong>: Redistributes shards from overutilized servers (the <strong>mountains</strong>) to spread the load evenly.</li>
+</ul>
+<p>Both logs will have a <code>SourceTeam</code> and <code>DestTeam</code> to use in other traces:</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">BgDDValleyFiller</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">QueuedRelocations</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">SourceTeam</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">TeamID 95819f0d3d7ea40d</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">DestTeam</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">TeamID 0817e6fe3135e6f6</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">ShardBytes</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">398281250</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">BgDDMountainChopper</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">QueuedRelocations</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">SourceTeam</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">TeamID 95819f0d3d7ea40d</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">DestTeam</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">TeamID e17dcecd86547e09</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">ShardBytes</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">308000000</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<hr />
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

@@ -69,6 +69,10 @@
         <lastmod>2016-05-13T17:19:23.788Z</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/fdb-data-distributor/</loc>
+        <lastmod>2025-03-07T00:00:00+01:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</loc>
         <lastmod>2020-02-14T10:24:27+01:00</lastmod>
     </url>
@@ -139,6 +143,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/contribution/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/debugging/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
