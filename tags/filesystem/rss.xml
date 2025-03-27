@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - filesystem</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/filesystem/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Sun, 04 Aug 2019 15:07:11 +0200</lastBuildDate>
+      <item>
+          <title>What can be gleaned about GFS successor codenamed Colossus?</title>
+          <pubDate>Sun, 04 Aug 2019 15:07:11 +0200</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/colossus-google/</link>
+          <guid>https://pierrezemb.fr/posts/colossus-google/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/colossus-google/">&lt;p&gt;In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.theregister.co.uk&#x2F;2019&#x2F;06&#x2F;06&#x2F;cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger&#x2F;&quot;&gt;Health of Hadoop-based companies are publicly bad&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Hadoop has a bad publicity with headlines like &lt;a href=&quot;https:&#x2F;&#x2F;techwireasia.com&#x2F;2019&#x2F;07&#x2F;what-does-the-death-of-hadoop-mean-for-big-data&#x2F;&quot;&gt;&#x27;What does the death of Hadoop mean for big data?&#x27;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Hadoop, as a distributed-system, &lt;strong&gt;is hard to operate, but can be essential for some type of workload&lt;&#x2F;strong&gt;. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hadoop-s-story&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hadoop-s-story&quot; aria-label=&quot;Anchor link for: hadoop-s-story&quot;&gt;🔗&lt;&#x2F;a&gt;Hadoop&#x27;s story&lt;&#x2F;h2&gt;
+&lt;p&gt;Hadoop is based on a Google&#x27;s paper called &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;gfs-sosp2003.pdf&quot;&gt;The Google File System&lt;&#x2F;a&gt; published in 2003. There are some key-elements on this paper:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;It was designed to be deployed with &lt;a href=&quot;https:&#x2F;&#x2F;ai.google&#x2F;research&#x2F;pubs&#x2F;pub43438&quot;&gt;Borg&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;to &quot;&lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;simplify the overall design problem&lt;&#x2F;a&gt;&quot;, they:
+&lt;ul&gt;
+&lt;li&gt;implemented a single master architecture&lt;&#x2F;li&gt;
+&lt;li&gt;dropped the idea of a full POSIX-compliant file system&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Metadatas are stored in RAM in the master,&lt;&#x2F;li&gt;
+&lt;li&gt;Datas are stored within chunkservers,&lt;&#x2F;li&gt;
+&lt;li&gt;There is no YARN or Map&#x2F;Reduce or any kind of compute capabilities.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;is-hadoop-still-revelant&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-hadoop-still-revelant&quot; aria-label=&quot;Anchor link for: is-hadoop-still-revelant&quot;&gt;🔗&lt;&#x2F;a&gt;Is Hadoop still revelant?&lt;&#x2F;h2&gt;
+&lt;p&gt;Google with GFS and the rest of the world with Hadoop hit some issues:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;One (Metadata) machine is not large enough for large FS,&lt;&#x2F;li&gt;
+&lt;li&gt;Single bottleneck for metadata operations,&lt;&#x2F;li&gt;
+&lt;li&gt;Not appropriate for latency sensitive applications,&lt;&#x2F;li&gt;
+&lt;li&gt;Fault tolerant not HA,&lt;&#x2F;li&gt;
+&lt;li&gt;Unpredictable performance,&lt;&#x2F;li&gt;
+&lt;li&gt;Replication&#x27;s cost,&lt;&#x2F;li&gt;
+&lt;li&gt;HDFS Write-path pipelining,&lt;&#x2F;li&gt;
+&lt;li&gt;fixed-size of blocks,&lt;&#x2F;li&gt;
+&lt;li&gt;cost of operations,&lt;&#x2F;li&gt;
+&lt;li&gt;...&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Despite all the issues, Hadoop is still relevant for some usecases, such as Map&#x2F;Reduce, or if you need Hbase as a main datastore. There is stories available online about the scalability of Hadoop:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blog.twitter.com&#x2F;engineering&#x2F;en_us&#x2F;topics&#x2F;infrastructure&#x2F;2017&#x2F;the-infrastructure-behind-twitter-scale.html&quot;&gt;Twitter has multiple clusters storing over 500 PB (2017)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;whereas Google prefered to &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;&quot;Scaled to approximately 50M files, 10P&quot; to avoid &quot;added management overhead&quot; brought by the scaling.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Nowadays, Hadoop is mostly used for Business Intelligence or to create a datalake, but at first, GFS was designed to provide a distributed file-system on top of commodity servers.&lt;&#x2F;p&gt;
+&lt;p&gt;Google&#x27;s developers were&#x2F;are deploying applications into &quot;containers&quot;, meaning that &lt;strong&gt;any process could be spawned somewhere into the cloud&lt;&#x2F;strong&gt;. Developers are used to work with the file-system abstraction, which provide a layer of durability and security. To mimic that process, they developed GFS, so that &lt;strong&gt;processes don&#x27;t need to worry about replication&lt;&#x2F;strong&gt; (like Bigtable&#x2F;HBase).&lt;&#x2F;p&gt;
+&lt;p&gt;This is a promise that, I think, was forgotten. In a world where Kubernetes &lt;em&gt;seems&lt;&#x2F;em&gt; to be the standard, &lt;strong&gt;the need of a global distributed file-system is now higher than before&lt;&#x2F;strong&gt;. By providing a &quot;file-system&quot; abstraction for applications deployed in Kubernetes, we may be solving many problems Kubernetes-adopters are hitting, such as:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;How can I retrieve that particular file for my applications deployed on the other side of the Kubernetes cluster?&lt;&#x2F;li&gt;
+&lt;li&gt;Should I be moving that persistent volume over my slow network?&lt;&#x2F;li&gt;
+&lt;li&gt;What is happening when &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dgraph-io&#x2F;dgraph&#x2F;issues&#x2F;2698&quot;&gt;Kubernetes killed an alpha pod in the middle of retrieving snapshot&lt;&#x2F;a&gt;?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;well-let-s-put-hadoop-in-kubernetes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#well-let-s-put-hadoop-in-kubernetes&quot; aria-label=&quot;Anchor link for: well-let-s-put-hadoop-in-kubernetes&quot;&gt;🔗&lt;&#x2F;a&gt;Well, let&#x27;s put Hadoop in Kubernetes&lt;&#x2F;h2&gt;
+&lt;p&gt;Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;helm&#x2F;charts&#x2F;tree&#x2F;master&#x2F;stable&#x2F;hadoop&quot;&gt;Helm chart for Hadoop is limited to YARN and Map&#x2F;Reduce and &quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Kubernetes Operators has no access to key-metrics, so they cannot watch over your applications correctly. It is only providing a &quot;day-zero to day-two&quot; good experience,&lt;&#x2F;li&gt;
+&lt;li&gt;Google seems to &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=16971959&quot;&gt;not be using the Operators design internally&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.ibm.com&#x2F;cloud&#x2F;blog&#x2F;new-builders&#x2F;database-deep-dives-couchdb&quot;&gt;CouchDB developers&lt;&#x2F;a&gt; are saying that:
+&lt;ul&gt;
+&lt;li&gt;&quot;For certain workloads, the technology isn’t quite there yet&quot;&lt;&#x2F;li&gt;
+&lt;li&gt;&quot;In certain scenarios that are getting smaller and smaller, both Kubernetes and Docker get in the way of that. At that point, CouchDB gets slow, or you get timeout errors, that you can’t explain.&quot;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;how-gfs-evolved-within-google&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-gfs-evolved-within-google&quot; aria-label=&quot;Anchor link for: how-gfs-evolved-within-google&quot;&gt;🔗&lt;&#x2F;a&gt;How GFS evolved within Google&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;technical-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#technical-overview&quot; aria-label=&quot;Anchor link for: technical-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Technical overview&lt;&#x2F;h3&gt;
+&lt;p&gt;As GFS&#x27;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed &lt;code&gt;Colossus&lt;&#x2F;code&gt;. There is no papers, and not a lot informations available, here&#x27;s what can be found online:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;files&#x2F;storage_architecture_and_challenges.pdf&quot;&gt;Storage Architecture and Challenges(2010)&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;They moved from full-replication to &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Reed%E2%80%93Solomon_error_correction&quot;&gt;Reed-Salomon&lt;&#x2F;a&gt;. This feature is acually in &lt;a href=&quot;https:&#x2F;&#x2F;hadoop.apache.org&#x2F;docs&#x2F;r3.0.0&#x2F;hadoop-project-dist&#x2F;hadoop-hdfs&#x2F;HDFSErasureCoding.html&quot;&gt;Hadoop 3&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;replication is handled by the client, instead of the pipelining,&lt;&#x2F;li&gt;
+&lt;li&gt;the metadata layer is automatically sharded. We can find more informations about that in the next ressource!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;http:&#x2F;&#x2F;www.pdsw.org&#x2F;pdsw-discs17&#x2F;slides&#x2F;PDSW-DISCS-Google-Keynote.pdf&quot;&gt;Cluster-Level Storage @ Google(2017)&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;GFS master replaced by Colossus&lt;&#x2F;li&gt;
+&lt;li&gt;GFS chunkserver replaced by D&lt;&#x2F;li&gt;
+&lt;li&gt;Colossus rebalances old, cold data&lt;&#x2F;li&gt;
+&lt;li&gt;distributes newly written data evenly across disks&lt;&#x2F;li&gt;
+&lt;li&gt;Metadatas are stored into BigTable. each Bigtable row corresponds to a single file.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The &quot;all in RAM&quot; GFS master design was a severe single-point-of-failure, so getting rid of it was a priority. They didn&#x27;t had a lof of options for a scalable and rock-solid datastore &lt;strong&gt;beside BigTable&lt;&#x2F;strong&gt;. When you think about it, a key&#x2F;value datastore is a great replacement for a distributed file-system master:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;automatic sharding of regions,&lt;&#x2F;li&gt;
+&lt;li&gt;scan capabilities for files in the same &quot;directory&quot;,&lt;&#x2F;li&gt;
+&lt;li&gt;lexical ordering,&lt;&#x2F;li&gt;
+&lt;li&gt;...&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The funny part is that they now need a Colossus for Colossus. The only things saving them is that storing the metametametadata (the metadata of the metadata of the metadata) can be hold in Chubby.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?id=1594206&quot;&gt;GFS: Evolution on Fast-forward(2009)&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;they moved to chunks of 1MB of files, as the limitations of the master disappeared. This is also allowing Colossus to support latency sensitive applications,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;cockroachdb&#x2F;cockroach&#x2F;issues&#x2F;243#issuecomment-91575792&quot;&gt;a Github comment on Colossus&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;File reconstruction from Reed-Salomnon was performed on both client-side and server-side&lt;&#x2F;li&gt;
+&lt;li&gt;on-the-fly recovery of data is greatly enhanced by this data layout(Reed Salomon)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From a &lt;a href=&quot;https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=20135927&quot;&gt;Hacker News comment&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Colossus and D are two separate things.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;blog&#x2F;products&#x2F;storage-data-transfer&#x2F;a-peek-behind-colossus-googles-file-system&quot;&gt;Colossus under the hood: a peek into Google’s scalable storage system&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Colossus&#x27;s Control Plane is a scalable metadata service, which consists of many Curators. Clients talk directly to curators for control operations, such as file creation, and can scale horizontally.&lt;&#x2F;li&gt;
+&lt;li&gt;background storage managers called Custodians, there are handling tasks like disk space balancing and RAID reconstruction.&lt;&#x2F;li&gt;
+&lt;li&gt;Applications needs to specifies I&#x2F;O, availability, and durability requirements&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;What is that &quot;D&quot;?&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;landing.google.com&#x2F;sre&#x2F;sre-book&#x2F;chapters&#x2F;production-environment&#x2F;&quot;&gt;The Production Environment at Google, from the Viewpoint of an SRE&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;D stands for &lt;em&gt;Disk&lt;&#x2F;em&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;D is a fileserver running on almost all machines in a cluster.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@jerub&#x2F;the-production-environment-at-google-8a1aaece3767&quot;&gt;The Production Environment at Google&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;D is more of a block server than a file server&lt;&#x2F;li&gt;
+&lt;li&gt;It provides nothing apart from checksums.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;deployments&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployments&quot; aria-label=&quot;Anchor link for: deployments&quot;&gt;🔗&lt;&#x2F;a&gt;Deployments&lt;&#x2F;h3&gt;
+&lt;!-- I think the team that&#x27;s pushing the forefront of something k8s-like for persistency&#x2F;durability is... the Colossus&#x2F;D team at Google, who have been running storage servers managed by Borg for almost a decade now :) Problem is, it&#x27;s not k8s. But could tell us what that roadmap is.  --&gt;
+&lt;p&gt;How everything is deployed? Using Borg!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;migration&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#migration&quot; aria-label=&quot;Anchor link for: migration&quot;&gt;🔗&lt;&#x2F;a&gt;Migration&lt;&#x2F;h3&gt;
+&lt;p&gt;The migration process is described in the now free &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;sre.google&#x2F;en&#x2F;&#x2F;static&#x2F;pdf&#x2F;case-studies-infrastructure-change-management.pdf&quot;&gt;Case Studies in Infrastructure Change Management&lt;&#x2F;a&gt; book.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot; aria-label=&quot;Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;🔗&lt;&#x2F;a&gt;Is there an open-source effort to create a Colossus-like DFS?&lt;&#x2F;h2&gt;
+&lt;p&gt;I did not found any point towards a open-source version of Colossus, beside some work made for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;baidu&#x2F;bfs&quot;&gt;The Baidu File System&lt;&#x2F;a&gt; in which the Nameserver is implemented as a raft group.&lt;&#x2F;p&gt;
+&lt;p&gt;There is &lt;a href=&quot;https:&#x2F;&#x2F;www.slideshare.net&#x2F;HadoopSummit&#x2F;scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes&quot;&gt;some work to add colossus&#x27;s features in Hadoop&lt;&#x2F;a&gt; but based on the bad publicity Hadoop has now, I don&#x27;t think there will be a lot of money to power those efforts.&lt;&#x2F;p&gt;
+&lt;p&gt;I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reimplement D may be easy, my current question is &lt;strong&gt;how far can we use modern FS such as OpenZFS&lt;&#x2F;strong&gt; to facilitate the work? FS capabilities such as &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;zfsonlinux&#x2F;zfs&#x2F;wiki&#x2F;Checksums&quot;&gt;OpenZFS checksums&lt;&#x2F;a&gt; seems pretty interesting.&lt;&#x2F;li&gt;
+&lt;li&gt;To resolve the distributed master issue, we could use &lt;a href=&quot;https:&#x2F;&#x2F;tikv.org&#x2F;&quot;&gt;Tikv&lt;&#x2F;a&gt; as a building block to provide an &quot;BigTable experience&quot; without the need of a distributed file-system underneath.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;But remember:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Like crypto, Do not roll your own DFS!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

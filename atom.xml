@@ -5,8 +5,62 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-03-07T00:00:00+01:00</updated>
+    <updated>2025-03-27T05:24:27+01:00</updated>
     <id>https://pierrezemb.fr/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Key design tip: reverse number scanning in ordered key-value stores</title>
+        <published>2025-03-27T05:24:27+01:00</published>
+        <updated>2025-03-27T05:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/reverse-number-scanning/"/>
+        <id>https://pierrezemb.fr/posts/reverse-number-scanning/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
+&lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-2&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In ordered key-value stores, keys are stored in &lt;code&gt;lexicographical order&lt;&#x2F;code&gt;. This works well when you want to scan from lowest to highest values, but becomes inefficient when you need the opposite order. For example, to find the highest number for a key, you need to scan through all values:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 3)
+&lt;&#x2F;span&gt;&lt;span&gt;...
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 99)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You could scan in reverse mode, but you would lose the order of your first prefix(the &quot;my-key-1&quot;).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;Reverse Number Scanning&lt;&#x2F;h2&gt;
+&lt;p&gt;By reversing the numbers using a simple subtraction from the maximum possible value (e.g., &lt;code&gt;Long.MAX_VALUE&lt;&#x2F;code&gt; in Java), we can optimize the scanning process:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;long&lt;&#x2F;span&gt;&lt;span&gt; reversedNumber = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Long&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;MAX_VALUE &lt;&#x2F;span&gt;&lt;span&gt;- number;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This transforms our data into:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775804) &#x2F;&#x2F; number 3
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775805) &#x2F;&#x2F; number 2
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775806) &#x2F;&#x2F; number 1
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, the highest number (which appears first in the reversed order) can be found efficiently, allowing us to stop after finding the first match.&lt;&#x2F;p&gt;
+&lt;p&gt;This technique is particularly useful in systems dealing with time-series data, versioned documents, or any scenario requiring efficient retrieval of the most recent or highest-valued items.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;number 1: 9223372036854775806
+&lt;&#x2F;span&gt;&lt;span&gt;number 2: 9223372036854775805
+&lt;&#x2F;span&gt;&lt;span&gt;number 3: 9223372036854775804
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&#x2F; Reversing back is straightforward
+&lt;&#x2F;span&gt;&lt;span&gt;Long.MAX_VALUE - 9223372036854775806 = 1
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Debugging FoundationDB&#x27;s Data Distributor</title>
         <published>2025-03-07T00:00:00+01:00</published>
@@ -63,6 +117,7 @@
 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;init&lt;&#x2F;span&gt;&lt;span&gt;( PRIORITY_SPLIT_SHARD, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;950 &lt;&#x2F;span&gt;&lt;span&gt;);
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;A full list of defined priorities can be found in the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;release-7.3&#x2F;fdbclient&#x2F;ServerKnobs.cpp#L155-L173&quot;&gt;Knobs file&lt;&#x2F;a&gt;, providing useful insights into how tasks are scheduled.&lt;&#x2F;p&gt;
+&lt;p&gt;EDIT: Yes, &lt;code&gt;SPLIT_SHARD&lt;&#x2F;code&gt; has an higher priority! See &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;alexmillerdb.bsky.social&#x2F;post&#x2F;3ljsqqvfslc24&quot;&gt;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;alexmillerdb.bsky.social&#x2F;post&#x2F;3ljsqqvfslc24&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;serverteaminfo-event&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#serverteaminfo-event&quot; aria-label=&quot;Anchor link for: serverteaminfo-event&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;code&gt;ServerTeamInfo&lt;&#x2F;code&gt; Event&lt;&#x2F;h3&gt;
 &lt;p&gt;Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The &lt;code&gt;fdbcli&lt;&#x2F;code&gt; command &lt;code&gt;triggerddteaminfolog&lt;&#x2F;code&gt; triggers informative logs by invoking &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;release-7.3&#x2F;fdbserver&#x2F;DDTeamCollection.actor.cpp#L3425&quot;&gt;printSnapshotTeamsInfo&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;json&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-json &quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span&gt;{
@@ -850,7 +905,7 @@
         <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
 &lt;p&gt;As stated in the &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -891,13 +946,13 @@
 &lt;li&gt;two common consensus algorithm are Paxos and Raft&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;blockquote&gt;
-&lt;p&gt;, Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable.Furthermore, its architecture requires complex changes to support practical systems. As a result, both system builders and students struggle with Paxos.&lt;&#x2F;p&gt;
+&lt;p&gt;Paxos is quite difficult to understand, inspite of numerous attempts to make it more approachable. Furthermore, its architecture requires complex changes to support practical systems. As a result, both system builders and students struggle with Paxos.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;A common alternative to Paxos&#x2F;Raft is a non-consensus (aka peer-to-peer) replication protocol.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety&lt;&#x2F;p&gt;
+&lt;p&gt;Raft separates the key elements of consensus, such as leader election, log replication, and safety&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD contains several raft optimizations:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -1251,7 +1306,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <id>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;h2 id=&quot;what-is-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;What is ETCD?&lt;&#x2F;h2&gt;
 &lt;p&gt;From &lt;a href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;the official website&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -1474,7 +1529,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;As I&#x27;m digging into ETCD, I needed to refresh my memory about Raft. I started by reading the paper located &lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;raft.pdf&quot;&gt;here&lt;&#x2F;a&gt; and I&#x27;m also playing with the amazing &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;pingcap&#x2F;talent-plan&#x2F;tree&#x2F;master&#x2F;courses&#x2F;dss&#x2F;raft&quot;&gt;Raft labs made by PingCAP&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -1709,7 +1764,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-2.png&quot; alt=&quot;kop image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &quot;kafka&quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-distributed-log&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-distributed-log&quot; aria-label=&quot;Anchor link for: the-distributed-log&quot;&gt;🔗&lt;&#x2F;a&gt;The distributed log&lt;&#x2F;h2&gt;
-&lt;p&gt;Both Pulsar and Kafka share a very similar data model around &lt;strong&gt;log&lt;&#x2F;strong&gt; for both pub&#x2F;sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a &lt;strong&gt;segment&lt;&#x2F;strong&gt;-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&#x27;s &lt;em&gt;segment&lt;&#x2F;em&gt; based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in &lt;a href=&quot;https:&#x2F;&#x2F;www.splunk.com&#x2F;en_us&#x2F;blog&#x2F;it&#x2F;comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html&quot;&gt;this Splunk blog&lt;&#x2F;a&gt; and in &lt;a href=&quot;http:&#x2F;&#x2F;bookkeeper.apache.org&#x2F;distributedlog&#x2F;technical-review&#x2F;2016&#x2F;09&#x2F;19&#x2F;kafka-vs-distributedlog.html&quot;&gt;this blog from the Bookkeeper project&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Both Pulsar and Kafka share a very similar data model around &lt;strong&gt;log&lt;&#x2F;strong&gt; for both pub&#x2F;sub messaging and event streaming. For example, both are built on top of a distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a &lt;strong&gt;segment&lt;&#x2F;strong&gt;-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&#x27;s &lt;em&gt;segment&lt;&#x2F;em&gt; based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in &lt;a href=&quot;https:&#x2F;&#x2F;www.splunk.com&#x2F;en_us&#x2F;blog&#x2F;it&#x2F;comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html&quot;&gt;this Splunk blog&lt;&#x2F;a&gt; and in &lt;a href=&quot;http:&#x2F;&#x2F;bookkeeper.apache.org&#x2F;distributedlog&#x2F;technical-review&#x2F;2016&#x2F;09&#x2F;19&#x2F;kafka-vs-distributedlog.html&quot;&gt;this blog from the Bookkeeper project&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar&#x27;s distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;implementations&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#implementations&quot; aria-label=&quot;Anchor link for: implementations&quot;&gt;🔗&lt;&#x2F;a&gt;Implementations&lt;&#x2F;h2&gt;
 &lt;p&gt;The implementation is done by comparing the protocols between Pulsar and Kafka. We found that there are a lot of similarities between these two protocols. Both protocols are comprised of the following operations:&lt;&#x2F;p&gt;
@@ -1875,7 +1930,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <id>https://pierrezemb.fr/posts/notes-about-foundationdb/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-foundationdb/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;fdb-white.jpg&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes-about&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover FoundationDB.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover FoundationDB.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;h2 id=&quot;overview-of-foundationdb&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-foundationdb&quot; aria-label=&quot;Anchor link for: overview-of-foundationdb&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of FoundationDB&lt;&#x2F;h2&gt;
 &lt;p&gt;As stated in the &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;index.html&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -2179,7 +2234,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <id>https://pierrezemb.fr/posts/diving-into-kafka-protocol/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-kafka-protocol&#x2F;apache-kafka.png&quot; alt=&quot;kafka image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into Kafka&#x27;s protocol.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into Kafka&#x27;s protocol.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;h2 id=&quot;the-protocol-reference&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-protocol-reference&quot; aria-label=&quot;Anchor link for: the-protocol-reference&quot;&gt;🔗&lt;&#x2F;a&gt;The protocol reference&lt;&#x2F;h2&gt;
 &lt;p&gt;For the last few months, I worked a lot around Kafka&#x27;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to &lt;a href=&quot;https:&#x2F;&#x2F;www.slideshare.net&#x2F;streamnative&#x2F;2-kafkaonpulsarjia&quot;&gt;KoP (Kafka On Pulsar)&lt;&#x2F;a&gt;. The full Kafka Protocol documentation is available &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html&quot;&gt;here&lt;&#x2F;a&gt;, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let&#x27;s dive in!&lt;&#x2F;p&gt;
@@ -2360,7 +2415,7 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <id>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</id>
         
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;code&gt;tl;dr:&lt;&#x2F;code&gt; Hbase is using the &lt;a href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-the-memstore&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-memstore&quot; aria-label=&quot;Anchor link for: what-is-the-memstore&quot;&gt;🔗&lt;&#x2F;a&gt;What is the MemStore?&lt;&#x2F;h2&gt;

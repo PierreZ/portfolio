@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - monitoring</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/monitoring/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2019-02-03T15:37:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/monitoring/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Handling OVH&#x27;s alerts with Apache Flink</title>
+        <published>2019-02-03T15:37:27+01:00</published>
+        <updated>2019-02-03T15:37:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"/>
+        <id>https://pierrezemb.fr/posts/ovh-alerts-flink/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&amp;#39;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;handling-ovh-s-alerts-with-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-ovh-s-alerts-with-apache-flink&quot; aria-label=&quot;Anchor link for: handling-ovh-s-alerts-with-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;Handling OVH&#x27;s alerts with Apache Flink&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;001-1.png?x70472&quot; alt=&quot;OVH &amp;amp; Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;OVH relies extensively on &lt;strong&gt;metrics&lt;&#x2F;strong&gt; to effectively monitor its entire stack. Whether they are &lt;strong&gt;low-level&lt;&#x2F;strong&gt; or &lt;strong&gt;business&lt;&#x2F;strong&gt; centric, they allow teams to gain &lt;strong&gt;insight&lt;&#x2F;strong&gt; into how our services are operating on a daily basis. The need to store &lt;strong&gt;millions of datapoints per second&lt;&#x2F;strong&gt; has produced the need to create a dedicated team to build a operate a product to handle that load: &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;data-platforms&#x2F;metrics&#x2F;&quot;&gt;**Metrics Data Platform&lt;&#x2F;a&gt;.&lt;strong&gt;By relying on &lt;a href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;**Apache Hbase&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;&quot;&gt;Apache Kafka&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;www.warp10.io&#x2F;&quot;&gt;&lt;strong&gt;Warp 10&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!&lt;&#x2F;p&gt;
+&lt;p&gt;After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the &lt;strong&gt;Alerting.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;meet-omni-our-alerting-layer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#meet-omni-our-alerting-layer&quot; aria-label=&quot;Anchor link for: meet-omni-our-alerting-layer&quot;&gt;🔗&lt;&#x2F;a&gt;Meet OMNI, our alerting layer&lt;&#x2F;h2&gt;
+&lt;p&gt;OMNI is our code name for a &lt;strong&gt;fully distributed&lt;&#x2F;strong&gt;, &lt;strong&gt;as-code&lt;&#x2F;strong&gt;, &lt;strong&gt;alerting&lt;&#x2F;strong&gt; system that we developed on top of Metrics. It is split into components:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;The management part&lt;&#x2F;strong&gt;, taking your alerts definitions defined in a Git repository, and represent them as continuous queries,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;The query executor&lt;&#x2F;strong&gt;, scheduling your queries in a distributed way.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The query executor is pushing the query results into Kafka, ready to be handled! We now need to perform all the tasks that an alerting system does:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Handling alerts &lt;strong&gt;deduplication&lt;&#x2F;strong&gt; and &lt;strong&gt;grouping&lt;&#x2F;strong&gt;, to avoid &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Alarm_fatigue&quot;&gt;alert fatigue.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Handling &lt;strong&gt;escalation&lt;&#x2F;strong&gt; steps, &lt;strong&gt;acknowledgement&lt;&#x2F;strong&gt;or &lt;strong&gt;snooze&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Notify&lt;&#x2F;strong&gt; the end user, through differents &lt;strong&gt;channels&lt;&#x2F;strong&gt;: SMS, mail, Push notifications, …&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;To handle that, we looked at open-source projects, such as &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;prometheus&#x2F;alertmanager&quot;&gt;Prometheus AlertManager,&lt;&#x2F;a&gt; &lt;a href=&quot;https:&#x2F;&#x2F;engineering.linkedin.com&#x2F;blog&#x2F;2017&#x2F;06&#x2F;open-sourcing-iris-and-oncall&quot;&gt;LinkedIn Iris,&lt;&#x2F;a&gt; we discovered the &lt;em&gt;hidden&lt;&#x2F;em&gt; truth:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Handling alerts as streams of data,&lt;br &#x2F;&gt;
+moving from operators to another.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;We embraced it, and decided to leverage &lt;a href=&quot;https:&#x2F;&#x2F;flink.apache.org&#x2F;&quot;&gt;Apache Flink&lt;&#x2F;a&gt; to create &lt;strong&gt;Beacon&lt;&#x2F;strong&gt;. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.&lt;&#x2F;p&gt;
+&lt;p&gt;If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: &lt;a href=&quot;https:&#x2F;&#x2F;flink.apache.org&#x2F;flink-architecture.html&quot;&gt;What is Apache Flink?&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;beacon-architecture&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#beacon-architecture&quot; aria-label=&quot;Anchor link for: beacon-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;strong&gt;Beacon architecture&lt;&#x2F;strong&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;At his core, Beacon is reading events from &lt;strong&gt;Kafka&lt;&#x2F;strong&gt;. Everything is represented as a &lt;strong&gt;message&lt;&#x2F;strong&gt;, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;One that is running the &lt;strong&gt;aggregations&lt;&#x2F;strong&gt;, and triggering notifications based on customer&#x27;s rules.&lt;&#x2F;li&gt;
+&lt;li&gt;One that is handling the &lt;strong&gt;escalation steps&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Then everything is merged to &lt;strong&gt;generate&lt;&#x2F;strong&gt; &lt;strong&gt;a&lt;&#x2F;strong&gt; &lt;strong&gt;notification&lt;&#x2F;strong&gt;, that is going to be forward to the right person. A notification message is pushed into Kafka, that will be consumed by another component called &lt;strong&gt;beacon-notifier.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;handling-states&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-states&quot; aria-label=&quot;Anchor link for: handling-states&quot;&gt;🔗&lt;&#x2F;a&gt;Handling States&lt;&#x2F;h2&gt;
+&lt;p&gt;If you are new to streaming architecture, I recommend reading &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-release-1.7&#x2F;concepts&#x2F;programming-model.html&quot;&gt;Dataflow Programming Model&lt;&#x2F;a&gt; from Flink official documentation.&lt;&#x2F;p&gt;
+&lt;p&gt;Everything is merged into a dataStream, &lt;strong&gt;partitionned&lt;&#x2F;strong&gt; (&lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;r&#x2F;?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state&quot;&gt;keyed by&lt;&#x2F;a&gt;in Flink API) by users. Here&#x27;s an example:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;final &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;DataStream&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; alertStream =
+&lt;&#x2F;span&gt;&lt;span&gt;    
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Partitioning Stream per AlertIdentifier
+&lt;&#x2F;span&gt;&lt;span&gt;      cleanedAlertsStream.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;keyBy&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Applying a Map Operation which is setting since when an alert is triggered
+&lt;&#x2F;span&gt;&lt;span&gt;      .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;map&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;SetSinceOnSelector&lt;&#x2F;span&gt;&lt;span&gt;())
+&lt;&#x2F;span&gt;&lt;span&gt;      .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;setting-since-on-selector&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uid&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;setting-since-on-selector&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;    
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Partitioning again Stream per AlertIdentifier
+&lt;&#x2F;span&gt;&lt;span&gt;      .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;keyBy&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Applying another Map Operation which is setting State and Trend
+&lt;&#x2F;span&gt;&lt;span&gt;      .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;map&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;SetStateAndTrend&lt;&#x2F;span&gt;&lt;span&gt;())
+&lt;&#x2F;span&gt;&lt;span&gt;      .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;setting-state&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uid&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;setting-state&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In the example above, we are chaining two keyed operations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SetSinceOnSelector&lt;&#x2F;strong&gt;, which is setting &lt;strong&gt;since&lt;&#x2F;strong&gt; when the alert is triggered&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;SetStateAndTrend&lt;&#x2F;strong&gt;, which is setting the &lt;strong&gt;state&lt;&#x2F;strong&gt;(ONGOING, RECOVERY or OK) and the &lt;strong&gt;trend&lt;&#x2F;strong&gt;(do we have more or less metrics in errors).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Each of this class is under 120 lines of codes because Flink is &lt;strong&gt;handling all the difficulties&lt;&#x2F;strong&gt;. Most of the pipeline are &lt;strong&gt;only composed&lt;&#x2F;strong&gt; of &lt;strong&gt;classic transformations&lt;&#x2F;strong&gt; such as &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-release-1.7&#x2F;dev&#x2F;stream&#x2F;operators&#x2F;&quot;&gt;Map, FlatMap, Reduce&lt;&#x2F;a&gt;, including their &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-stable&#x2F;dev&#x2F;api_concepts.html#rich-functions&quot;&gt;Rich&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-stable&#x2F;dev&#x2F;stream&#x2F;state&#x2F;state.html#using-managed-keyed-state&quot;&gt;Keyed&lt;&#x2F;a&gt; version. We have a few &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-release-1.7&#x2F;dev&#x2F;stream&#x2F;operators&#x2F;process_function.html&quot;&gt;Process Functions&lt;&#x2F;a&gt;, which are &lt;strong&gt;very handy&lt;&#x2F;strong&gt; to develop, for example, the escalation timer.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;integration-tests&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#integration-tests&quot; aria-label=&quot;Anchor link for: integration-tests&quot;&gt;🔗&lt;&#x2F;a&gt;Integration tests&lt;&#x2F;h2&gt;
+&lt;p&gt;As the number of classes was growing, we needed to test our pipeline. Because it is only wired to Kafka, we wrapped consumer and producer to create what we call **scenari:**a series of integration tests running different scenarios.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;queryable-state&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#queryable-state&quot; aria-label=&quot;Anchor link for: queryable-state&quot;&gt;🔗&lt;&#x2F;a&gt;Queryable state&lt;&#x2F;h2&gt;
+&lt;p&gt;One killer feature of Apache Flink is the &lt;strong&gt;capabilities of &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-release-1.7&#x2F;dev&#x2F;stream&#x2F;state&#x2F;queryable_state.html&quot;&gt;**&lt;strong&gt;querying the internal state&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;at which escalation steps are we on&lt;&#x2F;li&gt;
+&lt;li&gt;is it snoozed or &lt;em&gt;ack&lt;&#x2F;em&gt;-ed&lt;&#x2F;li&gt;
+&lt;li&gt;Which alert is ongoing&lt;&#x2F;li&gt;
+&lt;li&gt;and so on.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;004-1.png?x70472&quot; alt=&quot;Queryable state overview&quot; &#x2F;&gt;Queryable state overview&lt;&#x2F;p&gt;
+&lt;p&gt;Thanks to this, we easily developed an &lt;strong&gt;API&lt;&#x2F;strong&gt; over the queryable state, that is powering our &lt;strong&gt;alerting view&lt;&#x2F;strong&gt; in &lt;a href=&quot;https:&#x2F;&#x2F;studio.metrics.ovh.net&#x2F;&quot;&gt;Metrics Studio,&lt;&#x2F;a&gt; our codename for the Web UI of the Metrics Data Platform.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;apache-flink-deployment&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#apache-flink-deployment&quot; aria-label=&quot;Anchor link for: apache-flink-deployment&quot;&gt;🔗&lt;&#x2F;a&gt;Apache Flink deployment&lt;&#x2F;h3&gt;
+&lt;p&gt;We deployed the latest version of Flink (&lt;strong&gt;1.7.1&lt;&#x2F;strong&gt; at the time of writing) directly on bare metal servers with a dedicated Zookeeper&#x27;s cluster using Ansible. Operating Flink has been a really nice surprise for us, with &lt;strong&gt;clear documentation and configuration&lt;&#x2F;strong&gt;, and an &lt;strong&gt;impressive resilience&lt;&#x2F;strong&gt;. We are capable of &lt;strong&gt;rebooting&lt;&#x2F;strong&gt; the whole Flink cluster, and the job is &lt;strong&gt;restarting at his last saved state&lt;&#x2F;strong&gt;, like nothing happened.&lt;&#x2F;p&gt;
+&lt;p&gt;We are using &lt;strong&gt;RockDB&lt;&#x2F;strong&gt; as a state backend, backed by OpenStack &lt;strong&gt;Swift storage&lt;&#x2F;strong&gt;provided by OVH Public Cloud.&lt;&#x2F;p&gt;
+&lt;p&gt;For monitoring, we are relying on &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-stable&#x2F;monitoring&#x2F;metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter&quot;&gt;Prometheus Exporter&lt;&#x2F;a&gt; with &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ovh&#x2F;beamium&quot;&gt;Beamium&lt;&#x2F;a&gt; to gain &lt;strong&gt;observability&lt;&#x2F;strong&gt; over job&#x27;s health.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;in-short-we-love-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-short-we-love-apache-flink&quot; aria-label=&quot;Anchor link for: in-short-we-love-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;In short, we love Apache Flink&lt;&#x2F;h3&gt;
+&lt;p&gt;If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472&quot; alt=&quot;Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;r&#x2F;?url=https%3A%2F%2Ftraining.da-platform.com%2F&quot;&gt;Apache Flink Training&lt;&#x2F;a&gt;, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

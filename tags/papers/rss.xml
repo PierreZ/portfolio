@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - papers</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/papers/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Mon, 22 Jan 2024 15:37:27 +0100</lastBuildDate>
+      <item>
+          <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
+          <pubDate>Mon, 22 Jan 2024 15:37:27 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/academic-conferences/</link>
+          <guid>https://pierrezemb.fr/posts/academic-conferences/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/academic-conferences/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;papers.png&quot; alt=&quot;Academic paper created with AI&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there&#x27;s another source of information I&#x27;ve been using for a long time that not many people know about: &lt;strong&gt;academic papers&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often &lt;strong&gt;dive deeper&lt;&#x2F;strong&gt; into specific aspects of infrastructure. They provide more in-depth information, uncovering details that are not commonly discussed. So, if you&#x27;re interested in gaining a more comprehensive understanding of infrastructure-related topics, exploring academic papers can be really worthwile.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Sounds a bit too academic, doesn&#x27;t it? 🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I don&#x27;t think so!  It&#x27;s true that academic research can sometimes seem distant from everyday industry needs, but following both academic and industry tracks is beneficial. R&amp;amp;D from academia often lead to new ideas and technologies that eventually find their way into practical use.&lt;&#x2F;p&gt;
+&lt;p&gt;Moreover, numerous academic conferences feature a &lt;strong&gt;&quot;industry track&quot;&lt;&#x2F;strong&gt; that is essential to monitor.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Aren&#x27;t they too complex to read? 🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;If you don&#x27;t get everything right away, that&#x27;s okay. Reading these smart papers might be a bit hard, but it&#x27;s a skill that gets better with practice. And who knows, maybe you&#x27;ll be inspired to write your own paper someday! 😉&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I&#x27;m intrigued! Where should I start?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Here&#x27;s a short list of my go-to academic papers and conferences that you can follow for infrastructure engineering. Please note that many conferences exists on other subjects, like security and so.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-usenix-community&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-usenix-community&quot; aria-label=&quot;Anchor link for: the-usenix-community&quot;&gt;🔗&lt;&#x2F;a&gt;The USENIX community&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;osdi&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#osdi&quot; aria-label=&quot;Anchor link for: osdi&quot;&gt;🔗&lt;&#x2F;a&gt;OSDI&lt;&#x2F;h3&gt;
+&lt;p&gt;As part of the USENIX Association, the &lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conferences&quot;&gt;Operating Systems Design and Implementation&lt;&#x2F;a&gt; is an annual computer science conference that you shouldn&#x27;t miss. You can catch most of the sessions online along with some useful slides.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;nsdi&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#nsdi&quot; aria-label=&quot;Anchor link for: nsdi&quot;&gt;🔗&lt;&#x2F;a&gt;NSDI&lt;&#x2F;h3&gt;
+&lt;p&gt;In a similar fashion, the &lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conferences&quot;&gt;Networked Systems Design and Implementation&lt;&#x2F;a&gt; focuses on the design principles, implementation, and practical evaluation of networked and distributed systems.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;usenix-atc&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#usenix-atc&quot; aria-label=&quot;Anchor link for: usenix-atc&quot;&gt;🔗&lt;&#x2F;a&gt;Usenix ATC&lt;&#x2F;h3&gt;
+&lt;p&gt;The Usenix &lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conferences&quot;&gt;Annual Technical Conference&lt;&#x2F;a&gt; is another classic to follow.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-acm-family&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-acm-family&quot; aria-label=&quot;Anchor link for: the-acm-family&quot;&gt;🔗&lt;&#x2F;a&gt;The ACM family&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;sigmod&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sigmod&quot; aria-label=&quot;Anchor link for: sigmod&quot;&gt;🔗&lt;&#x2F;a&gt;SIGMOD&lt;&#x2F;h3&gt;
+&lt;p&gt;SIGMOD, or the &lt;a href=&quot;https:&#x2F;&#x2F;sigmod.org&#x2F;&quot;&gt;Special Interest Group on Management of Data&lt;&#x2F;a&gt;, is an essential conference under the ACM umbrella, focusing on the management and organization of data.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;damon&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#damon&quot; aria-label=&quot;Anchor link for: damon&quot;&gt;🔗&lt;&#x2F;a&gt;DaMoN&lt;&#x2F;h3&gt;
+&lt;p&gt;Held with ACM SIGMOD&#x2F;PODS, you can also find the &lt;a href=&quot;https:&#x2F;&#x2F;damon-db.org&#x2F;&quot;&gt;Data Management on New Hardware &lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;socc&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#socc&quot; aria-label=&quot;Anchor link for: socc&quot;&gt;🔗&lt;&#x2F;a&gt;SoCC&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;acmsocc.org&#x2F;2023&#x2F;&quot;&gt;Symposium on Cloud Computing&lt;&#x2F;a&gt; or SoCC for short belongs to ACM. It has a bit less content, as videos are not published, but you should keep it in your watchlist.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sosp&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sosp&quot; aria-label=&quot;Anchor link for: sosp&quot;&gt;🔗&lt;&#x2F;a&gt;SOSP&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;http:&#x2F;&#x2F;sosp.org&#x2F;&quot;&gt;Symposium on Operating Systems Principles&lt;&#x2F;a&gt; is another noteworthy conference in the ACM family. It&#x27;s a top-tier venue for discussing operating systems research. Stay tuned for updates on the latest breakthroughs and innovative ideas.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;others&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#others&quot; aria-label=&quot;Anchor link for: others&quot;&gt;🔗&lt;&#x2F;a&gt;Others&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;vldb&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#vldb&quot; aria-label=&quot;Anchor link for: vldb&quot;&gt;🔗&lt;&#x2F;a&gt;VLDB&lt;&#x2F;h3&gt;
+&lt;p&gt;Not belonging to USENIX or ACM, the &lt;a href=&quot;https:&#x2F;&#x2F;vldb.org&#x2F;&quot;&gt;Very Large Data Bases&lt;&#x2F;a&gt; (VLDB) conference is a key event in the database community. It provides a platform for researchers and professionals to exchange ideas on managing and analyzing large-scale datasets.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cidr&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cidr&quot; aria-label=&quot;Anchor link for: cidr&quot;&gt;🔗&lt;&#x2F;a&gt;CIDR&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;www.cidrdb.org&quot;&gt;Conference on Innovative Data Systems Research&lt;&#x2F;a&gt; (CIDR) is a systems-oriented conference, complementary in its mission to the mainstream database conferences like SIGMOD and VLDB, emphasizing the systems architecture perspective.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;cool-papers-examples&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cool-papers-examples&quot; aria-label=&quot;Anchor link for: cool-papers-examples&quot;&gt;🔗&lt;&#x2F;a&gt;Cool papers examples&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This is a nice list, but how about some paper examples that &lt;strong&gt;you&lt;&#x2F;strong&gt; like?🤔&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Sure! Here&#x27;s a quick list with some infrastructure-related informations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conference&#x2F;atc23&#x2F;presentation&#x2F;brooker&quot;&gt;On-demand Container Loading in AWS Lambda&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.cidrdb.org&#x2F;cidr2024&#x2F;papers&#x2F;p63-helland.pdf&quot;&gt;Scalable OLTP in the Cloud: What&#x27;s the BIG DEAL?&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.confluent.io&#x2F;blog&#x2F;cloud-native-kafka-kora-vldb-award&#x2F;&quot;&gt;Kora: A Cloud-Native Event Streaming Platform For Kafka&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=YdxvOPenjWI&quot;&gt;Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.foundationdb.org&#x2F;blog&#x2F;fdb-paper&#x2F;&quot;&gt;FoundationDB: A Distributed, Unbundled, Transactional Key Value Store&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;conference&#x2F;osdi20&#x2F;presentation&#x2F;balakrishnan&quot;&gt;Virtual consensus with Delos&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I&#x27;m also trying to organize them into my &lt;a href=&quot;https:&#x2F;&#x2F;www.zotero.org&#x2F;pierre.zemb&#x2F;library&quot;&gt;Zotero&#x27;s library&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

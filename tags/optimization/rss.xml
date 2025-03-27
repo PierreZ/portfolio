@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - optimization</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/optimization/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Thu, 27 Mar 2025 05:24:27 +0100</lastBuildDate>
+      <item>
+          <title>Key design tip: reverse number scanning in ordered key-value stores</title>
+          <pubDate>Thu, 27 Mar 2025 05:24:27 +0100</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/reverse-number-scanning/</link>
+          <guid>https://pierrezemb.fr/posts/reverse-number-scanning/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
+&lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-2&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In ordered key-value stores, keys are stored in &lt;code&gt;lexicographical order&lt;&#x2F;code&gt;. This works well when you want to scan from lowest to highest values, but becomes inefficient when you need the opposite order. For example, to find the highest number for a key, you need to scan through all values:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 3)
+&lt;&#x2F;span&gt;&lt;span&gt;...
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 99)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You could scan in reverse mode, but you would lose the order of your first prefix(the &quot;my-key-1&quot;).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;Reverse Number Scanning&lt;&#x2F;h2&gt;
+&lt;p&gt;By reversing the numbers using a simple subtraction from the maximum possible value (e.g., &lt;code&gt;Long.MAX_VALUE&lt;&#x2F;code&gt; in Java), we can optimize the scanning process:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;long&lt;&#x2F;span&gt;&lt;span&gt; reversedNumber = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Long&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;MAX_VALUE &lt;&#x2F;span&gt;&lt;span&gt;- number;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This transforms our data into:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775804) &#x2F;&#x2F; number 3
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775805) &#x2F;&#x2F; number 2
+&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 9223372036854775806) &#x2F;&#x2F; number 1
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now, the highest number (which appears first in the reversed order) can be found efficiently, allowing us to stop after finding the first match.&lt;&#x2F;p&gt;
+&lt;p&gt;This technique is particularly useful in systems dealing with time-series data, versioned documents, or any scenario requiring efficient retrieval of the most recent or highest-valued items.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;number 1: 9223372036854775806
+&lt;&#x2F;span&gt;&lt;span&gt;number 2: 9223372036854775805
+&lt;&#x2F;span&gt;&lt;span&gt;number 3: 9223372036854775804
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&#x2F; Reversing back is straightforward
+&lt;&#x2F;span&gt;&lt;span&gt;Long.MAX_VALUE - 9223372036854775806 = 1
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

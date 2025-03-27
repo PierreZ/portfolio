@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - messaging</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/messaging/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2020-03-24T10:24:27+01:00</updated>
+    <id>https://pierrezemb.fr/tags/messaging/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
+        <published>2020-03-24T10:24:27+01:00</published>
+        <updated>2020-03-24T10:24:27+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-kop/"/>
+        <id>https://pierrezemb.fr/posts/announcing-kop/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-kop/">&lt;blockquote&gt;
+&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar&#x2F;&quot; title=&quot;Permalink to announcing KoP&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;sijieg&quot;&gt;Sijie Guo&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;Jia_Zhai&quot;&gt;Jia Zhai&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Pierre Zemb&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the illustrations!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-1.png&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;We are excited to announce that StreamNative and OVHcloud are open-sourcing &quot;Kafka on Pulsar&quot; (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar&#x27;s powerful features, such as:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Streamlined operations with enterprise-grade multi-tenancy&lt;&#x2F;li&gt;
+&lt;li&gt;Simplified operations with a rebalance-free architecture&lt;&#x2F;li&gt;
+&lt;li&gt;Infinite event stream retention with Apache BookKeeper and tiered storage&lt;&#x2F;li&gt;
+&lt;li&gt;Serverless event processing with Pulsar Functions&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;what-is-apache-pulsar&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-apache-pulsar&quot; aria-label=&quot;Anchor link for: what-is-apache-pulsar&quot;&gt;🔗&lt;&#x2F;a&gt;What is Apache Pulsar?&lt;&#x2F;h2&gt;
+&lt;p&gt;Apache Pulsar is an event streaming platform designed from the ground up to be cloud-native- deploying a multi-layer and segment-centric architecture. The architecture separates serving and storage into different layers, making the system container-friendly. The cloud-native architecture provides scalability, availability and resiliency and enables companies to expand their offerings with real-time data-enabled solutions. Pulsar has gained wide adoption since it was open-sourced in 2016 and was designated an Apache Top-Level project in 2018.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-need-behind-kop&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-need-behind-kop&quot; aria-label=&quot;Anchor link for: the-need-behind-kop&quot;&gt;🔗&lt;&#x2F;a&gt;The need behind KoP&lt;&#x2F;h2&gt;
+&lt;p&gt;Pulsar provides a unified messaging model for both queueing and streaming workloads. Pulsar implemented its own protobuf-based binary protocol to provide high performance and low latency. This choice of protobuf makes it convenient to implement Pulsar &lt;a href=&quot;https:&#x2F;&#x2F;pulsar.apache.org&#x2F;docs&#x2F;en&#x2F;client-libraries&#x2F;&quot;&gt;clients&lt;&#x2F;a&gt; and the project already supports Java, Go, Python and C++ languages alongside &lt;a href=&quot;https:&#x2F;&#x2F;pulsar.apache.org&#x2F;docs&#x2F;en&#x2F;client-libraries&#x2F;#thirdparty-clients&quot;&gt;thirdparty clients&lt;&#x2F;a&gt; provided by the community. However, existing applications written using other messaging protocols had to be rewritten to adopt Pulsar&#x27;s new unified messaging protocol.&lt;&#x2F;p&gt;
+&lt;p&gt;To address this, the Pulsar community developed applications to facilitate the migration to Pulsar from other messaging systems. For example, Pulsar provides a &lt;a href=&quot;http:&#x2F;&#x2F;(https:&#x2F;&#x2F;pulsar.apache.org&#x2F;docs&#x2F;en&#x2F;adaptors-kafka&quot;&gt;Kafka wrapper&lt;&#x2F;a&gt; on Kafka Java API, which allows existing applications that already use Kafka Java client switching from Kafka to Pulsar &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=Cy9ev9nAZpI&quot;&gt;without code change&lt;&#x2F;a&gt;. Pulsar also has a rich connector ecosystem, connecting Pulsar with other data systems. Yet, there was still a strong demand from those looking to switch from other Kafka applications to Pulsar.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;streamnative-and-ovhcloud-s-collaboration&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#streamnative-and-ovhcloud-s-collaboration&quot; aria-label=&quot;Anchor link for: streamnative-and-ovhcloud-s-collaboration&quot;&gt;🔗&lt;&#x2F;a&gt;StreamNative and OVHcloud&#x27;s collaboration&lt;&#x2F;h2&gt;
+&lt;p&gt;StreamNative was receiving a lot of inbound requests for help migrating from other messaging systems to Pulsar and recognized the need to support other messaging protocols (such as AMQP and Kafka) natively on Pulsar. StreamNative began working on introducing a general protocol handler framework in Pulsar that would allow developers using other messaging protocols to use Pulsar.&lt;&#x2F;p&gt;
+&lt;p&gt;Internally, OVHcloud had been running Apache Kafka for years, but despite their experience operating multiple clusters with millions of messages per second on Kafka, there were painful operational challenges. For example, putting thousands of topics from thousands of users into a single cluster was difficult without multi-tenancy.&lt;&#x2F;p&gt;
+&lt;p&gt;As a result, OVHcloud decided to shift and build the foundation of their topic-as-a-service product, called ioStream, on Pulsar instead of Kafka. Pulsar&#x27;s multi-tenancy and the overall architecture with Apache Bookkeeper simplified operations compared to Kafka.&lt;&#x2F;p&gt;
+&lt;p&gt;After spawning the first region, OVHcloud decided to implement it as a proof-of-concept proxy capable of transforming the Kafka protocol to Pulsar on the fly. During this process, OVHcloud discovered that StreamNative was working on bringing the Kafka protocol natively to Pulsar, and they joined forces to develop KoP.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-2.png&quot; alt=&quot;kop image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper&#x27;s event stream storage infrastructure and Pulsar&#x27;s pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name &quot;kafka&quot;. It can be installed and configured to run as part of Pulsar brokers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-distributed-log&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-distributed-log&quot; aria-label=&quot;Anchor link for: the-distributed-log&quot;&gt;🔗&lt;&#x2F;a&gt;The distributed log&lt;&#x2F;h2&gt;
+&lt;p&gt;Both Pulsar and Kafka share a very similar data model around &lt;strong&gt;log&lt;&#x2F;strong&gt; for both pub&#x2F;sub messaging and event streaming. For example, both are built on top of a distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a &lt;strong&gt;segment&lt;&#x2F;strong&gt;-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar&#x27;s &lt;em&gt;segment&lt;&#x2F;em&gt; based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in &lt;a href=&quot;https:&#x2F;&#x2F;www.splunk.com&#x2F;en_us&#x2F;blog&#x2F;it&#x2F;comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html&quot;&gt;this Splunk blog&lt;&#x2F;a&gt; and in &lt;a href=&quot;http:&#x2F;&#x2F;bookkeeper.apache.org&#x2F;distributedlog&#x2F;technical-review&#x2F;2016&#x2F;09&#x2F;19&#x2F;kafka-vs-distributedlog.html&quot;&gt;this blog from the Bookkeeper project&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar&#x27;s distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;implementations&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#implementations&quot; aria-label=&quot;Anchor link for: implementations&quot;&gt;🔗&lt;&#x2F;a&gt;Implementations&lt;&#x2F;h2&gt;
+&lt;p&gt;The implementation is done by comparing the protocols between Pulsar and Kafka. We found that there are a lot of similarities between these two protocols. Both protocols are comprised of the following operations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Topic Lookup&lt;&#x2F;strong&gt;: All the clients connect to any broker to lookup the metadata (i.e. the owner broker) of the topics. After fetching the metadata, the clients establish persistent TCP connections to the owner brokers.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Produce&lt;&#x2F;strong&gt;: The clients talk to the &lt;strong&gt;owner&lt;&#x2F;strong&gt; broker of a topic partition to append the messages to a distributed log.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Consume&lt;&#x2F;strong&gt;: The clients talk to the &lt;strong&gt;owner&lt;&#x2F;strong&gt; broker of a topic partition to read the messages from a distributed log.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Offset&lt;&#x2F;strong&gt;: The messages produced to a topic partition are assigned with an offset. The offset in Pulsar is called MessageId. Consumers can use &lt;strong&gt;offsets&lt;&#x2F;strong&gt; to seek to a given position within the log to read messages.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Consumption State&lt;&#x2F;strong&gt;: Both systems maintain the consumption state for consumers within a subscription (or a consumer group in Kafka). The consumption state is stored in __offsets topic in Kafka, while the consumption state is stored as cursors in Pulsar.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;As you can see, these are all the primitive operations provided by a scale-out distributed log storage such as Apache BookKeeper. The core capabilities of Pulsar are implemented on top of Apache BookKeeper. Thus it is pretty easy and straightforward to implement the Kafka concepts by using the existing components that Pulsar has developed on BookKeeper.&lt;br&gt;
+The following figure illustrates how we add the Kafka protocol support within Pulsar. We are introducing a new &lt;strong&gt;Protocol Handler&lt;&#x2F;strong&gt;which implements the Kafka wire protocol by leveraging the existing components (such as topic discovery, the distributed log library – ManagedLedger, cursors and etc) that Pulsar already has.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-3.png&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;topics&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#topics&quot; aria-label=&quot;Anchor link for: topics&quot;&gt;🔗&lt;&#x2F;a&gt;Topics&lt;&#x2F;h3&gt;
+&lt;p&gt;In Kafka, all the topics are stored in one flat namespace. But in Pulsar, topics are organized in hierarchical multi-tenant namespaces. We introduce a setting &lt;em&gt;kafkaNamespace&lt;&#x2F;em&gt; in broker configuration to allow the administrator configuring to map Kafka topics to Pulsar topics.&lt;&#x2F;p&gt;
+&lt;p&gt;In order to let Kafka users leverage the multi-tenancy feature of Apache Pulsar, a Kafka user can specify a Pulsar tenant and namespace as its SASL username when it uses SASL authentication mechanism to authenticate a Kafka client.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;message-id-and-offset&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#message-id-and-offset&quot; aria-label=&quot;Anchor link for: message-id-and-offset&quot;&gt;🔗&lt;&#x2F;a&gt;Message ID and offset&lt;&#x2F;h3&gt;
+&lt;p&gt;In Kafka, each message is assigned with an offset once it is successfully produced to a topic partition. In Pulsar, each message is assigned with a &lt;code&gt;MessageID&lt;&#x2F;code&gt;. The message id consists of 3 components, &lt;em&gt;ledger-id&lt;&#x2F;em&gt;, &lt;em&gt;entry-id&lt;&#x2F;em&gt;, and &lt;em&gt;batch-index&lt;&#x2F;em&gt;. We are using the same approach in Pulsar-Kafka wrapper to convert a Pulsar MessageID to an offset and vice versa.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;messages&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#messages&quot; aria-label=&quot;Anchor link for: messages&quot;&gt;🔗&lt;&#x2F;a&gt;Messages&lt;&#x2F;h3&gt;
+&lt;p&gt;Both a Kafka message and a Pulsar message have key, value, timestamp, and headers (note: this is called &#x27;properties&#x27; in Pulsar). We convert these fields automatically between Kafka messages and Pulsar messages.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;topic-lookup&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#topic-lookup&quot; aria-label=&quot;Anchor link for: topic-lookup&quot;&gt;🔗&lt;&#x2F;a&gt;Topic lookup&lt;&#x2F;h3&gt;
+&lt;p&gt;We use the same topic lookup approach for the Kafka request handler as the Pulsar request handler. The request handler does topic discovery to lookup all the ownerships for the requested topic partitions and responds with the ownership information as part of Kafka TopicMetadata back to Kafka clients.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;produce-messages&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#produce-messages&quot; aria-label=&quot;Anchor link for: produce-messages&quot;&gt;🔗&lt;&#x2F;a&gt;Produce Messages&lt;&#x2F;h3&gt;
+&lt;p&gt;When the Kafka request handler receives produced messages from a Kafka client, it converts Kafka messages to Pulsar messages by mapping the fields (i.e. key, value, timestamp and headers) one by one, and uses the ManagedLedger append API to append those converted Pulsar messages to BookKeeper. Converting Kafka messages to Pulsar messages allows existing Pulsar applications to consume messages produced by Kafka clients.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;consume-messages&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consume-messages&quot; aria-label=&quot;Anchor link for: consume-messages&quot;&gt;🔗&lt;&#x2F;a&gt;Consume Messages&lt;&#x2F;h3&gt;
+&lt;p&gt;When the Kafka request handler receives a consumer request from a Kafka client, it opens a non-durable cursor to read the entries starting from the requested offset. The Kafka request handler converts the Pulsar messages back to Kafka messages to allow existing Kafka applications to consume the messages produced by Pulsar clients.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;group-coordinator-offsets-management&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#group-coordinator-offsets-management&quot; aria-label=&quot;Anchor link for: group-coordinator-offsets-management&quot;&gt;🔗&lt;&#x2F;a&gt;Group coordinator &amp;amp; offsets management&lt;&#x2F;h3&gt;
+&lt;p&gt;The most challenging part is to implement the group coordinator and offsets management. Because Pulsar doesn&#x27;t have a centralized group coordinator for assigning partitions to consumers of a consumer group and managing offsets for each consumer group. In Pulsar, the partition assignment is managed by broker on a per-partition basis, and the offset management is done by storing the acknowledgements in cursors by the owner broker of that partition.&lt;&#x2F;p&gt;
+&lt;p&gt;It is difficult to align the Pulsar model with the Kafka model. Hence, for the sake of providing full compatibility with Kafka clients, we implemented the Kafka group coordinator by storing the coordinator group changes and offsets in a system topic called *public&#x2F;kafka&#x2F;*&lt;em&gt;offsets&lt;&#x2F;em&gt; in Pulsar.&lt;&#x2F;p&gt;
+&lt;p&gt;This allows us to bridge the gap between Pulsar and Kafka and allows people to use existing Pulsar tools and policies to manage subscriptions and monitor Kafka consumers. We add a background thread in the implemented group coordinator to periodically sync offset updates from the system topic to Pulsar cursors. Hence a Kafka consumer group is effectively treated as a Pulsar subscription. All the existing Pulsar toolings can be used for managing Kafka consumer groups as well.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bridge-two-popular-messaging-ecosystems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#bridge-two-popular-messaging-ecosystems&quot; aria-label=&quot;Anchor link for: bridge-two-popular-messaging-ecosystems&quot;&gt;🔗&lt;&#x2F;a&gt;Bridge two popular messaging ecosystems&lt;&#x2F;h2&gt;
+&lt;p&gt;At both companies, we value customer success. We believe that providing a native Kafka protocol on Apache Pulsar will reduce the barriers for people adopting Pulsar to achieve their business success. By integrating two popular event streaming ecosystems, KoP unlocks new use cases. Customers can leverage advantages from each ecosystem and build a truly unified event streaming platform with Apache Pulsar to accelerate the development of real-time applications and services.&lt;&#x2F;p&gt;
+&lt;p&gt;With KoP, a log collector can continue collecting log data from its sources and producing messages to Apache Pulsar using existing Kafka integrations. The downstream applications can use Pulsar Functions to process the events arriving in the system to do serverless event streaming.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;try-it-out&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#try-it-out&quot; aria-label=&quot;Anchor link for: try-it-out&quot;&gt;🔗&lt;&#x2F;a&gt;Try it out&lt;&#x2F;h2&gt;
+&lt;p&gt;KoP is open sourced under Apache License V2 in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;streamnative&#x2F;kop&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;streamnative&#x2F;kop&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;We are looking forward to your issues, and PRs. You can also &lt;a href=&quot;https:&#x2F;&#x2F;apache-pulsar.herokuapp.com&#x2F;&quot;&gt;join #kop channel in Pulsar Slack&lt;&#x2F;a&gt; to discuss all things about Kafka-on-Pulsar.&lt;&#x2F;p&gt;
+&lt;p&gt;StreamNative and OVHcloud are also hosting a webinar about KoP on March 31. If you are interested in learning more details about KoP,&lt;a href=&quot;https:&#x2F;&#x2F;zoom.us&#x2F;webinar&#x2F;register&#x2F;6515842602644&#x2F;WN_l_i-3ekDSg6PwPFn7tqRvA&quot;&gt;please sign up&lt;&#x2F;a&gt;. Looking forward to meeting you online.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;announcing-kop&#x2F;kop-4.png&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#thanks&quot; aria-label=&quot;Anchor link for: thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Thanks&lt;&#x2F;h2&gt;
+&lt;p&gt;The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Diving into Kafka&#x27;s Protocol</title>
+        <published>2019-12-08T15:00:00+01:00</published>
+        <updated>2019-12-08T15:00:00+01:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"/>
+        <id>https://pierrezemb.fr/posts/diving-into-kafka-protocol/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-kafka-protocol&#x2F;apache-kafka.png&quot; alt=&quot;kafka image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into Kafka&#x27;s protocol.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;the-protocol-reference&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-protocol-reference&quot; aria-label=&quot;Anchor link for: the-protocol-reference&quot;&gt;🔗&lt;&#x2F;a&gt;The protocol reference&lt;&#x2F;h2&gt;
+&lt;p&gt;For the last few months, I worked a lot around Kafka&#x27;s protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to &lt;a href=&quot;https:&#x2F;&#x2F;www.slideshare.net&#x2F;streamnative&#x2F;2-kafkaonpulsarjia&quot;&gt;KoP (Kafka On Pulsar)&lt;&#x2F;a&gt;. The full Kafka Protocol documentation is available &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html&quot;&gt;here&lt;&#x2F;a&gt;, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let&#x27;s dive in!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;common-handshake&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#common-handshake&quot; aria-label=&quot;Anchor link for: common-handshake&quot;&gt;🔗&lt;&#x2F;a&gt;Common handshake&lt;&#x2F;h3&gt;
+&lt;p&gt;After a client established the TCP connection, there is a few common requests and responses that are almost always here.&lt;&#x2F;p&gt;
+&lt;p&gt;The common handhake can be divided in three parts:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Being able to understand each other. For this, we are using &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_ApiVersions&quot;&gt;API_VERSIONS&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; to know which versions of which TCP frames can be uses,&lt;&#x2F;li&gt;
+&lt;li&gt;Establish Auth using &lt;strong&gt;SASL&lt;&#x2F;strong&gt; if needed, thanks to &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_SaslHandshake&quot;&gt;SASL_HANDSHAKE&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; and &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_SaslAuthenticate&quot;&gt;SASL_AUTHENTICATE&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;Retrieve the topology of the cluster using &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Metadata&quot;&gt;METADATA&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All exchange are based between a Kafka 2.0 cluster and client.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All the following diagrams are generated with &lt;a href=&quot;https:&#x2F;&#x2F;mermaidjs.github.io&#x2F;#&#x2F;&quot;&gt;MermaidJS&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;pre class=&quot;mermaid&quot;&gt;
+    sequenceDiagram
+
+    Note left of KafkaClient: I&amp;#x27;m speaking Kafka &amp;lt;br&amp;#x2F;&amp;gt; 2.3,but can the &amp;lt;br&amp;#x2F;&amp;gt; broker understand &amp;lt;br&amp;#x2F;&amp;gt; me?
+
+    KafkaClient -&amp;gt;&amp;gt;+ Broker0: API_VERSIONS request
+
+    Note right of Broker0: I can handle theses &amp;lt;br&amp;#x2F;&amp;gt; structures in theses &amp;lt;br&amp;#x2F;&amp;gt;versions: ...
+    Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Thanks!&amp;lt;br&amp;#x2F;&amp;gt; I see you can handle &amp;lt;br&amp;#x2F;&amp;gt; SASL, let&amp;#x27;s auth! &amp;lt;br&amp;#x2F;&amp;gt; can you handle &amp;lt;br&amp;#x2F;&amp;gt; SASL_PLAIN?
+    KafkaClient -&amp;gt;&amp;gt;+ Broker0: SASL_HANDSHAKE request
+
+    Note right of Broker0: Yes I can handle &amp;lt;br&amp;#x2F;&amp;gt; SASL_PLAIN &amp;lt;br&amp;#x2F;&amp;gt; among others
+    Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Awesome, here&amp;#x27;s &amp;lt;br&amp;#x2F;&amp;gt; my credentials!
+    KafkaClient -&amp;gt;&amp;gt;+ Broker0: SASL_AUTHENTICATE request
+
+    Note right of Broker0: Checking...
+    Note right of Broker0: You are &amp;lt;br&amp;#x2F;&amp;gt;authenticated!
+    Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Cool! &amp;lt;br&amp;#x2F;&amp;gt; Can you give &amp;lt;br&amp;#x2F;&amp;gt; the cluster topology?&amp;lt;br&amp;#x2F;&amp;gt; I want to &amp;lt;br&amp;#x2F;&amp;gt; use &amp;#x27;my-topic&amp;#x27;
+    KafkaClient -&amp;gt;&amp;gt;+ Broker0: METADATA request
+
+    Note right of Broker0: There is one topic &amp;lt;br&amp;#x2F;&amp;gt; with one partition&amp;lt;br&amp;#x2F;&amp;gt; called &amp;#x27;my-topic&amp;#x27;&amp;lt;br&amp;#x2F;&amp;gt;The partition&amp;#x27;s leader &amp;lt;br&amp;#x2F;&amp;gt; is Broker0
+    Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp;gt; need to handshake &amp;lt;br&amp;#x2F;&amp;gt; again with &amp;lt;br&amp;#x2F;&amp;gt; another broker
+&lt;&#x2F;pre&gt;&lt;h3 id=&quot;producing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#producing&quot; aria-label=&quot;Anchor link for: producing&quot;&gt;🔗&lt;&#x2F;a&gt;Producing&lt;&#x2F;h3&gt;
+&lt;p&gt;The &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Produce&quot;&gt;PRODUCE&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.&lt;&#x2F;p&gt;
+&lt;pre class=&quot;mermaid&quot;&gt;
+    sequenceDiagram
+
+    Note over KafkaClient,Broker0: ...handshaking, see above...
+
+    loop pull msg
+        Note left of KafkaClient: I have a batch &amp;lt;br&amp;#x2F;&amp;gt; containing one &amp;lt;br&amp;#x2F;&amp;gt; message for the &amp;lt;br&amp;#x2F;&amp;gt; partition-0 &amp;lt;br&amp;#x2F;&amp;gt; of &amp;#x27;my-topic&amp;#x27;
+        KafkaClient -&amp;gt;&amp;gt;+ Broker0: PRODUCE request
+
+        Note right of Broker0: Processing...&amp;lt;br&amp;#x2F;&amp;gt;
+        Note right of Broker0: Done!
+        Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+        
+        Note left of KafkaClient: Thanks
+    end
+&lt;&#x2F;pre&gt;&lt;h3 id=&quot;consuming&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consuming&quot; aria-label=&quot;Anchor link for: consuming&quot;&gt;🔗&lt;&#x2F;a&gt;Consuming&lt;&#x2F;h3&gt;
+&lt;p&gt;Consuming is more complicated than producing. You can learn more in &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=maJulQ4ABNY&quot;&gt;The Magical Group Coordination Protocol of Apache Kafka&lt;&#x2F;a&gt; By Gwen Shapira, Principal Data Architect @ Confluent and also in the &lt;a href=&quot;https:&#x2F;&#x2F;cwiki.apache.org&#x2F;confluence&#x2F;display&#x2F;KAFKA&#x2F;Kafka+Client-side+Assignment+Proposal&quot;&gt;Kafka Client-side Assignment Proposal&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Consuming can be divided in three parts:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;coordinating the consumers to assign them partitions, using:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_FindCoordinator&quot;&gt;FIND_COORDINATOR&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_JoinGroup&quot;&gt;JOIN_GROUP&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_SyncGroup&quot;&gt;SYNC_GROUP&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;then fetch messages using:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_OffsetFetch&quot;&gt;OFFSET_FETCH&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_ListOffsets&quot;&gt;LIST_OFFSETS&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Fetch&quot;&gt;FETCH&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_OffsetCommit&quot;&gt;OFFSET_COMMIT&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;,&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Send lifeproof to the coordinator using &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Heartbeat&quot;&gt;HEARTBEAT&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;For the sake of the explanation, we have now another Broker1 which is holding the coordinator for topic &#x27;my-topic&#x27;. In real-life, it would be the same.&lt;&#x2F;p&gt;
+&lt;pre class=&quot;mermaid&quot;&gt;
+    sequenceDiagram
+
+    Note over KafkaClient,Broker0: ...handshaking, see above...
+
+    Note left of KafkaClient: Who is the &amp;lt;br&amp;#x2F;&amp;gt; coordinator for&amp;lt;br&amp;#x2F;&amp;gt; &amp;#x27;my-topic&amp;#x27;?
+    KafkaClient -&amp;gt;&amp;gt;+ Broker0: FIND_COORDINATOR request
+
+    Note right of Broker0: It is Broker1!
+    Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: OK, let&amp;#x27;s connect&amp;lt;br&amp;#x2F;&amp;gt; to Broker1
+    Note over KafkaClient,Broker1: ...handshaking, see above...
+
+    Note left of KafkaClient: Hi, I want to join a &amp;lt;br&amp;#x2F;&amp;gt; consumption group &amp;lt;br&amp;#x2F;&amp;gt;for &amp;#x27;my-topic&amp;#x27;
+    KafkaClient -&amp;gt;&amp;gt;+ Broker1: JOIN_GROUP request
+
+    Note right of Broker1: Welcome! I will be &amp;lt;br&amp;#x2F;&amp;gt; waiting a bit for any &amp;lt;br&amp;#x2F;&amp;gt;of your friends.
+    Note right of Broker1: You are now leader. &amp;lt;br&amp;#x2F;&amp;gt;Your group contains &amp;lt;br&amp;#x2F;&amp;gt; only one member.&amp;lt;br&amp;#x2F;&amp;gt; You now  need to &amp;lt;br&amp;#x2F;&amp;gt; assign partitions to &amp;lt;br&amp;#x2F;&amp;gt; them. 
+    Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Computing &amp;lt;br&amp;#x2F;&amp;gt;the assigment...
+    Note left of KafkaClient: Done! I will be &amp;lt;br&amp;#x2F;&amp;gt; in charge of handling &amp;lt;br&amp;#x2F;&amp;gt; partition-0 of &amp;lt;br&amp;#x2F;&amp;gt;&amp;#x27;my-topic&amp;#x27;
+    KafkaClient -&amp;gt;&amp;gt;+ Broker1: SYNC_GROUP request
+
+    Note right of Broker1: Thanks, I will &amp;lt;br&amp;#x2F;&amp;gt;broadcast the &amp;lt;br&amp;#x2F;&amp;gt;assigmnents to &amp;lt;br&amp;#x2F;&amp;gt;everyone
+    Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Can I get the &amp;lt;br&amp;#x2F;&amp;gt; committed offsets &amp;lt;br&amp;#x2F;&amp;gt; for partition-0&amp;lt;br&amp;#x2F;&amp;gt;for my consumer&amp;lt;br&amp;#x2F;&amp;gt;group?
+    KafkaClient -&amp;gt;&amp;gt;+ Broker1: OFFSET_FETCH request
+
+    Note right of Broker1: Found no &amp;lt;br&amp;#x2F;&amp;gt;committed offset&amp;lt;br&amp;#x2F;&amp;gt; for partition-0
+    Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
+
+    Note left of KafkaClient: Thanks, I will now &amp;lt;br&amp;#x2F;&amp;gt;connect to Broker0
+
+    Note over KafkaClient,Broker0: ...handshaking again...
+
+    opt if new consumer-group
+        Note left of KafkaClient: Can you give me&amp;lt;br&amp;#x2F;&amp;gt; the earliest position&amp;lt;br&amp;#x2F;&amp;gt; for partition-0?
+        KafkaClient -&amp;gt;&amp;gt;+ Broker0: LIST_OFFSETS request
+        
+        Note right of Broker0: Here&amp;#x27;s the earliest &amp;lt;br&amp;#x2F;&amp;gt; position: ...
+        Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+    end 
+    loop pull msg
+
+        opt Consume
+            Note left of KafkaClient: Can you give me&amp;lt;br&amp;#x2F;&amp;gt; some messages &amp;lt;br&amp;#x2F;&amp;gt; starting  at offset X?
+            KafkaClient -&amp;gt;&amp;gt;+ Broker0: FETCH request
+
+            Note right of Broker0: Here some records...
+            Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
+
+            Note left of KafkaClient: Processing...
+            Note left of KafkaClient: Can you commit &amp;lt;br&amp;#x2F;&amp;gt;offset X?
+            KafkaClient -&amp;gt;&amp;gt;+ Broker1: OFFSET_COMMIT request
+
+            Note right of Broker1: Committing...
+            Note right of Broker1: Done!
+            Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
+        end
+
+        Note left of KafkaClient: I need to send &amp;lt;br&amp;#x2F;&amp;gt; some lifeness proof &amp;lt;br&amp;#x2F;&amp;gt; to the coordinator           
+        opt Healthcheck
+            Note left of KafkaClient: I am still alive!  
+            KafkaClient -&amp;gt;&amp;gt;+ Broker1: HEARTBEAT request
+            Note right of Broker1: I hear you
+            Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
+        end
+    end
+&lt;&#x2F;pre&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Event-driven architecture 101</title>
+        <published>2016-05-13T17:19:23.788+00:00</published>
+        <updated>2016-05-13T17:19:23.788+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"/>
+        <id>https://pierrezemb.fr/posts/eventdriven-architecture-101/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/eventdriven-architecture-101/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;event-driven-architecture-101-d8e13cc4c656&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Do your own cover on &lt;a href=&quot;http:&#x2F;&#x2F;dev.to&#x2F;rly&quot;&gt;http:&#x2F;&#x2F;dev.to&#x2F;rly&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;I’m still a student, so my point of view could be far from reality, be gentle ;)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;**&lt;em&gt;tl;dr: Queue messaging are cool. Use them at the core of your architecture.&lt;&#x2F;em&gt;**I’m currently playing a lot around &lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;&quot;&gt;Kafka&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;flink.apache.org&#x2F;&quot;&gt;Flink&lt;&#x2F;a&gt; at work. I also discovered &lt;a href=&quot;http:&#x2F;&#x2F;vertx.io&#x2F;&quot;&gt;Vert.x&lt;&#x2F;a&gt; at my local JUG. All three have a common word: &lt;strong&gt;events&lt;&#x2F;strong&gt;. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;the-unix-philosophy&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-unix-philosophy&quot; aria-label=&quot;Anchor link for: the-unix-philosophy&quot;&gt;🔗&lt;&#x2F;a&gt;the Unix philosophy&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;2.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I’m a huge fan of GNU&#x2F;Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? &lt;strong&gt;Pipes or |&lt;&#x2F;strong&gt;. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;list files&lt;&#x2F;strong&gt; in a folder&lt;&#x2F;li&gt;
+&lt;li&gt;From this list, &lt;strong&gt;manipulate&#x2F;filter&lt;&#x2F;strong&gt; it. One line must correspond to one file, things like folder are omitted&lt;&#x2F;li&gt;
+&lt;li&gt;And then &lt;strong&gt;count&lt;&#x2F;strong&gt; the line!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;In the UNIX world, it should give you something like “&lt;strong&gt;&lt;em&gt;ls -l | grep ^- | wc -l”.&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; it might feels like chinese. For me, it’s just feels logical. &lt;strong&gt;3 operations mapped into 3 commands.&lt;&#x2F;strong&gt; You declare a set a commands that, in the end, give you the result. It’s simple and also very fast (in fact, you can find funny articles like this one: &lt;a href=&quot;http:&#x2F;&#x2F;aadrake.com&#x2F;command-line-tools-can-be-235x-faster-than-your-hadoop-cluster.html&quot;&gt;Command-line tools can be 235x faster than your Hadoop cluster&lt;&#x2F;a&gt;). This is only possible thanks to the &lt;strong&gt;UNIX philosophy&lt;&#x2F;strong&gt;, greatly describe by Doug McIlroy, Elliot Pinson and Berk Tague in 1978:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&amp;gt; Expect the output of every program to become the input to another, as yet unknown, program.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Why should I care? It’s 2016, not 1978! Well…&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;back-in-2016&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#back-in-2016&quot; aria-label=&quot;Anchor link for: back-in-2016&quot;&gt;🔗&lt;&#x2F;a&gt;Back in 2016&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;3.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Cloud changed everything in terms of software engineering. &lt;strong&gt;We can now deploy applications without thinking about the underlying server&lt;&#x2F;strong&gt;. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, &lt;strong&gt;Why should I deploy only one huge app ?&lt;&#x2F;strong&gt; why can’t I deploy multiples applications instead of one? &lt;strong&gt;Let’s call theses applications micro services&lt;&#x2F;strong&gt; because we are in 2016.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;4.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? &lt;strong&gt;How can they communicate? How can we simulate UNIX pipes?&lt;&#x2F;strong&gt; Before answering, let’s answer to another question first: &lt;strong&gt;What do we really need to send through our network?&lt;&#x2F;strong&gt; Don’t forget the  &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Fallacies_of_distributed_computing&quot;&gt;&lt;strong&gt;Fallacies of distributed computing&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;&lt;strong&gt;…&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Let’s take an example. We are a new startup, and we are building our plateform. We’ll certainly need to handle our customers. Let’s say that for each new customer, &lt;strong&gt;we need to make two actions&lt;&#x2F;strong&gt;: add it to our database, and then to our mailing-list. &lt;strong&gt;A simple and classical way would be to just call two functions&lt;&#x2F;strong&gt; (whether on the same applications or not), and then say to the customer: “You’re successfully registered”. Like this:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;5.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Classic approach&lt;&#x2F;p&gt;
+&lt;p&gt;Is there another approach? Let’s use an &lt;strong&gt;event-based architecture&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;let-s-talk-events&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#let-s-talk-events&quot; aria-label=&quot;Anchor link for: let-s-talk-events&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;strong&gt;Let’s talk events&lt;&#x2F;strong&gt;&lt;&#x2F;h1&gt;
+&lt;p&gt;Let’s ask Google, what’s an event?&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;a thing that happens, especially one of importance.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Well, handling a new customer is a thing that happens (hopefully). For this, we’ll be using a &lt;strong&gt;Queue messaging system or Broker&lt;&#x2F;strong&gt;. It’s a &lt;strong&gt;middleware&lt;&#x2F;strong&gt; that will &lt;strong&gt;receive events, and making them available for another application or groups of applications.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;6.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Queue messaging architecture with 2 producers and 4 consumers&lt;&#x2F;p&gt;
+&lt;p&gt;So let’s rethink our architecture. Pay attention to the words: our Register page will &lt;strong&gt;produce&lt;&#x2F;strong&gt; an event that will contains all the information about our client. This event will be &lt;strong&gt;queued&lt;&#x2F;strong&gt;, waiting to be &lt;strong&gt;consumed&lt;&#x2F;strong&gt; by the associated micro services.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;7.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Simple event-driven architecture&lt;&#x2F;p&gt;
+&lt;p&gt;We didn’t changed much, but we enable many things over here:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Simplicity&lt;&#x2F;strong&gt;. Remember, the first rule ! “Make each program do one thing well”. Like this, your &lt;strong&gt;code base for each app will be simple&lt;&#x2F;strong&gt; &lt;strong&gt;as hell&lt;&#x2F;strong&gt;, and you’ll be able to easily replace your software if needed.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Modularity&lt;&#x2F;strong&gt;. You need to add another action to the event, for example CreateProfile ? Easy, &lt;strong&gt;just plug another app on the same queue&lt;&#x2F;strong&gt;. You need to test a new version of your program? Easy, &lt;strong&gt;just plug it on the same queue&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Scalability&lt;&#x2F;strong&gt;. One of your micro services is taking too much time? &lt;strong&gt;Just start a new instance of it&lt;&#x2F;strong&gt;. Huge traffic? Add new instances. With this approach, you can start really small and become giant.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Big-data friendly.&lt;&#x2F;strong&gt; This type of architecture is often used to handle a lot of data. With plateform like &lt;a href=&quot;http:&#x2F;&#x2F;flink.apache.org&quot;&gt;Apache Flink&lt;&#x2F;a&gt;, you can do some &lt;strong&gt;stream processing directly&lt;&#x2F;strong&gt;. &lt;a href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-master&#x2F;apis&#x2F;streaming&#x2F;index.html#example-program&quot;&gt;Look how easy it is&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Polyglotism.&lt;&#x2F;strong&gt; Most messaging system are offering libraries for many languages.&lt;strong&gt;Like this, you can use whatever language you want&lt;&#x2F;strong&gt; . But be aware, &lt;em&gt;With great power comes great responsibility&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h1 id=&quot;what-about-serverless&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-serverless&quot; aria-label=&quot;Anchor link for: what-about-serverless&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;strong&gt;What about serverless?&lt;&#x2F;strong&gt;&lt;&#x2F;h1&gt;
+&lt;p&gt;Serverless is the “new” buzz word. Ignited by Amazon with their product &lt;a href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;lambda&#x2F;&quot;&gt;AWS Lambda&lt;&#x2F;a&gt; and quickly followed by &lt;a href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;functions&#x2F;docs&quot;&gt;Google&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;azure.microsoft.com&#x2F;en-us&#x2F;services&#x2F;functions&#x2F;&quot;&gt;Microsoft&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;new-console.ng.bluemix.net&#x2F;openwhisk&#x2F;&quot;&gt;IBM&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;www.iron.io&#x2F;introducing-aws-lambda-support&quot;&gt;Iron.io&lt;&#x2F;a&gt;, the goal is to &lt;strong&gt;offer to developers a new way of building apps&lt;&#x2F;strong&gt;. Instead of writing apps, &lt;strong&gt;you’ll just write a function that will respond to an event&lt;&#x2F;strong&gt;. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be &lt;strong&gt;deploying an architecture built only using events&lt;&#x2F;strong&gt;. I must admit that I didn’t try it yet, but I think i&lt;strong&gt;t’s a great idea to force developers to split their apps and really think about events,&lt;&#x2F;strong&gt; but you could just build the same thing with any cloud provider.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;additional-links-and-talks-about-this-topic&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#additional-links-and-talks-about-this-topic&quot; aria-label=&quot;Anchor link for: additional-links-and-talks-about-this-topic&quot;&gt;🔗&lt;&#x2F;a&gt;Additional links and talks about this topic&lt;&#x2F;h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;www.confluent.io&#x2F;blog&#x2F;apache-kafka-samza-and-the-unix-philosophy-of-distributed-data&quot;&gt;Apache Kafka, Samza, and the Unix Philosophy of Distributed Data&lt;&#x2F;a&gt; by &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;u&#x2F;13be457aed12&quot;&gt;Martin Kleppmann&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;blog.cloudera.com&#x2F;blog&#x2F;2014&#x2F;09&#x2F;apache-kafka-for-beginners&#x2F;&quot;&gt;Apache Kafka for Beginners&lt;&#x2F;a&gt; by Cloudera Engineering Blog&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.voxxed.com&#x2F;blog&#x2F;2016&#x2F;04&#x2F;introduction-apache-kafka&#x2F;&quot;&gt;Introduction to Apache Kafka&lt;&#x2F;a&gt; by Guglielmo Iozza&lt;&#x2F;li&gt;
+&lt;li&gt;[Apache Flink Training] (&lt;a href=&quot;http:&#x2F;&#x2F;dataartisans.github.io&#x2F;flink-training&#x2F;)by&quot;&gt;http:&#x2F;&#x2F;dataartisans.github.io&#x2F;flink-training&#x2F;)by&lt;&#x2F;a&gt; data-artisans&lt;&#x2F;li&gt;
+&lt;li&gt;Meetup LeboncoinTech — AMQP 101 by &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;u&#x2F;58ea5a89aaae&quot;&gt;Quentin ADAM&lt;&#x2F;a&gt; (French sorry)&lt;&#x2F;li&gt;
+&lt;li&gt;vert.x 3 — be reactive on the JVM but not only in Java by Clement Escoffier&#x2F;Paulo Lopes DEVOXX 2015&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Please, Feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

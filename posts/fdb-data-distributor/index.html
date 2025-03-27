@@ -293,6 +293,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span style="color:#bf616a;">init</span><span>( PRIORITY_SPLIT_SHARD, </span><span style="color:#d08770;">950 </span><span>);
 </span></code></pre>
 <p>A full list of defined priorities can be found in the <a href="https://github.com/apple/foundationdb/blob/release-7.3/fdbclient/ServerKnobs.cpp#L155-L173">Knobs file</a>, providing useful insights into how tasks are scheduled.</p>
+<p>EDIT: Yes, <code>SPLIT_SHARD</code> has an higher priority! See <a href="https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24">https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24</a>.</p>
 <h3 id="serverteaminfo-event"><a class="zola-anchor" href="#serverteaminfo-event" aria-label="Anchor link for: serverteaminfo-event">🔗</a><code>ServerTeamInfo</code> Event</h3>
 <p>Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The <code>fdbcli</code> command <code>triggerddteaminfolog</code> triggers informative logs by invoking <a href="https://github.com/apple/foundationdb/blob/release-7.3/fdbserver/DDTeamCollection.actor.cpp#L3425">printSnapshotTeamsInfo</a>.</p>
 <pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
@@ -353,7 +354,9 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
         Tags:
           <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
           <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a>
-          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
+          <a href="https://pierrezemb.fr/tags/database/">#database</a>
+          <a href="https://pierrezemb.fr/tags/storage/">#storage</a>
   </p>
 <footer>
     <p>© 2025 Pierre Zemb</p>

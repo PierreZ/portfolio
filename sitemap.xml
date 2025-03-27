@@ -113,6 +113,10 @@
         <lastmod>2024-04-22T00:37:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/reverse-number-scanning/</loc>
+        <lastmod>2025-03-27T05:24:27+01:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/ten-years-programming/</loc>
         <lastmod>2020-09-30T00:24:27+01:00</lastmod>
     </url>
@@ -124,43 +128,52 @@
         <loc>https://pierrezemb.fr/tags/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/academic/</loc>
+        <loc>https://pierrezemb.fr/tags/algorithms/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/analytics/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/architecture/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/balancing/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/colossus/</loc>
-    </url>
-    <url>
         <loc>https://pierrezemb.fr/tags/consensus/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/container/</loc>
+        <loc>https://pierrezemb.fr/tags/containers/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/contribution/</loc>
+        <loc>https://pierrezemb.fr/tags/database/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/debugging/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
+        <loc>https://pierrezemb.fr/tags/design/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/diving-into/</loc>
+        <loc>https://pierrezemb.fr/tags/distributed/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/diving/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/docker/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/education/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/engineering/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/etcd/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/event/</loc>
+        <loc>https://pierrezemb.fr/tags/expiration/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/filesystem/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/flink/</loc>
@@ -169,7 +182,7 @@
         <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/gfs/</loc>
+        <loc>https://pierrezemb.fr/tags/google/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/hadoop/</loc>
@@ -178,28 +191,43 @@
         <loc>https://pierrezemb.fr/tags/hbase/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/kafka/</loc>
+        <loc>https://pierrezemb.fr/tags/infrastructure/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/layer/</loc>
+        <loc>https://pierrezemb.fr/tags/kafka/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/learning/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/modeling/</loc>
+        <loc>https://pierrezemb.fr/tags/machinelearning/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/nasa/</loc>
+        <loc>https://pierrezemb.fr/tags/messaging/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/notes-about/</loc>
+        <loc>https://pierrezemb.fr/tags/monitoring/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/networking/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/notes/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/opensource/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/optimization/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/papers/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/performance/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/personal/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/protocol/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/pulsar/</loc>
@@ -208,31 +236,37 @@
         <loc>https://pierrezemb.fr/tags/raft/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/research/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/rust/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/simulation/</loc>
+        <loc>https://pierrezemb.fr/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/space/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/sql/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/stream/</loc>
+        <loc>https://pierrezemb.fr/tags/storage/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/streaming/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/testing/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/timeseries/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/transaction/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/ttl/</loc>
+        <loc>https://pierrezemb.fr/tags/transactions/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/tuning/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/warp10/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/talks/</loc>

@@ -301,7 +301,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p><img src="/images/announcing-kop/kop-2.png" alt="kop image" /></p>
 <p>KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper's event stream storage infrastructure and Pulsar's pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name "kafka". It can be installed and configured to run as part of Pulsar brokers.</p>
 <h2 id="the-distributed-log"><a class="zola-anchor" href="#the-distributed-log" aria-label="Anchor link for: the-distributed-log">🔗</a>The distributed log</h2>
-<p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. A key difference between these two systems is how they implement the distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar's <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
+<p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar's <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
 <p>Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar's distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).</p>
 <h2 id="implementations"><a class="zola-anchor" href="#implementations" aria-label="Anchor link for: implementations">🔗</a>Implementations</h2>
 <p>The implementation is done by comparing the protocols between Pulsar and Kafka. We found that there are a lot of similarities between these two protocols. Both protocols are comprised of the following operations:</p>
@@ -346,8 +346,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
   </main>
   <p>
         Tags:
+          <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a>
+          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
           <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a>
           <a href="https://pierrezemb.fr/tags/pulsar/">#pulsar</a>
+          <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a>
   </p>
 <footer>
     <p>© 2025 Pierre Zemb</p>
