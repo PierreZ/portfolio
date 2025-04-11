@@ -85,6 +85,10 @@
         <lastmod>2017-10-11T10:23:11.77Z</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/learn-about-dst/</loc>
+        <lastmod>2025-04-11T00:00:00+02:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/lets-talk-about-containers/</loc>
         <lastmod>2016-01-04T18:52:19.698Z</lastmod>
     </url>
@@ -150,6 +154,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/design/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/deterministic/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/distributed/</loc>
@@ -236,6 +243,9 @@
         <loc>https://pierrezemb.fr/tags/raft/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/reliability/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/research/</loc>
     </url>
     <url>
@@ -243,6 +253,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/simulation/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/space/</loc>

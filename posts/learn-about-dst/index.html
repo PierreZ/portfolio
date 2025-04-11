@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>So, You Want to Learn More About Deterministic Simulation Testing? | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="So, You Want to Learn More About Deterministic Simulation Testing?">
+<meta name="description" content="A curated collection of resources about deterministic simulation testing for distributed systems.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="So, You Want to Learn More About Deterministic Simulation Testing?" />
+<meta name="twitter:description" content="A curated collection of resources about deterministic simulation testing for distributed systems." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="So, You Want to Learn More About Deterministic Simulation Testing?">
+<meta property="og:description" content="A curated collection of resources about deterministic simulation testing for distributed systems."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/learn-about-dst/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-04-11T00:00:00+02:00" />
+
+
+
+<meta property="article:tag" content="distributed" />
+
+<meta property="article:tag" content="testing" />
+
+<meta property="article:tag" content="reliability" />
+
+<meta property="article:tag" content="simulation" />
+
+<meta property="article:tag" content="deterministic" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>So, You Want to Learn More About Deterministic Simulation Testing?</h1>
+      <p>
+        <i>
+          <time datetime="2025-04-11T00:00:00+02:00" pubdate>11 Apr, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/learn-about-dst/#what-is-deterministic-simulation-testing">What is Deterministic Simulation Testing?</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/learn-about-dst/#tl-dr">TL;DR</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/learn-about-dst/#essential-reading">Essential Reading</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/learn-about-dst/#foundations-concepts">Foundations &amp; Concepts</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/learn-about-dst/#language-specific-implementations">Language-Specific Implementations</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/learn-about-dst/#real-world-case-studies">Real-World Case Studies</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/learn-about-dst/#talks">Talks</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>I recently attended <a href="https://bugbash.antithesis.com/">BugBash 2025</a>, a software reliability conference organized by <a href="https://antithesis.com">Antithesis</a> in Washington, D.C. during April 3-4, 2025. The conference brought together industry experts like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss various aspects of building reliable software, with deterministic simulation testing being a significant focus throughout many of the sessions and discussions.</p>
+<p>One of the highlights for me was having the chance to talk with the Antithesis team and meet some of the original creators of FoundationDB.</p>
+<h2 id="what-is-deterministic-simulation-testing"><a class="zola-anchor" href="#what-is-deterministic-simulation-testing" aria-label="Anchor link for: what-is-deterministic-simulation-testing">🔗</a>What is Deterministic Simulation Testing?</h2>
+<p>The best description of DST I've found is described in <a href="https://apple.github.io/foundationdb/testing.html">FoundationDB's testing page</a>:</p>
+<blockquote>
+<p>The major goal of Simulation is to make sure that we find and diagnose issues in simulation rather than the real world. Simulation runs tens of thousands of simulations every night, each one simulating large numbers of component failures. Based on the volume of tests that we run and the increased intensity of the failures in our scenarios, we estimate that we have run the equivalent of roughly one trillion CPU-hours of simulation on FoundationDB.</p>
+</blockquote>
+<blockquote>
+<p>Simulation is able to conduct a deterministic simulation of an entire FoundationDB cluster within a single-threaded process. Determinism is crucial in that it allows perfect repeatability of a simulated run, facilitating controlled experiments to home in on issues. The simulation steps through time, synchronized across the system, representing a larger amount of real time in a smaller amount of simulated time. In practice, our simulations usually have about a 10-1 factor of real-to-simulated time, which is advantageous for the efficiency of testing.</p>
+</blockquote>
+<blockquote>
+<p>We use Simulation to simulate failures modes at the network, machine, and datacenter levels, including connection failures, degradation of machine performance, machine shutdowns or reboots, machines coming back from the dead, etc. We stress-test all of these failure modes, failing machines at very short intervals, inducing unusually severe loads, and delaying communications channels.</p>
+</blockquote>
+<blockquote>
+<p>Simulation's success has surpassed our expectation and has been vital to our engineering team. It seems unlikely that we would have been able to build FoundationDB without this technology.</p>
+</blockquote>
+<p>After years of operating many Apache-oriented distributed systems, I can confidently say that FoundationDB stands apart in its remarkable robustness—I've rarely been paged for it, which speaks volumes about its stability in production. At <a href="https://www.clever-cloud.com/">Clever Cloud</a>, we've even leveraged FoundationDB's simulation framework during our application development by <a href="/posts/providing-safety-fdb-rs/#user-safety">embedding Rust code inside FDB's simulation environment</a>, allowing us to inherit the same reliability guarantees for our custom applications.</p>
+<h2 id="tl-dr"><a class="zola-anchor" href="#tl-dr" aria-label="Anchor link for: tl-dr">🔗</a>TL;DR</h2>
+<p>If you only have limited time, here are the three must-watch videos that will give you the best introduction to deterministic simulation testing:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=4fFDFbi3toc">Will Wilson: Testing Distributed Systems with Deterministic Simulation</a></li>
+<li><a href="https://www.youtube.com/watch?v=fFSPwJFXVlw">Will Wilson: Autonomous Testing and the Future of Software Development</a></li>
+<li><a href="https://www.youtube.com/watch?v=m3HwXlQPCEU">Will Wilson: Testing a Single-Node, Single Threaded, Distributed System Written in 1985</a></li>
+</ul>
+<h2 id="essential-reading"><a class="zola-anchor" href="#essential-reading" aria-label="Anchor link for: essential-reading">🔗</a>Essential Reading</h2>
+<h3 id="foundations-concepts"><a class="zola-anchor" href="#foundations-concepts" aria-label="Anchor link for: foundations-concepts">🔗</a>Foundations &amp; Concepts</h3>
+<ul>
+<li><a href="https://www.cockroachlabs.com/blog/demonic-nondeterminism/">CockroachLabs: Demonic Nondeterminism</a></li>
+<li><a href="https://transactional.blog/simulation/buggify">Alex Miller: BUGGIFY</a></li>
+<li><a href="https://docs.tigerbeetle.com/concepts/safety/#software-reliability">TigerBeetle: Building Reliable Systems</a></li>
+<li><a href="https://journal.resonatehq.io/p/deterministic-simulation-testing">Dominik Tornow: Deterministic Simulation Testing</a></li>
+<li><a href="https://poorlydefinedbehaviour.github.io/posts/deterministic_simulation_testing/">Poorly Defined Behaviour: Deterministic Simulation Testing</a></li>
+<li><a href="https://notes.eatonphil.com/2024-08-20-deterministic-simulation-testing.html">Phil Eaton: What's the big deal about Deterministic Simulation Testing?</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?ref=rss&amp;id=3712057">AWS: Systems Correctness Practices</a></li>
+</ul>
+<h3 id="language-specific-implementations"><a class="zola-anchor" href="#language-specific-implementations" aria-label="Anchor link for: language-specific-implementations">🔗</a>Language-Specific Implementations</h3>
+<ul>
+<li><a href="https://docs.rs/turmoil/latest/turmoil/">Turmoil: Network Simulation Framework for Rust</a></li>
+<li><a href="https://docs.rs/madsim/latest/madsim/">MadSim: Deterministic Simulation Testing Library for Rust</a></li>
+<li><a href="https://sled.rs/simulation.html">Sled: Simulation Testing</a></li>
+<li><a href="https://s2.dev/blog/dst">S2: Deterministic simulation testing for async Rust</a></li>
+<li><a href="https://www.polarsignals.com/blog/posts/2024/05/28/mostly-dst-in-go">Polar Signals: Mostly-DST in Go</a></li>
+</ul>
+<h3 id="real-world-case-studies"><a class="zola-anchor" href="#real-world-case-studies" aria-label="Anchor link for: real-world-case-studies">🔗</a>Real-World Case Studies</h3>
+<ul>
+<li><a href="https://tigerbeetle.com/blog/2022-11-23-a-friendly-abstraction-over-iouring-and-kqueue/">TigerBeetle: A Friendly Abstraction Over io_uring and kqueue</a></li>
+<li><a href="https://dropbox.tech/infrastructure/-testing-our-new-sync-engine">Dropbox: Testing Our New Sync Engine</a></li>
+<li><a href="https://tigerbeetle.com/blog/2023-07-11-we-put-a-distributed-database-in-the-browser/">TigerBeetle: We Put a Distributed Database in the Browser</a></li>
+<li><a href="https://antithesis.com/solutions/case_studies/">Antithesis: Case Studies</a></li>
+<li><a href="https://risingwave.com/blog/deterministic-simulation-a-new-era-of-distributed-system-testing/">RisingWave: A New Era of Distributed System Testing</a></li>
+<li><a href="https://risingwave.com/blog/applying-deterministic-simulation-the-risingwave-story-part-2-of-2/">RisingWave: The RisingWave Story</a></li>
+<li><a href="https://www.warpstream.com/blog/deterministic-simulation-testing-for-our-entire-saas">WarpStream: DST for Our Entire SaaS</a></li>
+<li><a href="https://antithesis.com/blog/sdtalk/">Antithesis: How Antithesis finds bugs (with help from the Super Mario Bros.)</a></li>
+</ul>
+<h2 id="talks"><a class="zola-anchor" href="#talks" aria-label="Anchor link for: talks">🔗</a>Talks</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=IaB8jvjW0kk">Ben Collins: FoundationDB Testing: Past &amp; Present</a></li>
+<li><a href="https://www.youtube.com/watch?v=rvHd4Y76-fs">Marc Brooker: AWS re:Invent 2024 - Try again: The tools and techniques behind resilient systems (ARC403)</a></li>
+<li><a href="https://www.youtube.com/watch?v=6y8Ga3oogLY">TigerBeetle: Episode 064: Two In One, New Request Protocol and VOPR Tutorial</a></li>
+</ul>
+<hr />
+<p>Please, feel free to react to this article, you can reach me on <a href="https://twitter.com/PierreZ">Twitter</a>, or have a look on my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
+          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
+          <a href="https://pierrezemb.fr/tags/reliability/">#reliability</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+          <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

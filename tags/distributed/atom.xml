@@ -5,8 +5,89 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/distributed/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-03-27T05:24:27+01:00</updated>
+    <updated>2025-04-11T00:00:00+02:00</updated>
     <id>https://pierrezemb.fr/tags/distributed/atom.xml</id>
+    <entry xml:lang="en">
+        <title>So, You Want to Learn More About Deterministic Simulation Testing?</title>
+        <published>2025-04-11T00:00:00+02:00</published>
+        <updated>2025-04-11T00:00:00+02:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/learn-about-dst/"/>
+        <id>https://pierrezemb.fr/posts/learn-about-dst/</id>
+        
+        <content type="html" xml:base="https://pierrezemb.fr/posts/learn-about-dst/">&lt;p&gt;I recently attended &lt;a href=&quot;https:&#x2F;&#x2F;bugbash.antithesis.com&#x2F;&quot;&gt;BugBash 2025&lt;&#x2F;a&gt;, a software reliability conference organized by &lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&quot;&gt;Antithesis&lt;&#x2F;a&gt; in Washington, D.C. during April 3-4, 2025. The conference brought together industry experts like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss various aspects of building reliable software, with deterministic simulation testing being a significant focus throughout many of the sessions and discussions.&lt;&#x2F;p&gt;
+&lt;p&gt;One of the highlights for me was having the chance to talk with the Antithesis team and meet some of the original creators of FoundationDB.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-deterministic-simulation-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-deterministic-simulation-testing&quot; aria-label=&quot;Anchor link for: what-is-deterministic-simulation-testing&quot;&gt;🔗&lt;&#x2F;a&gt;What is Deterministic Simulation Testing?&lt;&#x2F;h2&gt;
+&lt;p&gt;The best description of DST I&#x27;ve found is described in &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;FoundationDB&#x27;s testing page&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The major goal of Simulation is to make sure that we find and diagnose issues in simulation rather than the real world. Simulation runs tens of thousands of simulations every night, each one simulating large numbers of component failures. Based on the volume of tests that we run and the increased intensity of the failures in our scenarios, we estimate that we have run the equivalent of roughly one trillion CPU-hours of simulation on FoundationDB.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Simulation is able to conduct a deterministic simulation of an entire FoundationDB cluster within a single-threaded process. Determinism is crucial in that it allows perfect repeatability of a simulated run, facilitating controlled experiments to home in on issues. The simulation steps through time, synchronized across the system, representing a larger amount of real time in a smaller amount of simulated time. In practice, our simulations usually have about a 10-1 factor of real-to-simulated time, which is advantageous for the efficiency of testing.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We use Simulation to simulate failures modes at the network, machine, and datacenter levels, including connection failures, degradation of machine performance, machine shutdowns or reboots, machines coming back from the dead, etc. We stress-test all of these failure modes, failing machines at very short intervals, inducing unusually severe loads, and delaying communications channels.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Simulation&#x27;s success has surpassed our expectation and has been vital to our engineering team. It seems unlikely that we would have been able to build FoundationDB without this technology.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;After years of operating many Apache-oriented distributed systems, I can confidently say that FoundationDB stands apart in its remarkable robustness—I&#x27;ve rarely been paged for it, which speaks volumes about its stability in production. At &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;&quot;&gt;Clever Cloud&lt;&#x2F;a&gt;, we&#x27;ve even leveraged FoundationDB&#x27;s simulation framework during our application development by &lt;a href=&quot;&#x2F;posts&#x2F;providing-safety-fdb-rs&#x2F;#user-safety&quot;&gt;embedding Rust code inside FDB&#x27;s simulation environment&lt;&#x2F;a&gt;, allowing us to inherit the same reliability guarantees for our custom applications.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tl-dr&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot;&gt;🔗&lt;&#x2F;a&gt;TL;DR&lt;&#x2F;h2&gt;
+&lt;p&gt;If you only have limited time, here are the three must-watch videos that will give you the best introduction to deterministic simulation testing:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=4fFDFbi3toc&quot;&gt;Will Wilson: Testing Distributed Systems with Deterministic Simulation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=fFSPwJFXVlw&quot;&gt;Will Wilson: Autonomous Testing and the Future of Software Development&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=m3HwXlQPCEU&quot;&gt;Will Wilson: Testing a Single-Node, Single Threaded, Distributed System Written in 1985&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;essential-reading&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#essential-reading&quot; aria-label=&quot;Anchor link for: essential-reading&quot;&gt;🔗&lt;&#x2F;a&gt;Essential Reading&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;foundations-concepts&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#foundations-concepts&quot; aria-label=&quot;Anchor link for: foundations-concepts&quot;&gt;🔗&lt;&#x2F;a&gt;Foundations &amp;amp; Concepts&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.cockroachlabs.com&#x2F;blog&#x2F;demonic-nondeterminism&#x2F;&quot;&gt;CockroachLabs: Demonic Nondeterminism&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;transactional.blog&#x2F;simulation&#x2F;buggify&quot;&gt;Alex Miller: BUGGIFY&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.tigerbeetle.com&#x2F;concepts&#x2F;safety&#x2F;#software-reliability&quot;&gt;TigerBeetle: Building Reliable Systems&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;journal.resonatehq.io&#x2F;p&#x2F;deterministic-simulation-testing&quot;&gt;Dominik Tornow: Deterministic Simulation Testing&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;poorlydefinedbehaviour.github.io&#x2F;posts&#x2F;deterministic_simulation_testing&#x2F;&quot;&gt;Poorly Defined Behaviour: Deterministic Simulation Testing&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;notes.eatonphil.com&#x2F;2024-08-20-deterministic-simulation-testing.html&quot;&gt;Phil Eaton: What&#x27;s the big deal about Deterministic Simulation Testing?&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;queue.acm.org&#x2F;detail.cfm?ref=rss&amp;amp;id=3712057&quot;&gt;AWS: Systems Correctness Practices&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;language-specific-implementations&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#language-specific-implementations&quot; aria-label=&quot;Anchor link for: language-specific-implementations&quot;&gt;🔗&lt;&#x2F;a&gt;Language-Specific Implementations&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;turmoil&#x2F;latest&#x2F;turmoil&#x2F;&quot;&gt;Turmoil: Network Simulation Framework for Rust&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;madsim&#x2F;latest&#x2F;madsim&#x2F;&quot;&gt;MadSim: Deterministic Simulation Testing Library for Rust&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;sled.rs&#x2F;simulation.html&quot;&gt;Sled: Simulation Testing&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;s2.dev&#x2F;blog&#x2F;dst&quot;&gt;S2: Deterministic simulation testing for async Rust&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.polarsignals.com&#x2F;blog&#x2F;posts&#x2F;2024&#x2F;05&#x2F;28&#x2F;mostly-dst-in-go&quot;&gt;Polar Signals: Mostly-DST in Go&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;real-world-case-studies&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#real-world-case-studies&quot; aria-label=&quot;Anchor link for: real-world-case-studies&quot;&gt;🔗&lt;&#x2F;a&gt;Real-World Case Studies&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;tigerbeetle.com&#x2F;blog&#x2F;2022-11-23-a-friendly-abstraction-over-iouring-and-kqueue&#x2F;&quot;&gt;TigerBeetle: A Friendly Abstraction Over io_uring and kqueue&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;dropbox.tech&#x2F;infrastructure&#x2F;-testing-our-new-sync-engine&quot;&gt;Dropbox: Testing Our New Sync Engine&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;tigerbeetle.com&#x2F;blog&#x2F;2023-07-11-we-put-a-distributed-database-in-the-browser&#x2F;&quot;&gt;TigerBeetle: We Put a Distributed Database in the Browser&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&#x2F;solutions&#x2F;case_studies&#x2F;&quot;&gt;Antithesis: Case Studies&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;risingwave.com&#x2F;blog&#x2F;deterministic-simulation-a-new-era-of-distributed-system-testing&#x2F;&quot;&gt;RisingWave: A New Era of Distributed System Testing&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;risingwave.com&#x2F;blog&#x2F;applying-deterministic-simulation-the-risingwave-story-part-2-of-2&#x2F;&quot;&gt;RisingWave: The RisingWave Story&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.warpstream.com&#x2F;blog&#x2F;deterministic-simulation-testing-for-our-entire-saas&quot;&gt;WarpStream: DST for Our Entire SaaS&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&#x2F;blog&#x2F;sdtalk&#x2F;&quot;&gt;Antithesis: How Antithesis finds bugs (with help from the Super Mario Bros.)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;talks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#talks&quot; aria-label=&quot;Anchor link for: talks&quot;&gt;🔗&lt;&#x2F;a&gt;Talks&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=IaB8jvjW0kk&quot;&gt;Ben Collins: FoundationDB Testing: Past &amp;amp; Present&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=rvHd4Y76-fs&quot;&gt;Marc Brooker: AWS re:Invent 2024 - Try again: The tools and techniques behind resilient systems (ARC403)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=6y8Ga3oogLY&quot;&gt;TigerBeetle: Episode 064: Two In One, New Request Protocol and VOPR Tutorial&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Please, feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Key design tip: reverse number scanning in ordered key-value stores</title>
         <published>2025-03-27T05:24:27+01:00</published>
