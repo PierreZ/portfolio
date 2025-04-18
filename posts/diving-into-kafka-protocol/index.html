@@ -291,8 +291,9 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <blockquote>
 <p>All the following diagrams are generated with <a href="https://mermaidjs.github.io/#/">MermaidJS</a>.</p>
 </blockquote>
-<pre class="mermaid">
-    sequenceDiagram
+<div style="text-align: center;">
+    <pre class="mermaid">
+        sequenceDiagram
 
     Note left of KafkaClient: I&#x27;m speaking Kafka &lt;br&#x2F;&gt; 2.3,but can the &lt;br&#x2F;&gt; broker understand &lt;br&#x2F;&gt; me?
 
@@ -321,10 +322,12 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
     Broker0 -&gt;&gt;- KafkaClient: 
 
 Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to handshake &lt;br&#x2F;&gt; again with &lt;br&#x2F;&gt; another broker
-</pre><h3 id="producing"><a class="zola-anchor" href="#producing" aria-label="Anchor link for: producing">🔗</a>Producing</h3>
+    </pre>
+</div><h3 id="producing"><a class="zola-anchor" href="#producing" aria-label="Anchor link for: producing">🔗</a>Producing</h3>
 <p>The <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Produce">PRODUCE</a></strong> API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.</p>
-<pre class="mermaid">
-    sequenceDiagram
+<div style="text-align: center;">
+    <pre class="mermaid">
+        sequenceDiagram
 
     Note over KafkaClient,Broker0: ...handshaking, see above...
 
@@ -338,7 +341,8 @@ Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to han
         
         Note left of KafkaClient: Thanks
     end
-</pre><h3 id="consuming"><a class="zola-anchor" href="#consuming" aria-label="Anchor link for: consuming">🔗</a>Consuming</h3>
+    </pre>
+</div><h3 id="consuming"><a class="zola-anchor" href="#consuming" aria-label="Anchor link for: consuming">🔗</a>Consuming</h3>
 <p>Consuming is more complicated than producing. You can learn more in <a href="https://www.youtube.com/watch?v=maJulQ4ABNY">The Magical Group Coordination Protocol of Apache Kafka</a> By Gwen Shapira, Principal Data Architect @ Confluent and also in the <a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Client-side+Assignment+Proposal">Kafka Client-side Assignment Proposal</a>.</p>
 <p>Consuming can be divided in three parts:</p>
 <ul>
@@ -360,8 +364,9 @@ Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to han
 <li>Send lifeproof to the coordinator using <strong><a href="https://kafka.apache.org/protocol.html#The_Messages_Heartbeat">HEARTBEAT</a></strong>.</li>
 </ul>
 <p>For the sake of the explanation, we have now another Broker1 which is holding the coordinator for topic 'my-topic'. In real-life, it would be the same.</p>
-<pre class="mermaid">
-    sequenceDiagram
+<div style="text-align: center;">
+    <pre class="mermaid">
+        sequenceDiagram
 
     Note over KafkaClient,Broker0: ...handshaking, see above...
 
@@ -431,7 +436,8 @@ Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to han
             Broker1 -&gt;&gt;- KafkaClient: 
         end
     end
-</pre>
+    </pre>
+</div>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 

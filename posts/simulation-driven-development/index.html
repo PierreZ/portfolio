@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What if we embraced simulation-driven development? | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="What if we embraced simulation-driven development?">
+<meta name="description" content="How deterministic simulation testing can help us build more reliable distributed systems and bridge the gap between development and production environments.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="What if we embraced simulation-driven development?" />
+<meta name="twitter:description" content="How deterministic simulation testing can help us build more reliable distributed systems and bridge the gap between development and production environments." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="What if we embraced simulation-driven development?">
+<meta property="og:description" content="How deterministic simulation testing can help us build more reliable distributed systems and bridge the gap between development and production environments."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/simulation-driven-development/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-04-18T11:12:12+02:00" />
+
+
+
+<meta property="article:tag" content="distributed" />
+
+<meta property="article:tag" content="testing" />
+
+<meta property="article:tag" content="reliability" />
+
+<meta property="article:tag" content="simulation" />
+
+<meta property="article:tag" content="deterministic" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>What if we embraced simulation-driven development?</h1>
+      <p>
+        <i>
+          <time datetime="2025-04-18T11:12:12+02:00" pubdate>18 Apr, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#the-tale-of-a-bug">The Tale of a Bug</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#the-development-production-gap">The Development-Production Gap</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#the-testing-problem">The Testing Problem</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#the-world-is-harsh">The World Is Harsh</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#sre-vs-swe-perspectives">SRE vs. SWE Perspectives</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#deterministic-simulation-testing">Deterministic Simulation Testing</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#how-to-simulate">How to simulate?</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/simulation-driven-development/#simulating-users-randomized-input-and-property-based-testing">Simulating Users: Randomized Input and Property-Based Testing</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/simulation-driven-development/#simulating-the-world-injecting-chaos">Simulating the World: Injecting Chaos</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#who-uses-dst">Who Uses DST?</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/simulation-driven-development/#dst-at-clever-cloud">DST at Clever Cloud</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/simulation-driven-development/#benefits-for-developer-education">Benefits for Developer Education</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/simulation-driven-development/#conclusion">Conclusion</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>This article has been translated from my original French presentation at the upcoming Devoxx France 2025, titled "<a href="https://docs.google.com/presentation/d/1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc/edit?usp=sharing">What if we embraced simulation-driven development?</a>".</p>
+<h2 id="the-tale-of-a-bug"><a class="zola-anchor" href="#the-tale-of-a-bug" aria-label="Anchor link for: the-tale-of-a-bug">🔗</a>The Tale of a Bug</h2>
+<p>As a software engineer, my responsibilities include debugging distributed systems during on-call shifts. My tendency to attract peculiar issues during these shifts earned me the nickname "Black Cat". Let me share a particularly memorable incident:</p>
+<p>One of the most memorable incidents happened when a <strong>network partition</strong> completely disrupted a 70+ node Apache Hadoop cluster. The system was in disarray, with nodes confused about <strong>block replication</strong> and <strong>management</strong>. After the network issue was resolved, we decided to <strong>restart the cluster</strong>...</p>
+<p>But it wouldn't come back online.</p>
+<p>The reason? The system was encountering a <code>NullPointerException</code> during startup due to its faulty state. The cluster was too slow to restart properly because of how severely degraded it had become after the network partition. This bug had actually been fixed in newer versions of <strong>HDFS</strong>, but we were running an older release.</p>
+<p>The solution required <strong>patching the Hadoop codebase</strong> by <strong>backporting the fix</strong>, <strong>recompiling</strong>, and <strong>distributing the new jar</strong> across all nodes—not exactly what you want to be doing during an active incident. Rolling out patches to a distributed system while it's already "on fire" is rarely recommended, but we had no choice.</p>
+<p>This is exactly the type of code that feels disconnected from production requirements—the bug appeared at the worst possible moment, during recovery, when the system was most vulnerable.</p>
+<h2 id="the-development-production-gap"><a class="zola-anchor" href="#the-development-production-gap" aria-label="Anchor link for: the-development-production-gap">🔗</a>The Development-Production Gap</h2>
+<p>This incident highlights a fundamental truth in software engineering: <strong>production environments are vastly different from development environments</strong>. The gap between them is comparable to the difference between passing a written driving test and actually driving on a busy highway during rush hour.</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart LR
+    S[&quot;Your System&quot;] 
+    U[&quot;Your Users&quot;]
+    W[&quot;The World&quot;]
+    
+    U --&gt; S
+    W --&gt; S
+    </pre>
+</div>
+<p>In development, everything is <strong>controlled</strong>, <strong>clean</strong>, and <strong>predictable</strong>. In production:</p>
+<ul>
+<li>Users do <strong>unexpected things</strong></li>
+<li>Systems operate under <strong>pressure</strong></li>
+<li>Components fail in <strong>complex ways</strong></li>
+<li><strong>Edge cases</strong> occur regularly</li>
+</ul>
+<p>Being on-call forces you to confront this reality. The pager is an unforgiving teacher, but is there a better way to instill a production mindset without throwing engineers into the deep end of incident response?</p>
+<h2 id="the-testing-problem"><a class="zola-anchor" href="#the-testing-problem" aria-label="Anchor link for: the-testing-problem">🔗</a>The Testing Problem</h2>
+<p>Let's consider a standard e-commerce API with multiple dimensions of variability:</p>
+<ul>
+<li>User Types: Guest, Logged-in, Premium, Business (4)</li>
+<li>Payment Methods: Credit Card, PayPal, Apple Pay, Gift Card, Bank Transfer (5)</li>
+<li>Delivery Options: Standard, Express, In-Store Pickup, Same-Day (4)</li>
+<li>Promotions: Yes, No, Expired (3)</li>
+<li>Inventory Status: In Stock, Low Stock, Out of Stock, Preorder (4)</li>
+<li>Currency: USD, EUR, GBP, JPY (4)</li>
+</ul>
+<p>Testing all possible combinations requires 4×5×4×3×4×4 = 3,840 unique test cases—and that's just for the happy path! Add error conditions, network failures, and other edge cases, and this number explodes exponentially.</p>
+<p>This is why comprehensive end-to-end testing is so difficult. Every new feature multiplies the complexity, and bugs often hide in rare combinations of conditions that we never thought to test.</p>
+<h2 id="the-world-is-harsh"><a class="zola-anchor" href="#the-world-is-harsh" aria-label="Anchor link for: the-world-is-harsh">🔗</a>The World Is Harsh</h2>
+<p>Meanwhile, the real world is even more chaotic than our test cases. Research papers like "<a href="https://www.usenix.org/system/files/osdi18-alquraan.pdf">An Analysis of Network-Partitioning Failures in Cloud Systems</a>" (OSDI '18) and "<a href="https://sigops.org/s/conferences/hotos/2021/papers/hotos21-s11-bronson.pdf">Metastable Failures in Distributed Systems</a>" (HotOS '21) document just how complex failure modes can be in production.</p>
+<p>In a <a href="https://qconlondon.com/london-2015/system/files/keynotes-slides/2015-03%20QCon%20(john%20wilkes).pdf">presentation by John Wilkes (Google) at QCon London 2015</a>, a 2,000-machine service will experience more than 10 machine crashes per day—and this is considered normal, not exceptional. When you operate at scale, failures become a constant background noise rather than exceptional events.</p>
+<p>And yes, your <strong>microservices architecture</strong> is absolutely a distributed system susceptible to these issues.</p>
+<h2 id="sre-vs-swe-perspectives"><a class="zola-anchor" href="#sre-vs-swe-perspectives" aria-label="Anchor link for: sre-vs-swe-perspectives">🔗</a>SRE vs. SWE Perspectives</h2>
+<p>There's often a gap between the Software Engineer (SWE) perspective and the Site Reliability Engineer (SRE) perspective:</p>
+<p>SWEs tend to focus on:</p>
+<ul>
+<li>Development environments (which are completely different from production)</li>
+<li>Feature implementations</li>
+<li>Code that passes tests (but may not account for real-world complexity)</li>
+</ul>
+<p>SREs worry about:</p>
+<ul>
+<li>System interactions in production under pressure</li>
+<li>Complex, unpredictable failure modes</li>
+<li>Recovery mechanisms when things are already broken</li>
+<li>Being paged at 3 AM to fix critical issues alone</li>
+</ul>
+<p>The question then becomes: <strong>How can we help developers gain a better understanding of production realities without subjecting them to the trial-by-fire of on-call rotations?</strong> How might we bridge this gap between development and operations, creating environments where engineers can experience production-like conditions safely, learn from failures, and build more resilient systems from the beginning?</p>
+<p>We need to test not just our expected use cases, but the <strong>"worse" versions of both our users and the world</strong>. How do we accomplish this comprehensively?</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart LR
+    S[&quot;Your System&quot;] 
+    U[&quot;Your worst Users&quot;]
+    W[&quot;The worst World&quot;]
+    
+    U --&gt; S
+    W --&gt; S
+    </pre>
+</div><h2 id="deterministic-simulation-testing"><a class="zola-anchor" href="#deterministic-simulation-testing" aria-label="Anchor link for: deterministic-simulation-testing">🔗</a>Deterministic Simulation Testing</h2>
+<p>The solution lies in a strategy that's both robust and practical: <strong>Deterministic Simulation Testing (DST)</strong>.</p>
+<p>For effective testing of complex distributed systems, we need an approach that satisfies three key requirements:</p>
+<ol>
+<li>
+<p><strong>Fast and debuggable testing</strong> → We achieve this with a single-threaded approach that uses a deterministic event loop, making issues perfectly reproducible</p>
+</li>
+<li>
+<p><strong>Testing the entire system at once</strong> → By packaging everything into a single binary with simulated network interactions, we can test complex distributed behaviors without actual network infrastructure</p>
+</li>
+<li>
+<p><strong>Robust against unknown issues</strong> → Through randomized testing with controlled entropy injection, we discover edge cases that we wouldn't think to test explicitly</p>
+</li>
+</ol>
+<p>These three elements work together to create a powerful testing methodology that's both practical to implement and effective at finding real-world issues.</p>
+<p>Let's see how we can simulate both our users and the world?</p>
+<h2 id="how-to-simulate"><a class="zola-anchor" href="#how-to-simulate" aria-label="Anchor link for: how-to-simulate">🔗</a>How to simulate?</h2>
+<h3 id="simulating-users-randomized-input-and-property-based-testing"><a class="zola-anchor" href="#simulating-users-randomized-input-and-property-based-testing" aria-label="Anchor link for: simulating-users-randomized-input-and-property-based-testing">🔗</a>Simulating Users: Randomized Input and Property-Based Testing</h3>
+<p>Instead of writing thousands of individual test cases, we can use <strong>property-based testing</strong> to generate randomized inputs and verify system properties. This approach is not new and is well-known for unit tests but is relatively new for integration tests:</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#b48ead;">enum </span><span style="color:#ebcb8b;">UserType </span><span style="color:#eff1f5;">{ </span><span style="color:#ebcb8b;">GUEST</span><span style="color:#eff1f5;">, LOGGED_IN, PREMIUM, BUSINESS }
+</span><span style="color:#b48ead;">enum </span><span style="color:#ebcb8b;">PaymentMethod </span><span style="color:#eff1f5;">{ </span><span style="color:#ebcb8b;">CARD</span><span style="color:#eff1f5;">, PAYPAL, APPLE_PAY, GIFT_CARD, BANK_TRANSFER }
+</span><span style="color:#65737e;">// ...
+</span><span>
+</span><span style="color:#ebcb8b;">Random</span><span> rand = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Random</span><span>(); </span><span style="color:#65737e;">// random seed
+</span><span>
+</span><span style="color:#ebcb8b;">UserType</span><span> user = </span><span style="color:#bf616a;">pickRandom</span><span>(rand, </span><span style="color:#ebcb8b;">UserType</span><span>.</span><span style="color:#bf616a;">values</span><span>());
+</span><span style="color:#ebcb8b;">PaymentMethod</span><span> paymentMethod = </span><span style="color:#bf616a;">pickRandom</span><span>(rand, </span><span style="color:#ebcb8b;">PaymentMethod</span><span>.</span><span style="color:#bf616a;">values</span><span>());
+</span></code></pre>
+<p>Rather than hardcoding test cases like:</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#bf616a;">assertFalse</span><span>(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">User</span><span>(</span><span style="color:#d08770;">GUEST</span><span>).</span><span style="color:#bf616a;">canUse</span><span>(</span><span style="color:#d08770;">SAVED_CARD</span><span>));
+</span></code></pre>
+<p>We can write property-based assertions:</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#bf616a;">assertEquals</span><span>(user.</span><span style="color:#bf616a;">isAuthenticated</span><span>(), user.</span><span style="color:#bf616a;">canUse</span><span>(</span><span style="color:#d08770;">SAVED_CARD</span><span>));
+</span></code></pre>
+<p>This approach is implemented in libraries like:</p>
+<ul>
+<li>Python: <strong>Hypothesis</strong></li>
+<li>Java: <strong>jqwik</strong></li>
+<li>Rust: <strong>proptest</strong></li>
+</ul>
+<h3 id="simulating-the-world-injecting-chaos"><a class="zola-anchor" href="#simulating-the-world-injecting-chaos" aria-label="Anchor link for: simulating-the-world-injecting-chaos">🔗</a>Simulating the World: Injecting Chaos</h3>
+<p>We also need to simulate the chaotic nature of production environments by injecting failures into:</p>
+<ul>
+<li>Time (delays, timeouts, retries, race conditions)</li>
+<li>Network (latency, failure, disconnection)</li>
+<li>Infrastructure (disk full, service crash, replica lag)</li>
+<li>External dependencies (slow APIs, rate limiting)</li>
+<li>Load (varying numbers of concurrent users)</li>
+</ul>
+<p>It's important to note that implementing full deterministic simulation requires control over every aspect of your system, from task scheduling to I/O operations. This is significantly easier if your system is built with simulation in mind from day one. Some languages offer advantages in this area—for example, Rust's ecosystem makes it relatively straightforward to implement custom virtual threading executors compared to modifying the JVM.</p>
+<p>For existing codebases where a full rewrite isn't practical, you can still benefit from simulation testing by adding layers of indirection. Even simple mocks like the HTTP client example below can help you discover how your system behaves under various failure conditions:</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">HttpClientMock </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">private final </span><span style="color:#ebcb8b;">Random </span><span style="color:#eff1f5;">random </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Random</span><span style="color:#eff1f5;">(); </span><span style="color:#65737e;">// random seed
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">String </span><span style="color:#8fa1b3;">get</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String </span><span style="color:#bf616a;">url</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">        </span><span style="color:#65737e;">// Simulate random chance of returning an error
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">if </span><span style="color:#eff1f5;">(random.</span><span style="color:#bf616a;">nextDouble</span><span style="color:#eff1f5;">() </span><span>&lt; </span><span style="color:#d08770;">0.2</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">return </span><span>&quot;</span><span style="color:#a3be8c;">HTTP 500 Internal Server Error</span><span>&quot;</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> delay </span><span>=</span><span style="color:#eff1f5;"> random.</span><span style="color:#bf616a;">nextInt</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">500</span><span style="color:#eff1f5;">); </span><span style="color:#65737e;">// Simulate 0–499ms latency
+</span><span style="color:#eff1f5;">        </span><span style="color:#ebcb8b;">Thread</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">sleep</span><span style="color:#eff1f5;">(delay);
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">return </span><span>&quot;</span><span style="color:#a3be8c;">HTTP 200 OK</span><span>&quot;</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">}
+</span></code></pre>
+<h2 id="who-uses-dst"><a class="zola-anchor" href="#who-uses-dst" aria-label="Anchor link for: who-uses-dst">🔗</a>Who Uses DST?</h2>
+<p>Not many companies are using DST, but we are starting to have a nice list:</p>
+<ul>
+<li>Clever Cloud</li>
+<li>TigerBeetle</li>
+<li>Resonate</li>
+<li>RisingWave</li>
+<li>Sync @ Dropbox</li>
+<li>sled.rs</li>
+<li>Kafka’s KRaft</li>
+<li>Astradot</li>
+<li>Polar Signals</li>
+<li>AWS</li>
+<li>Antithesis</li>
+</ul>
+<h3 id="dst-at-clever-cloud"><a class="zola-anchor" href="#dst-at-clever-cloud" aria-label="Anchor link for: dst-at-clever-cloud">🔗</a>DST at Clever Cloud</h3>
+<p>At Clever Cloud, we're implementing a multi-tenant, multi-model distributed database, <strong>a feat made possible by deterministic simulation testing</strong>, which is core to our first product, <a href="https://www.clever-cloud.com/blog/features/2024/06/11/materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all/">Materia KV</a>. Our simulations include:</p>
+<ul>
+<li>Random network partitions</li>
+<li>Machine reboots (up to 10 machines, keeping at least 3 running)</li>
+<li>Concurrent chaos events, like shuffling the actual data disk between 2 nodes</li>
+</ul>
+<p>Our simulation-driven development workflow runs simulations:</p>
+<ul>
+<li>In CI loops</li>
+<li>Continuously in the cloud</li>
+<li>With 30 minutes of simulation equating to roughly 24 hours of chaos testing</li>
+</ul>
+<p>When we find a faulty seed, we can replay it locally, providing a superpower for debugging complex distributed systems issues.</p>
+<h3 id="benefits-for-developer-education"><a class="zola-anchor" href="#benefits-for-developer-education" aria-label="Anchor link for: benefits-for-developer-education">🔗</a>Benefits for Developer Education</h3>
+<p>Deterministic simulation testing doesn't just help find bugs—it helps developers grow. By working with simulated but realistic failure scenarios, developers build intuition for how distributed systems behave under stress without having to experience painful on-call incidents.</p>
+<p>Moreover, deterministic simulation testing has instilled a <strong>deep trust in our software</strong>, as it is tested under conditions even more challenging than those encountered in production. This confidence has been crucial for us.</p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
+<p>The gap between development and production is real and significant. Traditional testing approaches can't scale to cover all the possible combinations of user behavior and world events that our systems will encounter.</p>
+<p>Deterministic simulation testing offers a powerful alternative that allows us to test complex distributed systems more thoroughly, find bugs before they impact users, and train developers to build more resilient systems.</p>
+<p>By embracing simulation-driven development, we can build software that better handles the chaotic reality of production environments—and maybe reduce those 3 AM pages that give engineers like me unfortunate nicknames.</p>
+<hr />
+<p>Want to learn more? Check out my <a href="/posts/learn-about-dst/">curated list of resources on deterministic simulation testing</a>, which includes articles, talks, and implementation examples.</p>
+<p>Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
+          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
+          <a href="https://pierrezemb.fr/tags/reliability/">#reliability</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+          <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

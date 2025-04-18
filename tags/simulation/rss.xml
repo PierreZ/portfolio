@@ -7,7 +7,192 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/simulation/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Fri, 11 Apr 2025 00:00:00 +0200</lastBuildDate>
+      <lastBuildDate>Fri, 18 Apr 2025 11:12:12 +0200</lastBuildDate>
+      <item>
+          <title>What if we embraced simulation-driven development?</title>
+          <pubDate>Fri, 18 Apr 2025 11:12:12 +0200</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/simulation-driven-development/</link>
+          <guid>https://pierrezemb.fr/posts/simulation-driven-development/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/simulation-driven-development/">&lt;p&gt;This article has been translated from my original French presentation at the upcoming Devoxx France 2025, titled &quot;&lt;a href=&quot;https:&#x2F;&#x2F;docs.google.com&#x2F;presentation&#x2F;d&#x2F;1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc&#x2F;edit?usp=sharing&quot;&gt;What if we embraced simulation-driven development?&lt;&#x2F;a&gt;&quot;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-tale-of-a-bug&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-tale-of-a-bug&quot; aria-label=&quot;Anchor link for: the-tale-of-a-bug&quot;&gt;🔗&lt;&#x2F;a&gt;The Tale of a Bug&lt;&#x2F;h2&gt;
+&lt;p&gt;As a software engineer, my responsibilities include debugging distributed systems during on-call shifts. My tendency to attract peculiar issues during these shifts earned me the nickname &quot;Black Cat&quot;. Let me share a particularly memorable incident:&lt;&#x2F;p&gt;
+&lt;p&gt;One of the most memorable incidents happened when a &lt;strong&gt;network partition&lt;&#x2F;strong&gt; completely disrupted a 70+ node Apache Hadoop cluster. The system was in disarray, with nodes confused about &lt;strong&gt;block replication&lt;&#x2F;strong&gt; and &lt;strong&gt;management&lt;&#x2F;strong&gt;. After the network issue was resolved, we decided to &lt;strong&gt;restart the cluster&lt;&#x2F;strong&gt;...&lt;&#x2F;p&gt;
+&lt;p&gt;But it wouldn&#x27;t come back online.&lt;&#x2F;p&gt;
+&lt;p&gt;The reason? The system was encountering a &lt;code&gt;NullPointerException&lt;&#x2F;code&gt; during startup due to its faulty state. The cluster was too slow to restart properly because of how severely degraded it had become after the network partition. This bug had actually been fixed in newer versions of &lt;strong&gt;HDFS&lt;&#x2F;strong&gt;, but we were running an older release.&lt;&#x2F;p&gt;
+&lt;p&gt;The solution required &lt;strong&gt;patching the Hadoop codebase&lt;&#x2F;strong&gt; by &lt;strong&gt;backporting the fix&lt;&#x2F;strong&gt;, &lt;strong&gt;recompiling&lt;&#x2F;strong&gt;, and &lt;strong&gt;distributing the new jar&lt;&#x2F;strong&gt; across all nodes—not exactly what you want to be doing during an active incident. Rolling out patches to a distributed system while it&#x27;s already &quot;on fire&quot; is rarely recommended, but we had no choice.&lt;&#x2F;p&gt;
+&lt;p&gt;This is exactly the type of code that feels disconnected from production requirements—the bug appeared at the worst possible moment, during recovery, when the system was most vulnerable.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-development-production-gap&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-development-production-gap&quot; aria-label=&quot;Anchor link for: the-development-production-gap&quot;&gt;🔗&lt;&#x2F;a&gt;The Development-Production Gap&lt;&#x2F;h2&gt;
+&lt;p&gt;This incident highlights a fundamental truth in software engineering: &lt;strong&gt;production environments are vastly different from development environments&lt;&#x2F;strong&gt;. The gap between them is comparable to the difference between passing a written driving test and actually driving on a busy highway during rush hour.&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart LR
+    S[&amp;quot;Your System&amp;quot;] 
+    U[&amp;quot;Your Users&amp;quot;]
+    W[&amp;quot;The World&amp;quot;]
+    
+    U --&amp;gt; S
+    W --&amp;gt; S
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;In development, everything is &lt;strong&gt;controlled&lt;&#x2F;strong&gt;, &lt;strong&gt;clean&lt;&#x2F;strong&gt;, and &lt;strong&gt;predictable&lt;&#x2F;strong&gt;. In production:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Users do &lt;strong&gt;unexpected things&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Systems operate under &lt;strong&gt;pressure&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Components fail in &lt;strong&gt;complex ways&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Edge cases&lt;&#x2F;strong&gt; occur regularly&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Being on-call forces you to confront this reality. The pager is an unforgiving teacher, but is there a better way to instill a production mindset without throwing engineers into the deep end of incident response?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-testing-problem&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-testing-problem&quot; aria-label=&quot;Anchor link for: the-testing-problem&quot;&gt;🔗&lt;&#x2F;a&gt;The Testing Problem&lt;&#x2F;h2&gt;
+&lt;p&gt;Let&#x27;s consider a standard e-commerce API with multiple dimensions of variability:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;User Types: Guest, Logged-in, Premium, Business (4)&lt;&#x2F;li&gt;
+&lt;li&gt;Payment Methods: Credit Card, PayPal, Apple Pay, Gift Card, Bank Transfer (5)&lt;&#x2F;li&gt;
+&lt;li&gt;Delivery Options: Standard, Express, In-Store Pickup, Same-Day (4)&lt;&#x2F;li&gt;
+&lt;li&gt;Promotions: Yes, No, Expired (3)&lt;&#x2F;li&gt;
+&lt;li&gt;Inventory Status: In Stock, Low Stock, Out of Stock, Preorder (4)&lt;&#x2F;li&gt;
+&lt;li&gt;Currency: USD, EUR, GBP, JPY (4)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Testing all possible combinations requires 4×5×4×3×4×4 = 3,840 unique test cases—and that&#x27;s just for the happy path! Add error conditions, network failures, and other edge cases, and this number explodes exponentially.&lt;&#x2F;p&gt;
+&lt;p&gt;This is why comprehensive end-to-end testing is so difficult. Every new feature multiplies the complexity, and bugs often hide in rare combinations of conditions that we never thought to test.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-world-is-harsh&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-world-is-harsh&quot; aria-label=&quot;Anchor link for: the-world-is-harsh&quot;&gt;🔗&lt;&#x2F;a&gt;The World Is Harsh&lt;&#x2F;h2&gt;
+&lt;p&gt;Meanwhile, the real world is even more chaotic than our test cases. Research papers like &quot;&lt;a href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;system&#x2F;files&#x2F;osdi18-alquraan.pdf&quot;&gt;An Analysis of Network-Partitioning Failures in Cloud Systems&lt;&#x2F;a&gt;&quot; (OSDI &#x27;18) and &quot;&lt;a href=&quot;https:&#x2F;&#x2F;sigops.org&#x2F;s&#x2F;conferences&#x2F;hotos&#x2F;2021&#x2F;papers&#x2F;hotos21-s11-bronson.pdf&quot;&gt;Metastable Failures in Distributed Systems&lt;&#x2F;a&gt;&quot; (HotOS &#x27;21) document just how complex failure modes can be in production.&lt;&#x2F;p&gt;
+&lt;p&gt;In a &lt;a href=&quot;https:&#x2F;&#x2F;qconlondon.com&#x2F;london-2015&#x2F;system&#x2F;files&#x2F;keynotes-slides&#x2F;2015-03%20QCon%20(john%20wilkes).pdf&quot;&gt;presentation by John Wilkes (Google) at QCon London 2015&lt;&#x2F;a&gt;, a 2,000-machine service will experience more than 10 machine crashes per day—and this is considered normal, not exceptional. When you operate at scale, failures become a constant background noise rather than exceptional events.&lt;&#x2F;p&gt;
+&lt;p&gt;And yes, your &lt;strong&gt;microservices architecture&lt;&#x2F;strong&gt; is absolutely a distributed system susceptible to these issues.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;sre-vs-swe-perspectives&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sre-vs-swe-perspectives&quot; aria-label=&quot;Anchor link for: sre-vs-swe-perspectives&quot;&gt;🔗&lt;&#x2F;a&gt;SRE vs. SWE Perspectives&lt;&#x2F;h2&gt;
+&lt;p&gt;There&#x27;s often a gap between the Software Engineer (SWE) perspective and the Site Reliability Engineer (SRE) perspective:&lt;&#x2F;p&gt;
+&lt;p&gt;SWEs tend to focus on:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Development environments (which are completely different from production)&lt;&#x2F;li&gt;
+&lt;li&gt;Feature implementations&lt;&#x2F;li&gt;
+&lt;li&gt;Code that passes tests (but may not account for real-world complexity)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;SREs worry about:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;System interactions in production under pressure&lt;&#x2F;li&gt;
+&lt;li&gt;Complex, unpredictable failure modes&lt;&#x2F;li&gt;
+&lt;li&gt;Recovery mechanisms when things are already broken&lt;&#x2F;li&gt;
+&lt;li&gt;Being paged at 3 AM to fix critical issues alone&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The question then becomes: &lt;strong&gt;How can we help developers gain a better understanding of production realities without subjecting them to the trial-by-fire of on-call rotations?&lt;&#x2F;strong&gt; How might we bridge this gap between development and operations, creating environments where engineers can experience production-like conditions safely, learn from failures, and build more resilient systems from the beginning?&lt;&#x2F;p&gt;
+&lt;p&gt;We need to test not just our expected use cases, but the &lt;strong&gt;&quot;worse&quot; versions of both our users and the world&lt;&#x2F;strong&gt;. How do we accomplish this comprehensively?&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart LR
+    S[&amp;quot;Your System&amp;quot;] 
+    U[&amp;quot;Your worst Users&amp;quot;]
+    W[&amp;quot;The worst World&amp;quot;]
+    
+    U --&amp;gt; S
+    W --&amp;gt; S
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;&lt;h2 id=&quot;deterministic-simulation-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deterministic-simulation-testing&quot; aria-label=&quot;Anchor link for: deterministic-simulation-testing&quot;&gt;🔗&lt;&#x2F;a&gt;Deterministic Simulation Testing&lt;&#x2F;h2&gt;
+&lt;p&gt;The solution lies in a strategy that&#x27;s both robust and practical: &lt;strong&gt;Deterministic Simulation Testing (DST)&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;For effective testing of complex distributed systems, we need an approach that satisfies three key requirements:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Fast and debuggable testing&lt;&#x2F;strong&gt; → We achieve this with a single-threaded approach that uses a deterministic event loop, making issues perfectly reproducible&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Testing the entire system at once&lt;&#x2F;strong&gt; → By packaging everything into a single binary with simulated network interactions, we can test complex distributed behaviors without actual network infrastructure&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Robust against unknown issues&lt;&#x2F;strong&gt; → Through randomized testing with controlled entropy injection, we discover edge cases that we wouldn&#x27;t think to test explicitly&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;These three elements work together to create a powerful testing methodology that&#x27;s both practical to implement and effective at finding real-world issues.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s see how we can simulate both our users and the world?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-to-simulate&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-simulate&quot; aria-label=&quot;Anchor link for: how-to-simulate&quot;&gt;🔗&lt;&#x2F;a&gt;How to simulate?&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;simulating-users-randomized-input-and-property-based-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#simulating-users-randomized-input-and-property-based-testing&quot; aria-label=&quot;Anchor link for: simulating-users-randomized-input-and-property-based-testing&quot;&gt;🔗&lt;&#x2F;a&gt;Simulating Users: Randomized Input and Property-Based Testing&lt;&#x2F;h3&gt;
+&lt;p&gt;Instead of writing thousands of individual test cases, we can use &lt;strong&gt;property-based testing&lt;&#x2F;strong&gt; to generate randomized inputs and verify system properties. This approach is not new and is well-known for unit tests but is relatively new for integration tests:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;enum &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;UserType &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;GUEST&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;, LOGGED_IN, PREMIUM, BUSINESS }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;enum &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;PaymentMethod &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;CARD&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;, PAYPAL, APPLE_PAY, GIFT_CARD, BANK_TRANSFER }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; ...
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Random&lt;&#x2F;span&gt;&lt;span&gt; rand = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Random&lt;&#x2F;span&gt;&lt;span&gt;(); &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; random seed
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;UserType&lt;&#x2F;span&gt;&lt;span&gt; user = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pickRandom&lt;&#x2F;span&gt;&lt;span&gt;(rand, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;UserType&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;values&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;PaymentMethod&lt;&#x2F;span&gt;&lt;span&gt; paymentMethod = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pickRandom&lt;&#x2F;span&gt;&lt;span&gt;(rand, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;PaymentMethod&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;values&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Rather than hardcoding test cases like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;assertFalse&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;User&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;GUEST&lt;&#x2F;span&gt;&lt;span&gt;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;canUse&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;SAVED_CARD&lt;&#x2F;span&gt;&lt;span&gt;));
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We can write property-based assertions:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;assertEquals&lt;&#x2F;span&gt;&lt;span&gt;(user.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;isAuthenticated&lt;&#x2F;span&gt;&lt;span&gt;(), user.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;canUse&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;SAVED_CARD&lt;&#x2F;span&gt;&lt;span&gt;));
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This approach is implemented in libraries like:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Python: &lt;strong&gt;Hypothesis&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Java: &lt;strong&gt;jqwik&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Rust: &lt;strong&gt;proptest&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;simulating-the-world-injecting-chaos&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#simulating-the-world-injecting-chaos&quot; aria-label=&quot;Anchor link for: simulating-the-world-injecting-chaos&quot;&gt;🔗&lt;&#x2F;a&gt;Simulating the World: Injecting Chaos&lt;&#x2F;h3&gt;
+&lt;p&gt;We also need to simulate the chaotic nature of production environments by injecting failures into:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Time (delays, timeouts, retries, race conditions)&lt;&#x2F;li&gt;
+&lt;li&gt;Network (latency, failure, disconnection)&lt;&#x2F;li&gt;
+&lt;li&gt;Infrastructure (disk full, service crash, replica lag)&lt;&#x2F;li&gt;
+&lt;li&gt;External dependencies (slow APIs, rate limiting)&lt;&#x2F;li&gt;
+&lt;li&gt;Load (varying numbers of concurrent users)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;It&#x27;s important to note that implementing full deterministic simulation requires control over every aspect of your system, from task scheduling to I&#x2F;O operations. This is significantly easier if your system is built with simulation in mind from day one. Some languages offer advantages in this area—for example, Rust&#x27;s ecosystem makes it relatively straightforward to implement custom virtual threading executors compared to modifying the JVM.&lt;&#x2F;p&gt;
+&lt;p&gt;For existing codebases where a full rewrite isn&#x27;t practical, you can still benefit from simulation testing by adding layers of indirection. Even simple mocks like the HTTP client example below can help you discover how your system behaves under various failure conditions:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;HttpClientMock &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;{
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;private final &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Random &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;random &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Random&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(); &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; random seed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;String &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;get&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;String &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;url&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;) {
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Simulate random chance of returning an error
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(random.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nextDouble&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;() &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0.2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;) {
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;HTTP 500 Internal Server Error&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt; delay &lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt; random.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nextInt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;500&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;); &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Simulate 0–499ms latency
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Thread&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sleep&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(delay);
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;HTTP 200 OK&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;    }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;who-uses-dst&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#who-uses-dst&quot; aria-label=&quot;Anchor link for: who-uses-dst&quot;&gt;🔗&lt;&#x2F;a&gt;Who Uses DST?&lt;&#x2F;h2&gt;
+&lt;p&gt;Not many companies are using DST, but we are starting to have a nice list:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Clever Cloud&lt;&#x2F;li&gt;
+&lt;li&gt;TigerBeetle&lt;&#x2F;li&gt;
+&lt;li&gt;Resonate&lt;&#x2F;li&gt;
+&lt;li&gt;RisingWave&lt;&#x2F;li&gt;
+&lt;li&gt;Sync @ Dropbox&lt;&#x2F;li&gt;
+&lt;li&gt;sled.rs&lt;&#x2F;li&gt;
+&lt;li&gt;Kafka’s KRaft&lt;&#x2F;li&gt;
+&lt;li&gt;Astradot&lt;&#x2F;li&gt;
+&lt;li&gt;Polar Signals&lt;&#x2F;li&gt;
+&lt;li&gt;AWS&lt;&#x2F;li&gt;
+&lt;li&gt;Antithesis&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;dst-at-clever-cloud&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dst-at-clever-cloud&quot; aria-label=&quot;Anchor link for: dst-at-clever-cloud&quot;&gt;🔗&lt;&#x2F;a&gt;DST at Clever Cloud&lt;&#x2F;h3&gt;
+&lt;p&gt;At Clever Cloud, we&#x27;re implementing a multi-tenant, multi-model distributed database, &lt;strong&gt;a feat made possible by deterministic simulation testing&lt;&#x2F;strong&gt;, which is core to our first product, &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;features&#x2F;2024&#x2F;06&#x2F;11&#x2F;materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all&#x2F;&quot;&gt;Materia KV&lt;&#x2F;a&gt;. Our simulations include:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Random network partitions&lt;&#x2F;li&gt;
+&lt;li&gt;Machine reboots (up to 10 machines, keeping at least 3 running)&lt;&#x2F;li&gt;
+&lt;li&gt;Concurrent chaos events, like shuffling the actual data disk between 2 nodes&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Our simulation-driven development workflow runs simulations:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;In CI loops&lt;&#x2F;li&gt;
+&lt;li&gt;Continuously in the cloud&lt;&#x2F;li&gt;
+&lt;li&gt;With 30 minutes of simulation equating to roughly 24 hours of chaos testing&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;When we find a faulty seed, we can replay it locally, providing a superpower for debugging complex distributed systems issues.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;benefits-for-developer-education&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#benefits-for-developer-education&quot; aria-label=&quot;Anchor link for: benefits-for-developer-education&quot;&gt;🔗&lt;&#x2F;a&gt;Benefits for Developer Education&lt;&#x2F;h3&gt;
+&lt;p&gt;Deterministic simulation testing doesn&#x27;t just help find bugs—it helps developers grow. By working with simulated but realistic failure scenarios, developers build intuition for how distributed systems behave under stress without having to experience painful on-call incidents.&lt;&#x2F;p&gt;
+&lt;p&gt;Moreover, deterministic simulation testing has instilled a &lt;strong&gt;deep trust in our software&lt;&#x2F;strong&gt;, as it is tested under conditions even more challenging than those encountered in production. This confidence has been crucial for us.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot;&gt;🔗&lt;&#x2F;a&gt;Conclusion&lt;&#x2F;h2&gt;
+&lt;p&gt;The gap between development and production is real and significant. Traditional testing approaches can&#x27;t scale to cover all the possible combinations of user behavior and world events that our systems will encounter.&lt;&#x2F;p&gt;
+&lt;p&gt;Deterministic simulation testing offers a powerful alternative that allows us to test complex distributed systems more thoroughly, find bugs before they impact users, and train developers to build more resilient systems.&lt;&#x2F;p&gt;
+&lt;p&gt;By embracing simulation-driven development, we can build software that better handles the chaotic reality of production environments—and maybe reduce those 3 AM pages that give engineers like me unfortunate nicknames.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Want to learn more? Check out my &lt;a href=&quot;&#x2F;posts&#x2F;learn-about-dst&#x2F;&quot;&gt;curated list of resources on deterministic simulation testing&lt;&#x2F;a&gt;, which includes articles, talks, and implementation examples.&lt;&#x2F;p&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</description>
+      </item>
       <item>
           <title>So, You Want to Learn More About Deterministic Simulation Testing?</title>
           <pubDate>Fri, 11 Apr 2025 00:00:00 +0200</pubDate>
@@ -17,6 +202,9 @@
           <description xml:base="https://pierrezemb.fr/posts/learn-about-dst/">&lt;p&gt;I recently attended &lt;a href=&quot;https:&#x2F;&#x2F;bugbash.antithesis.com&#x2F;&quot;&gt;BugBash 2025&lt;&#x2F;a&gt;, a software reliability conference organized by &lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&quot;&gt;Antithesis&lt;&#x2F;a&gt; in Washington, D.C. during April 3-4, 2025. The conference brought together industry experts like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss various aspects of building reliable software, with deterministic simulation testing being a significant focus throughout many of the sessions and discussions.&lt;&#x2F;p&gt;
 &lt;p&gt;One of the highlights for me was having the chance to talk with the Antithesis team and meet some of the original creators of FoundationDB.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-deterministic-simulation-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-deterministic-simulation-testing&quot; aria-label=&quot;Anchor link for: what-is-deterministic-simulation-testing&quot;&gt;🔗&lt;&#x2F;a&gt;What is Deterministic Simulation Testing?&lt;&#x2F;h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;&#x2F;strong&gt; For a deeper dive into this concept and its practical applications, check out my article on &lt;a href=&quot;&#x2F;posts&#x2F;simulation-driven-development&#x2F;&quot;&gt;What if we embraced simulation-driven development?&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
 &lt;p&gt;The best description of DST I&#x27;ve found is described in &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;FoundationDB&#x27;s testing page&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The major goal of Simulation is to make sure that we find and diagnose issues in simulation rather than the real world. Simulation runs tens of thousands of simulations every night, each one simulating large numbers of component failures. Based on the volume of tests that we run and the increased intensity of the failures in our scenarios, we estimate that we have run the equivalent of roughly one trillion CPU-hours of simulation on FoundationDB.&lt;&#x2F;p&gt;

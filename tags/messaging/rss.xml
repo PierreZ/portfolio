@@ -107,8 +107,9 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 &lt;blockquote&gt;
 &lt;p&gt;All the following diagrams are generated with &lt;a href=&quot;https:&#x2F;&#x2F;mermaidjs.github.io&#x2F;#&#x2F;&quot;&gt;MermaidJS&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;pre class=&quot;mermaid&quot;&gt;
-    sequenceDiagram
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        sequenceDiagram
 
     Note left of KafkaClient: I&amp;#x27;m speaking Kafka &amp;lt;br&amp;#x2F;&amp;gt; 2.3,but can the &amp;lt;br&amp;#x2F;&amp;gt; broker understand &amp;lt;br&amp;#x2F;&amp;gt; me?
 
@@ -137,10 +138,12 @@ The following figure illustrates how we add the Kafka protocol support within Pu
     Broker0 -&amp;gt;&amp;gt;- KafkaClient: 
 
 Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp;gt; need to handshake &amp;lt;br&amp;#x2F;&amp;gt; again with &amp;lt;br&amp;#x2F;&amp;gt; another broker
-&lt;&#x2F;pre&gt;&lt;h3 id=&quot;producing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#producing&quot; aria-label=&quot;Anchor link for: producing&quot;&gt;🔗&lt;&#x2F;a&gt;Producing&lt;&#x2F;h3&gt;
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;&lt;h3 id=&quot;producing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#producing&quot; aria-label=&quot;Anchor link for: producing&quot;&gt;🔗&lt;&#x2F;a&gt;Producing&lt;&#x2F;h3&gt;
 &lt;p&gt;The &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Produce&quot;&gt;PRODUCE&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.&lt;&#x2F;p&gt;
-&lt;pre class=&quot;mermaid&quot;&gt;
-    sequenceDiagram
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        sequenceDiagram
 
     Note over KafkaClient,Broker0: ...handshaking, see above...
 
@@ -154,7 +157,8 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         
         Note left of KafkaClient: Thanks
     end
-&lt;&#x2F;pre&gt;&lt;h3 id=&quot;consuming&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consuming&quot; aria-label=&quot;Anchor link for: consuming&quot;&gt;🔗&lt;&#x2F;a&gt;Consuming&lt;&#x2F;h3&gt;
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;&lt;h3 id=&quot;consuming&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consuming&quot; aria-label=&quot;Anchor link for: consuming&quot;&gt;🔗&lt;&#x2F;a&gt;Consuming&lt;&#x2F;h3&gt;
 &lt;p&gt;Consuming is more complicated than producing. You can learn more in &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=maJulQ4ABNY&quot;&gt;The Magical Group Coordination Protocol of Apache Kafka&lt;&#x2F;a&gt; By Gwen Shapira, Principal Data Architect @ Confluent and also in the &lt;a href=&quot;https:&#x2F;&#x2F;cwiki.apache.org&#x2F;confluence&#x2F;display&#x2F;KAFKA&#x2F;Kafka+Client-side+Assignment+Proposal&quot;&gt;Kafka Client-side Assignment Proposal&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Consuming can be divided in three parts:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -176,8 +180,9 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;li&gt;Send lifeproof to the coordinator using &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;protocol.html#The_Messages_Heartbeat&quot;&gt;HEARTBEAT&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;For the sake of the explanation, we have now another Broker1 which is holding the coordinator for topic &#x27;my-topic&#x27;. In real-life, it would be the same.&lt;&#x2F;p&gt;
-&lt;pre class=&quot;mermaid&quot;&gt;
-    sequenceDiagram
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        sequenceDiagram
 
     Note over KafkaClient,Broker0: ...handshaking, see above...
 
@@ -247,7 +252,8 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
             Broker1 -&amp;gt;&amp;gt;- KafkaClient: 
         end
     end
-&lt;&#x2F;pre&gt;
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
