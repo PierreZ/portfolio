@@ -86,6 +86,10 @@
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;11.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;strong&gt;Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets&lt;&#x2F;strong&gt;. Image Credit: By &lt;a href=&quot;http:&#x2F;&#x2F;www.eso.org&#x2F;public&#x2F;images&#x2F;eso1615b&#x2F;&quot;&gt;ESO&#x2F;M. Kornmesser&lt;&#x2F;a&gt; — &lt;a href=&quot;https:&#x2F;&#x2F;creativecommons.org&#x2F;licenses&#x2F;by-sa&#x2F;4.0&quot;&gt;CC BY-SA 4.0&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">space</category>
+          <category domain="tag">timeseries</category>
+          <category domain="tag">analytics</category>
+          <category domain="tag">machinelearning</category>
       </item>
       <item>
           <title>Engage maximum warp speed in time series analysis with WarpScript</title>
@@ -211,6 +215,10 @@
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;groups.google.com&#x2F;forum&#x2F;#!forum&#x2F;warp10-users&quot;&gt;Warp10 Google Groups&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">timeseries</category>
+          <category domain="tag">analytics</category>
+          <category domain="tag">performance</category>
       </item>
     </channel>
 </rss>

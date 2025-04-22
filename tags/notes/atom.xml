@@ -23,6 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-etcd/"/>
         <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
         
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="etcd" schema="tag" label="etcd"/>
+        <category term="storage" schema="tag" label="storage"/>
+        <category term="consensus" schema="tag" label="consensus"/>
+        <category term="notes" schema="tag" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
@@ -266,6 +271,11 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="consensus" schema="tag" label="consensus"/>
+        <category term="raft" schema="tag" label="raft"/>
+        <category term="algorithms" schema="tag" label="algorithms"/>
+        <category term="notes" schema="tag" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -477,6 +487,11 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"/>
         <id>https://pierrezemb.fr/posts/notes-about-foundationdb/</id>
         
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="foundationdb" schema="tag" label="foundationdb"/>
+        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="tag" label="database"/>
+        <category term="notes" schema="tag" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-foundationdb/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;fdb-white.jpg&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover FoundationDB.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;

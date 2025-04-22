@@ -23,6 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/fdb-data-distributor/"/>
         <id>https://pierrezemb.fr/posts/fdb-data-distributor/</id>
         
+        <category term="foundationdb" schema="tag" label="foundationdb"/>
+        <category term="debugging" schema="tag" label="debugging"/>
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="database" schema="tag" label="database"/>
+        <category term="storage" schema="tag" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/fdb-data-distributor/">&lt;p&gt;FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt; plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.&lt;&#x2F;p&gt;
 &lt;p&gt;In this post, we dive into the &lt;strong&gt;Data Distributor&#x27;s&lt;&#x2F;strong&gt; internals, along with practical lessons we learned during a outage.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-the-data-distributor&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-data-distributor&quot; aria-label=&quot;Anchor link for: what-is-the-data-distributor&quot;&gt;🔗&lt;&#x2F;a&gt;What is the Data Distributor?&lt;&#x2F;h2&gt;

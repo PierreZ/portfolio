@@ -23,6 +23,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/"/>
         <id>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</id>
         
+        <category term="space" schema="tag" label="space"/>
+        <category term="timeseries" schema="tag" label="timeseries"/>
+        <category term="analytics" schema="tag" label="analytics"/>
+        <category term="machinelearning" schema="tag" label="machinelearning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;helloexoworld&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow-e50f6e669915&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;1.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;
@@ -113,6 +117,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"/>
         <id>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</id>
         
+        <category term="database" schema="tag" label="database"/>
+        <category term="timeseries" schema="tag" label="timeseries"/>
+        <category term="analytics" schema="tag" label="analytics"/>
+        <category term="performance" schema="tag" label="performance"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;

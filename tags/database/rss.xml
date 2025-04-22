@@ -50,6 +50,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">optimization</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Debugging FoundationDB&#x27;s Data Distributor</title>
@@ -153,6 +158,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">debugging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate</title>
@@ -265,6 +275,11 @@
 &lt;p&gt;I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.&lt;&#x2F;p&gt;
 &lt;p&gt;There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the &lt;a href=&quot;&#x2F;tags&#x2F;simulation&#x2F;&quot;&gt;simulation tags&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">rust</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Redwood’s memory tuning in FoundationDB</title>
@@ -310,6 +325,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">database</category>
+          <category domain="tag">tuning</category>
       </item>
       <item>
           <title>True idempotent transactions with FoundationDB 7.3</title>
@@ -360,6 +380,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">transactions</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>Best resources to learn about data and distributed systems</title>
@@ -518,6 +543,10 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, you can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">learning</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">education</category>
+          <category domain="tag">database</category>
       </item>
       <item>
           <title>Crafting row keys in FoundationDB</title>
@@ -715,6 +744,10 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Announcing Record-Store, a new (experimental) place for your data</title>
@@ -774,6 +807,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">opensource</category>
+          <category domain="tag">foundationdb</category>
       </item>
       <item>
           <title>Contributing to Apache HBase: custom data balancing</title>
@@ -868,6 +906,11 @@ We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;
 source is the opportunity ability to contribute back, and build stronger
 software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a particular issue should addressed, but &lt;strong&gt;the discussions with the community helped us to refine it&lt;&#x2F;strong&gt;. We spoke with e &lt;strong&gt;ngineers from other companies, who were struggling with Apache HBase&#x27;s cloud deployments, just as we were&lt;&#x2F;strong&gt;, and thanks to those exchanges, &lt;strong&gt;our contribution became more and more relevant.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Notes about FoundationDB</title>
@@ -1161,6 +1204,11 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">database</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>Diving into Hbase&#x27;s MemStore</title>
@@ -1227,6 +1275,12 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>Playing with TTL in HBase</title>
@@ -1327,6 +1381,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">expiration</category>
       </item>
       <item>
           <title>What are ACID transactions?</title>
@@ -1383,6 +1441,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">transactions</category>
+          <category domain="tag">sql</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>Hbase Data Model</title>
@@ -1451,6 +1513,11 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">design</category>
       </item>
       <item>
           <title>Engage maximum warp speed in time series analysis with WarpScript</title>
@@ -1576,6 +1643,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;groups.google.com&#x2F;forum&#x2F;#!forum&#x2F;warp10-users&quot;&gt;Warp10 Google Groups&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">timeseries</category>
+          <category domain="tag">analytics</category>
+          <category domain="tag">performance</category>
       </item>
     </channel>
 </rss>

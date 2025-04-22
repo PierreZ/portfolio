@@ -192,6 +192,11 @@
 &lt;p&gt;Want to learn more? Check out my &lt;a href=&quot;&#x2F;posts&#x2F;learn-about-dst&#x2F;&quot;&gt;curated list of resources on deterministic simulation testing&lt;&#x2F;a&gt;, which includes articles, talks, and implementation examples.&lt;&#x2F;p&gt;
 &lt;p&gt;Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">reliability</category>
+          <category domain="tag">simulation</category>
+          <category domain="tag">deterministic</category>
       </item>
       <item>
           <title>So, You Want to Learn More About Deterministic Simulation Testing?</title>
@@ -267,6 +272,11 @@
 &lt;p&gt;Have I missed any important resources on Deterministic Simulation Testing? This field is rapidly evolving, and I&#x27;m always looking to expand this collection. If you know of any articles, talks, or tools related to DST that should be included here, please reach out! I&#x27;d love to hear about your experiences with deterministic testing as well.&lt;&#x2F;p&gt;
 &lt;p&gt;Please, feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">reliability</category>
+          <category domain="tag">simulation</category>
+          <category domain="tag">deterministic</category>
       </item>
       <item>
           <title>Key design tip: reverse number scanning in ordered key-value stores</title>
@@ -310,6 +320,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">optimization</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Debugging FoundationDB&#x27;s Data Distributor</title>
@@ -413,6 +428,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">debugging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate</title>
@@ -525,6 +545,11 @@
 &lt;p&gt;I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.&lt;&#x2F;p&gt;
 &lt;p&gt;There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the &lt;a href=&quot;&#x2F;tags&#x2F;simulation&#x2F;&quot;&gt;simulation tags&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">rust</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Back in engineering!</title>
@@ -538,6 +563,7 @@
 &lt;p&gt;Management is a rewarding challenge, like unlocking a new skill tree to walk through. Resources like &lt;a href=&quot;https:&#x2F;&#x2F;www.oreilly.com&#x2F;library&#x2F;view&#x2F;the-managers-path&#x2F;9781491973882&#x2F;&quot;&gt;The Manager&#x27;s Path&lt;&#x2F;a&gt; or &lt;a href=&quot;https:&#x2F;&#x2F;www.engmanagement.dev&quot;&gt;Engineering Management for the Rest of Us&lt;&#x2F;a&gt; can give you a head-start and should be read by anyone. Blogs like &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;tag&#x2F;management&#x2F;page&#x2F;2&#x2F;&quot;&gt;Charity Majors&lt;&#x2F;a&gt; are also useful to read, especially &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;2017&#x2F;05&#x2F;11&#x2F;the-engineer-manager-pendulum&#x2F;&quot;&gt;The Engineer&#x2F;Manager Pendulum&lt;&#x2F;a&gt; and its &lt;a href=&quot;https:&#x2F;&#x2F;charity.wtf&#x2F;2019&#x2F;01&#x2F;04&#x2F;engineering-management-the-pendulum-or-the-ladder&#x2F;&quot;&gt;follow-up&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;After nearly two years, I feel it&#x27;s the right time to return to core engineering. I just miss it.  From the start, my manager and I had an understanding that I could transition back whenever I wanted to—and that time is now. I&#x27;ve found an excellent manager to lead the team, giving me the space to focus on the technical side of Materia. I also should have more time to work around open-source, and I&#x27;m looking forward to it.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">personal</category>
       </item>
       <item>
           <title>Redwood’s memory tuning in FoundationDB</title>
@@ -583,6 +609,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">database</category>
+          <category domain="tag">tuning</category>
       </item>
       <item>
           <title>True idempotent transactions with FoundationDB 7.3</title>
@@ -633,6 +664,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">transactions</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>The unseen treasures of Infrastructure Engineering: Academic Papers</title>
@@ -694,6 +730,10 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">research</category>
+          <category domain="tag">learning</category>
+          <category domain="tag">engineering</category>
+          <category domain="tag">papers</category>
       </item>
       <item>
           <title>Best resources to learn about data and distributed systems</title>
@@ -852,6 +892,10 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, you can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">learning</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">education</category>
+          <category domain="tag">database</category>
       </item>
       <item>
           <title>Crafting row keys in FoundationDB</title>
@@ -1049,6 +1093,10 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>Notes about ETCD</title>
@@ -1281,6 +1329,11 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;2004.00372.pdf&quot;&gt;Impact of etcd deployment on Kubernetes, Istio, and application performance&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">etcd</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">consensus</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>10 years of programming and counting 🚀</title>
@@ -1358,6 +1411,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">personal</category>
       </item>
       <item>
           <title>Announcing Record-Store, a new (experimental) place for your data</title>
@@ -1417,6 +1471,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">opensource</category>
+          <category domain="tag">foundationdb</category>
       </item>
       <item>
           <title>Diving into ETCD&#x27;s linearizable reads</title>
@@ -1629,6 +1688,12 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">etcd</category>
+          <category domain="tag">raft</category>
+          <category domain="tag">consensus</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>Notes about Raft&#x27;s paper</title>
@@ -1829,6 +1894,11 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">consensus</category>
+          <category domain="tag">raft</category>
+          <category domain="tag">algorithms</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
@@ -1903,6 +1973,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 &lt;h2 id=&quot;thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#thanks&quot; aria-label=&quot;Anchor link for: thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Thanks&lt;&#x2F;h2&gt;
 &lt;p&gt;The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">pulsar</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Contributing to Apache HBase: custom data balancing</title>
@@ -1997,6 +2072,11 @@ We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;
 source is the opportunity ability to contribute back, and build stronger
 software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a particular issue should addressed, but &lt;strong&gt;the discussions with the community helped us to refine it&lt;&#x2F;strong&gt;. We spoke with e &lt;strong&gt;ngineers from other companies, who were struggling with Apache HBase&#x27;s cloud deployments, just as we were&lt;&#x2F;strong&gt;, and thanks to those exchanges, &lt;strong&gt;our contribution became more and more relevant.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Notes about FoundationDB</title>
@@ -2290,6 +2370,11 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">database</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>Diving into Kafka&#x27;s Protocol</title>
@@ -2466,6 +2551,11 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">networking</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>Diving into Hbase&#x27;s MemStore</title>
@@ -2532,6 +2622,12 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>What can be gleaned about GFS successor codenamed Colossus?</title>
@@ -2696,6 +2792,11 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">google</category>
+          <category domain="tag">filesystem</category>
+          <category domain="tag">hadoop</category>
       </item>
       <item>
           <title>Playing with TTL in HBase</title>
@@ -2796,6 +2897,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">expiration</category>
       </item>
       <item>
           <title>Handling OVH&#x27;s alerts with Apache Flink</title>
@@ -2878,6 +2983,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472&quot; alt=&quot;Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;r&#x2F;?url=https%3A%2F%2Ftraining.da-platform.com%2F&quot;&gt;Apache Flink Training&lt;&#x2F;a&gt;, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">streaming</category>
+          <category domain="tag">flink</category>
+          <category domain="tag">monitoring</category>
+          <category domain="tag">distributed</category>
       </item>
       <item>
           <title>What are ACID transactions?</title>
@@ -2934,6 +3043,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">transactions</category>
+          <category domain="tag">sql</category>
+          <category domain="tag">storage</category>
       </item>
       <item>
           <title>Hbase Data Model</title>
@@ -3002,6 +3115,11 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">design</category>
       </item>
       <item>
           <title>Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</title>
@@ -3081,6 +3199,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;11.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;strong&gt;Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets&lt;&#x2F;strong&gt;. Image Credit: By &lt;a href=&quot;http:&#x2F;&#x2F;www.eso.org&#x2F;public&#x2F;images&#x2F;eso1615b&#x2F;&quot;&gt;ESO&#x2F;M. Kornmesser&lt;&#x2F;a&gt; — &lt;a href=&quot;https:&#x2F;&#x2F;creativecommons.org&#x2F;licenses&#x2F;by-sa&#x2F;4.0&quot;&gt;CC BY-SA 4.0&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">space</category>
+          <category domain="tag">timeseries</category>
+          <category domain="tag">analytics</category>
+          <category domain="tag">machinelearning</category>
       </item>
       <item>
           <title>Engage maximum warp speed in time series analysis with WarpScript</title>
@@ -3206,6 +3328,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;groups.google.com&#x2F;forum&#x2F;#!forum&#x2F;warp10-users&quot;&gt;Warp10 Google Groups&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">timeseries</category>
+          <category domain="tag">analytics</category>
+          <category domain="tag">performance</category>
       </item>
       <item>
           <title>Event-driven architecture 101</title>
@@ -3273,6 +3399,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Please, Feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">architecture</category>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">design</category>
       </item>
       <item>
           <title>Let’s talk about containers</title>
@@ -3327,6 +3457,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;p&gt;Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So &lt;strong&gt;the role of Docker would be more like a Operating System builder&lt;&#x2F;strong&gt; (nice name found by &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;u&#x2F;58ea5a89aaae&quot;&gt;Quentin ADAM&lt;&#x2F;a&gt;).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.&lt;&#x2F;p&gt;
 &lt;p&gt;Please, Feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, Or visite my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">containers</category>
+          <category domain="tag">docker</category>
+          <category domain="tag">security</category>
+          <category domain="tag">infrastructure</category>
       </item>
     </channel>
 </rss>

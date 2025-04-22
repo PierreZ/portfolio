@@ -192,6 +192,11 @@
 &lt;p&gt;Want to learn more? Check out my &lt;a href=&quot;&#x2F;posts&#x2F;learn-about-dst&#x2F;&quot;&gt;curated list of resources on deterministic simulation testing&lt;&#x2F;a&gt;, which includes articles, talks, and implementation examples.&lt;&#x2F;p&gt;
 &lt;p&gt;Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">reliability</category>
+          <category domain="tag">simulation</category>
+          <category domain="tag">deterministic</category>
       </item>
       <item>
           <title>So, You Want to Learn More About Deterministic Simulation Testing?</title>
@@ -267,6 +272,11 @@
 &lt;p&gt;Have I missed any important resources on Deterministic Simulation Testing? This field is rapidly evolving, and I&#x27;m always looking to expand this collection. If you know of any articles, talks, or tools related to DST that should be included here, please reach out! I&#x27;d love to hear about your experiences with deterministic testing as well.&lt;&#x2F;p&gt;
 &lt;p&gt;Please, feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">reliability</category>
+          <category domain="tag">simulation</category>
+          <category domain="tag">deterministic</category>
       </item>
     </channel>
 </rss>

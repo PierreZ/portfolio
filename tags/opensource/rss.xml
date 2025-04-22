@@ -66,6 +66,11 @@
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">opensource</category>
+          <category domain="tag">foundationdb</category>
       </item>
       <item>
           <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</title>
@@ -140,6 +145,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 &lt;h2 id=&quot;thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#thanks&quot; aria-label=&quot;Anchor link for: thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Thanks&lt;&#x2F;h2&gt;
 &lt;p&gt;The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">pulsar</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Contributing to Apache HBase: custom data balancing</title>
@@ -234,6 +244,11 @@ We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;
 source is the opportunity ability to contribute back, and build stronger
 software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a particular issue should addressed, but &lt;strong&gt;the discussions with the community helped us to refine it&lt;&#x2F;strong&gt;. We spoke with e &lt;strong&gt;ngineers from other companies, who were struggling with Apache HBase&#x27;s cloud deployments, just as we were&lt;&#x2F;strong&gt;, and thanks to those exchanges, &lt;strong&gt;our contribution became more and more relevant.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">opensource</category>
       </item>
     </channel>
 </rss>

@@ -61,6 +61,10 @@
 &lt;p&gt;Here’s the (final) answer! By trully coming back to the UNIX process point-of-view, we can abstract containers as Unix processes. Bu we still need to handle them. So &lt;strong&gt;the role of Docker would be more like a Operating System builder&lt;&#x2F;strong&gt; (nice name found by &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;u&#x2F;58ea5a89aaae&quot;&gt;Quentin ADAM&lt;&#x2F;a&gt;).As a conclusion, I think that Docker true success was to show developers that they can sandbox their apps easily, and now it’s our work to build better software, and learning new design patterns.&lt;&#x2F;p&gt;
 &lt;p&gt;Please, Feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, Or visite my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">containers</category>
+          <category domain="tag">docker</category>
+          <category domain="tag">security</category>
+          <category domain="tag">infrastructure</category>
       </item>
     </channel>
 </rss>

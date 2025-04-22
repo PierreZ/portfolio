@@ -23,6 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/redwood-memory-tuning/"/>
         <id>https://pierrezemb.fr/posts/redwood-memory-tuning/</id>
         
+        <category term="foundationdb" schema="tag" label="foundationdb"/>
+        <category term="performance" schema="tag" label="performance"/>
+        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="tag" label="database"/>
+        <category term="tuning" schema="tag" label="tuning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/redwood-memory-tuning/">&lt;p&gt;While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;btree-page-cache&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;BTree page cache&lt;&#x2F;h2&gt;
 &lt;p&gt;We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:&lt;&#x2F;p&gt;

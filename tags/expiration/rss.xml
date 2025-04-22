@@ -107,6 +107,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">expiration</category>
       </item>
     </channel>
 </rss>

@@ -101,6 +101,11 @@ We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;
 source is the opportunity ability to contribute back, and build stronger
 software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a particular issue should addressed, but &lt;strong&gt;the discussions with the community helped us to refine it&lt;&#x2F;strong&gt;. We spoke with e &lt;strong&gt;ngineers from other companies, who were struggling with Apache HBase&#x27;s cloud deployments, just as we were&lt;&#x2F;strong&gt;, and thanks to those exchanges, &lt;strong&gt;our contribution became more and more relevant.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Diving into Hbase&#x27;s MemStore</title>
@@ -167,6 +172,12 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">performance</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>Playing with TTL in HBase</title>
@@ -267,6 +278,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">expiration</category>
       </item>
       <item>
           <title>Hbase Data Model</title>
@@ -335,6 +350,11 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">database</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">hbase</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">design</category>
       </item>
     </channel>
 </rss>

@@ -89,6 +89,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472&quot; alt=&quot;Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;r&#x2F;?url=https%3A%2F%2Ftraining.da-platform.com%2F&quot;&gt;Apache Flink Training&lt;&#x2F;a&gt;, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">streaming</category>
+          <category domain="tag">flink</category>
+          <category domain="tag">monitoring</category>
+          <category domain="tag">distributed</category>
       </item>
     </channel>
 </rss>

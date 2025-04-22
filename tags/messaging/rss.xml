@@ -81,6 +81,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 &lt;h2 id=&quot;thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#thanks&quot; aria-label=&quot;Anchor link for: thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Thanks&lt;&#x2F;h2&gt;
 &lt;p&gt;The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">pulsar</category>
+          <category domain="tag">opensource</category>
       </item>
       <item>
           <title>Diving into Kafka&#x27;s Protocol</title>
@@ -257,6 +262,11 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">networking</category>
+          <category domain="tag">diving</category>
       </item>
       <item>
           <title>Event-driven architecture 101</title>
@@ -324,6 +334,10 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Please, Feel free to react to this article, you can reach me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, or have a look on my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">architecture</category>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">design</category>
       </item>
     </channel>
 </rss>

@@ -239,6 +239,11 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;2004.00372.pdf&quot;&gt;Impact of etcd deployment on Kubernetes, Istio, and application performance&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">etcd</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">consensus</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>Notes about Raft&#x27;s paper</title>
@@ -439,6 +444,11 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">consensus</category>
+          <category domain="tag">raft</category>
+          <category domain="tag">algorithms</category>
+          <category domain="tag">notes</category>
       </item>
       <item>
           <title>Notes about FoundationDB</title>
@@ -732,6 +742,11 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">distributed</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">storage</category>
+          <category domain="tag">database</category>
+          <category domain="tag">notes</category>
       </item>
     </channel>
 </rss>

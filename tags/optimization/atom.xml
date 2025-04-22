@@ -23,6 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/reverse-number-scanning/"/>
         <id>https://pierrezemb.fr/posts/reverse-number-scanning/</id>
         
+        <category term="database" schema="tag" label="database"/>
+        <category term="performance" schema="tag" label="performance"/>
+        <category term="optimization" schema="tag" label="optimization"/>
+        <category term="storage" schema="tag" label="storage"/>
+        <category term="distributed" schema="tag" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
 &lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;

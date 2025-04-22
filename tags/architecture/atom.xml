@@ -23,6 +23,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"/>
         <id>https://pierrezemb.fr/posts/eventdriven-architecture-101/</id>
         
+        <category term="architecture" schema="tag" label="architecture"/>
+        <category term="messaging" schema="tag" label="messaging"/>
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="design" schema="tag" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/eventdriven-architecture-101/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;event-driven-architecture-101-d8e13cc4c656&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;

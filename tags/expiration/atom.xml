@@ -23,6 +23,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ttl-hbase/"/>
         <id>https://pierrezemb.fr/posts/ttl-hbase/</id>
         
+        <category term="database" schema="tag" label="database"/>
+        <category term="hbase" schema="tag" label="hbase"/>
+        <category term="storage" schema="tag" label="storage"/>
+        <category term="expiration" schema="tag" label="expiration"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ttl-hbase/">&lt;header class=&quot;row text-center header&quot;&gt;
    &lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;HBase Image&quot; class=&quot;text-center&quot;&gt;
 &lt;&#x2F;header&gt;

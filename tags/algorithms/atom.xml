@@ -23,6 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
+        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="consensus" schema="tag" label="consensus"/>
+        <category term="raft" schema="tag" label="raft"/>
+        <category term="algorithms" schema="tag" label="algorithms"/>
+        <category term="notes" schema="tag" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;

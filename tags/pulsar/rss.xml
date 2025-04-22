@@ -81,6 +81,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 &lt;h2 id=&quot;thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#thanks&quot; aria-label=&quot;Anchor link for: thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Thanks&lt;&#x2F;h2&gt;
 &lt;p&gt;The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!&lt;&#x2F;p&gt;
 </description>
+          <category domain="tag">messaging</category>
+          <category domain="tag">distributed</category>
+          <category domain="tag">kafka</category>
+          <category domain="tag">pulsar</category>
+          <category domain="tag">opensource</category>
       </item>
     </channel>
 </rss>
