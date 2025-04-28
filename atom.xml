@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/simulation-driven-development/"/>
         <id>https://pierrezemb.fr/posts/simulation-driven-development/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="reliability" schema="tag" label="reliability"/>
-        <category term="simulation" schema="tag" label="simulation"/>
-        <category term="deterministic" schema="tag" label="deterministic"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="reliability" schema="https://pierrezemb.fr/tags/" label="reliability"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <category term="deterministic" schema="https://pierrezemb.fr/tags/" label="deterministic"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/simulation-driven-development/">&lt;p&gt;This article has been translated from my original French presentation at the upcoming Devoxx France 2025, titled &quot;&lt;a href=&quot;https:&#x2F;&#x2F;docs.google.com&#x2F;presentation&#x2F;d&#x2F;1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc&#x2F;edit?usp=sharing&quot;&gt;What if we embraced simulation-driven development?&lt;&#x2F;a&gt;&quot;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-tale-of-a-bug&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-tale-of-a-bug&quot; aria-label=&quot;Anchor link for: the-tale-of-a-bug&quot;&gt;🔗&lt;&#x2F;a&gt;The Tale of a Bug&lt;&#x2F;h2&gt;
 &lt;p&gt;As a software engineer, my responsibilities include debugging distributed systems during on-call shifts. My tendency to attract peculiar issues during these shifts earned me the nickname &quot;Black Cat&quot;. Let me share a particularly memorable incident:&lt;&#x2F;p&gt;
@@ -224,11 +224,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/learn-about-dst/"/>
         <id>https://pierrezemb.fr/posts/learn-about-dst/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="reliability" schema="tag" label="reliability"/>
-        <category term="simulation" schema="tag" label="simulation"/>
-        <category term="deterministic" schema="tag" label="deterministic"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="reliability" schema="https://pierrezemb.fr/tags/" label="reliability"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <category term="deterministic" schema="https://pierrezemb.fr/tags/" label="deterministic"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/learn-about-dst/">&lt;p&gt;I recently attended &lt;a href=&quot;https:&#x2F;&#x2F;bugbash.antithesis.com&#x2F;&quot;&gt;BugBash 2025&lt;&#x2F;a&gt;, a software reliability conference organized by &lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&quot;&gt;Antithesis&lt;&#x2F;a&gt; in Washington, D.C. during April 3-4, 2025. The conference brought together industry experts like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss various aspects of building reliable software, with deterministic simulation testing being a significant focus throughout many of the sessions and discussions.&lt;&#x2F;p&gt;
 &lt;p&gt;One of the highlights for me was having the chance to talk with the Antithesis team and meet some of the original creators of FoundationDB.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-deterministic-simulation-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-deterministic-simulation-testing&quot; aria-label=&quot;Anchor link for: what-is-deterministic-simulation-testing&quot;&gt;🔗&lt;&#x2F;a&gt;What is Deterministic Simulation Testing?&lt;&#x2F;h2&gt;
@@ -315,11 +315,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/reverse-number-scanning/"/>
         <id>https://pierrezemb.fr/posts/reverse-number-scanning/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="optimization" schema="tag" label="optimization"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="optimization" schema="https://pierrezemb.fr/tags/" label="optimization"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
 &lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;
@@ -374,11 +374,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/fdb-data-distributor/"/>
         <id>https://pierrezemb.fr/posts/fdb-data-distributor/</id>
         
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="debugging" schema="tag" label="debugging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="debugging" schema="https://pierrezemb.fr/tags/" label="debugging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/fdb-data-distributor/">&lt;p&gt;FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the &lt;strong&gt;Data Distributor&lt;&#x2F;strong&gt; plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.&lt;&#x2F;p&gt;
 &lt;p&gt;In this post, we dive into the &lt;strong&gt;Data Distributor&#x27;s&lt;&#x2F;strong&gt; internals, along with practical lessons we learned during a outage.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-the-data-distributor&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-data-distributor&quot; aria-label=&quot;Anchor link for: what-is-the-data-distributor&quot;&gt;🔗&lt;&#x2F;a&gt;What is the Data Distributor?&lt;&#x2F;h2&gt;
@@ -493,11 +493,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/"/>
         <id>https://pierrezemb.fr/posts/providing-safety-fdb-rs/</id>
         
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="rust" schema="tag" label="rust"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="rust" schema="https://pierrezemb.fr/tags/" label="rust"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">&lt;p&gt;As we approach 5 million downloads of the &lt;a href=&quot;https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;foundationdb&quot;&gt;FoundationDB Rust crate&lt;&#x2F;a&gt; (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;crate-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#crate-overview&quot; aria-label=&quot;Anchor link for: crate-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Crate Overview&lt;&#x2F;h2&gt;
 &lt;p&gt;The Rust crate, &lt;code&gt;foundationdb-rs&lt;&#x2F;code&gt;, provides bindings to interact with FoundationDB&#x27;s C API (&lt;code&gt;libfdb&lt;&#x2F;code&gt;). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:&lt;&#x2F;p&gt;
@@ -621,7 +621,7 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/back-engineering/"/>
         <id>https://pierrezemb.fr/posts/back-engineering/</id>
         
-        <category term="personal" schema="tag" label="personal"/>
+        <category term="personal" schema="https://pierrezemb.fr/tags/" label="personal"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/back-engineering/">&lt;p&gt;Time flies—it’s already 2025! Looking back, 2024 was an incredibly fast-paced year for me professionally as an Engineering Manager. This year, I’ve decided to take a new direction and return to a more engineering-focused role.&lt;&#x2F;p&gt;
 &lt;p&gt;I moved in a management position early 2023. It was a time where my company was growing fast (from 20-ish to 60-ish), and we needed coordination to ship things out in parallel, but also to &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;company&#x2F;2023&#x2F;12&#x2F;21&#x2F;our-journey-to-a-better-clever-cloud&#x2F;&quot;&gt;migrate customers (and ourselves!) to new datacenters&lt;&#x2F;a&gt;. With my on-call experience, I helped our CTO, Steven, bootstrap two data-oriented teams and later led the Materia team, shaping its technology.&lt;&#x2F;p&gt;
 &lt;p&gt;During this time, we successfully launched &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;features&#x2F;2024&#x2F;06&#x2F;11&#x2F;materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all&#x2F;&quot;&gt;Materia KV in its Alpha version&lt;&#x2F;a&gt; and built strong internal trust in FoundationDB. Our largest cluster effortlessly handles hundreds of thousands of writes per second, and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;tree&#x2F;main&#x2F;foundationdb-simulation&quot;&gt;the ability to simulate Rust code within FDB’s simulation framework&lt;&#x2F;a&gt; has significantly boosted our developers&#x27; confidence.&lt;&#x2F;p&gt;
@@ -646,11 +646,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/redwood-memory-tuning/"/>
         <id>https://pierrezemb.fr/posts/redwood-memory-tuning/</id>
         
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="database" schema="tag" label="database"/>
-        <category term="tuning" schema="tag" label="tuning"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="tuning" schema="https://pierrezemb.fr/tags/" label="tuning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/redwood-memory-tuning/">&lt;p&gt;While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;btree-page-cache&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;BTree page cache&lt;&#x2F;h2&gt;
 &lt;p&gt;We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:&lt;&#x2F;p&gt;
@@ -707,11 +707,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/"/>
         <id>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="transactions" schema="tag" label="transactions"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="transactions" schema="https://pierrezemb.fr/tags/" label="transactions"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">&lt;p&gt;I have been working around &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.org&quot;&gt;FoundationDB&lt;&#x2F;a&gt; for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: &lt;code&gt;commit_unknown_result&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;transactions-with-unknown-results&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions-with-unknown-results&quot; aria-label=&quot;Anchor link for: transactions-with-unknown-results&quot;&gt;🔗&lt;&#x2F;a&gt;Transactions with unknown results&lt;&#x2F;h2&gt;
 &lt;p&gt;When you start writing code with FDB, you may be under the assertions that given the database’s robustness, you will not experience some strange behavior under certain failure scenarios. Turns out, there is one scenario that is possible to reach, and quickly explained in the official &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;developer-guide.html#transactions-with-unknown-results&quot;&gt;documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -773,10 +773,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/academic-conferences/"/>
         <id>https://pierrezemb.fr/posts/academic-conferences/</id>
         
-        <category term="research" schema="tag" label="research"/>
-        <category term="learning" schema="tag" label="learning"/>
-        <category term="engineering" schema="tag" label="engineering"/>
-        <category term="papers" schema="tag" label="papers"/>
+        <category term="research" schema="https://pierrezemb.fr/tags/" label="research"/>
+        <category term="learning" schema="https://pierrezemb.fr/tags/" label="learning"/>
+        <category term="engineering" schema="https://pierrezemb.fr/tags/" label="engineering"/>
+        <category term="papers" schema="https://pierrezemb.fr/tags/" label="papers"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/academic-conferences/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;papers.png&quot; alt=&quot;Academic paper created with AI&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;I really like using RSS feeds. My Feedly account has more than 190 feeds, all neatly organized by categories. They help me keep up with new ideas and interesting blog posts about engineering. But there&#x27;s another source of information I&#x27;ve been using for a long time that not many people know about: &lt;strong&gt;academic papers&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;You can discover details about infrastructure that you might not find in regular blog posts. Academic papers, unlike typical blog content, often &lt;strong&gt;dive deeper&lt;&#x2F;strong&gt; into specific aspects of infrastructure. They provide more in-depth information, uncovering details that are not commonly discussed. So, if you&#x27;re interested in gaining a more comprehensive understanding of infrastructure-related topics, exploring academic papers can be really worthwile.&lt;&#x2F;p&gt;
@@ -849,10 +849,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/distsys-resources/"/>
         <id>https://pierrezemb.fr/posts/distsys-resources/</id>
         
-        <category term="learning" schema="tag" label="learning"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="education" schema="tag" label="education"/>
-        <category term="database" schema="tag" label="database"/>
+        <category term="learning" schema="https://pierrezemb.fr/tags/" label="learning"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="education" schema="https://pierrezemb.fr/tags/" label="education"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/distsys-resources/">&lt;p&gt;Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you to get started.  Here&#x27;s a list of resources I used to learn distributed systems. I will keep this blogpost up-to-date with books, conferences, and so on.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;distsys-resources&#x2F;books.jpeg&quot; alt=&quot;&#x2F;posts&#x2F;distsys-resources&#x2F;books.jpeg&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -1022,10 +1022,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/"/>
         <id>https://pierrezemb.fr/posts/crafting-keys-in-fdb/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;fdb-white.jpg&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;As I&#x27;m working &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Clikengo&#x2F;foundationdb-rs&#x2F;issues&#x2F;27&quot;&gt;on my latest contribution around FoundationDB and Rust&lt;&#x2F;a&gt;, I had the chance to dig a bit into how FoundationDB&#x27;s bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;row-key&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#row-key&quot; aria-label=&quot;Anchor link for: row-key&quot;&gt;🔗&lt;&#x2F;a&gt;Row key?&lt;&#x2F;h2&gt;
@@ -1234,11 +1234,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-etcd/"/>
         <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="etcd" schema="tag" label="etcd"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="consensus" schema="tag" label="consensus"/>
-        <category term="notes" schema="tag" label="notes"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="etcd" schema="https://pierrezemb.fr/tags/" label="etcd"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
+        <category term="notes" schema="https://pierrezemb.fr/tags/" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
@@ -1482,7 +1482,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ten-years-programming/"/>
         <id>https://pierrezemb.fr/posts/ten-years-programming/</id>
         
-        <category term="personal" schema="tag" label="personal"/>
+        <category term="personal" schema="https://pierrezemb.fr/tags/" label="personal"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ten-years-programming/">&lt;p&gt;I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;learning-to-program-man-computer&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-to-program-man-computer&quot; aria-label=&quot;Anchor link for: learning-to-program-man-computer&quot;&gt;🔗&lt;&#x2F;a&gt;Learning to program 👨🏻‍💻&lt;&#x2F;h2&gt;
 &lt;p&gt;I wrote my first &lt;em&gt;Hello, world&lt;&#x2F;em&gt; program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.&lt;&#x2F;p&gt;
@@ -1571,11 +1571,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-record-store/"/>
         <id>https://pierrezemb.fr/posts/announcing-record-store/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="opensource" schema="tag" label="opensource"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-record-store/">&lt;p&gt;TL;DR: I&#x27;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on &lt;a href=&quot;https:&#x2F;&#x2F;pierrez.github.io&#x2F;record-store&quot;&gt;https:&#x2F;&#x2F;pierrez.github.io&#x2F;record-store&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what&quot; aria-label=&quot;Anchor link for: what&quot;&gt;🔗&lt;&#x2F;a&gt;What?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;code&gt;Record-Store&lt;&#x2F;code&gt; is a &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;layer-concept.html&quot;&gt;layer&lt;&#x2F;a&gt; running on top of &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.org&quot;&gt;FoundationDB&lt;&#x2F;a&gt;. It provides abstractions to create, load and deletes customer-defined data called &lt;code&gt;records&lt;&#x2F;code&gt;, which are hold into a &lt;code&gt;RecordSpace&lt;&#x2F;code&gt;. We would like to have this kind of flow for developers:&lt;&#x2F;p&gt;
@@ -1646,12 +1646,12 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/"/>
         <id>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="etcd" schema="tag" label="etcd"/>
-        <category term="raft" schema="tag" label="raft"/>
-        <category term="consensus" schema="tag" label="consensus"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="diving" schema="tag" label="diving"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="etcd" schema="https://pierrezemb.fr/tags/" label="etcd"/>
+        <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
+        <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="diving" schema="https://pierrezemb.fr/tags/" label="diving"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -1875,11 +1875,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="consensus" schema="tag" label="consensus"/>
-        <category term="raft" schema="tag" label="raft"/>
-        <category term="algorithms" schema="tag" label="algorithms"/>
-        <category term="notes" schema="tag" label="notes"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
+        <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
+        <category term="algorithms" schema="https://pierrezemb.fr/tags/" label="algorithms"/>
+        <category term="notes" schema="https://pierrezemb.fr/tags/" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-raft/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;raft.png&quot; alt=&quot;raft_image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover Raft&#x27;s paper called &#x27;In Search of an Understandable Consensus Algorithm&#x27;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -2091,11 +2091,11 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-kop/"/>
         <id>https://pierrezemb.fr/posts/announcing-kop/</id>
         
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="kafka" schema="tag" label="kafka"/>
-        <category term="pulsar" schema="tag" label="pulsar"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="kafka" schema="https://pierrezemb.fr/tags/" label="kafka"/>
+        <category term="pulsar" schema="https://pierrezemb.fr/tags/" label="pulsar"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-kop/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar&#x2F;&quot; title=&quot;Permalink to announcing KoP&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -2181,11 +2181,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"/>
         <id>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;contributing-to-apache-hbase-custom-data-balancing&#x2F;&quot; title=&quot;Permalink to Contributing to Apache HBase: custom data balancing&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -2291,11 +2291,11 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"/>
         <id>https://pierrezemb.fr/posts/notes-about-foundationdb/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="database" schema="tag" label="database"/>
-        <category term="notes" schema="tag" label="notes"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="notes" schema="https://pierrezemb.fr/tags/" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-foundationdb/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-foundationdb&#x2F;fdb-white.jpg&quot; alt=&quot;fdb image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover FoundationDB.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -2600,11 +2600,11 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"/>
         <id>https://pierrezemb.fr/posts/diving-into-kafka-protocol/</id>
         
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="kafka" schema="tag" label="kafka"/>
-        <category term="networking" schema="tag" label="networking"/>
-        <category term="diving" schema="tag" label="diving"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="kafka" schema="https://pierrezemb.fr/tags/" label="kafka"/>
+        <category term="networking" schema="https://pierrezemb.fr/tags/" label="networking"/>
+        <category term="diving" schema="https://pierrezemb.fr/tags/" label="diving"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-kafka-protocol&#x2F;apache-kafka.png&quot; alt=&quot;kafka image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into Kafka&#x27;s protocol.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -2792,12 +2792,12 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"/>
         <id>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="diving" schema="tag" label="diving"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="diving" schema="https://pierrezemb.fr/tags/" label="diving"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -2875,11 +2875,11 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/colossus-google/"/>
         <id>https://pierrezemb.fr/posts/colossus-google/</id>
         
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="google" schema="tag" label="google"/>
-        <category term="filesystem" schema="tag" label="filesystem"/>
-        <category term="hadoop" schema="tag" label="hadoop"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="google" schema="https://pierrezemb.fr/tags/" label="google"/>
+        <category term="filesystem" schema="https://pierrezemb.fr/tags/" label="filesystem"/>
+        <category term="hadoop" schema="https://pierrezemb.fr/tags/" label="hadoop"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/colossus-google/">&lt;p&gt;In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.theregister.co.uk&#x2F;2019&#x2F;06&#x2F;06&#x2F;cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger&#x2F;&quot;&gt;Health of Hadoop-based companies are publicly bad&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -3055,10 +3055,10 @@ Note left of KafkaClient: That is you, I don&amp;#x27;t &amp;lt;br&amp;#x2F;&amp
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ttl-hbase/"/>
         <id>https://pierrezemb.fr/posts/ttl-hbase/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="expiration" schema="tag" label="expiration"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="expiration" schema="https://pierrezemb.fr/tags/" label="expiration"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ttl-hbase/">&lt;header class=&quot;row text-center header&quot;&gt;
    &lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;HBase Image&quot; class=&quot;text-center&quot;&gt;
 &lt;&#x2F;header&gt;
@@ -3170,10 +3170,10 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"/>
         <id>https://pierrezemb.fr/posts/ovh-alerts-flink/</id>
         
-        <category term="streaming" schema="tag" label="streaming"/>
-        <category term="flink" schema="tag" label="flink"/>
-        <category term="monitoring" schema="tag" label="monitoring"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="streaming" schema="https://pierrezemb.fr/tags/" label="streaming"/>
+        <category term="flink" schema="https://pierrezemb.fr/tags/" label="flink"/>
+        <category term="monitoring" schema="https://pierrezemb.fr/tags/" label="monitoring"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&amp;#39;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;h1 id=&quot;handling-ovh-s-alerts-with-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-ovh-s-alerts-with-apache-flink&quot; aria-label=&quot;Anchor link for: handling-ovh-s-alerts-with-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;Handling OVH&#x27;s alerts with Apache Flink&lt;&#x2F;h1&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;001-1.png?x70472&quot; alt=&quot;OVH &amp;amp; Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
@@ -3267,10 +3267,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/acid-transactions/"/>
         <id>https://pierrezemb.fr/posts/acid-transactions/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="transactions" schema="tag" label="transactions"/>
-        <category term="sql" schema="tag" label="sql"/>
-        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="transactions" schema="https://pierrezemb.fr/tags/" label="transactions"/>
+        <category term="sql" schema="https://pierrezemb.fr/tags/" label="sql"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/acid-transactions/">&lt;h1 id=&quot;transaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transaction&quot; aria-label=&quot;Anchor link for: transaction&quot;&gt;🔗&lt;&#x2F;a&gt;Transaction?&lt;&#x2F;h1&gt;
 &lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&amp;quot;Programming should be about transforming data&amp;quot;
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
@@ -3338,11 +3338,11 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-data-model/"/>
         <id>https://pierrezemb.fr/posts/hbase-data-model/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="design" schema="tag" label="design"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="design" schema="https://pierrezemb.fr/tags/" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -3422,10 +3422,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/"/>
         <id>https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/</id>
         
-        <category term="space" schema="tag" label="space"/>
-        <category term="timeseries" schema="tag" label="timeseries"/>
-        <category term="analytics" schema="tag" label="analytics"/>
-        <category term="machinelearning" schema="tag" label="machinelearning"/>
+        <category term="space" schema="https://pierrezemb.fr/tags/" label="space"/>
+        <category term="timeseries" schema="https://pierrezemb.fr/tags/" label="timeseries"/>
+        <category term="analytics" schema="https://pierrezemb.fr/tags/" label="analytics"/>
+        <category term="machinelearning" schema="https://pierrezemb.fr/tags/" label="machinelearning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;helloexoworld&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow-e50f6e669915&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow&#x2F;1.jpeg&quot; alt=&quot;image&quot; &#x2F;&gt;
@@ -3516,10 +3516,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"/>
         <id>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="timeseries" schema="tag" label="timeseries"/>
-        <category term="analytics" schema="tag" label="analytics"/>
-        <category term="performance" schema="tag" label="performance"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="timeseries" schema="https://pierrezemb.fr/tags/" label="timeseries"/>
+        <category term="analytics" schema="https://pierrezemb.fr/tags/" label="analytics"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
@@ -3656,10 +3656,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"/>
         <id>https://pierrezemb.fr/posts/eventdriven-architecture-101/</id>
         
-        <category term="architecture" schema="tag" label="architecture"/>
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="design" schema="tag" label="design"/>
+        <category term="architecture" schema="https://pierrezemb.fr/tags/" label="architecture"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="design" schema="https://pierrezemb.fr/tags/" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/eventdriven-architecture-101/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;event-driven-architecture-101-d8e13cc4c656&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
@@ -3738,10 +3738,10 @@ moving from operators to another.&lt;&#x2F;p&gt;
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/lets-talk-about-containers/"/>
         <id>https://pierrezemb.fr/posts/lets-talk-about-containers/</id>
         
-        <category term="containers" schema="tag" label="containers"/>
-        <category term="docker" schema="tag" label="docker"/>
-        <category term="security" schema="tag" label="security"/>
-        <category term="infrastructure" schema="tag" label="infrastructure"/>
+        <category term="containers" schema="https://pierrezemb.fr/tags/" label="containers"/>
+        <category term="docker" schema="https://pierrezemb.fr/tags/" label="docker"/>
+        <category term="security" schema="https://pierrezemb.fr/tags/" label="security"/>
+        <category term="infrastructure" schema="https://pierrezemb.fr/tags/" label="infrastructure"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/lets-talk-about-containers/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@pierrez&#x2F;let-s-talk-about-containers-1f11ee68c470&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;em&gt;English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;

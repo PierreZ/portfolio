@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-kop/"/>
         <id>https://pierrezemb.fr/posts/announcing-kop/</id>
         
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="kafka" schema="tag" label="kafka"/>
-        <category term="pulsar" schema="tag" label="pulsar"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="kafka" schema="https://pierrezemb.fr/tags/" label="kafka"/>
+        <category term="pulsar" schema="https://pierrezemb.fr/tags/" label="pulsar"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-kop/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar&#x2F;&quot; title=&quot;Permalink to announcing KoP&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;

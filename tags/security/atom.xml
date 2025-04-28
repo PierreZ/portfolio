@@ -23,10 +23,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/lets-talk-about-containers/"/>
         <id>https://pierrezemb.fr/posts/lets-talk-about-containers/</id>
         
-        <category term="containers" schema="tag" label="containers"/>
-        <category term="docker" schema="tag" label="docker"/>
-        <category term="security" schema="tag" label="security"/>
-        <category term="infrastructure" schema="tag" label="infrastructure"/>
+        <category term="containers" schema="https://pierrezemb.fr/tags/" label="containers"/>
+        <category term="docker" schema="https://pierrezemb.fr/tags/" label="docker"/>
+        <category term="security" schema="https://pierrezemb.fr/tags/" label="security"/>
+        <category term="infrastructure" schema="https://pierrezemb.fr/tags/" label="infrastructure"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/lets-talk-about-containers/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@pierrez&#x2F;let-s-talk-about-containers-1f11ee68c470&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;em&gt;English is not my first language, so the whole story may have some mistakes… corrections and fixes will be greatly appreciated. I’m also still a student, so my point of view could be far from “production ready”, be gentle ;-)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;

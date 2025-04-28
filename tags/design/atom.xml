@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-data-model/"/>
         <id>https://pierrezemb.fr/posts/hbase-data-model/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="design" schema="tag" label="design"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="design" schema="https://pierrezemb.fr/tags/" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
@@ -107,10 +107,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"/>
         <id>https://pierrezemb.fr/posts/eventdriven-architecture-101/</id>
         
-        <category term="architecture" schema="tag" label="architecture"/>
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="design" schema="tag" label="design"/>
+        <category term="architecture" schema="https://pierrezemb.fr/tags/" label="architecture"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="design" schema="https://pierrezemb.fr/tags/" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/eventdriven-architecture-101/">&lt;p&gt;&lt;strong&gt;update 2019:&lt;&#x2F;strong&gt; this is a repost on my own blog. original article can be read on &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;@PierreZ&#x2F;event-driven-architecture-101-d8e13cc4c656&quot;&gt;medium&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;1.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;

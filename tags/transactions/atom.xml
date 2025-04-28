@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/"/>
         <id>https://pierrezemb.fr/posts/automatic-txn-fdb-730/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="transactions" schema="tag" label="transactions"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="transactions" schema="https://pierrezemb.fr/tags/" label="transactions"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">&lt;p&gt;I have been working around &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.org&quot;&gt;FoundationDB&lt;&#x2F;a&gt; for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: &lt;code&gt;commit_unknown_result&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;transactions-with-unknown-results&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions-with-unknown-results&quot; aria-label=&quot;Anchor link for: transactions-with-unknown-results&quot;&gt;🔗&lt;&#x2F;a&gt;Transactions with unknown results&lt;&#x2F;h2&gt;
 &lt;p&gt;When you start writing code with FDB, you may be under the assertions that given the database’s robustness, you will not experience some strange behavior under certain failure scenarios. Turns out, there is one scenario that is possible to reach, and quickly explained in the official &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;developer-guide.html#transactions-with-unknown-results&quot;&gt;documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -89,10 +89,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/acid-transactions/"/>
         <id>https://pierrezemb.fr/posts/acid-transactions/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="transactions" schema="tag" label="transactions"/>
-        <category term="sql" schema="tag" label="sql"/>
-        <category term="storage" schema="tag" label="storage"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="transactions" schema="https://pierrezemb.fr/tags/" label="transactions"/>
+        <category term="sql" schema="https://pierrezemb.fr/tags/" label="sql"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/acid-transactions/">&lt;h1 id=&quot;transaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transaction&quot; aria-label=&quot;Anchor link for: transaction&quot;&gt;🔗&lt;&#x2F;a&gt;Transaction?&lt;&#x2F;h1&gt;
 &lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&amp;quot;Programming should be about transforming data&amp;quot;
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;

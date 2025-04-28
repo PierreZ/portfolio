@@ -23,10 +23,10 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"/>
         <id>https://pierrezemb.fr/posts/ovh-alerts-flink/</id>
         
-        <category term="streaming" schema="tag" label="streaming"/>
-        <category term="flink" schema="tag" label="flink"/>
-        <category term="monitoring" schema="tag" label="monitoring"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="streaming" schema="https://pierrezemb.fr/tags/" label="streaming"/>
+        <category term="flink" schema="https://pierrezemb.fr/tags/" label="flink"/>
+        <category term="monitoring" schema="https://pierrezemb.fr/tags/" label="monitoring"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ovh-alerts-flink/">&lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;&quot; title=&quot;Permalink to Handling OVH&amp;#39;s alerts with Apache Flink&quot;&gt;OVH&#x27;s official blogpost.&lt;&#x2F;a&gt;. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;h1 id=&quot;handling-ovh-s-alerts-with-apache-flink&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#handling-ovh-s-alerts-with-apache-flink&quot; aria-label=&quot;Anchor link for: handling-ovh-s-alerts-with-apache-flink&quot;&gt;🔗&lt;&#x2F;a&gt;Handling OVH&#x27;s alerts with Apache Flink&lt;&#x2F;h1&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;01&#x2F;001-1.png?x70472&quot; alt=&quot;OVH &amp;amp; Apache Flink&quot; &#x2F;&gt;&lt;&#x2F;p&gt;

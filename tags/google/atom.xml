@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/colossus-google/"/>
         <id>https://pierrezemb.fr/posts/colossus-google/</id>
         
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="google" schema="tag" label="google"/>
-        <category term="filesystem" schema="tag" label="filesystem"/>
-        <category term="hadoop" schema="tag" label="hadoop"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="google" schema="https://pierrezemb.fr/tags/" label="google"/>
+        <category term="filesystem" schema="https://pierrezemb.fr/tags/" label="filesystem"/>
+        <category term="hadoop" schema="https://pierrezemb.fr/tags/" label="hadoop"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/colossus-google/">&lt;p&gt;In the last few months, there has been numerous blogposts about the end of the Hadoop-era. It is true that:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.theregister.co.uk&#x2F;2019&#x2F;06&#x2F;06&#x2F;cloudera_ceo_quits_customers_delay_purchase_orders_due_to_roadmap_uncertainty_after_hortonworks_merger&#x2F;&quot;&gt;Health of Hadoop-based companies are publicly bad&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;

@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/simulation-driven-development/"/>
         <id>https://pierrezemb.fr/posts/simulation-driven-development/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="reliability" schema="tag" label="reliability"/>
-        <category term="simulation" schema="tag" label="simulation"/>
-        <category term="deterministic" schema="tag" label="deterministic"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="reliability" schema="https://pierrezemb.fr/tags/" label="reliability"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <category term="deterministic" schema="https://pierrezemb.fr/tags/" label="deterministic"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/simulation-driven-development/">&lt;p&gt;This article has been translated from my original French presentation at the upcoming Devoxx France 2025, titled &quot;&lt;a href=&quot;https:&#x2F;&#x2F;docs.google.com&#x2F;presentation&#x2F;d&#x2F;1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc&#x2F;edit?usp=sharing&quot;&gt;What if we embraced simulation-driven development?&lt;&#x2F;a&gt;&quot;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-tale-of-a-bug&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-tale-of-a-bug&quot; aria-label=&quot;Anchor link for: the-tale-of-a-bug&quot;&gt;🔗&lt;&#x2F;a&gt;The Tale of a Bug&lt;&#x2F;h2&gt;
 &lt;p&gt;As a software engineer, my responsibilities include debugging distributed systems during on-call shifts. My tendency to attract peculiar issues during these shifts earned me the nickname &quot;Black Cat&quot;. Let me share a particularly memorable incident:&lt;&#x2F;p&gt;
@@ -224,11 +224,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/learn-about-dst/"/>
         <id>https://pierrezemb.fr/posts/learn-about-dst/</id>
         
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="reliability" schema="tag" label="reliability"/>
-        <category term="simulation" schema="tag" label="simulation"/>
-        <category term="deterministic" schema="tag" label="deterministic"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="reliability" schema="https://pierrezemb.fr/tags/" label="reliability"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <category term="deterministic" schema="https://pierrezemb.fr/tags/" label="deterministic"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/learn-about-dst/">&lt;p&gt;I recently attended &lt;a href=&quot;https:&#x2F;&#x2F;bugbash.antithesis.com&#x2F;&quot;&gt;BugBash 2025&lt;&#x2F;a&gt;, a software reliability conference organized by &lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&quot;&gt;Antithesis&lt;&#x2F;a&gt; in Washington, D.C. during April 3-4, 2025. The conference brought together industry experts like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss various aspects of building reliable software, with deterministic simulation testing being a significant focus throughout many of the sessions and discussions.&lt;&#x2F;p&gt;
 &lt;p&gt;One of the highlights for me was having the chance to talk with the Antithesis team and meet some of the original creators of FoundationDB.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what-is-deterministic-simulation-testing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-deterministic-simulation-testing&quot; aria-label=&quot;Anchor link for: what-is-deterministic-simulation-testing&quot;&gt;🔗&lt;&#x2F;a&gt;What is Deterministic Simulation Testing?&lt;&#x2F;h2&gt;
@@ -315,11 +315,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/"/>
         <id>https://pierrezemb.fr/posts/providing-safety-fdb-rs/</id>
         
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
-        <category term="rust" schema="tag" label="rust"/>
-        <category term="testing" schema="tag" label="testing"/>
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="rust" schema="https://pierrezemb.fr/tags/" label="rust"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">&lt;p&gt;As we approach 5 million downloads of the &lt;a href=&quot;https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;foundationdb&quot;&gt;FoundationDB Rust crate&lt;&#x2F;a&gt; (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;crate-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#crate-overview&quot; aria-label=&quot;Anchor link for: crate-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Crate Overview&lt;&#x2F;h2&gt;
 &lt;p&gt;The Rust crate, &lt;code&gt;foundationdb-rs&lt;&#x2F;code&gt;, provides bindings to interact with FoundationDB&#x27;s C API (&lt;code&gt;libfdb&lt;&#x2F;code&gt;). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:&lt;&#x2F;p&gt;

@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-record-store/"/>
         <id>https://pierrezemb.fr/posts/announcing-record-store/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="opensource" schema="tag" label="opensource"/>
-        <category term="foundationdb" schema="tag" label="foundationdb"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-record-store/">&lt;p&gt;TL;DR: I&#x27;m really happy to announce my latest open-source project called Record-Store 🚀 Please check it out on &lt;a href=&quot;https:&#x2F;&#x2F;pierrez.github.io&#x2F;record-store&quot;&gt;https:&#x2F;&#x2F;pierrez.github.io&#x2F;record-store&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what&quot; aria-label=&quot;Anchor link for: what&quot;&gt;🔗&lt;&#x2F;a&gt;What?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;code&gt;Record-Store&lt;&#x2F;code&gt; is a &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;layer-concept.html&quot;&gt;layer&lt;&#x2F;a&gt; running on top of &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.org&quot;&gt;FoundationDB&lt;&#x2F;a&gt;. It provides abstractions to create, load and deletes customer-defined data called &lt;code&gt;records&lt;&#x2F;code&gt;, which are hold into a &lt;code&gt;RecordSpace&lt;&#x2F;code&gt;. We would like to have this kind of flow for developers:&lt;&#x2F;p&gt;
@@ -98,11 +98,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/announcing-kop/"/>
         <id>https://pierrezemb.fr/posts/announcing-kop/</id>
         
-        <category term="messaging" schema="tag" label="messaging"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="kafka" schema="tag" label="kafka"/>
-        <category term="pulsar" schema="tag" label="pulsar"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="messaging" schema="https://pierrezemb.fr/tags/" label="messaging"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="kafka" schema="https://pierrezemb.fr/tags/" label="kafka"/>
+        <category term="pulsar" schema="https://pierrezemb.fr/tags/" label="pulsar"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/announcing-kop/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar&#x2F;&quot; title=&quot;Permalink to announcing KoP&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -188,11 +188,11 @@ The following figure illustrates how we add the Kafka protocol support within Pu
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"/>
         <id>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;contributing-to-apache-hbase-custom-data-balancing&#x2F;&quot; title=&quot;Permalink to Contributing to Apache HBase: custom data balancing&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;

@@ -23,11 +23,11 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"/>
         <id>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="opensource" schema="tag" label="opensource"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">&lt;blockquote&gt;
 &lt;p&gt;This is a repost from &lt;a href=&quot;https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;contributing-to-apache-hbase-custom-data-balancing&#x2F;&quot; title=&quot;Permalink to Contributing to Apache HBase: custom data balancing&quot;&gt;OVHcloud&#x27;s official blogpost.&lt;&#x2F;a&gt;, please read it there to support my company. Thanks &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;LostInBrittany&#x2F;&quot;&gt;Horacio Gonzalez&lt;&#x2F;a&gt; for the awesome drawings!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -133,12 +133,12 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"/>
         <id>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="performance" schema="tag" label="performance"/>
-        <category term="diving" schema="tag" label="diving"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
+        <category term="diving" schema="https://pierrezemb.fr/tags/" label="diving"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
@@ -216,10 +216,10 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/ttl-hbase/"/>
         <id>https://pierrezemb.fr/posts/ttl-hbase/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="expiration" schema="tag" label="expiration"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="expiration" schema="https://pierrezemb.fr/tags/" label="expiration"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/ttl-hbase/">&lt;header class=&quot;row text-center header&quot;&gt;
    &lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;HBase Image&quot; class=&quot;text-center&quot;&gt;
 &lt;&#x2F;header&gt;
@@ -331,11 +331,11 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/hbase-data-model/"/>
         <id>https://pierrezemb.fr/posts/hbase-data-model/</id>
         
-        <category term="database" schema="tag" label="database"/>
-        <category term="distributed" schema="tag" label="distributed"/>
-        <category term="hbase" schema="tag" label="hbase"/>
-        <category term="storage" schema="tag" label="storage"/>
-        <category term="design" schema="tag" label="design"/>
+        <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
+        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
+        <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
+        <category term="design" schema="https://pierrezemb.fr/tags/" label="design"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
