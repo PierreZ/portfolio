@@ -168,10 +168,10 @@
 &lt;li&gt;Antithesis&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;h3 id=&quot;dst-at-clever-cloud&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dst-at-clever-cloud&quot; aria-label=&quot;Anchor link for: dst-at-clever-cloud&quot;&gt;🔗&lt;&#x2F;a&gt;DST at Clever Cloud&lt;&#x2F;h3&gt;
-&lt;p&gt;At Clever Cloud, we&#x27;re implementing a multi-tenant, multi-model distributed database, &lt;strong&gt;a feat made possible by deterministic simulation testing&lt;&#x2F;strong&gt;, which is core to our first product, &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;features&#x2F;2024&#x2F;06&#x2F;11&#x2F;materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all&#x2F;&quot;&gt;Materia KV&lt;&#x2F;a&gt;. Our simulations include:&lt;&#x2F;p&gt;
+&lt;p&gt;At Clever Cloud, we&#x27;re implementing a multi-tenant, multi-model distributed database heavily relying on FoundationDB. While we haven&#x27;t developed our own deterministic simulation testing framework yet, we leverage &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.foundationdb.org&#x2F;&quot;&gt;FoundationDB&lt;&#x2F;a&gt;&#x27;s built-in simulation by injecting custom workloads.&lt;&#x2F;strong&gt; This approach is core to developing our first serverless product, &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;blog&#x2F;features&#x2F;2024&#x2F;06&#x2F;11&#x2F;materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all&#x2F;&quot;&gt;Materia KV&lt;&#x2F;a&gt;. The simulations FoundationDB provides include:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Random network partitions&lt;&#x2F;li&gt;
-&lt;li&gt;Machine reboots (up to 10 machines, keeping at least 3 running)&lt;&#x2F;li&gt;
+&lt;li&gt;Machine reboots&lt;&#x2F;li&gt;
 &lt;li&gt;Concurrent chaos events, like shuffling the actual data disk between 2 nodes&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Our simulation-driven development workflow runs simulations:&lt;&#x2F;p&gt;
