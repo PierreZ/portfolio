@@ -129,6 +129,10 @@
         <lastmod>2020-09-30T00:24:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/tokio-hidden-gems/</loc>
+        <lastmod>2025-05-18T18:13:02+02:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/ttl-hbase/</loc>
         <lastmod>2019-05-27T22:07:11+02:00</lastmod>
     </url>
@@ -143,6 +147,12 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/architecture/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/async/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/concurrency/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/consensus/</loc>
@@ -278,6 +288,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/timeseries/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/tokio/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/transactions/</loc>

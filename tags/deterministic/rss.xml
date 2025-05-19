@@ -7,7 +7,141 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/deterministic/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Fri, 18 Apr 2025 11:12:12 +0200</lastBuildDate>
+      <lastBuildDate>Sun, 18 May 2025 18:13:02 +0200</lastBuildDate>
+      <item>
+          <title>Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</title>
+          <pubDate>Sun, 18 May 2025 18:13:02 +0200</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/tokio-hidden-gems/</link>
+          <guid>https://pierrezemb.fr/posts/tokio-hidden-gems/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/tokio-hidden-gems/">&lt;p&gt;Tokio is the powerhouse of asynchronous Rust, celebrated for its blazing speed and robust concurrency primitives. Many of us interact with its core components daily—&lt;code&gt;spawn&lt;&#x2F;code&gt;, &lt;code&gt;select!&lt;&#x2F;code&gt;, &lt;code&gt;async fn&lt;&#x2F;code&gt;, and the rich ecosystem of I&#x2F;O utilities. But beyond these well-trodden paths lie some incredibly potent, albeit less-publicized, features that can dramatically elevate your testing strategies, offer more nuanced task management, and grant you surgical control over your runtime&#x27;s execution.&lt;&#x2F;p&gt;
+&lt;p&gt;Today, let&#x27;s pull back the curtain on a few of these invaluable tools: current-thread runtimes for embracing single-threaded flexibility with &lt;code&gt;!Send&lt;&#x2F;code&gt; types, seeded runtimes for taming non-determinism, and the paused clock for mastering time in your tests.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;effortless-send-futures-with-current-thread-runtimes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#effortless-send-futures-with-current-thread-runtimes&quot; aria-label=&quot;Anchor link for: effortless-send-futures-with-current-thread-runtimes&quot;&gt;🔗&lt;&#x2F;a&gt;Effortless &lt;code&gt;!Send&lt;&#x2F;code&gt; Futures with Current-Thread Runtimes&lt;&#x2F;h2&gt;
+&lt;p&gt;While Tokio&#x27;s multi-threaded scheduler is a marvel for CPU-bound and parallel I&#x2F;O tasks, there are scenarios where a single-threaded execution model is simpler or even necessary. This is particularly true when dealing with types that are not &lt;code&gt;Send&lt;&#x2F;code&gt; (i.e., cannot be safely transferred across threads), such as &lt;code&gt;Rc&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; or &lt;code&gt;RefCell&amp;lt;T&amp;gt;&lt;&#x2F;code&gt;, or when you want to avoid the overhead and complexity of synchronization primitives like &lt;code&gt;Arc&amp;lt;Mutex&amp;lt;T&amp;gt;&amp;gt;&lt;&#x2F;code&gt; for state shared only within a single thread of execution.&lt;&#x2F;p&gt;
+&lt;p&gt;Tokio&#x27;s &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html#method.new_current_thread&quot;&gt;&lt;code&gt;Builder::new_current_thread()&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; followed by &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html#method.build_local&quot;&gt;&lt;code&gt;build_local()&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; (part of the same &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html&quot;&gt;&lt;code&gt;Builder&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; API) provides a streamlined way to create a runtime that executes tasks on the thread that created it. This setup inherently supports spawning &lt;code&gt;!Send&lt;&#x2F;code&gt; futures using &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;task&#x2F;fn.spawn_local.html&quot;&gt;&lt;code&gt;tokio::task::spawn_local&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; without needing to manually manage a &lt;code&gt;LocalSet&lt;&#x2F;code&gt; for basic cases. This approach aligns well with ongoing discussions in the Tokio community aimed at simplifying &lt;code&gt;!Send&lt;&#x2F;code&gt; task management.&lt;&#x2F;p&gt;
+&lt;p&gt;This &lt;code&gt;build_local()&lt;&#x2F;code&gt; method not only simplifies handling &lt;code&gt;!Send&lt;&#x2F;code&gt; types today but also reflects the direction Tokio is heading. The Tokio team is exploring ways to make this even more integrated and ergonomic through a proposed &lt;strong&gt;&lt;code&gt;LocalRuntime&lt;&#x2F;code&gt;&lt;&#x2F;strong&gt; type (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;tokio-rs&#x2F;tokio&#x2F;issues&#x2F;6739&quot;&gt;#6739&lt;&#x2F;a&gt;). The vision for &lt;code&gt;LocalRuntime&lt;&#x2F;code&gt; is a runtime that is inherently &lt;code&gt;!Send&lt;&#x2F;code&gt; (making &lt;code&gt;!Send&lt;&#x2F;code&gt; task management seamless within its context), where &lt;code&gt;tokio::spawn&lt;&#x2F;code&gt; and &lt;code&gt;tokio::task::spawn_local&lt;&#x2F;code&gt; would effectively behave identically.&lt;&#x2F;p&gt;
+&lt;p&gt;This proposed enhancement is linked to a discussion about potentially deprecating the existing &lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;task&#x2F;struct.LocalSet.html&quot;&gt;&lt;code&gt;tokio::task::LocalSet&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;tokio-rs&#x2F;tokio&#x2F;issues&#x2F;6741&quot;&gt;#6741&lt;&#x2F;a&gt;). While &lt;code&gt;LocalSet&lt;&#x2F;code&gt; currently offers fine-grained control for running &lt;code&gt;!Send&lt;&#x2F;code&gt; tasks (e.g., within specific parts of larger, multi-threaded applications), it comes with complexities, performance overhead, and integration challenges that &lt;code&gt;LocalRuntime&lt;&#x2F;code&gt; aims to resolve.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;So, what&#x27;s the takeaway for you?&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;For most scenarios requiring &lt;code&gt;!Send&lt;&#x2F;code&gt; tasks on a single thread&lt;&#x2F;strong&gt; (like entire applications, test suites, or dedicated utility threads): Using &lt;code&gt;Builder::new_current_thread().build_local()&lt;&#x2F;code&gt; is the recommended, simpler, and more future-proof path. It embodies the principles of the proposed &lt;code&gt;LocalRuntime&lt;&#x2F;code&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;If you need to embed &lt;code&gt;!Send&lt;&#x2F;code&gt; task execution within a specific scope of a larger, multi-threaded application&lt;&#x2F;strong&gt;: &lt;code&gt;LocalSet&lt;&#x2F;code&gt; is the current tool. However, be mindful of its potential deprecation and associated complexities. For new projects, evaluate if a dedicated thread using a &lt;code&gt;build_local()&lt;&#x2F;code&gt; runtime (or a future &lt;code&gt;LocalRuntime&lt;&#x2F;code&gt;) might offer a cleaner solution.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Essentially, Tokio is moving towards making single-threaded &lt;code&gt;!Send&lt;&#x2F;code&gt; execution more straightforward and deeply integrated. The &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html#method.build_local&quot;&gt;&lt;code&gt;build_local()&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; method is a current gem that aligns you with this forward-looking approach.&lt;&#x2F;p&gt;
+&lt;p&gt;Here&#x27;s how you typically set one up (the &lt;code&gt;build_local()&lt;&#x2F;code&gt; way):&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;tokio::runtime::Builder;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; rt = Builder::new_current_thread()
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;enable_all&lt;&#x2F;span&gt;&lt;span&gt;() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Enable I&#x2F;O, time, etc.
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;build_local&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span&gt;Default::default()) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Builds a runtime on the current thread
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; The runtime itself is the &amp;#39;LocalSet&amp;#39; in this context
+&lt;&#x2F;span&gt;&lt;span&gt;    rt.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;block_on&lt;&#x2F;span&gt;&lt;span&gt;(async {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Spawn !Send futures here using tokio::task::spawn_local(...)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; For example:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; rc_value = std::rc::Rc::new(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;        tokio::task::spawn_local(async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;move &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;RC value: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, *rc_value);
+&lt;&#x2F;span&gt;&lt;span&gt;        }).await.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Running !Send futures on a current-thread runtime!&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;    });
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This approach simplifies designs where tasks don&#x27;t need to cross thread boundaries, allowing for more straightforward state management.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;taming-non-determinism-seeded-runtimes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#taming-non-determinism-seeded-runtimes&quot; aria-label=&quot;Anchor link for: taming-non-determinism-seeded-runtimes&quot;&gt;🔗&lt;&#x2F;a&gt;Taming Non-Determinism: Seeded Runtimes&lt;&#x2F;h2&gt;
+&lt;p&gt;One of the challenges in testing concurrent systems is non-determinism. When multiple futures are ready to make progress simultaneously, such as in a &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;macro.select.html&quot;&gt;&lt;code&gt;tokio::select!&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; macro, the order in which they are polled can vary between runs. This can make reproducing and debugging race conditions or specific interleavings tricky.&lt;&#x2F;p&gt;
+&lt;p&gt;Tokio offers a solution: &lt;strong&gt;seeded runtimes&lt;&#x2F;strong&gt;. By providing a specific &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html#method.rng_seed&quot;&gt;&lt;code&gt;RngSeed&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; when building the runtime, you can make certain scheduler behaviors deterministic. This is particularly useful for &lt;code&gt;select!&lt;&#x2F;code&gt; statements involving multiple futures that become ready around the same time.&lt;&#x2F;p&gt;
+&lt;p&gt;Consider this example, which demonstrates how a seed can influence which future &#x27;wins&#x27; a &lt;code&gt;select!&lt;&#x2F;code&gt; race:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;tokio::runtime::{Builder, RngSeed};
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;tokio::time::{sleep, Duration};
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Example function to show deterministic select!
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;demo_deterministic_select&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Try changing this seed to see the select! behavior change (but consistently per seed).
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; seed = RngSeed::from_bytes(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;my_fixed_seed_001&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; e.g., let seed = RngSeed::from_bytes(b&amp;quot;another_seed_002&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; rt = Builder::new_current_thread()
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;enable_time&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Pausing the clock is crucial here to ensure both tasks become ready 
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; at the *exact same logical time* after we call `tokio::time::advance`.
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; This makes the seed&amp;#39;s role in tie-breaking very clear.
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;start_paused&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;rng_seed&lt;&#x2F;span&gt;&lt;span&gt;(seed)     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Apply the seed for deterministic polling order
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;build_local&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span&gt;Default::default())
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Now, let&amp;#39;s run some tasks and see select! in action.
+&lt;&#x2F;span&gt;&lt;span&gt;    rt.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;block_on&lt;&#x2F;span&gt;&lt;span&gt;(async {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; task_a = async {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;sleep&lt;&#x2F;span&gt;&lt;span&gt;(Duration::from_millis(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span&gt;)).await;
+&lt;&#x2F;span&gt;&lt;span&gt;            println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Task A finished.&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Result from A&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;        };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; task_b = async {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;sleep&lt;&#x2F;span&gt;&lt;span&gt;(Duration::from_millis(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span&gt;)).await;
+&lt;&#x2F;span&gt;&lt;span&gt;            println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Task B finished.&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Result from B&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;        };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Advance time so both sleeps complete and both tasks become ready.
+&lt;&#x2F;span&gt;&lt;span&gt;        tokio::time::advance(Duration::from_millis(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span&gt;)).await;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; With the same seed, the select! macro will consistently pick the same
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; branch if both are ready. Change the seed to see if the other branch gets picked.
+&lt;&#x2F;span&gt;&lt;span&gt;        tokio::select! {
+&lt;&#x2F;span&gt;&lt;span&gt;            res_a = task_a =&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;                println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Select chose Task A, result: &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, res_a);
+&lt;&#x2F;span&gt;&lt;span&gt;            }
+&lt;&#x2F;span&gt;&lt;span&gt;            res_b = task_b =&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;                println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Select chose Task B, result: &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, res_b);
+&lt;&#x2F;span&gt;&lt;span&gt;            }
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;    });
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;demo_deterministic_select&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;mastering-time-paused-clock-and-auto-advancement&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#mastering-time-paused-clock-and-auto-advancement&quot; aria-label=&quot;Anchor link for: mastering-time-paused-clock-and-auto-advancement&quot;&gt;🔗&lt;&#x2F;a&gt;Mastering Time: Paused Clock and Auto-Advancement&lt;&#x2F;h2&gt;
+&lt;p&gt;Testing time-dependent behavior (timeouts, retries, scheduled tasks) can be slow and flaky. Waiting for real seconds or minutes to pass during tests is inefficient. Tokio&#x27;s time facilities can be &lt;strong&gt;paused&lt;&#x2F;strong&gt; and &lt;strong&gt;manually advanced&lt;&#x2F;strong&gt;, giving you precise control over the flow of time within your tests.&lt;&#x2F;p&gt;
+&lt;p&gt;When you initialize a runtime with &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;tokio&#x2F;latest&#x2F;tokio&#x2F;runtime&#x2F;struct.Builder.html#method.start_paused&quot;&gt;&lt;code&gt;start_paused(true)&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, the runtime&#x27;s clock will not advance automatically based on wall-clock time. Instead, you use &lt;code&gt;tokio::time::advance(Duration)&lt;&#x2F;code&gt; to move time forward explicitly.&lt;&#x2F;p&gt;
+&lt;p&gt;What&#x27;s particularly neat is Tokio&#x27;s &lt;strong&gt;auto-advance&lt;&#x2F;strong&gt; feature when the runtime is paused and idle. This works because Tokio&#x27;s runtime separates the &lt;strong&gt;executor&lt;&#x2F;strong&gt; (which polls your async code until it&#x27;s blocked) from the &lt;strong&gt;reactor&lt;&#x2F;strong&gt; (which wakes tasks based on I&#x2F;O or timer events). If all tasks are sleeping, the executor is idle. The reactor can then identify the next scheduled timer, allowing Tokio to automatically advance its clock to that point. This prevents tests from hanging indefinitely while still allowing for controlled time progression.&lt;&#x2F;p&gt;
+&lt;p&gt;Here&#x27;s your example illustrating this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;tokio::time::{Duration, Instant, sleep};
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;auto_advance_kicks_in_when_idle_example&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; start = Instant::now();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Sleep for 5 seconds. Since the runtime is paused, this would normally hang.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; However, if no other tasks are active, Tokio auto-advances time.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;sleep&lt;&#x2F;span&gt;&lt;span&gt;(Duration::from_secs(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt;)).await;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; elapsed = start.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;elapsed&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; This will be exactly 5 seconds (simulated time)
+&lt;&#x2F;span&gt;&lt;span&gt;    assert_eq!(elapsed, Duration::from_secs(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt;));
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Elapsed (simulated): &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{:?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, elapsed);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In this scenario, &lt;code&gt;sleep(Duration::from_secs(5)).await&lt;&#x2F;code&gt; doesn&#x27;t cause your test to wait for 5 real seconds. Because the clock is paused and this &lt;code&gt;sleep&lt;&#x2F;code&gt; is the only pending timed event, Tokio advances its internal clock by 5 seconds, allowing the sleep to complete almost instantaneously in real time. This makes testing timeouts, scheduled events, and other time-sensitive logic fast and reliable.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot;&gt;🔗&lt;&#x2F;a&gt;Conclusion&lt;&#x2F;h2&gt;
+&lt;p&gt;Tokio offers more than just speed; it&#x27;s a powerful toolkit. Features like current-thread runtimes for &lt;code&gt;!Send&lt;&#x2F;code&gt; tasks, seeded runtimes for deterministic tests, and a controllable clock for time-based logic help build robust and debuggable async Rust applications. These &#x27;hidden gems&#x27; allow you to confidently handle complex concurrency and testing. So, explore Tokio&#x27;s depth—the right tool for your challenge might be closer than you think.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</description>
+          <category domain="tag">rust</category>
+          <category domain="tag">tokio</category>
+          <category domain="tag">async</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">concurrency</category>
+          <category domain="tag">deterministic</category>
+      </item>
       <item>
           <title>What if we embraced simulation-driven development?</title>
           <pubDate>Fri, 18 Apr 2025 11:12:12 +0200</pubDate>

@@ -7,7 +7,7 @@
 .home-image {
     flex: 1;
     /* Takes up 1 portion of the flex container */
-    max-width: 200px;
+    max-width: 150px;
     /* Example width, adjust as needed */
     margin-left: 20px;
 }
@@ -24,8 +24,21 @@
 }
 
 code {
-    background-color: #00d992; 
-    color: #070f11;
+    background-color: #2E343B; 
+    color: var(--text-color);  
+}
+
+/* Ensure links within code blocks are styled as links */
+code a {
+  text-decoration: underline; /* Makes links in code more obvious */
+  color: var(--link-color);
+}
+
+/* Style for <code> tags that are part of an <a> tag */
+a code {
+  color: var(--link-color);
+  /* The background-color will be inherited from the general 'code' rule */
+  /* Text decoration (underline) will be inherited from the parent 'a' tag, typically on hover */
 }
 
 ::selection {
@@ -38,10 +51,11 @@ code {
   --heading-color: #eee;
   --text-color: #ddd;
   --link-color: #00d992;
-  --visited-color: #00d992;;
+  --visited-color: #00d992;
   --code-background-color: #000;
   --code-color: #ddd;
   --blockquote-color: #ccc;
+  --width: 1200px; /* Increase main content width from default 800px */
 }
 
 .flex-container {
@@ -61,7 +75,7 @@ code {
     width: 50%;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1200px) {
     .home-container {
         flex-direction: column;
         align-items: center;
@@ -95,3 +109,5 @@ code {
     width: 100%;
   }
 }
+
+    

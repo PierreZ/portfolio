@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-      <title>Pierre Zemb&#x27;s Blog - rust</title>
+      <title>Pierre Zemb&#x27;s Blog - async</title>
       <link>https://pierrezemb.fr</link>
       <description>Pierre Zemb personal blog</description>
       <generator>Zola</generator>
       <language>en</language>
-      <atom:link href="https://pierrezemb.fr/tags/rust/rss.xml" rel="self" type="application/rss+xml"/>
+      <atom:link href="https://pierrezemb.fr/tags/async/rss.xml" rel="self" type="application/rss+xml"/>
       <lastBuildDate>Sun, 18 May 2025 18:13:02 +0200</lastBuildDate>
       <item>
           <title>Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</title>
@@ -141,123 +141,6 @@
           <category domain="tag">testing</category>
           <category domain="tag">concurrency</category>
           <category domain="tag">deterministic</category>
-      </item>
-      <item>
-          <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate</title>
-          <pubDate>Tue, 11 Feb 2025 00:00:00 +0100</pubDate>
-          <author>Pierre Zemb</author>
-          <link>https://pierrezemb.fr/posts/providing-safety-fdb-rs/</link>
-          <guid>https://pierrezemb.fr/posts/providing-safety-fdb-rs/</guid>
-          <description xml:base="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">&lt;p&gt;As we approach 5 million downloads of the &lt;a href=&quot;https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;foundationdb&quot;&gt;FoundationDB Rust crate&lt;&#x2F;a&gt; (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;crate-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#crate-overview&quot; aria-label=&quot;Anchor link for: crate-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Crate Overview&lt;&#x2F;h2&gt;
-&lt;p&gt;The Rust crate, &lt;code&gt;foundationdb-rs&lt;&#x2F;code&gt;, provides bindings to interact with FoundationDB&#x27;s C API (&lt;code&gt;libfdb&lt;&#x2F;code&gt;). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:&lt;&#x2F;p&gt;
-&lt;ul&gt;
-&lt;li&gt;The underlying client, &lt;code&gt;libfdb&lt;&#x2F;code&gt;,&lt;&#x2F;li&gt;
-&lt;li&gt;The crate itself,&lt;&#x2F;li&gt;
-&lt;li&gt;The code that uses the crate.&lt;&#x2F;li&gt;
-&lt;&#x2F;ul&gt;
-&lt;p&gt;Let&#x27;s dig into each of these areas.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;libfdb-safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#libfdb-safety&quot; aria-label=&quot;Anchor link for: libfdb-safety&quot;&gt;🔗&lt;&#x2F;a&gt;libfdb Safety&lt;&#x2F;h2&gt;
-&lt;p&gt;This is the simplest part. &lt;code&gt;libfdb&lt;&#x2F;code&gt;&#x27;s safety is guaranteed by FoundationDB&#x27;s &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;simulation framework&lt;&#x2F;a&gt;. Therefore, we can consider it safe.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;classic-testing-suite&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#classic-testing-suite&quot; aria-label=&quot;Anchor link for: classic-testing-suite&quot;&gt;🔗&lt;&#x2F;a&gt;Classic testing suite&lt;&#x2F;h3&gt;
-&lt;p&gt;Since we are using a C library, we need to use FFI (Foreign Function Interface) and unsafe code blocks. With around 130 unsafe blocks, we must be extra careful when calling C code, ensuring all preconditions are met. Naturally, we conduct extensive testing, but most importantly, we run tests in high-variety environments:&lt;&#x2F;p&gt;
-&lt;ul&gt;
-&lt;li&gt;On multiple operating systems (Ubuntu, macOS)&lt;&#x2F;li&gt;
-&lt;li&gt;On multiple FoundationDB versions (from FDB 6.1 to 7.3)&lt;&#x2F;li&gt;
-&lt;li&gt;On multiple Rust compiler versions (Minimum Supported Rust Version or MSRV, stable, beta, nightly)&lt;&#x2F;li&gt;
-&lt;&#x2F;ul&gt;
-&lt;p&gt;The most useful tests are run on the nightly Rust compiler, as we can catch &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;issues&#x2F;90&quot;&gt;new behaviors in the Rust compiler early&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;p&gt;While these testing practices provide significant coverage, the most powerful tool we utilize comes from FoundationDB’s maintainers: the &lt;code&gt;BindingTester&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;the-bindingtester&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-bindingtester&quot; aria-label=&quot;Anchor link for: the-bindingtester&quot;&gt;🔗&lt;&#x2F;a&gt;The BindingTester&lt;&#x2F;h3&gt;
-&lt;p&gt;FoundationDB is renowned for its &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;simulation and testing&lt;&#x2F;a&gt; frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.&lt;&#x2F;p&gt;
-&lt;p&gt;The BindingTester uses &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;main&#x2F;bindings&#x2F;bindingtester&#x2F;spec&#x2F;bindingApiTester.md&quot;&gt;a stack-based machine&lt;&#x2F;a&gt; to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.&lt;&#x2F;p&gt;
-&lt;p&gt;It looks like this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;.&#x2F;bindings&#x2F;bindingtester&#x2F;bindingtester.py --num-ops 1000 --api-version 730 --test-name api --compare python rust
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Creating test at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Generating api test at seed 3208032894 with 1000 op(s) and 1 concurrent tester(s)...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Rust tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;&#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;debug&#x2F;bindingtester test_spec 730&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Python tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;python &#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;foundationdb_build&#x2F;foundationdb&#x2F;bindings&#x2F;bindingtester&#x2F;..&#x2F;python&#x2F;tests&#x2F;tester.py test_spec 730&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Comparing the results
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Test with seed 3208032894 and concurrency 1 had 0 incorrect result(s) and 0 error(s) at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Completed api test with random seed 3208032894 and 1000 operations
-&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;The great advantage of this method is that the tests are seeded, meaning the operations are:&lt;&#x2F;p&gt;
-&lt;ul&gt;
-&lt;li&gt;randomly selected to cover all binding usages,&lt;&#x2F;li&gt;
-&lt;li&gt;deterministic, so a failing seed can be replayed locally.&lt;&#x2F;li&gt;
-&lt;&#x2F;ul&gt;
-&lt;p&gt;Combined with code coverage, this gives us a good idea of what has been tested (though code coverage may vary).&lt;&#x2F;p&gt;
-&lt;p&gt;We run the &lt;code&gt;BindingTester&lt;&#x2F;code&gt; &lt;strong&gt;every hour&lt;&#x2F;strong&gt; on our GitHub actions, amounting to &lt;strong&gt;around 219 days of continuous testing each month&lt;&#x2F;strong&gt; (316,335 minutes of correctness last month according to Github).&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;user-safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#user-safety&quot; aria-label=&quot;Anchor link for: user-safety&quot;&gt;🔗&lt;&#x2F;a&gt;User Safety&lt;&#x2F;h2&gt;
-&lt;p&gt;Thanks to &lt;code&gt;libfdb&lt;&#x2F;code&gt; and the &lt;code&gt;BindingTester&lt;&#x2F;code&gt;, we can ensure that the library is quite safe. But what about the user&#x27;s code? How can we help users ensure their code can handle all of FoundationDB&#x27;s caveats, such as &lt;a href=&quot;&#x2F;posts&#x2F;automatic-txn-fdb-730&#x2F;#transactions-with-unknown-results&quot;&gt;commit_unknown_result&lt;&#x2F;a&gt;? We added a great feature: the ability to include Rust code &lt;strong&gt;within FDB&#x27;s simulation framework&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
-&lt;p&gt;We can implement an Rust workload with the following Trait:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub trait &lt;&#x2F;span&gt;&lt;span&gt;RustWorkload {
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;description&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) -&amp;gt; String;
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;setup&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;static mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;db&lt;&#x2F;span&gt;&lt;span&gt;: SimDatabase, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done&lt;&#x2F;span&gt;&lt;span&gt;: Promise);
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;static mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;db&lt;&#x2F;span&gt;&lt;span&gt;: SimDatabase, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done&lt;&#x2F;span&gt;&lt;span&gt;: Promise);
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;check&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;static mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;db&lt;&#x2F;span&gt;&lt;span&gt;: SimDatabase, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;done&lt;&#x2F;span&gt;&lt;span&gt;: Promise);
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;get_metrics&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) -&amp;gt; Vec&amp;lt;Metric&amp;gt;;
-&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;get_check_timeout&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) -&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f64&lt;&#x2F;span&gt;&lt;span&gt;;
-&lt;&#x2F;span&gt;&lt;span&gt;}
-&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;Which can be runned inside the simulation while injecting some faults:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;fdbserver -r simulation -f &#x2F;root&#x2F;atomic.toml -b on --trace-format json
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Choosing a random seed
-&lt;&#x2F;span&gt;&lt;span&gt;Random seed is 394378360...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Then, everything is derived from the seed, including:
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster topology,
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster configuration,
-&lt;&#x2F;span&gt;&lt;span&gt;# * timing to inject faults,
-&lt;&#x2F;span&gt;&lt;span&gt;# * operations to run
-&lt;&#x2F;span&gt;&lt;span&gt;# * ...
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 0: 3&#x2F;12 machines, 1&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 1: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 2: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 3: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Starting the Atomic workload
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload start
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;AtomicWorkload complete
-&lt;&#x2F;span&gt;&lt;span&gt;checking test (AtomicWorkload)...
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;5 test clients passed; 0 test clients failed
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload Done.
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;1 tests passed; 0 tests failed.
-&lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Unseed: 66324
-&lt;&#x2F;span&gt;&lt;span&gt;Elapsed: 405.055622 simsec, 30.342000 real seconds
-&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;This has been a &lt;strong&gt;major keypoint&lt;&#x2F;strong&gt; for us to develop and operate &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;materia&#x2F;&quot;&gt;Materia, Clever Cloud&#x27;s serverless database offer&lt;&#x2F;a&gt;, as we can enjoy the same Simulation framework used by FDB&#x27;s core engineers for layer engineering 🤯&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;closing-words&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#closing-words&quot; aria-label=&quot;Anchor link for: closing-words&quot;&gt;🔗&lt;&#x2F;a&gt;Closing words&lt;&#x2F;h2&gt;
-&lt;p&gt;As with any open-source project, there is always more to accomplish, but I am quite satisfied with the current level of safety provided by the crate. I would like to express my gratitude to the FoundationDB community for developing the BindingTester, and former contributors to the crate.&lt;&#x2F;p&gt;
-&lt;p&gt;I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.&lt;&#x2F;p&gt;
-&lt;p&gt;There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the &lt;a href=&quot;&#x2F;tags&#x2F;simulation&#x2F;&quot;&gt;simulation tags&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-</description>
-          <category domain="tag">foundationdb</category>
-          <category domain="tag">rust</category>
-          <category domain="tag">testing</category>
-          <category domain="tag">database</category>
-          <category domain="tag">distributed</category>
       </item>
     </channel>
 </rss>
