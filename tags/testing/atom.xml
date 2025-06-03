@@ -148,7 +148,7 @@
 &lt;h2 id=&quot;conclusion&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot;&gt;🔗&lt;&#x2F;a&gt;Conclusion&lt;&#x2F;h2&gt;
 &lt;p&gt;Tokio offers more than just speed; it&#x27;s a powerful toolkit. Features like current-thread runtimes for &lt;code&gt;!Send&lt;&#x2F;code&gt; tasks, seeded runtimes for deterministic tests, and a controllable clock for time-based logic help build robust and debuggable async Rust applications. These &#x27;hidden gems&#x27; allow you to confidently handle complex concurrency and testing. So, explore Tokio&#x27;s depth—the right tool for your challenge might be closer than you think.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
-&lt;p&gt;Feel free to reach out with any questions or to share your experiences with simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your thoughts. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </content>
         
     </entry>

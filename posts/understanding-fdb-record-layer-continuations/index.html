@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
+<meta name="description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations" />
+<meta name="twitter:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
+<meta property="og:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-06-03T00:30:00+02:00" />
+
+
+
+<meta property="article:tag" content="foundationdb" />
+
+<meta property="article:tag" content="record-layer" />
+
+<meta property="article:tag" content="java" />
+
+<meta property="article:tag" content="database" />
+
+<meta property="article:tag" content="continuation" />
+
+<meta property="article:tag" content="pagination" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</h1>
+      <p>
+        <i>
+          <time datetime="2025-06-03T00:30:00+02:00" pubdate>03 Jun, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#introducing-the-foundationdb-record-layer">Introducing the FoundationDB Record Layer</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#the-challenge-fdb-s-transaction-constraints">The Challenge: FDB&#x27;s Transaction Constraints</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#bridging-transactions-the-role-of-continuations">Bridging Transactions: The Role of Continuations</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#dissecting-the-continuation-token">Dissecting the Continuation Token</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#resuming-query-execution-via-continuations">Resuming Query Execution via Continuations</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#implications-of-non-atomicity">Implications of Non-Atomicity</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#conclusion">Conclusion</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <h2 id="introducing-the-foundationdb-record-layer"><a class="zola-anchor" href="#introducing-the-foundationdb-record-layer" aria-label="Anchor link for: introducing-the-foundationdb-record-layer">🔗</a>Introducing the FoundationDB Record Layer</h2>
+<p>Before we dive into the specifics of handling large operations with continuations (the main topic of this post), let's briefly introduce the <a href="https://foundationdb.github.io/fdb-record-layer/index.html"><strong>FoundationDB Record Layer</strong></a>. It's a powerful open-source library built atop FoundationDB that brings a structured, record-oriented data model to FDB's highly scalable key-value store. Think of it as adding schema management, rich indexing capabilities, and a sophisticated query engine, making it easier to build complex applications.</p>
+<p>The Record Layer is versatile and has been adopted for demanding use-cases, most notably by Apple as the core of CloudKit, powering services for millions of users. It allows developers to define their data models using Protocol Buffers and then query them in a flexible manner.</p>
+<p>For instance, you can express queries like finding all 'Order' records for roses costing less than $50 with a declarative API (example in Java):</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#ebcb8b;">RecordQuery</span><span> query = </span><span style="color:#ebcb8b;">RecordQuery</span><span>.</span><span style="color:#bf616a;">newBuilder</span><span>()
+</span><span>        .</span><span style="color:#bf616a;">setRecordType</span><span>(&quot;</span><span style="color:#a3be8c;">Order</span><span>&quot;)
+</span><span>        .</span><span style="color:#bf616a;">setFilter</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">and</span><span>(
+</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">price</span><span>&quot;).</span><span style="color:#bf616a;">lessThan</span><span>(</span><span style="color:#d08770;">50</span><span>),
+</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">flower</span><span>&quot;).</span><span style="color:#bf616a;">matches</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">type</span><span>&quot;).</span><span style="color:#bf616a;">equalsValue</span><span>(</span><span style="color:#ebcb8b;">FlowerType</span><span>.</span><span style="color:#d08770;">ROSE</span><span>.</span><span style="color:#bf616a;">name</span><span>()))))
+</span><span>        .</span><span style="color:#bf616a;">build</span><span>();
+</span></code></pre>
+<p>To get started and explore its capabilities further, the official <a href="https://foundationdb.github.io/fdb-record-layer/GettingStarted.html">Getting Started Guide</a> is an excellent resource. You can also watch these talks for a deeper understanding:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=SvoUHHM9IKU">Using FoundationDB and the FDB Record Layer to Build CloudKit - Scott Gray, Apple</a></li>
+<li><a href="https://www.youtube.com/watch?v=HLE8chgw6LI">FoundationDB Record Layer: Open Source Structured Storage on FoundationDB - Nicholas Schiefer, Apple</a></li>
+</ul>
+<blockquote>
+<p>For a detailed academic perspective on its design and how CloudKit uses it, refer to the <a href="https://www.foundationdb.org/files/record-layer-paper.pdf">SIGMOD'19 paper: FoundationDB Record Layer: A Multi-Tenant Structured Datastore</a>.</p>
+</blockquote>
+<h2 id="the-challenge-fdb-s-transaction-constraints"><a class="zola-anchor" href="#the-challenge-fdb-s-transaction-constraints" aria-label="Anchor link for: the-challenge-fdb-s-transaction-constraints">🔗</a>The Challenge: FDB's Transaction Constraints</h2>
+<p>FoundationDB (FDB) imposes strict constraints on its transactions: they must complete within 5 seconds and are limited to 10MB of manipulated data, either writes or reads. These constraints are fundamental to FDB's design, ensuring high performance and serializable isolation. However, they pose a significant challenge for operations that inherently require processing large datasets or executing complex queries that cannot complete within these tight boundaries, such as full table scans, large analytical queries, or bulk data exports.</p>
+<p>The <strong>FoundationDB Record Layer</strong> addresses this challenge through a mechanism known as <strong>continuations</strong>. Continuations allow a single logical operation to be broken down into a sequence of smaller, independent FDB transactions. Each transaction processes a segment of the total workload and, if more work remains, yields a <strong>continuation token</strong>. This opaque token encapsulates the state required to resume the operation precisely where the previous transaction left off.</p>
+<p>This article delves into the technical details of Record Layer continuations, exploring how they function and how to leverage them effectively to build robust, scalable applications on FDB.</p>
+<h2 id="bridging-transactions-the-role-of-continuations"><a class="zola-anchor" href="#bridging-transactions-the-role-of-continuations" aria-label="Anchor link for: bridging-transactions-the-role-of-continuations">🔗</a>Bridging Transactions: The Role of Continuations</h2>
+<p>Consider a query to retrieve all records matching a specific filter from a large dataset. Executing this as a single FDB transaction would likely violate the 5-second or 10MB limit. The Record Layer employs continuations to serialize this operation across multiple transactions:</p>
+<ol>
+<li><strong>Initial Request:</strong> The application initiates a query against the Record Layer.</li>
+<li><strong>Segmented Execution:</strong> The Record Layer's query planner executes the query, but with built-in scan limiters. It processes records until a predefined limit (e.g., row count, time duration, or byte size) is approached, or it nears FDB's intrinsic transaction limits.</li>
+<li><strong>State Serialization:</strong> Before the current FDB transaction commits, if the logical operation is incomplete, the Record Layer serializes the execution state of the query plan into a continuation token.</li>
+<li><strong>Partial Result &amp; Token:</strong> The application receives the processed segment of data and the continuation token. The FDB transaction for this segment commits successfully.</li>
+<li><strong>Resumption:</strong> To fetch the next segment, the application submits a new request, providing the previously received continuation token.</li>
+<li><strong>State Deserialization &amp; Continued Execution:</strong> The Record Layer deserializes the token, restores the query plan's state, and resumes execution from the exact point it paused. This typically involves adjusting scan boundaries (e.g., starting a key-range scan from the key after the last one processed).</li>
+</ol>
+<p>This cycle repeats until the entire logical operation is complete. The continuation token acts as the critical link, enabling a series of short, FDB-compliant transactions to collectively achieve the effect of a single, long-running operation without violating FDB's core constraints.</p>
+<h2 id="dissecting-the-continuation-token"><a class="zola-anchor" href="#dissecting-the-continuation-token" aria-label="Anchor link for: dissecting-the-continuation-token">🔗</a>Dissecting the Continuation Token</h2>
+<p>While the continuation token is <strong>opaque</strong> to the application (it's a <code>byte[]</code> that should not be introspected or modified), it internally contains structured information vital for resuming query execution. The exact format is an implementation detail of the Record Layer and can evolve, but conceptually, it must capture:</p>
+<ul>
+<li><strong>Scan Boundaries:</strong> The key (or keys, for multi-dimensional indexes) where the next scan segment should begin. This ensures no data is missed or re-processed unnecessarily.</li>
+<li><strong>Query Plan State:</strong> For complex query plans involving joins, filters, aggregations, or in-memory sorting, the token may need to store intermediate state specific to those operators. For instance, a <code>UnionPlan</code> or <code>IntersectionPlan</code> might need to remember which child plan was active and its respective continuation.</li>
+<li><strong>Scan Limiter State:</strong> Information about accumulated counts or sizes if the scan was paused due to application-defined limits rather than FDB limits.</li>
+<li><strong>Version Information:</strong> To ensure compatibility if the token format changes across Record Layer versions.</li>
+</ul>
+<p>The opacity of the token is a deliberate design choice. It decouples the application from the internal mechanics of the Record Layer, allowing the latter to evolve its continuation strategies (e.g., for efficiency or new features) without breaking client applications. The application's responsibility is solely to store and return this token verbatim.</p>
+<h2 id="resuming-query-execution-via-continuations"><a class="zola-anchor" href="#resuming-query-execution-via-continuations" aria-label="Anchor link for: resuming-query-execution-via-continuations">🔗</a>Resuming Query Execution via Continuations</h2>
+<p>When a continuation token is provided to a <code>RecordCursor</code> (the Record Layer's abstraction for iterating over query results), the underlying <code>RecordQueryPlan</code> uses it to reconstruct its state.</p>
+<ol>
+<li><strong>Plan Identification:</strong> The token typically identifies the specific query plan or sub-plan it pertains to.</li>
+<li><strong>State Restoration:</strong> Each operator in the query plan (e.g., <code>IndexScanPlan</code>, <code>FilterPlan</code>, <code>SortPlan</code>) that can be stateful across transaction boundaries implements logic to initialize itself from the continuation. For an <code>IndexScanPlan</code>, this primarily means setting the <code>ScanComparisons</code> for the next range read. For a <code>UnionPlan</code>, it might mean restoring the continuation for one of its child plans and indicating which child to resume.</li>
+<li><strong>Execution Resumption:</strong> Once the plan's state is restored, the <code>RecordCursor</code> can proceed to fetch the next batch of records. The execution effectively "jumps" to the point encoded in the continuation.</li>
+</ol>
+<p>This mechanism allows the Record Layer to transparently manage the complexities of distributed, stateful iteration over potentially vast datasets, all while adhering to FDB's transactional model.</p>
+<h2 id="implications-of-non-atomicity"><a class="zola-anchor" href="#implications-of-non-atomicity" aria-label="Anchor link for: implications-of-non-atomicity">🔗</a>Implications of Non-Atomicity</h2>
+<p>It's important to understand a key implication of this multi-transaction approach: while each individual FDB transaction executed as part of a continued operation is atomic and isolated (typically providing serializable isolation), the overall logical operation spanning multiple continuations is <strong>not atomic</strong> in the same way. Mutations to the data by other concurrent transactions can occur <em>between</em> the FDB transactions of a continued scan. As a result, a long-running operation that uses continuations doesn't see the entire dataset at a single, frozen moment in time. Instead, it might see some data that was present or changed <em>after</em> the operation began but <em>before</em> it completed. This is a natural consequence of breaking the work into smaller pieces to fit within FDB's transaction limits. Applications should be aware of this behavior, particularly if they need all the data to reflect its state from one specific instant.</p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
+<p>The Record Layer's continuation feature is a powerful tool for handling large datasets and complex queries in FoundationDB, but it's important to understand the implications of non-atomicity. By breaking operations into smaller, FDB-compliant transactions, the Record Layer provides a flexible and scalable solution while maintaining the core principles of FDB's transactional model.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your thoughts. You can find me on <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a>, <a href="https://twitter.com/PierreZ">Twitter</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/record-layer/">#record-layer</a>
+          <a href="https://pierrezemb.fr/tags/java/">#java</a>
+          <a href="https://pierrezemb.fr/tags/database/">#database</a>
+          <a href="https://pierrezemb.fr/tags/continuation/">#continuation</a>
+          <a href="https://pierrezemb.fr/tags/pagination/">#pagination</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

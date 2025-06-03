@@ -137,6 +137,10 @@
         <lastmod>2019-05-27T22:07:11+02:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/</loc>
+        <lastmod>2025-06-03T00:30:00+02:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/</loc>
     </url>
     <url>
@@ -161,6 +165,9 @@
         <loc>https://pierrezemb.fr/tags/containers/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/continuation/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/database/</loc>
     </url>
     <url>
@@ -171,6 +178,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/deterministic/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/distributed/</loc>
@@ -215,6 +225,9 @@
         <loc>https://pierrezemb.fr/tags/infrastructure/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/java/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/kafka/</loc>
     </url>
     <url>
@@ -242,6 +255,9 @@
         <loc>https://pierrezemb.fr/tags/optimization/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/pagination/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/papers/</loc>
     </url>
     <url>
@@ -255,6 +271,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/raft/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/record-layer/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/reliability/</loc>
