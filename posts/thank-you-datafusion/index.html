@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You, DataFusion: Queries in Rust, Without the Pain | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Thank You, DataFusion: Queries in Rust, Without the Pain">
+<meta name="description" content="Pierre Zemb personal blog">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Thank You, DataFusion: Queries in Rust, Without the Pain" />
+<meta name="twitter:description" content="Pierre Zemb personal blog" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Thank You, DataFusion: Queries in Rust, Without the Pain">
+<meta property="og:description" content="Pierre Zemb personal blog"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/thank-you-datafusion/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-06-04" />
+
+
+
+<meta property="article:tag" content="rust" />
+
+<meta property="article:tag" content="datafusion" />
+
+<meta property="article:tag" content="sql" />
+
+<meta property="article:tag" content="query-engine" />
+
+<meta property="article:tag" content="databases" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Thank You, DataFusion: Queries in Rust, Without the Pain</h1>
+      <p>
+        <i>
+          <time datetime="2025-06-04T00:00:00+00:00" pubdate>04 Jun, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#that-yata-moment-rebooted">That “YATA!” Moment, Rebooted</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#you-don-t-just-add-a-query-engine">You Don’t Just Add a Query Engine</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#i-ve-been-watching-from-day-one">I’ve Been Watching From Day One</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#modular-composable-respectful">Modular, Composable, Respectful</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#my-goal-join-indexes-without-going-insane">My Goal: Join Indexes Without Going Insane</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#the-joy-of-real-libraries">The Joy of Real Libraries</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/thank-you-datafusion/#to-the-datafusion-team-thank-you">To the DataFusion Team: Thank You</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <h2 id="that-yata-moment-rebooted"><a class="zola-anchor" href="#that-yata-moment-rebooted" aria-label="Anchor link for: that-yata-moment-rebooted">🔗</a>That “YATA!” Moment, Rebooted</h2>
+<p>We just merged at work our first successful data retrieval using <a href="https://github.com/apache/datafusion">DataFusion</a> — a real SQL query, over real data, flowing through a system we built. And I’ll be honest: I haven’t had a “YATA!” moment like this in years. This wasn't just a feature shipped; it felt like unlocking a new superpower for our entire system, a complex vision finally materializing.</p>
+<p>Not a silent nod. Not “huh, that works.” A <em>real</em>, physical, joyful reaction. The kind that makes you want to run a lap around the office (or, in my remote-first case, the living room).</p>
+<p>Because plugging a query engine into your software isn’t supposed to feel this smooth. It's usually a battle. But this one did. This one felt like an invitation.</p>
+<h2 id="you-don-t-just-add-a-query-engine"><a class="zola-anchor" href="#you-don-t-just-add-a-query-engine" aria-label="Anchor link for: you-don-t-just-add-a-query-engine">🔗</a>You Don’t Just Add a Query Engine</h2>
+<p>Adding a query engine to a codebase isn’t something you do lightly. It’s a foundational piece of infrastructure, the kind of decision that usually ends in regret, or at least a <em>lot</em> of rewriting. Most engines assume they own the world: they want to dictate your storage, your execution model, your schema, your optimizer, often forcing you to contort your application around their idiosyncrasies. It's a path often paved with impedance mismatches, performance bottlenecks, and the haunting feeling that you’ve just bolted an opinionated, unyielding black box onto your carefully crafted system.</p>
+<p>But then there’s DataFusion. A SQL engine written in Rust, and — against all odds — one you can actually <em>use</em>. Drop-in? Not quite. But close enough to be kind of magical, offering a set of powerful, composable tools rather than a rigid framework.</p>
+<h2 id="i-ve-been-watching-from-day-one"><a class="zola-anchor" href="#i-ve-been-watching-from-day-one" aria-label="Anchor link for: i-ve-been-watching-from-day-one">🔗</a>I’ve Been Watching From Day One</h2>
+<p>I’ve been following DataFusion since it was a weekend project. I still remember the early blog posts, the prototypes, the potential. And more importantly, I read <a href="https://andygrove.io/how-query-engines-work/">Andy Grove’s book <em>How Query Engines Work</em></a>. That book unlocked it for me.</p>
+<p>It demystified concepts like logical plans, physical plans, and execution trees — enough to give me the confidence to experiment. I first played with Apache Calcite, then circled back to DataFusion. Eventually, I contributed a small example: a custom <code>TableProvider</code>, <a href="https://github.com/apache/datafusion/issues/1864">added to DataFusion in this issue</a> to demonstrate how to integrate custom datasources.</p>
+<p>And then... it only took me <strong>three years</strong> to actually write the code that <em>used</em> it. Why so long? Well, let's just say a gazillion other things, the never-ending sagas of on-call, and a <a href="/posts/back-engineering">brief-but-eventful detour into management</a> kept my dance card impressively full. But hey, it still felt amazing when it finally clicked.</p>
+<p>More recently, I was genuinely happy to see that <strong>Andrew Lamb</strong> co-authored an <a href="https://github.com/apache/datafusion/issues/6782">academic paper describing DataFusion’s architecture</a>. There’s something really validating about seeing a project you’ve followed for years get formalized in research — it’s a sign that the internals are solid and the ideas are worth sharing. And they are.</p>
+<p>That moment was big. Because here was a Rust-native query engine where I could plug in <em>my own data</em>, and get <em>real queries</em> back. No layers of JVM glue, no corroded abstractions. Just composable, hackable Rust.</p>
+<h2 id="modular-composable-respectful"><a class="zola-anchor" href="#modular-composable-respectful" aria-label="Anchor link for: modular-composable-respectful">🔗</a>Modular, Composable, Respectful</h2>
+<p>What I love about DataFusion is that it doesn’t try to control your application. It’s a query engine that knows it’s a library — not a database.</p>
+<p>It lets you:</p>
+<ul>
+<li>Plug in your own data sources</li>
+<li>Register logical tables dynamically</li>
+<li>Push down filters, projections, even partitions</li>
+<li>Swap in or extend physical execution nodes</li>
+<li>Keep your own runtime, threading, and lifecycle</li>
+</ul>
+<p>And all that without feeling like you’re stepping into “internal” code. It’s all open, cleanly layered, and welcoming.</p>
+<h2 id="my-goal-join-indexes-without-going-insane"><a class="zola-anchor" href="#my-goal-join-indexes-without-going-insane" aria-label="Anchor link for: my-goal-join-indexes-without-going-insane">🔗</a>My Goal: Join Indexes Without Going Insane</h2>
+<p>From the beginning, my goal was never to just scan data — it was to <strong>query it properly</strong>, with indexes, joins, and all the things a real engine should do. I never had any intention of writing a join execution engine myself. That’s not the kind of wheel I want to reinvent.</p>
+<p>It's no secret that at work, we're building a system on top of FoundationDB that draws inspiration from Apple's <a href="https://foundationdb.github.io/fdb-record-layer/">FDB Record Layer</a> (you can learn more about its concepts in <a href="https://www.youtube.com/watch?v=SvoUHHM9IKU">this talk</a>). We offer <a href="https://foundationdb.github.io/fdb-record-layer/GettingStarted.html">a similar programmatic API for constructing queries</a>, which naturally leads to similar requirements. For example, developers need to express sophisticated data retrieval logic, much like this FDB Record Layer example for querying orders:</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#ebcb8b;">RecordQuery</span><span> query = </span><span style="color:#ebcb8b;">RecordQuery</span><span>.</span><span style="color:#bf616a;">newBuilder</span><span>()
+</span><span>        .</span><span style="color:#bf616a;">setRecordType</span><span>(&quot;</span><span style="color:#a3be8c;">Order</span><span>&quot;)
+</span><span>        .</span><span style="color:#bf616a;">setFilter</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">and</span><span>(
+</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">price</span><span>&quot;).</span><span style="color:#bf616a;">lessThan</span><span>(</span><span style="color:#d08770;">50</span><span>),
+</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">flower</span><span>&quot;).</span><span style="color:#bf616a;">matches</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">type</span><span>&quot;).</span><span style="color:#bf616a;">equalsValue</span><span>(</span><span style="color:#ebcb8b;">FlowerType</span><span>.</span><span style="color:#d08770;">ROSE</span><span>.</span><span style="color:#bf616a;">name</span><span>()))))
+</span><span>        .</span><span style="color:#bf616a;">build</span><span>();
+</span></code></pre>
+<p>The challenge then becomes translating such programmatic queries into efficient, index-backed scans and, crucially, leveraging a robust engine for complex operations like joins—without rebuilding that engine from scratch.</p>
+<p>What I wanted was the ability to:</p>
+<ul>
+<li>Fetch rows efficiently through custom index-backed scans</li>
+<li>Join them using <code>HashJoinExec</code> or <code>MergeJoinExec</code></li>
+<li>Let the planner and execution engine figure out the hard parts</li>
+</ul>
+<p>This vision is what spurred me to start working on <a href="https://github.com/datafusion-contrib/datafusion-index-provider"><code>datafusion-index-provider</code></a>, a library hosted in the <code>datafusion-contrib</code> GitHub organization — part of the growing ecosystem around DataFusion. At the time of writing, I’ve built a PoC — you can find it <a href="https://github.com/PierreZ/datafusion-index-provider/tree/init-v2">on this branch</a> — and I’m integrating it into our internal stack before opening a proper PR upstream.</p>
+<p>The architecture makes it feel possible. The abstractions are ready. And I still don’t have to write a join engine. Victory.</p>
+<h2 id="the-joy-of-real-libraries"><a class="zola-anchor" href="#the-joy-of-real-libraries" aria-label="Anchor link for: the-joy-of-real-libraries">🔗</a>The Joy of Real Libraries</h2>
+<p>There’s a special joy in finding a library that <em>slots in</em> — that doesn’t just solve a problem, but fits the shape of your system. DataFusion was that for me.</p>
+<p>It didn’t just let me query data; it gave me a better way to think about the data I already had, and how I wanted to work with it. Instead of manually stitching together filters and projections, I could describe my intent, and let the engine handle the rest.</p>
+<p>What’s even more exciting is that this isn’t happening in a vacuum.</p>
+<p>We’re seeing a quiet shift in how query engines are built and used. Projects like <a href="https://duckdb.org/">DuckDB</a> have shown just how powerful it is to have <strong>SQL as a library</strong>, not a service. No server to deploy. No socket to connect to. Just an API, embedded right in your code.</p>
+<p>DataFusion follows that same philosophy — Rust-native, embeddable, and unapologetically library-first.</p>
+<h2 id="to-the-datafusion-team-thank-you"><a class="zola-anchor" href="#to-the-datafusion-team-thank-you" aria-label="Anchor link for: to-the-datafusion-team-thank-you">🔗</a>To the DataFusion Team: Thank You</h2>
+<p>To Andy Grove, to all the contributors, to everyone filing issues and refining abstractions: thank you. Your work is enabling a new generation of Rust systems to think like databases — without becoming one.</p>
+<p>I don’t know if you realize how rare that is. I just know it changed what I thought was possible in my software.</p>
+<p>And I’m having a lot more fun because of it.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with DataFusion. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
+          <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a>
+          <a href="https://pierrezemb.fr/tags/sql/">#sql</a>
+          <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a>
+          <a href="https://pierrezemb.fr/tags/databases/">#databases</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

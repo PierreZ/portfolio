@@ -5,8 +5,87 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/rust/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-05-18T18:13:02+02:00</updated>
+    <updated>2025-06-04T00:00:00+00:00</updated>
     <id>https://pierrezemb.fr/tags/rust/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Thank You, DataFusion: Queries in Rust, Without the Pain</title>
+        <published>2025-06-04T00:00:00+00:00</published>
+        <updated>2025-06-04T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/thank-you-datafusion/"/>
+        <id>https://pierrezemb.fr/posts/thank-you-datafusion/</id>
+        
+        <category term="rust" schema="https://pierrezemb.fr/tags/" label="rust"/>
+        <category term="datafusion" schema="https://pierrezemb.fr/tags/" label="datafusion"/>
+        <category term="sql" schema="https://pierrezemb.fr/tags/" label="sql"/>
+        <category term="query-engine" schema="https://pierrezemb.fr/tags/" label="query-engine"/>
+        <category term="databases" schema="https://pierrezemb.fr/tags/" label="databases"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/thank-you-datafusion/">&lt;h2 id=&quot;that-yata-moment-rebooted&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#that-yata-moment-rebooted&quot; aria-label=&quot;Anchor link for: that-yata-moment-rebooted&quot;&gt;🔗&lt;&#x2F;a&gt;That “YATA!” Moment, Rebooted&lt;&#x2F;h2&gt;
+&lt;p&gt;We just merged at work our first successful data retrieval using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;datafusion&quot;&gt;DataFusion&lt;&#x2F;a&gt; — a real SQL query, over real data, flowing through a system we built. And I’ll be honest: I haven’t had a “YATA!” moment like this in years. This wasn&#x27;t just a feature shipped; it felt like unlocking a new superpower for our entire system, a complex vision finally materializing.&lt;&#x2F;p&gt;
+&lt;p&gt;Not a silent nod. Not “huh, that works.” A &lt;em&gt;real&lt;&#x2F;em&gt;, physical, joyful reaction. The kind that makes you want to run a lap around the office (or, in my remote-first case, the living room).&lt;&#x2F;p&gt;
+&lt;p&gt;Because plugging a query engine into your software isn’t supposed to feel this smooth. It&#x27;s usually a battle. But this one did. This one felt like an invitation.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;you-don-t-just-add-a-query-engine&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#you-don-t-just-add-a-query-engine&quot; aria-label=&quot;Anchor link for: you-don-t-just-add-a-query-engine&quot;&gt;🔗&lt;&#x2F;a&gt;You Don’t Just Add a Query Engine&lt;&#x2F;h2&gt;
+&lt;p&gt;Adding a query engine to a codebase isn’t something you do lightly. It’s a foundational piece of infrastructure, the kind of decision that usually ends in regret, or at least a &lt;em&gt;lot&lt;&#x2F;em&gt; of rewriting. Most engines assume they own the world: they want to dictate your storage, your execution model, your schema, your optimizer, often forcing you to contort your application around their idiosyncrasies. It&#x27;s a path often paved with impedance mismatches, performance bottlenecks, and the haunting feeling that you’ve just bolted an opinionated, unyielding black box onto your carefully crafted system.&lt;&#x2F;p&gt;
+&lt;p&gt;But then there’s DataFusion. A SQL engine written in Rust, and — against all odds — one you can actually &lt;em&gt;use&lt;&#x2F;em&gt;. Drop-in? Not quite. But close enough to be kind of magical, offering a set of powerful, composable tools rather than a rigid framework.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;i-ve-been-watching-from-day-one&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#i-ve-been-watching-from-day-one&quot; aria-label=&quot;Anchor link for: i-ve-been-watching-from-day-one&quot;&gt;🔗&lt;&#x2F;a&gt;I’ve Been Watching From Day One&lt;&#x2F;h2&gt;
+&lt;p&gt;I’ve been following DataFusion since it was a weekend project. I still remember the early blog posts, the prototypes, the potential. And more importantly, I read &lt;a href=&quot;https:&#x2F;&#x2F;andygrove.io&#x2F;how-query-engines-work&#x2F;&quot;&gt;Andy Grove’s book &lt;em&gt;How Query Engines Work&lt;&#x2F;em&gt;&lt;&#x2F;a&gt;. That book unlocked it for me.&lt;&#x2F;p&gt;
+&lt;p&gt;It demystified concepts like logical plans, physical plans, and execution trees — enough to give me the confidence to experiment. I first played with Apache Calcite, then circled back to DataFusion. Eventually, I contributed a small example: a custom &lt;code&gt;TableProvider&lt;&#x2F;code&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;datafusion&#x2F;issues&#x2F;1864&quot;&gt;added to DataFusion in this issue&lt;&#x2F;a&gt; to demonstrate how to integrate custom datasources.&lt;&#x2F;p&gt;
+&lt;p&gt;And then... it only took me &lt;strong&gt;three years&lt;&#x2F;strong&gt; to actually write the code that &lt;em&gt;used&lt;&#x2F;em&gt; it. Why so long? Well, let&#x27;s just say a gazillion other things, the never-ending sagas of on-call, and a &lt;a href=&quot;&#x2F;posts&#x2F;back-engineering&quot;&gt;brief-but-eventful detour into management&lt;&#x2F;a&gt; kept my dance card impressively full. But hey, it still felt amazing when it finally clicked.&lt;&#x2F;p&gt;
+&lt;p&gt;More recently, I was genuinely happy to see that &lt;strong&gt;Andrew Lamb&lt;&#x2F;strong&gt; co-authored an &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;datafusion&#x2F;issues&#x2F;6782&quot;&gt;academic paper describing DataFusion’s architecture&lt;&#x2F;a&gt;. There’s something really validating about seeing a project you’ve followed for years get formalized in research — it’s a sign that the internals are solid and the ideas are worth sharing. And they are.&lt;&#x2F;p&gt;
+&lt;p&gt;That moment was big. Because here was a Rust-native query engine where I could plug in &lt;em&gt;my own data&lt;&#x2F;em&gt;, and get &lt;em&gt;real queries&lt;&#x2F;em&gt; back. No layers of JVM glue, no corroded abstractions. Just composable, hackable Rust.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;modular-composable-respectful&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#modular-composable-respectful&quot; aria-label=&quot;Anchor link for: modular-composable-respectful&quot;&gt;🔗&lt;&#x2F;a&gt;Modular, Composable, Respectful&lt;&#x2F;h2&gt;
+&lt;p&gt;What I love about DataFusion is that it doesn’t try to control your application. It’s a query engine that knows it’s a library — not a database.&lt;&#x2F;p&gt;
+&lt;p&gt;It lets you:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Plug in your own data sources&lt;&#x2F;li&gt;
+&lt;li&gt;Register logical tables dynamically&lt;&#x2F;li&gt;
+&lt;li&gt;Push down filters, projections, even partitions&lt;&#x2F;li&gt;
+&lt;li&gt;Swap in or extend physical execution nodes&lt;&#x2F;li&gt;
+&lt;li&gt;Keep your own runtime, threading, and lifecycle&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;And all that without feeling like you’re stepping into “internal” code. It’s all open, cleanly layered, and welcoming.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;my-goal-join-indexes-without-going-insane&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#my-goal-join-indexes-without-going-insane&quot; aria-label=&quot;Anchor link for: my-goal-join-indexes-without-going-insane&quot;&gt;🔗&lt;&#x2F;a&gt;My Goal: Join Indexes Without Going Insane&lt;&#x2F;h2&gt;
+&lt;p&gt;From the beginning, my goal was never to just scan data — it was to &lt;strong&gt;query it properly&lt;&#x2F;strong&gt;, with indexes, joins, and all the things a real engine should do. I never had any intention of writing a join execution engine myself. That’s not the kind of wheel I want to reinvent.&lt;&#x2F;p&gt;
+&lt;p&gt;It&#x27;s no secret that at work, we&#x27;re building a system on top of FoundationDB that draws inspiration from Apple&#x27;s &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.github.io&#x2F;fdb-record-layer&#x2F;&quot;&gt;FDB Record Layer&lt;&#x2F;a&gt; (you can learn more about its concepts in &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=SvoUHHM9IKU&quot;&gt;this talk&lt;&#x2F;a&gt;). We offer &lt;a href=&quot;https:&#x2F;&#x2F;foundationdb.github.io&#x2F;fdb-record-layer&#x2F;GettingStarted.html&quot;&gt;a similar programmatic API for constructing queries&lt;&#x2F;a&gt;, which naturally leads to similar requirements. For example, developers need to express sophisticated data retrieval logic, much like this FDB Record Layer example for querying orders:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;java&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-java &quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;RecordQuery&lt;&#x2F;span&gt;&lt;span&gt; query = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;RecordQuery&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;newBuilder&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;setRecordType&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Order&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;setFilter&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Query&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;and&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Query&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;field&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;price&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;lessThan&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span&gt;),
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Query&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;field&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;flower&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;matches&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Query&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;field&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;type&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;equalsValue&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;FlowerType&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;ROSE&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;()))))
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;build&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The challenge then becomes translating such programmatic queries into efficient, index-backed scans and, crucially, leveraging a robust engine for complex operations like joins—without rebuilding that engine from scratch.&lt;&#x2F;p&gt;
+&lt;p&gt;What I wanted was the ability to:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fetch rows efficiently through custom index-backed scans&lt;&#x2F;li&gt;
+&lt;li&gt;Join them using &lt;code&gt;HashJoinExec&lt;&#x2F;code&gt; or &lt;code&gt;MergeJoinExec&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Let the planner and execution engine figure out the hard parts&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This vision is what spurred me to start working on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafusion-contrib&#x2F;datafusion-index-provider&quot;&gt;&lt;code&gt;datafusion-index-provider&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, a library hosted in the &lt;code&gt;datafusion-contrib&lt;&#x2F;code&gt; GitHub organization — part of the growing ecosystem around DataFusion. At the time of writing, I’ve built a PoC — you can find it &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;datafusion-index-provider&#x2F;tree&#x2F;init-v2&quot;&gt;on this branch&lt;&#x2F;a&gt; — and I’m integrating it into our internal stack before opening a proper PR upstream.&lt;&#x2F;p&gt;
+&lt;p&gt;The architecture makes it feel possible. The abstractions are ready. And I still don’t have to write a join engine. Victory.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-joy-of-real-libraries&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-joy-of-real-libraries&quot; aria-label=&quot;Anchor link for: the-joy-of-real-libraries&quot;&gt;🔗&lt;&#x2F;a&gt;The Joy of Real Libraries&lt;&#x2F;h2&gt;
+&lt;p&gt;There’s a special joy in finding a library that &lt;em&gt;slots in&lt;&#x2F;em&gt; — that doesn’t just solve a problem, but fits the shape of your system. DataFusion was that for me.&lt;&#x2F;p&gt;
+&lt;p&gt;It didn’t just let me query data; it gave me a better way to think about the data I already had, and how I wanted to work with it. Instead of manually stitching together filters and projections, I could describe my intent, and let the engine handle the rest.&lt;&#x2F;p&gt;
+&lt;p&gt;What’s even more exciting is that this isn’t happening in a vacuum.&lt;&#x2F;p&gt;
+&lt;p&gt;We’re seeing a quiet shift in how query engines are built and used. Projects like &lt;a href=&quot;https:&#x2F;&#x2F;duckdb.org&#x2F;&quot;&gt;DuckDB&lt;&#x2F;a&gt; have shown just how powerful it is to have &lt;strong&gt;SQL as a library&lt;&#x2F;strong&gt;, not a service. No server to deploy. No socket to connect to. Just an API, embedded right in your code.&lt;&#x2F;p&gt;
+&lt;p&gt;DataFusion follows that same philosophy — Rust-native, embeddable, and unapologetically library-first.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;to-the-datafusion-team-thank-you&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#to-the-datafusion-team-thank-you&quot; aria-label=&quot;Anchor link for: to-the-datafusion-team-thank-you&quot;&gt;🔗&lt;&#x2F;a&gt;To the DataFusion Team: Thank You&lt;&#x2F;h2&gt;
+&lt;p&gt;To Andy Grove, to all the contributors, to everyone filing issues and refining abstractions: thank you. Your work is enabling a new generation of Rust systems to think like databases — without becoming one.&lt;&#x2F;p&gt;
+&lt;p&gt;I don’t know if you realize how rare that is. I just know it changed what I thought was possible in my software.&lt;&#x2F;p&gt;
+&lt;p&gt;And I’m having a lot more fun because of it.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with DataFusion. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</title>
         <published>2025-05-18T18:13:02+02:00</published>
