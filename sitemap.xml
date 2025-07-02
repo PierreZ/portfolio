@@ -93,6 +93,10 @@
         <lastmod>2016-01-04T18:52:19.698Z</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/nixos-good-bad-ugly/</loc>
+        <lastmod>2025-07-02T00:37:27+01:00</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/notes-about-etcd/</loc>
         <lastmod>2021-01-11T00:24:27+01:00</lastmod>
     </url>
@@ -190,6 +194,9 @@
         <loc>https://pierrezemb.fr/tags/deterministic/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/devops/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
     </url>
     <url>
@@ -244,6 +251,9 @@
         <loc>https://pierrezemb.fr/tags/learning/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/linux/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/machinelearning/</loc>
     </url>
     <url>
@@ -254,6 +264,12 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/networking/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/nix/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/nixos/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/notes/</loc>

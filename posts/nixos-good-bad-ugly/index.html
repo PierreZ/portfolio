@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three Years of Nix and NixOS: The Good, the Bad, and the Ugly | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Three Years of Nix and NixOS: The Good, the Bad, and the Ugly">
+<meta name="description" content="A review of Nix&#x2F;NixOS after using it on all my machines for three years. I&#x27;ll cover what works, what doesn&#x27;t, and why it&#x27;s the first OS that&#x27;s stuck with me.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Three Years of Nix and NixOS: The Good, the Bad, and the Ugly" />
+<meta name="twitter:description" content="A review of Nix&#x2F;NixOS after using it on all my machines for three years. I&#x27;ll cover what works, what doesn&#x27;t, and why it&#x27;s the first OS that&#x27;s stuck with me." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Three Years of Nix and NixOS: The Good, the Bad, and the Ugly">
+<meta property="og:description" content="A review of Nix&#x2F;NixOS after using it on all my machines for three years. I&#x27;ll cover what works, what doesn&#x27;t, and why it&#x27;s the first OS that&#x27;s stuck with me."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/nixos-good-bad-ugly/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-07-02T00:37:27+01:00" />
+
+
+
+<meta property="article:tag" content="nixos" />
+
+<meta property="article:tag" content="nix" />
+
+<meta property="article:tag" content="linux" />
+
+<meta property="article:tag" content="devops" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Three Years of Nix and NixOS: The Good, the Bad, and the Ugly</h1>
+      <p>
+        <i>
+          <time datetime="2025-07-02T00:37:27+01:00" pubdate>02 Jul, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#the-good">The Good</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#declarative-and-atomic-system-management-on-nixos">Declarative and Atomic System Management on NixOS</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#system-crafting-as-a-first-class-citizen">System Crafting as a First-Class Citizen</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#sandboxed-development-environments">Sandboxed Development Environments</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#built-in-vm-based-testing">Built-in VM-Based Testing</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#the-bad">The Bad</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#the-friction-of-simple-changes-on-nixos">The Friction of Simple Changes on NixOS</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#a-steep-and-isolated-learning-curve">A Steep and Isolated Learning Curve</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#incompatibility-with-the-wider-ecosystem">Incompatibility with the Wider Ecosystem</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#handling-hardcoded-build-environments">Handling Hardcoded Build Environments</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#the-ugly">The Ugly</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#the-nix-language-barrier">The Nix Language Barrier</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#conclusion">Conclusion</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/#a-gentler-start-try-nix-first">A Gentler Start: Try Nix First</a>
+            </li>
+        </ul>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>For years, I was a serial distro-hopper, working my way through Ubuntu, Arch, Gentoo, Exherbo, Void Linux, Fedora, Pop!_OS, and Manjaro. Every few months, a new Linux distribution would catch my eye, and I’d spend a weekend migrating my setup, hoping to find the perfect fit. That cycle broke three years ago when I switched to NixOS. It has since become the foundation for all my Linux machines, not because it’s perfect, but because it fundamentally changes the contract between the user and the operating system.</p>
+<p>It's important to distinguish between <strong>Nix</strong>, the powerful package manager that can run on any Linux distro (and even macOS), and <strong>NixOS</strong>, the full immutable operating system built around it. This post is a review of my three years with both—the good, the bad, and the ugly.</p>
+<h2 id="the-good"><a class="zola-anchor" href="#the-good" aria-label="Anchor link for: the-good">🔗</a>The Good</h2>
+<h3 id="declarative-and-atomic-system-management-on-nixos"><a class="zola-anchor" href="#declarative-and-atomic-system-management-on-nixos" aria-label="Anchor link for: declarative-and-atomic-system-management-on-nixos">🔗</a>Declarative and Atomic System Management on NixOS</h3>
+<p>The core promise of NixOS is that your entire system is configured from a set of files, which you can store in a Git repository. Every change is a commit, giving you a complete, auditable history of your system's state. This makes setting up a new machine trivial: I clone my repository, run one command, and my entire setup is replicated perfectly. No more manually copying dotfiles or running install scripts.</p>
+<p>This declarative approach also makes the system incredibly robust. I once broke a laptop running Exherbo right before an on-call shift, and it was a nightmare to fix. With NixOS, that fear is gone. Every <code>nixos-rebuild switch</code> creates a new "generation" of the system. If an update breaks something, you simply reboot and select the previous generation from the boot menu. This atomic update mechanism makes you fearless about making and testing changes.</p>
+<h3 id="system-crafting-as-a-first-class-citizen"><a class="zola-anchor" href="#system-crafting-as-a-first-class-citizen" aria-label="Anchor link for: system-crafting-as-a-first-class-citizen">🔗</a>System Crafting as a First-Class Citizen</h3>
+<p>On NixOS, customizing your system is not an afterthought—it's a core feature. While the Nix package manager gives you fine-grained control over packages, NixOS uses this power to make deep system modifications simple. For example, building a custom ISO with your SSH keys pre-installed is just a few lines of configuration. This philosophy extends to packages: you can use pre-built binaries for most things, but easily build a package from source with your own patches when you need to.</p>
+<h3 id="sandboxed-development-environments"><a class="zola-anchor" href="#sandboxed-development-environments" aria-label="Anchor link for: sandboxed-development-environments">🔗</a>Sandboxed Development Environments</h3>
+<p>A powerful feature of <strong>Nix</strong> (the package manager) is the ability to define per-project development environments using a <code>flake.nix</code> file. When you enter the project directory, <code>direnv</code> can automatically load a shell with all the specific tools and libraries you need for that project—a specific version of Rust, Node.js, or any other dependency. This completely solves the problem of conflicting dependencies between projects. Each project is perfectly isolated, and you can be sure that you and your colleagues are using the exact same environment.</p>
+<p>My favorite tip is to add <code>if has nix; then use nix; fi</code> to the <code>.envrc</code> file, so the environment is only loaded for team members who have Nix installed, avoiding errors for everyone else.</p>
+<h3 id="built-in-vm-based-testing"><a class="zola-anchor" href="#built-in-vm-based-testing" aria-label="Anchor link for: built-in-vm-based-testing">🔗</a>Built-in VM-Based Testing</h3>
+<p>A great, underrated <strong>NixOS</strong> feature is the built-in testing framework. You can write tests that spin up lightweight virtual machines with their own configurations to test your setup. I saw this firsthand when I recently packaged <code>fdbserver</code>. It took me about 30 minutes to get a test running that spins up a full FoundationDB cluster across multiple VMs. The setup is still basic—it doesn't even use systemd—but it was more than enough to validate the packaging. You can see the test definition <a href="https://github.com/foundationdb-rs/overlay/blob/main/tests/cluster.nix">here</a>. Being able to build that kind of complex integration test so quickly is something I've only found in NixOS.</p>
+<h2 id="the-bad"><a class="zola-anchor" href="#the-bad" aria-label="Anchor link for: the-bad">🔗</a>The Bad</h2>
+<h3 id="the-friction-of-simple-changes-on-nixos"><a class="zola-anchor" href="#the-friction-of-simple-changes-on-nixos" aria-label="Anchor link for: the-friction-of-simple-changes-on-nixos">🔗</a>The Friction of Simple Changes on NixOS</h3>
+<p>On a normal system, if you want to add a shell alias, you edit <code>.bashrc</code> and you're done. In NixOS, there are no quick edits. You have to find the right option in your configuration, add the line, and then rebuild your system. This is great for keeping your configuration tracked, but it adds a lot of friction to simple tasks.</p>
+<h3 id="a-steep-and-isolated-learning-curve"><a class="zola-anchor" href="#a-steep-and-isolated-learning-curve" aria-label="Anchor link for: a-steep-and-isolated-learning-curve">🔗</a>A Steep and Isolated Learning Curve</h3>
+<p>Learning the Nix ecosystem is a big commitment. The ideas are very different from other Linux systems, so your existing knowledge doesn't help much. You have to learn the Nix language, how derivations work, and now Flakes. It takes a few months before you feel productive.</p>
+<h3 id="incompatibility-with-the-wider-ecosystem"><a class="zola-anchor" href="#incompatibility-with-the-wider-ecosystem" aria-label="Anchor link for: incompatibility-with-the-wider-ecosystem">🔗</a>Incompatibility with the Wider Ecosystem</h3>
+<p>Because NixOS doesn't use the standard Filesystem Hierarchy Standard (FHS), you can't just download a pre-compiled binary and expect it to work. It will fail to run because it can't find its shared libraries in places like <code>/lib</code> or <code>/usr/lib</code>. The Nix way to solve this is to use <code>patchelf</code> to modify the binary and tell it where to find its dependencies inside the <code>/nix/store</code>.</p>
+<p>A similar problem occurs with "impure" build tools. For example, the standard Protobuf plugin for Gradle tries to download the <code>protoc</code> compiler during the build. To make this work in a pure Nix environment, you have to disable this feature and instead provide <code>protoc</code> through the Nix derivation.</p>
+<p>While these tools provide a solution, they are another hurdle to overcome. For a deep dive on patching binaries, Sander van der Burg's post on <a href="https://sandervanderburg.blogspot.com/2015/10/deploying-prebuilt-binary-software-with.html">deploying prebuilt binaries with Nix</a> is an excellent resource.</p>
+<h3 id="handling-hardcoded-build-environments"><a class="zola-anchor" href="#handling-hardcoded-build-environments" aria-label="Anchor link for: handling-hardcoded-build-environments">🔗</a>Handling Hardcoded Build Environments</h3>
+<p>Sometimes, you can't override impure behavior. Certain libraries, particularly in the cryptography space, might have build scripts that are hardcoded to look for dependencies in standard locations like <code>/usr/lib</code>. In these cases, your only option is to fall back on <a href="https://ryantm.github.io/nixpkgs/builders/special/fhs-environments/"><code>buildFHSUserEnv</code></a> to create a sandboxed environment that simulates a traditional filesystem. It's a powerful tool, but it feels like a workaround and highlights the gap between the pure world of Nix and how many other tools work.</p>
+<h2 id="the-ugly"><a class="zola-anchor" href="#the-ugly" aria-label="Anchor link for: the-ugly">🔗</a>The Ugly</h2>
+<h3 id="the-nix-language-barrier"><a class="zola-anchor" href="#the-nix-language-barrier" aria-label="Anchor link for: the-nix-language-barrier">🔗</a>The Nix Language Barrier</h3>
+<p>The Nix language itself is the hardest part. It’s a functional language that feels very different from most programming languages. Simple things can be hard to figure out, and you often have to look up how to do basic operations.</p>
+<p>LLMs have made this much easier. Before they were widely available, I spent countless hours searching for similar packages on GitHub to figure out how to solve a specific problem. Now, you can ask for a code snippet and get something that works. But needing an AI to help with basic packaging shows how hard the language is to learn.</p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
+<p>So, what's the verdict? The scales may seem evenly balanced between praise and frustration, yet I wouldn't switch away from NixOS. The learning curve is a mountain, and the daily friction can be grating. But the payoff—the absolute, ironclad guarantee of reproducibility—is a superpower.</p>
+<p>As someone who builds and tests complex distributed systems, I spend my days fighting entropy. NixOS provides a sane foundation where the environment is a solved problem. The fear of a broken update before an on-call shift is gone. The hours spent debugging "works on my machine" issues have vanished. Setting up a new machine is a 15-minute, one-command affair.</p>
+<p>NixOS demands a significant upfront investment for long-term peace of mind. It trades short-term convenience for long-term stability and control. It's not for everyone, but if you're a developer or systems engineer who sees your OS as a critical part of your toolkit—one that should be as reliable and version-controlled as your code—then the tough road of NixOS is absolutely worth it.</p>
+<h3 id="a-gentler-start-try-nix-first"><a class="zola-anchor" href="#a-gentler-start-try-nix-first" aria-label="Anchor link for: a-gentler-start-try-nix-first">🔗</a>A Gentler Start: Try Nix First</h3>
+<p>If this article makes you curious but wary of diving headfirst into a full OS migration, there’s good news: you don’t have to. You can get a taste of Nix’s power on your existing macOS or Linux setup.</p>
+<p>By installing just the Nix package manager, you can start creating reproducible development environments using <code>nix-shell</code> or Nix Flakes. This lets you manage project-specific dependencies without conflicts and share a consistent setup with your team. It's a fantastic way to learn the Nix language and experience its benefits in a familiar environment before committing to NixOS.</p>
+<p>I’ve found it incredibly useful to have dependencies managed the same way between Linux and macOS. This website, for example, is built using the same Flake to pull Zola, and it works identically on my Linux laptop and my Mac.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with NixOS. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/nixos/">#nixos</a>
+          <a href="https://pierrezemb.fr/tags/nix/">#nix</a>
+          <a href="https://pierrezemb.fr/tags/linux/">#linux</a>
+          <a href="https://pierrezemb.fr/tags/devops/">#devops</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
