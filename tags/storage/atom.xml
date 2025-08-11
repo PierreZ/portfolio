@@ -387,7 +387,7 @@
 &lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and print-it in hexa
 &lt;&#x2F;span&gt;&lt;span&gt;println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{:#04X?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, row_key);
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;pre data-lang=&quot;log&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-log &quot;&gt;&lt;code class=&quot;language-log&quot; data-lang=&quot;log&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
 &lt;&#x2F;span&gt;&lt;span&gt;[
 &lt;&#x2F;span&gt;&lt;span&gt;    0x02,
 &lt;&#x2F;span&gt;&lt;span&gt;    0x74, &#x2F;&#x2F; t
@@ -414,7 +414,7 @@
 &lt;p&gt;Now that we saw &lt;code&gt;Tuples&lt;&#x2F;code&gt;, let&#x27;s dig in the next abstraction: &lt;code&gt;subspaces&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;subspace&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#subspace&quot; aria-label=&quot;Anchor link for: subspace&quot;&gt;🔗&lt;&#x2F;a&gt;Subspace&lt;&#x2F;h3&gt;
 &lt;p&gt;When you are working with key-values store, we are often playing with what we call &lt;code&gt;keyspaces&lt;&#x2F;code&gt;, by dedicating a portion of the key to an usage, like this for example:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;text&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-text &quot;&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-1&#x2F;...
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-1&#x2F;...
 &lt;&#x2F;span&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-2&#x2F;...
 &lt;&#x2F;span&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-3&#x2F;...
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
@@ -438,7 +438,7 @@
 &lt;&#x2F;span&gt;&lt;span&gt;println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;start: {:#04X?}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;\n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; end: {:#04X?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, subspace.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, subspace.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;);
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;We can see observe this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;log&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-log &quot;&gt;&lt;code class=&quot;language-log&quot; data-lang=&quot;log&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
 &lt;&#x2F;span&gt;&lt;span&gt;start: [
 &lt;&#x2F;span&gt;&lt;span&gt;    0x02,
 &lt;&#x2F;span&gt;&lt;span&gt;    0x74, &#x2F;&#x2F; t

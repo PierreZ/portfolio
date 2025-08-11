@@ -331,7 +331,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// and print-it in hexa
 </span><span>println!(&quot;</span><span style="color:#a3be8c;">{:#04X?}</span><span>&quot;, row_key);
 </span></code></pre>
-<pre data-lang="log" style="background-color:#2b303b;color:#c0c5ce;" class="language-log "><code class="language-log" data-lang="log"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+<pre data-lang="txt" style="background-color:#2b303b;color:#c0c5ce;" class="language-txt "><code class="language-txt" data-lang="txt"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 </span><span>[
 </span><span>    0x02,
 </span><span>    0x74, // t
@@ -358,7 +358,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>Now that we saw <code>Tuples</code>, let's dig in the next abstraction: <code>subspaces</code></p>
 <h3 id="subspace"><a class="zola-anchor" href="#subspace" aria-label="Anchor link for: subspace">🔗</a>Subspace</h3>
 <p>When you are working with key-values store, we are often playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
-<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>/users/tenant-1/...
+<pre data-lang="txt" style="background-color:#2b303b;color:#c0c5ce;" class="language-txt "><code class="language-txt" data-lang="txt"><span>/users/tenant-1/...
 </span><span>/users/tenant-2/...
 </span><span>/users/tenant-3/...
 </span></code></pre>
@@ -382,7 +382,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span>println!(&quot;</span><span style="color:#a3be8c;">start: {:#04X?}</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;"> end: {:#04X?}</span><span>&quot;, subspace.</span><span style="color:#96b5b4;">range</span><span>().</span><span style="color:#d08770;">0</span><span>, subspace.</span><span style="color:#96b5b4;">range</span><span>().</span><span style="color:#d08770;">1</span><span>);
 </span></code></pre>
 <p>We can see observe this:</p>
-<pre data-lang="log" style="background-color:#2b303b;color:#c0c5ce;" class="language-log "><code class="language-log" data-lang="log"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
+<pre data-lang="txt" style="background-color:#2b303b;color:#c0c5ce;" class="language-txt "><code class="language-txt" data-lang="txt"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl
 </span><span>start: [
 </span><span>    0x02,
 </span><span>    0x74, // t

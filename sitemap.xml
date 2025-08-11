@@ -45,6 +45,10 @@
         <lastmod>2021-02-21T00:24:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/</loc>
+        <lastmod>2025-08-11</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/distsys-resources/</loc>
         <lastmod>2022-01-17T01:37:27+01:00</lastmod>
     </url>
@@ -176,6 +180,9 @@
         <loc>https://pierrezemb.fr/tags/continuation/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/correctness/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/database/</loc>
     </url>
     <url>
@@ -291,6 +298,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/personal/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/podcasts/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/pulsar/</loc>

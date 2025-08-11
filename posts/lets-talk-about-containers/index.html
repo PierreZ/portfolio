@@ -314,8 +314,8 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.</p>
 </blockquote>
 <p>That means that our Dockerfile now looks like this:</p>
-<pre data-lang="docker" style="background-color:#2b303b;color:#c0c5ce;" class="language-docker "><code class="language-docker" data-lang="docker"><span>FROM scratch  
-</span><span>ADD hello /  
+<pre data-lang="dockerfile" style="background-color:#2b303b;color:#c0c5ce;" class="language-dockerfile "><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#b48ead;">FROM</span><span> scratch  
+</span><span style="color:#b48ead;">ADD </span><span>hello /  
 </span><span>CMD [/hello]
 </span></code></pre>
 <p>So now, I have finally (I think) the right abstraction for a container! <strong>We have a container containing only our app</strong>. Can we go even further? The most interesting thing that I learned from (quickly) reading <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43438.pdf"><em>Large-scale cluster management at Google with Borg</em></a> is this:</p>

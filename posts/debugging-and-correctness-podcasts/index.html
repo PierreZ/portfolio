@@ -3,34 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Pierre Zemb&#x27;s Blog">
-<meta name="description" content="Pierre Zemb personal blog">
+  <title>Two Podcast Episodes on Topics Developers Rarely Talk About | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Two Podcast Episodes on Topics Developers Rarely Talk About">
+<meta name="description" content="Two podcast episodes—one from Oxide and one from Antithesis—on debugging at the limits and building correctness into systems from day one.">
 <meta name="author" content="Pierre Zemb">
 
 <!-- Twitter Card tags -->
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@pierrez" />
 <meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Pierre Zemb&#x27;s Blog" />
-<meta name="twitter:description" content="Pierre Zemb personal blog" />
+<meta name="twitter:title" content="Two Podcast Episodes on Topics Developers Rarely Talk About" />
+<meta name="twitter:description" content="Two podcast episodes—one from Oxide and one from Antithesis—on debugging at the limits and building correctness into systems from day one." />
 
 <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
 
 
 <!-- OpenGraph tags -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content="article" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:description" content="Pierre Zemb personal blog"> 
-<meta property="og:url" content="https://pierrezemb.fr">
+<meta property="og:title" content="Two Podcast Episodes on Topics Developers Rarely Talk About">
+<meta property="og:description" content="Two podcast episodes—one from Oxide and one from Antithesis—on debugging at the limits and building correctness into systems from day one."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/">
 
 <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
 
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 
+
+<meta property="article:published_time" content="2025-08-11" />
+
+
+
+<meta property="article:tag" content="distributed-systems" />
+
+<meta property="article:tag" content="debugging" />
+
+<meta property="article:tag" content="correctness" />
+
+<meta property="article:tag" content="podcasts" />
+
+<meta property="article:tag" content="simulation" />
 
 
 
@@ -232,45 +246,35 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
 </header>
-
+<h1>Two Podcast Episodes on Topics Developers Rarely Talk About</h1>
+      <p>
+        <i>
+          <time datetime="2025-08-11T00:00:00+00:00" pubdate>11 Aug, 2025</time>
+        </i>
+      </p>
   <main>
-    <ul class="blog-posts">
-      
-        <li>
-          <span>
-            <i>
-              <time datetime='2025-08-11T00:00:00+00:00' pubdate>
-                11 Aug, 2025
-              </time>
-            </i>
-          </span>
-          <a href="https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;debugging-and-correctness-podcasts&#x2F;">Two Podcast Episodes on Topics Developers Rarely Talk About</a>
-        </li>
-      
-        <li>
-          <span>
-            <i>
-              <time datetime='2025-04-18T11:12:12+02:00' pubdate>
-                18 Apr, 2025
-              </time>
-            </i>
-          </span>
-          <a href="https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;simulation-driven-development&#x2F;">What if we embraced simulation-driven development?</a>
-        </li>
-      
-        <li>
-          <span>
-            <i>
-              <time datetime='2025-04-11T00:00:00+02:00' pubdate>
-                11 Apr, 2025
-              </time>
-            </i>
-          </span>
-          <a href="https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;learn-about-dst&#x2F;">So, You Want to Learn More About Deterministic Simulation Testing?</a>
-        </li>
-      
-    </ul>
+    <p>I was listening to a couple of podcasts the other day and stumbled across two episodes that were so compelling I had to stop my chores and listen. They dive into corners of software engineering that most developers barely think about; not because they’re unimportant, but because they appear in the hard corners of engineering:</p>
+<ul>
+<li>catastrophic data corruption,</li>
+<li>correctness work done before a single line is shipped.</li>
+</ul>
+<p>The first is <a href="https://oxide-and-friends.transistor.fm/episodes/adventures-in-data-corruption">Adventures in Data Corruption</a> from <em>Oxide and Friends</em>. Two years ago, the Oxide team ran into data corruption during what should have been a routine network transfer. The debugging journey that followed went from packet traces to CPU speculation quirks, peeling back the stack layer by layer, hardware, kernel, network, application, asking hard questions at each step. What I love here is the combination of clear storytelling and the rapid-fire hypotheses: they make an assumption, test it, discard it, and immediately move to the next, pulling you along in the investigation until the root cause finally clicks into place.</p>
+<p>The second is <a href="https://x.com/AntithesisHQ/status/1953097721205710918">Scaling Correctness: Marc Brooker on a Decade of Formal Methods at AWS</a> of <em>The BugBash Podcast</em> by Antithesis. Marc Brooker, who has spent nearly 17 years building core AWS services like S3 and Lambda, shares the company’s decade-long journey with formal methods — from heavyweight tools like TLA+ to the <em>lightweight</em> approaches that any team can adopt(yes, they are talking about simulation!). At AWS, they’ve learned that investing in correctness up front not only improves reliability but actually speeds up delivery. They also touch on deterministic simulation testing, the challenge of verifying UIs and control planes, and the role AI might play in the future of verification.</p>
+<p>I’ve been paged way too many times for metastable failures, data corruption, network meltdowns, or NTP drift in production. These days, I’d rather tackle the correctness part <em>before</em> those alarms go off. Every new layer I build is designed to be simulated — to explore failure modes in a controlled environment before they can hurt real users.</p>
+<p>But when things fall apart anyway, and spoilers <strong>they will</strong>, developers have the opportunity to truly understand their software. Being responsible for the systems you build means you’re the one getting paged, and it’s in those moments of crisis that the sharpest debugging skills are forged.</p>
+<p>So don’t just bookmark them. Put them at the top of your queue. Listen. And maybe, the next time your system misbehaves, you’ll be ready.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with debugging and correctness. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
   </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+          <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a>
+          <a href="https://pierrezemb.fr/tags/correctness/">#correctness</a>
+          <a href="https://pierrezemb.fr/tags/podcasts/">#podcasts</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+  </p>
 <footer>
     <p>© 2025 Pierre Zemb</p>
     <div class="social-links">

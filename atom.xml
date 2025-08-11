@@ -5,8 +5,44 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-07-02T00:37:27+01:00</updated>
+    <updated>2025-08-11T00:00:00+00:00</updated>
     <id>https://pierrezemb.fr/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Two Podcast Episodes on Topics Developers Rarely Talk About</title>
+        <published>2025-08-11T00:00:00+00:00</published>
+        <updated>2025-08-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/"/>
+        <id>https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/</id>
+        
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
+        <category term="debugging" schema="https://pierrezemb.fr/tags/" label="debugging"/>
+        <category term="correctness" schema="https://pierrezemb.fr/tags/" label="correctness"/>
+        <category term="podcasts" schema="https://pierrezemb.fr/tags/" label="podcasts"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/">&lt;p&gt;I was listening to a couple of podcasts the other day and stumbled across two episodes that were so compelling I had to stop my chores and listen. They dive into corners of software engineering that most developers barely think about; not because they’re unimportant, but because they appear in the hard corners of engineering:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;catastrophic data corruption,&lt;&#x2F;li&gt;
+&lt;li&gt;correctness work done before a single line is shipped.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The first is &lt;a href=&quot;https:&#x2F;&#x2F;oxide-and-friends.transistor.fm&#x2F;episodes&#x2F;adventures-in-data-corruption&quot;&gt;Adventures in Data Corruption&lt;&#x2F;a&gt; from &lt;em&gt;Oxide and Friends&lt;&#x2F;em&gt;. Two years ago, the Oxide team ran into data corruption during what should have been a routine network transfer. The debugging journey that followed went from packet traces to CPU speculation quirks, peeling back the stack layer by layer, hardware, kernel, network, application, asking hard questions at each step. What I love here is the combination of clear storytelling and the rapid-fire hypotheses: they make an assumption, test it, discard it, and immediately move to the next, pulling you along in the investigation until the root cause finally clicks into place.&lt;&#x2F;p&gt;
+&lt;p&gt;The second is &lt;a href=&quot;https:&#x2F;&#x2F;x.com&#x2F;AntithesisHQ&#x2F;status&#x2F;1953097721205710918&quot;&gt;Scaling Correctness: Marc Brooker on a Decade of Formal Methods at AWS&lt;&#x2F;a&gt; of &lt;em&gt;The BugBash Podcast&lt;&#x2F;em&gt; by Antithesis. Marc Brooker, who has spent nearly 17 years building core AWS services like S3 and Lambda, shares the company’s decade-long journey with formal methods — from heavyweight tools like TLA+ to the &lt;em&gt;lightweight&lt;&#x2F;em&gt; approaches that any team can adopt(yes, they are talking about simulation!). At AWS, they’ve learned that investing in correctness up front not only improves reliability but actually speeds up delivery. They also touch on deterministic simulation testing, the challenge of verifying UIs and control planes, and the role AI might play in the future of verification.&lt;&#x2F;p&gt;
+&lt;p&gt;I’ve been paged way too many times for metastable failures, data corruption, network meltdowns, or NTP drift in production. These days, I’d rather tackle the correctness part &lt;em&gt;before&lt;&#x2F;em&gt; those alarms go off. Every new layer I build is designed to be simulated — to explore failure modes in a controlled environment before they can hurt real users.&lt;&#x2F;p&gt;
+&lt;p&gt;But when things fall apart anyway, and spoilers &lt;strong&gt;they will&lt;&#x2F;strong&gt;, developers have the opportunity to truly understand their software. Being responsible for the systems you build means you’re the one getting paged, and it’s in those moments of crisis that the sharpest debugging skills are forged.&lt;&#x2F;p&gt;
+&lt;p&gt;So don’t just bookmark them. Put them at the top of your queue. Listen. And maybe, the next time your system misbehaves, you’ll be ready.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with debugging and correctness. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Three Years of Nix and NixOS: The Good, the Bad, and the Ugly</title>
         <published>2025-07-02T00:37:27+01:00</published>
@@ -891,30 +927,30 @@
 &lt;p&gt;FoundationDB is renowned for its &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;simulation and testing&lt;&#x2F;a&gt; frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.&lt;&#x2F;p&gt;
 &lt;p&gt;The BindingTester uses &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;main&#x2F;bindings&#x2F;bindingtester&#x2F;spec&#x2F;bindingApiTester.md&quot;&gt;a stack-based machine&lt;&#x2F;a&gt; to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.&lt;&#x2F;p&gt;
 &lt;p&gt;It looks like this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;.&#x2F;bindings&#x2F;bindingtester&#x2F;bindingtester.py --num-ops 1000 --api-version 730 --test-name api --compare python rust
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;.&#x2F;bindings&#x2F;bindingtester&#x2F;bindingtester.py --num-ops&lt;&#x2F;span&gt;&lt;span&gt; 1000&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --api-version&lt;&#x2F;span&gt;&lt;span&gt; 730&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --test-name&lt;&#x2F;span&gt;&lt;span&gt; api&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --compare&lt;&#x2F;span&gt;&lt;span&gt; python rust
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Creating test at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Generating api test at seed 3208032894 with 1000 op(s) and 1 concurrent tester(s)...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Creating&lt;&#x2F;span&gt;&lt;span&gt; test at API version 730
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Generating&lt;&#x2F;span&gt;&lt;span&gt; api test at seed 3208032894 with 1000 op(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;and&lt;&#x2F;span&gt;&lt;span&gt; 1 concurrent tester(s)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Rust tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;&#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;debug&#x2F;bindingtester test_spec 730&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Inserting Rust tests
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Inserting&lt;&#x2F;span&gt;&lt;span&gt; test into database...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Running&lt;&#x2F;span&gt;&lt;span&gt; tester &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;debug&#x2F;bindingtester test_spec 730&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Python tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;python &#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;foundationdb_build&#x2F;foundationdb&#x2F;bindings&#x2F;bindingtester&#x2F;..&#x2F;python&#x2F;tests&#x2F;tester.py test_spec 730&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Inserting Python tests
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Inserting&lt;&#x2F;span&gt;&lt;span&gt; test into database...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Running&lt;&#x2F;span&gt;&lt;span&gt; tester &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;python &#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;foundationdb_build&#x2F;foundationdb&#x2F;bindings&#x2F;bindingtester&#x2F;..&#x2F;python&#x2F;tests&#x2F;tester.py test_spec 730&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Comparing the results
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Test with seed 3208032894 and concurrency 1 had 0 incorrect result(s) and 0 error(s) at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Completed api test with random seed 3208032894 and 1000 operations
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Comparing the results
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Comparing&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Comparing&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Test&lt;&#x2F;span&gt;&lt;span&gt; with seed 3208032894 and concurrency 1 had 0 incorrect result(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;and&lt;&#x2F;span&gt;&lt;span&gt; 0 error(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;at&lt;&#x2F;span&gt;&lt;span&gt; API version 730
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Completed&lt;&#x2F;span&gt;&lt;span&gt; api test with random seed 3208032894 and 1000 operations
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;The great advantage of this method is that the tests are seeded, meaning the operations are:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -936,35 +972,35 @@
 &lt;&#x2F;span&gt;&lt;span&gt;}
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;Which can be runned inside the simulation while injecting some faults:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;fdbserver -r simulation -f &#x2F;root&#x2F;atomic.toml -b on --trace-format json
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fdbserver -r&lt;&#x2F;span&gt;&lt;span&gt; simulation&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; -f&lt;&#x2F;span&gt;&lt;span&gt; &#x2F;root&#x2F;atomic.toml&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; -b&lt;&#x2F;span&gt;&lt;span&gt; on&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --trace-format&lt;&#x2F;span&gt;&lt;span&gt; json
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Choosing a random seed
-&lt;&#x2F;span&gt;&lt;span&gt;Random seed is 394378360...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Choosing a random seed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Random&lt;&#x2F;span&gt;&lt;span&gt; seed is 394378360...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Then, everything is derived from the seed, including:
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster topology,
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster configuration,
-&lt;&#x2F;span&gt;&lt;span&gt;# * timing to inject faults,
-&lt;&#x2F;span&gt;&lt;span&gt;# * operations to run
-&lt;&#x2F;span&gt;&lt;span&gt;# * ...
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 0: 3&#x2F;12 machines, 1&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 1: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 2: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 3: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Then, everything is derived from the seed, including:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * cluster topology,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * cluster configuration,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * timing to inject faults,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * operations to run
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * ...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 0: 3&#x2F;12 machines, 1&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 1: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 2: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 3: 3&#x2F;12 machines, 0&#x2F;1 coordinators
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Starting the Atomic workload
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload start
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Starting the Atomic workload
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Run&lt;&#x2F;span&gt;&lt;span&gt; test:AtomicWorkload start
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;AtomicWorkload complete
-&lt;&#x2F;span&gt;&lt;span&gt;checking test (AtomicWorkload)...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;AtomicWorkload&lt;&#x2F;span&gt;&lt;span&gt; complete
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;checking&lt;&#x2F;span&gt;&lt;span&gt; test (AtomicWorkload)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;5 test clients passed; 0 test clients failed
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload Done.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt; test clients passed; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt; test clients failed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Run&lt;&#x2F;span&gt;&lt;span&gt; test:AtomicWorkload Done.
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;1 tests passed; 0 tests failed.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt; tests passed; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt; tests failed.
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Unseed: 66324
-&lt;&#x2F;span&gt;&lt;span&gt;Elapsed: 405.055622 simsec, 30.342000 real seconds
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Unseed:&lt;&#x2F;span&gt;&lt;span&gt; 66324
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Elapsed:&lt;&#x2F;span&gt;&lt;span&gt; 405.055622 simsec, 30.342000 real seconds
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This has been a &lt;strong&gt;major keypoint&lt;&#x2F;strong&gt; for us to develop and operate &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;materia&#x2F;&quot;&gt;Materia, Clever Cloud&#x27;s serverless database offer&lt;&#x2F;a&gt;, as we can enjoy the same Simulation framework used by FDB&#x27;s core engineers for layer engineering 🤯&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;closing-words&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#closing-words&quot; aria-label=&quot;Anchor link for: closing-words&quot;&gt;🔗&lt;&#x2F;a&gt;Closing words&lt;&#x2F;h2&gt;
@@ -1450,7 +1486,7 @@
 &lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; and print-it in hexa
 &lt;&#x2F;span&gt;&lt;span&gt;println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{:#04X?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, row_key);
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;pre data-lang=&quot;log&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-log &quot;&gt;&lt;code class=&quot;language-log&quot; data-lang=&quot;log&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
 &lt;&#x2F;span&gt;&lt;span&gt;[
 &lt;&#x2F;span&gt;&lt;span&gt;    0x02,
 &lt;&#x2F;span&gt;&lt;span&gt;    0x74, &#x2F;&#x2F; t
@@ -1477,7 +1513,7 @@
 &lt;p&gt;Now that we saw &lt;code&gt;Tuples&lt;&#x2F;code&gt;, let&#x27;s dig in the next abstraction: &lt;code&gt;subspaces&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;subspace&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#subspace&quot; aria-label=&quot;Anchor link for: subspace&quot;&gt;🔗&lt;&#x2F;a&gt;Subspace&lt;&#x2F;h3&gt;
 &lt;p&gt;When you are working with key-values store, we are often playing with what we call &lt;code&gt;keyspaces&lt;&#x2F;code&gt;, by dedicating a portion of the key to an usage, like this for example:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;text&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-text &quot;&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-1&#x2F;...
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-1&#x2F;...
 &lt;&#x2F;span&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-2&#x2F;...
 &lt;&#x2F;span&gt;&lt;span&gt;&#x2F;users&#x2F;tenant-3&#x2F;...
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
@@ -1501,7 +1537,7 @@
 &lt;&#x2F;span&gt;&lt;span&gt;println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;start: {:#04X?}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;\n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; end: {:#04X?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, subspace.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, subspace.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;);
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;We can see observe this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;log&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-log &quot;&gt;&lt;code class=&quot;language-log&quot; data-lang=&quot;log&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
+&lt;pre data-lang=&quot;txt&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-txt &quot;&gt;&lt;code class=&quot;language-txt&quot; data-lang=&quot;txt&quot;&gt;&lt;span&gt;&#x2F;&#x2F; can be verified with https:&#x2F;&#x2F;www.utf8-chartable.de&#x2F;unicode-utf8-table.pl
 &lt;&#x2F;span&gt;&lt;span&gt;start: [
 &lt;&#x2F;span&gt;&lt;span&gt;    0x02,
 &lt;&#x2F;span&gt;&lt;span&gt;    0x74, &#x2F;&#x2F; t
@@ -4147,8 +4183,8 @@ moving from operators to another.&lt;&#x2F;p&gt;
 &lt;p&gt;You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;That means that our Dockerfile now looks like this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;docker&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-docker &quot;&gt;&lt;code class=&quot;language-docker&quot; data-lang=&quot;docker&quot;&gt;&lt;span&gt;FROM scratch  
-&lt;&#x2F;span&gt;&lt;span&gt;ADD hello &#x2F;  
+&lt;pre data-lang=&quot;dockerfile&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-dockerfile &quot;&gt;&lt;code class=&quot;language-dockerfile&quot; data-lang=&quot;dockerfile&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; scratch  
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;ADD &lt;&#x2F;span&gt;&lt;span&gt;hello &#x2F;  
 &lt;&#x2F;span&gt;&lt;span&gt;CMD [&#x2F;hello]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;So now, I have finally (I think) the right abstraction for a container! &lt;strong&gt;We have a container containing only our app&lt;&#x2F;strong&gt;. Can we go even further? The most interesting thing that I learned from (quickly) reading &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;pubs&#x2F;archive&#x2F;43438.pdf&quot;&gt;&lt;em&gt;Large-scale cluster management at Google with Borg&lt;&#x2F;em&gt;&lt;&#x2F;a&gt; is this:&lt;&#x2F;p&gt;

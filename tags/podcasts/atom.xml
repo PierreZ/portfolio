@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - podcasts</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/podcasts/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-08-11T00:00:00+00:00</updated>
+    <id>https://pierrezemb.fr/tags/podcasts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Two Podcast Episodes on Topics Developers Rarely Talk About</title>
+        <published>2025-08-11T00:00:00+00:00</published>
+        <updated>2025-08-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/"/>
+        <id>https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/</id>
+        
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
+        <category term="debugging" schema="https://pierrezemb.fr/tags/" label="debugging"/>
+        <category term="correctness" schema="https://pierrezemb.fr/tags/" label="correctness"/>
+        <category term="podcasts" schema="https://pierrezemb.fr/tags/" label="podcasts"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/">&lt;p&gt;I was listening to a couple of podcasts the other day and stumbled across two episodes that were so compelling I had to stop my chores and listen. They dive into corners of software engineering that most developers barely think about; not because they’re unimportant, but because they appear in the hard corners of engineering:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;catastrophic data corruption,&lt;&#x2F;li&gt;
+&lt;li&gt;correctness work done before a single line is shipped.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The first is &lt;a href=&quot;https:&#x2F;&#x2F;oxide-and-friends.transistor.fm&#x2F;episodes&#x2F;adventures-in-data-corruption&quot;&gt;Adventures in Data Corruption&lt;&#x2F;a&gt; from &lt;em&gt;Oxide and Friends&lt;&#x2F;em&gt;. Two years ago, the Oxide team ran into data corruption during what should have been a routine network transfer. The debugging journey that followed went from packet traces to CPU speculation quirks, peeling back the stack layer by layer, hardware, kernel, network, application, asking hard questions at each step. What I love here is the combination of clear storytelling and the rapid-fire hypotheses: they make an assumption, test it, discard it, and immediately move to the next, pulling you along in the investigation until the root cause finally clicks into place.&lt;&#x2F;p&gt;
+&lt;p&gt;The second is &lt;a href=&quot;https:&#x2F;&#x2F;x.com&#x2F;AntithesisHQ&#x2F;status&#x2F;1953097721205710918&quot;&gt;Scaling Correctness: Marc Brooker on a Decade of Formal Methods at AWS&lt;&#x2F;a&gt; of &lt;em&gt;The BugBash Podcast&lt;&#x2F;em&gt; by Antithesis. Marc Brooker, who has spent nearly 17 years building core AWS services like S3 and Lambda, shares the company’s decade-long journey with formal methods — from heavyweight tools like TLA+ to the &lt;em&gt;lightweight&lt;&#x2F;em&gt; approaches that any team can adopt(yes, they are talking about simulation!). At AWS, they’ve learned that investing in correctness up front not only improves reliability but actually speeds up delivery. They also touch on deterministic simulation testing, the challenge of verifying UIs and control planes, and the role AI might play in the future of verification.&lt;&#x2F;p&gt;
+&lt;p&gt;I’ve been paged way too many times for metastable failures, data corruption, network meltdowns, or NTP drift in production. These days, I’d rather tackle the correctness part &lt;em&gt;before&lt;&#x2F;em&gt; those alarms go off. Every new layer I build is designed to be simulated — to explore failure modes in a controlled environment before they can hurt real users.&lt;&#x2F;p&gt;
+&lt;p&gt;But when things fall apart anyway, and spoilers &lt;strong&gt;they will&lt;&#x2F;strong&gt;, developers have the opportunity to truly understand their software. Being responsible for the systems you build means you’re the one getting paged, and it’s in those moments of crisis that the sharpest debugging skills are forged.&lt;&#x2F;p&gt;
+&lt;p&gt;So don’t just bookmark them. Put them at the top of your queue. Listen. And maybe, the next time your system misbehaves, you’ll be ready.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with debugging and correctness. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

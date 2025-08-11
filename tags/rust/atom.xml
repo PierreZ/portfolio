@@ -276,30 +276,30 @@
 &lt;p&gt;FoundationDB is renowned for its &lt;a href=&quot;https:&#x2F;&#x2F;apple.github.io&#x2F;foundationdb&#x2F;testing.html&quot;&gt;simulation and testing&lt;&#x2F;a&gt; frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.&lt;&#x2F;p&gt;
 &lt;p&gt;The BindingTester uses &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;main&#x2F;bindings&#x2F;bindingtester&#x2F;spec&#x2F;bindingApiTester.md&quot;&gt;a stack-based machine&lt;&#x2F;a&gt; to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.&lt;&#x2F;p&gt;
 &lt;p&gt;It looks like this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;.&#x2F;bindings&#x2F;bindingtester&#x2F;bindingtester.py --num-ops 1000 --api-version 730 --test-name api --compare python rust
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;.&#x2F;bindings&#x2F;bindingtester&#x2F;bindingtester.py --num-ops&lt;&#x2F;span&gt;&lt;span&gt; 1000&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --api-version&lt;&#x2F;span&gt;&lt;span&gt; 730&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --test-name&lt;&#x2F;span&gt;&lt;span&gt; api&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --compare&lt;&#x2F;span&gt;&lt;span&gt; python rust
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Creating test at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Generating api test at seed 3208032894 with 1000 op(s) and 1 concurrent tester(s)...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Creating&lt;&#x2F;span&gt;&lt;span&gt; test at API version 730
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Generating&lt;&#x2F;span&gt;&lt;span&gt; api test at seed 3208032894 with 1000 op(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;and&lt;&#x2F;span&gt;&lt;span&gt; 1 concurrent tester(s)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Rust tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;&#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;debug&#x2F;bindingtester test_spec 730&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Inserting Rust tests
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Inserting&lt;&#x2F;span&gt;&lt;span&gt; test into database...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Running&lt;&#x2F;span&gt;&lt;span&gt; tester &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;debug&#x2F;bindingtester test_spec 730&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Inserting Python tests
-&lt;&#x2F;span&gt;&lt;span&gt;Inserting test into database...
-&lt;&#x2F;span&gt;&lt;span&gt;Running tester &amp;#39;python &#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;foundationdb_build&#x2F;foundationdb&#x2F;bindings&#x2F;bindingtester&#x2F;..&#x2F;python&#x2F;tests&#x2F;tester.py test_spec 730&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Inserting Python tests
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Inserting&lt;&#x2F;span&gt;&lt;span&gt; test into database...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Running&lt;&#x2F;span&gt;&lt;span&gt; tester &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;python &#x2F;home&#x2F;runner&#x2F;work&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;target&#x2F;foundationdb_build&#x2F;foundationdb&#x2F;bindings&#x2F;bindingtester&#x2F;..&#x2F;python&#x2F;tests&#x2F;tester.py test_spec 730&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Reading results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Reading&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Comparing the results
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;workspace&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Comparing results from &amp;#39;(&amp;#39;tester_output&amp;#39;, &amp;#39;stack&amp;#39;)&amp;#39;...
-&lt;&#x2F;span&gt;&lt;span&gt;Test with seed 3208032894 and concurrency 1 had 0 incorrect result(s) and 0 error(s) at API version 730
-&lt;&#x2F;span&gt;&lt;span&gt;Completed api test with random seed 3208032894 and 1000 operations
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Comparing the results
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Comparing&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;workspace&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Comparing&lt;&#x2F;span&gt;&lt;span&gt; results from &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;tester_output&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;stack&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Test&lt;&#x2F;span&gt;&lt;span&gt; with seed 3208032894 and concurrency 1 had 0 incorrect result(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;and&lt;&#x2F;span&gt;&lt;span&gt; 0 error(s) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;at&lt;&#x2F;span&gt;&lt;span&gt; API version 730
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Completed&lt;&#x2F;span&gt;&lt;span&gt; api test with random seed 3208032894 and 1000 operations
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;The great advantage of this method is that the tests are seeded, meaning the operations are:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -321,35 +321,35 @@
 &lt;&#x2F;span&gt;&lt;span&gt;}
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;Which can be runned inside the simulation while injecting some faults:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;shell&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-shell &quot;&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span&gt;fdbserver -r simulation -f &#x2F;root&#x2F;atomic.toml -b on --trace-format json
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fdbserver -r&lt;&#x2F;span&gt;&lt;span&gt; simulation&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; -f&lt;&#x2F;span&gt;&lt;span&gt; &#x2F;root&#x2F;atomic.toml&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; -b&lt;&#x2F;span&gt;&lt;span&gt; on&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --trace-format&lt;&#x2F;span&gt;&lt;span&gt; json
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Choosing a random seed
-&lt;&#x2F;span&gt;&lt;span&gt;Random seed is 394378360...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Choosing a random seed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Random&lt;&#x2F;span&gt;&lt;span&gt; seed is 394378360...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Then, everything is derived from the seed, including:
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster topology,
-&lt;&#x2F;span&gt;&lt;span&gt;# * cluster configuration,
-&lt;&#x2F;span&gt;&lt;span&gt;# * timing to inject faults,
-&lt;&#x2F;span&gt;&lt;span&gt;# * operations to run
-&lt;&#x2F;span&gt;&lt;span&gt;# * ...
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 0: 3&#x2F;12 machines, 1&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 1: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 2: 3&#x2F;12 machines, 0&#x2F;1 coordinators
-&lt;&#x2F;span&gt;&lt;span&gt;Datacenter 3: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Then, everything is derived from the seed, including:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * cluster topology,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * cluster configuration,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * timing to inject faults,
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * operations to run
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# * ...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 0: 3&#x2F;12 machines, 1&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 1: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 2: 3&#x2F;12 machines, 0&#x2F;1 coordinators
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Datacenter&lt;&#x2F;span&gt;&lt;span&gt; 3: 3&#x2F;12 machines, 0&#x2F;1 coordinators
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;# Starting the Atomic workload
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload start
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Starting the Atomic workload
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Run&lt;&#x2F;span&gt;&lt;span&gt; test:AtomicWorkload start
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;AtomicWorkload complete
-&lt;&#x2F;span&gt;&lt;span&gt;checking test (AtomicWorkload)...
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;AtomicWorkload&lt;&#x2F;span&gt;&lt;span&gt; complete
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;checking&lt;&#x2F;span&gt;&lt;span&gt; test (AtomicWorkload)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;...
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;5 test clients passed; 0 test clients failed
-&lt;&#x2F;span&gt;&lt;span&gt;Run test:AtomicWorkload Done.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt; test clients passed; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt; test clients failed
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Run&lt;&#x2F;span&gt;&lt;span&gt; test:AtomicWorkload Done.
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;1 tests passed; 0 tests failed.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt; tests passed; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt; tests failed.
 &lt;&#x2F;span&gt;&lt;span&gt;
-&lt;&#x2F;span&gt;&lt;span&gt;Unseed: 66324
-&lt;&#x2F;span&gt;&lt;span&gt;Elapsed: 405.055622 simsec, 30.342000 real seconds
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Unseed:&lt;&#x2F;span&gt;&lt;span&gt; 66324
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;Elapsed:&lt;&#x2F;span&gt;&lt;span&gt; 405.055622 simsec, 30.342000 real seconds
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This has been a &lt;strong&gt;major keypoint&lt;&#x2F;strong&gt; for us to develop and operate &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;materia&#x2F;&quot;&gt;Materia, Clever Cloud&#x27;s serverless database offer&lt;&#x2F;a&gt;, as we can enjoy the same Simulation framework used by FDB&#x27;s core engineers for layer engineering 🤯&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;closing-words&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#closing-words&quot; aria-label=&quot;Anchor link for: closing-words&quot;&gt;🔗&lt;&#x2F;a&gt;Closing words&lt;&#x2F;h2&gt;

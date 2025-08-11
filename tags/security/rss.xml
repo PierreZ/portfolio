@@ -50,8 +50,8 @@
 &lt;p&gt;You can use Docker’s reserved, minimal image, scratch, as a starting point for building containers. Using the scratch “image” signals to the build process that you want the next command in the Dockerfile to be the first filesystem layer in your image. While scratch appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;That means that our Dockerfile now looks like this:&lt;&#x2F;p&gt;
-&lt;pre data-lang=&quot;docker&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-docker &quot;&gt;&lt;code class=&quot;language-docker&quot; data-lang=&quot;docker&quot;&gt;&lt;span&gt;FROM scratch  
-&lt;&#x2F;span&gt;&lt;span&gt;ADD hello &#x2F;  
+&lt;pre data-lang=&quot;dockerfile&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-dockerfile &quot;&gt;&lt;code class=&quot;language-dockerfile&quot; data-lang=&quot;dockerfile&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; scratch  
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;ADD &lt;&#x2F;span&gt;&lt;span&gt;hello &#x2F;  
 &lt;&#x2F;span&gt;&lt;span&gt;CMD [&#x2F;hello]
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;So now, I have finally (I think) the right abstraction for a container! &lt;strong&gt;We have a container containing only our app&lt;&#x2F;strong&gt;. Can we go even further? The most interesting thing that I learned from (quickly) reading &lt;a href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;pubs&#x2F;archive&#x2F;43438.pdf&quot;&gt;&lt;em&gt;Large-scale cluster management at Google with Borg&lt;&#x2F;em&gt;&lt;&#x2F;a&gt; is this:&lt;&#x2F;p&gt;

@@ -302,30 +302,30 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>FoundationDB is renowned for its <a href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
 <p>The BindingTester uses <a href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
 <p>It looks like this:</p>
-<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>./bindings/bindingtester/bindingtester.py --num-ops 1000 --api-version 730 --test-name api --compare python rust
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">./bindings/bindingtester/bindingtester.py --num-ops</span><span> 1000</span><span style="color:#bf616a;"> --api-version</span><span> 730</span><span style="color:#bf616a;"> --test-name</span><span> api</span><span style="color:#bf616a;"> --compare</span><span> python rust
 </span><span>
-</span><span>Creating test at API version 730
-</span><span>Generating api test at seed 3208032894 with 1000 op(s) and 1 concurrent tester(s)...
+</span><span style="color:#bf616a;">Creating</span><span> test at API version 730
+</span><span style="color:#bf616a;">Generating</span><span> api test at seed 3208032894 with 1000 op(s) </span><span style="color:#bf616a;">and</span><span> 1 concurrent tester(s)</span><span style="color:#bf616a;">...
 </span><span>
-</span><span># Inserting Rust tests
-</span><span>Inserting test into database...
-</span><span>Running tester &#39;/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730&#39;...
+</span><span style="color:#65737e;"># Inserting Rust tests
+</span><span style="color:#bf616a;">Inserting</span><span> test into database...
+</span><span style="color:#bf616a;">Running</span><span> tester &#39;</span><span style="color:#a3be8c;">/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730</span><span>&#39;...
 </span><span>
-</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
-</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
+</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
+</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
 </span><span>
-</span><span># Inserting Python tests
-</span><span>Inserting test into database...
-</span><span>Running tester &#39;python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730&#39;...
+</span><span style="color:#65737e;"># Inserting Python tests
+</span><span style="color:#bf616a;">Inserting</span><span> test into database...
+</span><span style="color:#bf616a;">Running</span><span> tester &#39;</span><span style="color:#a3be8c;">python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730</span><span>&#39;...
 </span><span>
-</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
-</span><span>Reading results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
+</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
+</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
 </span><span>
-</span><span># Comparing the results
-</span><span>Comparing results from &#39;(&#39;tester_output&#39;, &#39;workspace&#39;)&#39;...
-</span><span>Comparing results from &#39;(&#39;tester_output&#39;, &#39;stack&#39;)&#39;...
-</span><span>Test with seed 3208032894 and concurrency 1 had 0 incorrect result(s) and 0 error(s) at API version 730
-</span><span>Completed api test with random seed 3208032894 and 1000 operations
+</span><span style="color:#65737e;"># Comparing the results
+</span><span style="color:#bf616a;">Comparing</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
+</span><span style="color:#bf616a;">Comparing</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
+</span><span style="color:#bf616a;">Test</span><span> with seed 3208032894 and concurrency 1 had 0 incorrect result(s) </span><span style="color:#bf616a;">and</span><span> 0 error(s) </span><span style="color:#bf616a;">at</span><span> API version 730
+</span><span style="color:#bf616a;">Completed</span><span> api test with random seed 3208032894 and 1000 operations
 </span></code></pre>
 <p>The great advantage of this method is that the tests are seeded, meaning the operations are:</p>
 <ul>
@@ -347,35 +347,35 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </span><span>}
 </span></code></pre>
 <p>Which can be runned inside the simulation while injecting some faults:</p>
-<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>fdbserver -r simulation -f /root/atomic.toml -b on --trace-format json
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">fdbserver -r</span><span> simulation</span><span style="color:#bf616a;"> -f</span><span> /root/atomic.toml</span><span style="color:#bf616a;"> -b</span><span> on</span><span style="color:#bf616a;"> --trace-format</span><span> json
 </span><span>
-</span><span># Choosing a random seed
-</span><span>Random seed is 394378360...
+</span><span style="color:#65737e;"># Choosing a random seed
+</span><span style="color:#bf616a;">Random</span><span> seed is 394378360...
 </span><span>
-</span><span># Then, everything is derived from the seed, including:
-</span><span># * cluster topology,
-</span><span># * cluster configuration,
-</span><span># * timing to inject faults,
-</span><span># * operations to run
-</span><span># * ...
-</span><span>Datacenter 0: 3/12 machines, 1/1 coordinators
-</span><span>Datacenter 1: 3/12 machines, 0/1 coordinators
-</span><span>Datacenter 2: 3/12 machines, 0/1 coordinators
-</span><span>Datacenter 3: 3/12 machines, 0/1 coordinators
+</span><span style="color:#65737e;"># Then, everything is derived from the seed, including:
+</span><span style="color:#65737e;"># * cluster topology,
+</span><span style="color:#65737e;"># * cluster configuration,
+</span><span style="color:#65737e;"># * timing to inject faults,
+</span><span style="color:#65737e;"># * operations to run
+</span><span style="color:#65737e;"># * ...
+</span><span style="color:#bf616a;">Datacenter</span><span> 0: 3/12 machines, 1/1 coordinators
+</span><span style="color:#bf616a;">Datacenter</span><span> 1: 3/12 machines, 0/1 coordinators
+</span><span style="color:#bf616a;">Datacenter</span><span> 2: 3/12 machines, 0/1 coordinators
+</span><span style="color:#bf616a;">Datacenter</span><span> 3: 3/12 machines, 0/1 coordinators
 </span><span>
-</span><span># Starting the Atomic workload
-</span><span>Run test:AtomicWorkload start
+</span><span style="color:#65737e;"># Starting the Atomic workload
+</span><span style="color:#bf616a;">Run</span><span> test:AtomicWorkload start
 </span><span>
-</span><span>AtomicWorkload complete
-</span><span>checking test (AtomicWorkload)...
+</span><span style="color:#bf616a;">AtomicWorkload</span><span> complete
+</span><span style="color:#bf616a;">checking</span><span> test (AtomicWorkload)</span><span style="color:#bf616a;">...
 </span><span>
-</span><span>5 test clients passed; 0 test clients failed
-</span><span>Run test:AtomicWorkload Done.
+</span><span style="color:#bf616a;">5</span><span> test clients passed; </span><span style="color:#bf616a;">0</span><span> test clients failed
+</span><span style="color:#bf616a;">Run</span><span> test:AtomicWorkload Done.
 </span><span>
-</span><span>1 tests passed; 0 tests failed.
+</span><span style="color:#bf616a;">1</span><span> tests passed; </span><span style="color:#bf616a;">0</span><span> tests failed.
 </span><span>
-</span><span>Unseed: 66324
-</span><span>Elapsed: 405.055622 simsec, 30.342000 real seconds
+</span><span style="color:#bf616a;">Unseed:</span><span> 66324
+</span><span style="color:#bf616a;">Elapsed:</span><span> 405.055622 simsec, 30.342000 real seconds
 </span></code></pre>
 <p>This has been a <strong>major keypoint</strong> for us to develop and operate <a href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
 <h2 id="closing-words"><a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a>Closing words</h2>
