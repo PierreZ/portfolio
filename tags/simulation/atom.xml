@@ -286,12 +286,14 @@
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;After years of operating many Apache-oriented distributed systems, I can confidently say that FoundationDB stands apart in its remarkable robustness—I&#x27;ve rarely been paged for it, which speaks volumes about its stability in production. At &lt;a href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;&quot;&gt;Clever Cloud&lt;&#x2F;a&gt;, we&#x27;ve even leveraged FoundationDB&#x27;s simulation framework during our application development by &lt;a href=&quot;&#x2F;posts&#x2F;providing-safety-fdb-rs&#x2F;#user-safety&quot;&gt;embedding Rust code inside FDB&#x27;s simulation environment&lt;&#x2F;a&gt;, allowing us to inherit the same reliability guarantees for our custom applications.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;tl-dr&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot;&gt;🔗&lt;&#x2F;a&gt;TL;DR&lt;&#x2F;h2&gt;
-&lt;p&gt;If you only have limited time, here are the three must-watch videos that will give you the best introduction to deterministic simulation testing:&lt;&#x2F;p&gt;
+&lt;p&gt;If you only have limited time, here are the four must-watch videos that will give you the best introduction to deterministic simulation testing:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=4fFDFbi3toc&quot;&gt;Will Wilson: Testing Distributed Systems with Deterministic Simulation&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=fFSPwJFXVlw&quot;&gt;Will Wilson: Autonomous Testing and the Future of Software Development&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=m3HwXlQPCEU&quot;&gt;Will Wilson: Testing a Single-Node, Single Threaded, Distributed System Written in 1985&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=eZ1mmqlq-mY&quot;&gt;Will Wilson: Let&#x27;s all write good software&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
+&lt;p&gt;(Yes, it seems Will Wilson has a monopoly on great introductory talks on the topic. Having had the chance to meet him, I can personally vouch that he is not a deterministic algorithm for generating insightful presentations, though the sheer quality of his talks might make you wonder.)&lt;&#x2F;p&gt;
 &lt;p&gt;A curated feed of recent articles and blog posts about DST can be found at &lt;a href=&quot;https:&#x2F;&#x2F;deterministic-simulation-testing.github.io&#x2F;planet-dst&#x2F;&quot;&gt;Planet DST&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;essential-reading&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#essential-reading&quot; aria-label=&quot;Anchor link for: essential-reading&quot;&gt;🔗&lt;&#x2F;a&gt;Essential Reading&lt;&#x2F;h2&gt;
 &lt;h3 id=&quot;foundations-concepts&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#foundations-concepts&quot; aria-label=&quot;Anchor link for: foundations-concepts&quot;&gt;🔗&lt;&#x2F;a&gt;Foundations &amp;amp; Concepts&lt;&#x2F;h3&gt;
@@ -329,6 +331,7 @@
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=rvHd4Y76-fs&quot;&gt;Marc Brooker: AWS re:Invent 2024 - Try again: The tools and techniques behind resilient systems (ARC403)&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=6y8Ga3oogLY&quot;&gt;TigerBeetle: Episode 064: Two In One, New Request Protocol and VOPR Tutorial&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;fosdem.org&#x2F;2025&#x2F;schedule&#x2F;event&#x2F;fosdem-2025-4279-squashing-the-heisenbug-with-deterministic-simulation-testing&#x2F;&quot;&gt;FOSDEM 2025: Squashing the Heisenbug with Deterministic Simulation Testing&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=024c8OwR4JM&quot;&gt;BugBash 2025: Lawrie Green - How to succeed in software testing without really trying&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;Have I missed any important resources on Deterministic Simulation Testing? This field is rapidly evolving, and I&#x27;m always looking to expand this collection. If you know of any articles, talks, or tools related to DST that should be included here, please reach out! I&#x27;d love to hear about your experiences with deterministic testing as well.&lt;&#x2F;p&gt;
