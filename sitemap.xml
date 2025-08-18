@@ -129,6 +129,10 @@
         <lastmod>2025-03-27T05:24:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/shipped-vs-operated/</loc>
+        <lastmod>2025-08-18</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/simulation-driven-development/</loc>
         <lastmod>2025-04-18T11:12:12+02:00</lastmod>
     </url>
@@ -283,6 +287,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/opensource/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/operation/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/optimization/</loc>
