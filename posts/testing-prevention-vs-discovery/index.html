@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testing: prevention vs discovery | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Testing: prevention vs discovery">
+<meta name="description" content="Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Testing: prevention vs discovery" />
+<meta name="twitter:description" content="Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Testing: prevention vs discovery">
+<meta property="og:description" content="Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-09-08" />
+
+
+
+<meta property="article:tag" content="testing" />
+
+<meta property="article:tag" content="simulation" />
+
+<meta property="article:tag" content="deterministic" />
+
+<meta property="article:tag" content="llm" />
+
+<meta property="article:tag" content="foundationdb" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Testing: prevention vs discovery</h1>
+      <p>
+        <i>
+          <time datetime="2025-09-08T00:00:00+00:00" pubdate>08 Sep, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/#building-for-discovery">Building for Discovery</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/#the-chaos-environment">The Chaos Environment</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/#why-even-simple-network-code-needs-chaos">Why Even Simple Network Code Needs Chaos</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/#the-paradigm-shift">The Paradigm Shift</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>While working on <a href="https://github.com/PierreZ/moonpool">moonpool</a>, my hobby project for studying and backporting FoundationDB's low-level engineering concepts (actor model, deterministic simulation, network fault injection), Claude Code did something remarkable: it found a bug I didn't know existed on its own. Not through traditional testing, but through active exploration of edge cases I hadn't considered.</p>
+<div style="text-align: center;">
+<p><img src="/images/testing-prevention-vs-discovery/claude-moonpool.png" alt="Claude Code autonomously debugging moonpool" /></p>
+</div>
+<p>Claude identified a faulty seed triggering an edge case, debugged it locally using deterministic replay, and added it to the test suite. All by itself. 🤯 <strong>This wasn't prevention but discovery.</strong> It's time to shift our testing paradigm from preventing regressions to actively discovering unknown bugs.</p>
+<h2 id="building-for-discovery"><a class="zola-anchor" href="#building-for-discovery" aria-label="Anchor link for: building-for-discovery">🔗</a>Building for Discovery</h2>
+<p>The difference between prevention and discovery isn't just philosophical but requires completely different system design. Moonpool was built from day one around three principles that enable active bug discovery:</p>
+<p><strong>Deterministic simulation</strong>: Every execution is completely reproducible. Given the same seed, the system makes identical decisions every time. This changes debugging from "I can't reproduce this" to "let me replay exactly what happened." More importantly, it lets LLMs explore the state space step by step without getting lost in non-deterministic noise.</p>
+<p><strong>Controlled failure injection</strong>: Built-in mechanisms intentionally introduce failures in controlled, reproducible ways. This includes timed failures like network delays and disconnects, plus <a href="https://transactional.blog/simulation/buggify">"buggify" mechanisms</a> that inject faulty internal state at strategic points in the code. Each buggify point is either enabled or disabled for an entire simulation run, creating consistent failure scenarios instead of random chaos. Instead of waiting for production to reveal edge cases, we force the system to encounter dangerous, bug-finding behaviors during development.</p>
+<p><strong>Observability through sometimes assertions</strong>: Borrowed from <a href="https://antithesis.com/docs/best_practices/sometimes_assertions/">Antithesis</a>, these verify we're actually discovering the edge cases we think we're testing. Here's what they look like:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Verify that server binds sometimes fail during chaos testing
+</span><span>sometimes_assert!(
+</span><span>    server_bind_fails,
+</span><span>    </span><span style="color:#bf616a;">self</span><span>.bind_result.</span><span style="color:#96b5b4;">is_err</span><span>(),
+</span><span>    &quot;</span><span style="color:#a3be8c;">Server bind should sometimes fail during chaos testing</span><span>&quot;
+</span><span>);
+</span><span>
+</span><span style="color:#65737e;">// Ensure message queues sometimes approach capacity under load
+</span><span>sometimes_assert!(
+</span><span>    peer_queue_near_capacity,
+</span><span>    state.send_queue.</span><span style="color:#96b5b4;">len</span><span>() &gt;= (</span><span style="color:#bf616a;">self</span><span>.config.max_queue_size as </span><span style="color:#b48ead;">f64 </span><span>* </span><span style="color:#d08770;">0.8</span><span>) as </span><span style="color:#b48ead;">usize</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">Message queue should sometimes approach capacity limit</span><span>&quot;
+</span><span>);
+</span></code></pre>
+<p>Traditional code coverage only tells you "this line was reached." Sometimes assertions verify "this interesting scenario actually happened." If a sometimes assertion never triggers across thousands of test runs, you know you're not discovering the edge cases that matter.</p>
+<p>These three elements shift testing from prevention to discovery. Instead of developers writing tests for scenarios they already know about, the system forces them to hit failure modes they haven't thought of. For Claude, this meant it could explore the state space step by step, understanding not just what the code does, but what breaks it.</p>
+<h2 id="the-chaos-environment"><a class="zola-anchor" href="#the-chaos-environment" aria-label="Anchor link for: the-chaos-environment">🔗</a>The Chaos Environment</h2>
+<p>Moonpool is currently limited to simulating TCP connections through its Peer abstraction, but even this narrow scope creates a surprisingly rich failure environment. Here's what the chaos testing configuration looks like (borrowed from TigerBeetle's approach):</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">impl </span><span>NetworkRandomizationRanges {
+</span><span>    </span><span style="color:#65737e;">/// Create chaos testing ranges with connection cutting enabled for distributed systems testing
+</span><span>    </span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">chaos_testing</span><span>() -&gt; </span><span style="color:#b48ead;">Self </span><span>{
+</span><span>        </span><span style="color:#b48ead;">Self </span><span>{
+</span><span>            bind_base_range: </span><span style="color:#d08770;">10</span><span>..</span><span style="color:#d08770;">200</span><span>,                       </span><span style="color:#65737e;">// 10-200µs
+</span><span>            bind_jitter_range: </span><span style="color:#d08770;">10</span><span>..</span><span style="color:#d08770;">100</span><span>,                     </span><span style="color:#65737e;">// 10-100µs
+</span><span>            accept_base_range: </span><span style="color:#d08770;">1000</span><span>..</span><span style="color:#d08770;">10000</span><span>,                 </span><span style="color:#65737e;">// 1-10ms in µs
+</span><span>            accept_jitter_range: </span><span style="color:#d08770;">1000</span><span>..</span><span style="color:#d08770;">15000</span><span>,               </span><span style="color:#65737e;">// 1-15ms in µs
+</span><span>            connect_base_range: </span><span style="color:#d08770;">1000</span><span>..</span><span style="color:#d08770;">50000</span><span>,                </span><span style="color:#65737e;">// 1-50ms in µs
+</span><span>            connect_jitter_range: </span><span style="color:#d08770;">5000</span><span>..</span><span style="color:#d08770;">100000</span><span>,             </span><span style="color:#65737e;">// 5-100ms in µs
+</span><span>            read_base_range: </span><span style="color:#d08770;">5</span><span>..</span><span style="color:#d08770;">100</span><span>,                        </span><span style="color:#65737e;">// 5-100µs
+</span><span>            read_jitter_range: </span><span style="color:#d08770;">10</span><span>..</span><span style="color:#d08770;">200</span><span>,                     </span><span style="color:#65737e;">// 10-200µs
+</span><span>            write_base_range: </span><span style="color:#d08770;">50</span><span>..</span><span style="color:#d08770;">1000</span><span>,                     </span><span style="color:#65737e;">// 50-1000µs
+</span><span>            write_jitter_range: </span><span style="color:#d08770;">100</span><span>..</span><span style="color:#d08770;">2000</span><span>,                  </span><span style="color:#65737e;">// 100-2000µs
+</span><span>            clogging_probability_range: </span><span style="color:#d08770;">0.1</span><span>..</span><span style="color:#d08770;">0.3</span><span>,           </span><span style="color:#65737e;">// 10-30% chance of temporary network congestion
+</span><span>            clogging_base_duration_range: </span><span style="color:#d08770;">50000</span><span>..</span><span style="color:#d08770;">300000</span><span>,    </span><span style="color:#65737e;">// 50-300ms congestion duration in µs
+</span><span>            clogging_jitter_duration_range: </span><span style="color:#d08770;">100000</span><span>..</span><span style="color:#d08770;">400000</span><span>, </span><span style="color:#65737e;">// 100-400ms additional congestion variance in µs
+</span><span>            cutting_probability_range: </span><span style="color:#d08770;">0.10</span><span>..</span><span style="color:#d08770;">0.20</span><span>,          </span><span style="color:#65737e;">// 10-20% cutting chance per tick
+</span><span>            cutting_reconnect_base_range: </span><span style="color:#d08770;">200000</span><span>..</span><span style="color:#d08770;">800000</span><span>,   </span><span style="color:#65737e;">// 200-800ms in µs
+</span><span>            cutting_reconnect_jitter_range: </span><span style="color:#d08770;">100000</span><span>..</span><span style="color:#d08770;">500000</span><span>, </span><span style="color:#65737e;">// 100-500ms in µs
+</span><span>            cutting_max_cuts_range: </span><span style="color:#d08770;">1</span><span>..</span><span style="color:#d08770;">3</span><span>,                   </span><span style="color:#65737e;">// 1-2 cuts per connection max (exclusive upper bound)
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>Even with just TCP simulation, this creates a hostile environment where connections randomly fail, messages get delayed, and network operations experience unpredictable latencies. Each seed represents a different combination of timing and probability, creating unique failure scenarios.</p>
+<h3 id="why-even-simple-network-code-needs-chaos"><a class="zola-anchor" href="#why-even-simple-network-code-needs-chaos" aria-label="Anchor link for: why-even-simple-network-code-needs-chaos">🔗</a>Why Even Simple Network Code Needs Chaos</h3>
+<p>You might think testing a simple peer implementation with fault injection is overkill, but production experience and research show otherwise. <a href="https://www.usenix.org/system/files/osdi18-alquraan.pdf">"An Analysis of Network-Partitioning Failures in Cloud Systems"</a> (OSDI '18) studied real-world failures and found:</p>
+<ul>
+<li><strong>80%</strong> of network partition failures have catastrophic impact</li>
+<li><strong>27%</strong> lead to data loss (the most common consequence)</li>
+<li><strong>90%</strong> of these failures are silent</li>
+<li><strong>21%</strong> cause permanent damage that persists even after the partition heals</li>
+<li><strong>83%</strong> need three additional events to manifest</li>
+</ul>
+<p>That last point is crucial; exactly the kind of complex interaction that deterministic simulation with fault injection helps uncover.</p>
+<p>My peer implementation only does simple ping-pong communication, yet it still took some work to make it robust enough to pass all the checks and assertions. It's enough complexity for Claude to discover edge cases in connection handling, retry logic, and recovery mechanisms.</p>
+<p>The breakthrough wasn't that Claude wrote perfect code but that <strong>Claude could discover and explore failure scenarios I hadn't thought to test, then use deterministic replay to debug and fix what went wrong.</strong></p>
+<h2 id="the-paradigm-shift"><a class="zola-anchor" href="#the-paradigm-shift" aria-label="Anchor link for: the-paradigm-shift">🔗</a>The Paradigm Shift</h2>
+<p>The difference between prevention and discovery completely changes how we think about software quality. <strong>Prevention testing asks "did we break what used to work?" Discovery testing asks "what else is broken that we haven't found yet?"</strong></p>
+<p>This shift creates a powerful feedback loop for young engineers and LLMs alike. Both developers and LLMs learn what production failure really looks like, not the sanitized version we imagine. When Claude can explore failure scenarios step by step and immediately see the results through sometimes assertions, it becomes a discovery partner that finds edge cases human intuition misses.</p>
+<p>This isn't theoretical. It's working in my hobby project today. Moonpool is definitely hobby-grade, but if a side project can enable LLM-assisted bug discovery, imagine what's possible with production systems designed from the ground up for deterministic testing.</p>
+<p>The <a href="https://github.com/apple/foundationdb">FoundationDB</a>, <a href="https://tigerbeetle.com/">TigerBeetle</a>, and <a href="https://antithesis.com/">Antithesis</a> communities have been practicing discovery-oriented testing for years. FoundationDB's legendary reliability comes from exactly this approach; deterministic simulation that actively hunts for bugs rather than just preventing regressions. After operating FoundationDB in production for 3 years, I can confirm it's by far the most robust and predictable distributed system I've encountered. Everything behaves exactly as documented, with none of the usual distributed systems surprises. I've written more about these ideas in my posts on <a href="/posts/simulation-driven-development/">simulation-driven development</a> and <a href="/posts/notes-about-foundationdb/">notes about FoundationDB</a>.</p>
+<p><strong>What's new is that LLMs can now participate in this process.</strong> Through deterministic simulation and sometimes assertions, we're not just telling the LLM "write good code" but showing it exactly what production failure looks like. If you're curious about production-grade implementations of these ideas, check out <a href="https://antithesis.com/">Antithesis</a>; their best hidden feature is that it works on any existing system without requiring a rewrite.</p>
+<p>The tools exist. The techniques are proven. <strong>Testing must evolve from prevention to discovery.</strong> The future isn't about writing better test cases but about building systems that actively reveal their own bugs.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with deterministic testing. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+          <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a>
+          <a href="https://pierrezemb.fr/tags/llm/">#llm</a>
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

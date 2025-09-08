@@ -141,6 +141,10 @@
         <lastmod>2020-09-30T00:24:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/testing-prevention-vs-discovery/</loc>
+        <lastmod>2025-09-08</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/thank-you-datafusion/</loc>
         <lastmod>2025-06-04</lastmod>
     </url>
@@ -263,6 +267,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/linux/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/llm/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/machinelearning/</loc>
