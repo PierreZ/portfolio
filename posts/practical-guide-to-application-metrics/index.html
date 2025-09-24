@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Practical Guide to Application Metrics: Where to Put Your Instrumentation | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
+<meta name="description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation" />
+<meta name="twitter:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
+<meta property="og:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-09-24" />
+
+
+
+<meta property="article:tag" content="observability" />
+
+<meta property="article:tag" content="metrics" />
+
+<meta property="article:tag" content="monitoring" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>A Practical Guide to Application Metrics: Where to Put Your Instrumentation</h1>
+      <p>
+        <i>
+          <time datetime="2025-09-24T00:00:00+00:00" pubdate>24 Sep, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-five-essential-metric-types">The Five Essential Metric Types</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#where-to-instrument-a-component-guide">Where to Instrument: A Component Guide</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#api-endpoints-and-http-requests">API Endpoints and HTTP Requests</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#database-layer">Database Layer</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#message-queues-and-background-processing">Message Queues and Background Processing</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#caching-and-locks">Caching and Locks</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#real-world-instrumentation-patterns">Real-World Instrumentation Patterns</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-request-lifecycle-pattern">The Request Lifecycle Pattern</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-resource-exhaustion-pattern">The Resource Exhaustion Pattern</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-business-context-pattern">The Business Context Pattern</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-error-classification-pattern">The Error Classification Pattern</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#best-practices-for-production-metrics">Best Practices for Production Metrics</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#naming-conventions-that-scale">Naming Conventions That Scale</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#critical-mistakes-to-avoid">Critical Mistakes to Avoid</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#a-note-on-histograms-or-why-they-re-not-here">A Note on Histograms (Or: Why They&#x27;re Not Here)</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#quick-reference-metrics-by-component">Quick Reference: Metrics by Component</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#conclusion">Conclusion</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>I keep having the same conversation with junior developers. They're building their first production service, and they ask: "Where should I put metrics in my application?" Then, inevitably: "What should I actually measure?"</p>
+<p>After mentoring dozens of engineers and running distributed systems for years, I've learned these aren't just beginner questions. Even experienced developers struggle with metrics placement because most of us learned observability as an afterthought, not as a core design principle.</p>
+<p>I've been on both sides: deploying services with no metrics and scrambling at 3 AM to understand what broke, and also building comprehensive monitoring that caught issues before users noticed. The difference isn't just about sleep quality; it's about building systems you can actually operate with confidence.</p>
+<p>This post gives you a practical framework for where to instrument your applications. No theory, just patterns I've learned from years of production incidents.</p>
+<h2 id="the-five-essential-metric-types"><a class="zola-anchor" href="#the-five-essential-metric-types" aria-label="Anchor link for: the-five-essential-metric-types">🔗</a>The Five Essential Metric Types</h2>
+<blockquote>
+<p><strong>Quick note on naming:</strong> Throughout this post, I use dots (<code>.</code>) as metric separators like <code>api.requests.total</code>. This works perfectly for us because we're heavy <a href="https://warp10.io/">Warp 10</a> users, and Warp 10 handles dots beautifully. If you're using Prometheus or other systems that prefer underscores, just replace the dots with underscores (<code>api_requests_total</code>). The patterns remain the same!</p>
+</blockquote>
+<p>All useful application metrics fall into five categories. Understanding these helps you decide what to instrument and where:</p>
+<p><strong>1. Operational Counters</strong> track discrete events in your system. Every time something happens (a request arrives, a job finishes, an error occurs), you increment a counter. The most critical insight here is measuring both success and failure paths. Most developers remember to count successful operations but forget the errors, leaving them blind when things break. Examples include <code>api.requests.total</code>, <code>db.queries.executed</code>, <code>auth.failures.count</code>, <code>payments.declined.count</code>, <code>jobs.started</code>, and <code>cache.evictions</code>. Always include labels like <code>method</code>, <code>endpoint</code>, <code>error_type</code> to provide context.</p>
+<p><strong>2. Resource Utilization</strong> answers "how much of X am I using right now?" These are your early warning system for capacity problems. Track current values with gauges, cumulative usage with counters. The key is monitoring resources before they're completely exhausted. A connection pool might support 100 connections, but if 95 are active, you're in trouble. Monitor <code>memory.used.bytes</code>, <code>db.connections.active</code>, <code>cache.size.entries</code>, <code>thread_pool.active_threads</code>, and <code>disk.space.available.bytes</code>. Watch for patterns like steadily increasing memory usage or connection counts approaching pool limits.</p>
+<p><strong>3. Performance and Latency</strong> shows how fast (or slow) things are running. Users feel latency immediately, making these often your most-watched dashboards. Always include units in metric names (<code>.ms</code>, <code>.seconds</code>, <code>.bytes</code>) to make dashboards self-documenting. Track <code>api.response_time.ms</code>, <code>db.query.duration.ms</code>, <code>jobs.processing_time.seconds</code>, and <code>external_api.call.duration.ms</code>. Monitor percentiles (p50, p95, p99) not just averages: a 1ms average with a 5-second p99 indicates serious problems.</p>
+<p><strong>4. Data Volume and Throughput</strong> tracks data flow through your system. These metrics are crucial for capacity planning and spotting bottlenecks before they cause user-visible problems. Monitor both input and output rates to understand processing efficiency. Focus on <code>queue.messages.consumed</code>, <code>network.bytes.sent</code>, <code>database.rows.processed</code>, <code>file_processor.files.completed</code>, and <code>batch_processor.records.per_batch</code>. Compare input vs output rates to identify accumulating backlogs.</p>
+<p><strong>5. Business Logic</strong> captures domain-specific metrics that relate to your actual business value. These are often the most valuable metrics for understanding how your application is really being used and whether technical problems are affecting business outcomes. Track <code>orders.placed</code>, <code>users.registered</code>, <code>searches.executed</code>, <code>documents.uploaded</code>, and <code>subscriptions.activated</code>. Don't underestimate these: they're what your executives care about and often reveal problems that technical metrics miss.</p>
+<table><thead><tr><th>Type</th><th>Examples</th><th>Key Insight</th></tr></thead><tbody>
+<tr><td>Operational</td><td><code>api.requests.total</code>, <code>auth.failures</code></td><td>Track success AND failure paths</td></tr>
+<tr><td>Resource</td><td><code>memory.used.bytes</code>, <code>db.connections.active</code></td><td>Early warning for capacity issues</td></tr>
+<tr><td>Performance</td><td><code>api.response_time.ms</code>, <code>db.query.duration.ms</code></td><td>Users feel latency immediately</td></tr>
+<tr><td>Throughput</td><td><code>queue.messages.consumed</code>, <code>network.bytes.sent</code></td><td>Understand data flow patterns</td></tr>
+<tr><td>Business</td><td><code>orders.placed</code>, <code>users.login</code></td><td>What executives actually care about</td></tr>
+</tbody></table>
+<h2 id="where-to-instrument-a-component-guide"><a class="zola-anchor" href="#where-to-instrument-a-component-guide" aria-label="Anchor link for: where-to-instrument-a-component-guide">🔗</a>Where to Instrument: A Component Guide</h2>
+<h3 id="api-endpoints-and-http-requests"><a class="zola-anchor" href="#api-endpoints-and-http-requests" aria-label="Anchor link for: api-endpoints-and-http-requests">🔗</a>API Endpoints and HTTP Requests</h3>
+<p>Your application's front door deserves comprehensive monitoring. Every HTTP request tells a story from arrival to completion, and you want to capture that entire narrative, not just the happy path. Track <code>api.requests.total</code> with labels for <code>method</code>, <code>endpoint</code>, and <code>status_code</code> to understand usage patterns. Monitor <code>api.response_time.ms</code> to show user experience, and <code>api.errors.count</code> with <code>error_type</code> labels to reveal reliability issues. Include <code>auth.failures.count</code> with <code>failure_reason</code> to catch security problems, and <code>api.concurrent_requests</code> to identify when you're approaching capacity limits. The common mistake is only instrumenting successful requests; the real value comes from measuring what happens when things go wrong: network timeouts, validation errors, service dependencies failing.</p>
+<h3 id="database-layer"><a class="zola-anchor" href="#database-layer" aria-label="Anchor link for: database-layer">🔗</a>Database Layer</h3>
+<p>Database calls are often your biggest bottleneck and cause more production incidents than any other component. For connection management, track <code>db.connections.active</code> (critical for pool management), <code>db.connections.idle</code> (available connections), and <code>db.connections.wait_time.ms</code> (time threads wait for connections). Monitor query performance with <code>db.queries.executed</code> (including <code>operation_type</code> and <code>table</code> labels), <code>db.query.duration.ms</code> (with percentile tracking), <code>db.slow_queries.count</code> (queries exceeding thresholds), and <code>db.query.rows_affected</code> (rows returned or modified). For error monitoring, track <code>db.errors.count</code> by <code>error_type</code> (timeout, deadlock, constraint violation) and <code>db.connection_errors.count</code> for connection failures. Connection pool exhaustion is a classic way to kill your entire application: if you support 100 connections and 95 are active, you're in danger. Start alerting when you hit 85% utilization.</p>
+<h3 id="message-queues-and-background-processing"><a class="zola-anchor" href="#message-queues-and-background-processing" aria-label="Anchor link for: message-queues-and-background-processing">🔗</a>Message Queues and Background Processing</h3>
+<p>Message queues often hide subtle bugs that manifest as slowly growing delays or stuck processing. Track data flow in both directions to catch issues early. For producers, monitor <code>queue.messages.produced</code> (with <code>topic</code> and <code>producer_id</code> labels), <code>queue.messages.failed</code> (with detailed <code>error_type</code> labels), <code>queue.producer.wait_time.ms</code> (time waiting for producer availability), and <code>queue.batch_size</code> (messages sent per batch). For consumers, track <code>queue.messages.consumed</code> (successfully processed), <code>queue.processing.time.ms</code> (per-message duration), <code>queue.processing.errors</code> (failures with <code>error_type</code> and recovery action), <code>jobs.queue.depth</code> (messages waiting), and <code>consumer.lag.ms</code> (how far behind real-time). Background jobs need additional metrics: <code>jobs.started</code>, <code>jobs.completed</code>, <code>jobs.failed</code> (with failure reason), <code>jobs.retry.count</code>, and <code>jobs.execution_time.seconds</code>. Growing queue depth usually means you're processing jobs slower than they're being created, leading to increasing delays and eventual system overload. Consumer lag helps you understand if you're keeping up with real-time processing needs.</p>
+<h3 id="caching-and-locks"><a class="zola-anchor" href="#caching-and-locks" aria-label="Anchor link for: caching-and-locks">🔗</a>Caching and Locks</h3>
+<p>For cache performance, track <code>cache.requests.total</code> (with <code>operation</code> labels for get, set, delete), <code>cache.hits</code> and <code>cache.misses</code> (for calculating hit ratio), <code>cache.size.entries</code> (current cached items), <code>cache.size.bytes</code> (memory usage), <code>cache.evictions</code> (items removed with <code>eviction_reason</code>), and <code>cache.operation.duration.ms</code> (time for operations). Hit ratio below 80% usually indicates problems: either you're caching the wrong things, cache TTL is too short, or your working set exceeds cache capacity.</p>
+<p>For lock and synchronization, monitor <code>locks.acquire.duration.ms</code> (time from requesting to getting lock), <code>locks.held.duration.ms</code> (how long locks are held), <code>locks.contention.count</code> (threads waiting), and <code>locks.timeouts.count</code> (failed acquisitions within timeout). Lock contention can kill your entire application, but it stays invisible without metrics. I've debugged more performance issues with lock metrics than almost any other single type. High acquisition times mean contention; long hold times suggest you're doing too much work while holding the lock.</p>
+<h2 id="real-world-instrumentation-patterns"><a class="zola-anchor" href="#real-world-instrumentation-patterns" aria-label="Anchor link for: real-world-instrumentation-patterns">🔗</a>Real-World Instrumentation Patterns</h2>
+<h3 id="the-request-lifecycle-pattern"><a class="zola-anchor" href="#the-request-lifecycle-pattern" aria-label="Anchor link for: the-request-lifecycle-pattern">🔗</a>The Request Lifecycle Pattern</h3>
+<p>For every user-facing operation, track the complete journey from entry to exit. This means instrumenting not just the success path, but every branch your code can take. Increment <code>api.requests.received</code> the moment a request hits your service, track <code>auth.attempts.count</code> and <code>auth.failures.count</code> separately to show both volume and failure rate, monitor <code>authorization.decisions.count</code> with labels for <code>granted</code> vs <code>denied</code>, measure <code>business_logic.duration.ms</code> to isolate your application logic performance, and record final <code>response.status_code</code> distribution to understand your error patterns. Most developers instrument the happy path but forget edge cases. A request that fails authentication never reaches your business logic, but it still uses resources and affects user experience. The real value comes from measuring what happens when things go wrong: network timeouts, validation errors, service dependencies failing.</p>
+<h3 id="the-resource-exhaustion-pattern"><a class="zola-anchor" href="#the-resource-exhaustion-pattern" aria-label="Anchor link for: the-resource-exhaustion-pattern">🔗</a>The Resource Exhaustion Pattern</h3>
+<p>Systems fail when they run out of resources. The trick is measuring resources before they're completely exhausted, giving you time to react. For connection pools, track <code>db.connections.active</code> vs <code>db.connections.max</code> and don't wait until you hit 100% utilization: start alerting at 85%. Monitor <code>db.connections.wait_time.ms</code> because long waits indicate you're close to exhaustion even if you haven't hit the limit. For memory pressure, monitor both <code>memory.heap.used.bytes</code> and <code>gc.frequency.per_minute</code> since high GC frequency often predicts memory pressure before OutOfMemory errors occur. Track <code>memory.allocation.rate.bytes_per_second</code> to understand if your allocation rate is sustainable. For queue management, a growing <code>jobs.queue.depth</code> indicates you're processing work slower than it arrives, eventually leading to timeouts and system overload. Track <code>queue.processing.rate.per_second</code> and <code>queue.arrival.rate.per_second</code>: the relationship between these rates tells you if you're keeping up. For disk space, track <code>disk.available.bytes</code> and <code>disk.usage.rate.bytes_per_hour</code>. Linear growth can be predicted and prevented, while sudden spikes indicate immediate problems.</p>
+<h3 id="the-business-context-pattern"><a class="zola-anchor" href="#the-business-context-pattern" aria-label="Anchor link for: the-business-context-pattern">🔗</a>The Business Context Pattern</h3>
+<p>Technical metrics tell you <em>what</em> is happening; business metrics tell you <em>why</em> it matters. Always pair technical instrumentation with business context to understand the real impact of technical problems. Track <code>api.errors.count</code> alongside <code>orders.lost.count</code> to understand how technical problems affect sales, monitor <code>payment_service.response_time.ms</code> alongside <code>checkout.abandonment.rate</code> to see if slow payments drive users away, and measure <code>search.response_time.ms</code> alongside <code>search.result_clicks.count</code> to understand if slow search reduces engagement. For user experience correlation, pair <code>cache.misses.count</code> with <code>page.load.time.ms</code> to quantify cache performance impact, track <code>db.slow_queries.count</code> alongside <code>user.session.duration.minutes</code> to see if database performance affects user retention, and monitor <code>auth.failures.count</code> with <code>support.tickets.count</code> to predict support load from technical issues. For capacity planning, correlate <code>server.cpu.usage.percent</code> with <code>concurrent.users.count</code> to understand scaling requirements, track <code>memory.usage.bytes</code> alongside <code>active.sessions.count</code> to predict memory needs, and monitor <code>network.bandwidth.used.mbps</code> with <code>file.uploads.count</code> to plan infrastructure scaling. This pairing helps you understand the business impact of technical problems and prioritize fixes based on actual user and revenue impact.</p>
+<h3 id="the-error-classification-pattern"><a class="zola-anchor" href="#the-error-classification-pattern" aria-label="Anchor link for: the-error-classification-pattern">🔗</a>The Error Classification Pattern</h3>
+<p>Not all errors are created equal. Classify errors by their impact and actionability to build appropriate response strategies. User errors (4xx) like <code>auth.invalid_credentials</code>, <code>validation.missing_field</code>, or <code>resource.not_found</code> are usually not your fault, but track patterns to identify UX issues. High rates might indicate confusing interfaces or inadequate client-side validation; alert on unusual spikes that might indicate attacks or system confusion. System errors (5xx) like <code>db.connection_timeout</code>, <code>service.unavailable</code>, or <code>memory.exhausted</code> are your responsibility to fix immediately. They're always actionable and usually indicate infrastructure or code problems that should trigger immediate alerts and investigation. External dependency errors like <code>payment_gateway.timeout</code>, <code>third_party_api.rate_limited</code>, or <code>cdn.unavailable</code> are outside your direct control but affect users. They require fallback strategies and user communication, and help predict when to escalate with external providers. Distinguish transient errors (<code>network.timeout</code>, <code>rate_limit.exceeded</code> that often resolve themselves) from persistent errors (<code>config.invalid</code>, <code>database.schema_mismatch</code> that require immediate intervention). Each category needs different alerting strategies, escalation procedures, and response timeframes: user errors might warrant daily review, system errors need immediate alerts, external errors require monitoring trends and fallback activation.</p>
+<h2 id="best-practices-for-production-metrics"><a class="zola-anchor" href="#best-practices-for-production-metrics" aria-label="Anchor link for: best-practices-for-production-metrics">🔗</a>Best Practices for Production Metrics</h2>
+<h3 id="naming-conventions-that-scale"><a class="zola-anchor" href="#naming-conventions-that-scale" aria-label="Anchor link for: naming-conventions-that-scale">🔗</a>Naming Conventions That Scale</h3>
+<p>Consistent naming prevents the confusion that kills metrics adoption. Use a clear hierarchy: <code>&lt;system&gt;.&lt;component&gt;.&lt;operation&gt;.&lt;metric_type&gt;</code>. Examples include <code>api.auth.requests.count</code>, <code>db.user_queries.duration.ms</code>, <code>cache.metadata.hits.total</code>, and <code>queue.order_processing.messages.consumed</code>. Standardize your suffixes: <code>.count/.total</code> for event counters, <code>.current/.active</code> for current gauge values, <code>.duration/.ms/.seconds</code> for time measurements, <code>.bytes/.mb/.gb</code> for data volume, <code>.errors/.failures</code> for error counters, and <code>.ratio/.rate</code> for ratios and rates. Avoid mixing naming styles (<code>requestCount</code> vs <code>request_total</code>), ambiguous units (<code>response_time</code> without units), and inconsistent hierarchies (<code>api_requests</code> vs <code>requests.api</code>). This consistency pays off during 3 AM troubleshooting when you don't want to waste mental energy remembering naming schemes.</p>
+<h3 id="critical-mistakes-to-avoid"><a class="zola-anchor" href="#critical-mistakes-to-avoid" aria-label="Anchor link for: critical-mistakes-to-avoid">🔗</a>Critical Mistakes to Avoid</h3>
+<p>The biggest mistake is using unbounded values as labels. Don't tag metrics with user IDs, session tokens, IP addresses, or other unlimited values; your metrics system will eventually explode from too many unique series. Use <code>api.requests{user_type="premium", region="us-west"}</code> instead of <code>api.requests{user_id="12345", session="abc123xyz"}</code>. Always instrument failure cases, not just success paths. Track both <code>payments.succeeded</code> AND <code>payments.failed</code> with error type labels, monitor <code>auth.attempts</code> alongside <code>auth.failures</code> to understand failure rates, and count <code>file.uploads.completed</code> and <code>file.uploads.failed</code> to see processing reliability. Every metric has a cost in storage, network bandwidth, and cognitive load. If you can't explain why a metric matters for operations or business decisions, skip it. Ask yourself: "Would this metric help me during an incident?" Metrics that stop updating can be worse than no metrics at all. Always include heartbeat or health check metrics to verify your instrumentation is working; track <code>metrics.last_updated.timestamp</code> to detect collection failures.</p>
+<h2 id="a-note-on-histograms-or-why-they-re-not-here"><a class="zola-anchor" href="#a-note-on-histograms-or-why-they-re-not-here" aria-label="Anchor link for: a-note-on-histograms-or-why-they-re-not-here">🔗</a>A Note on Histograms (Or: Why They're Not Here)</h2>
+<p>I know what some of you are thinking: "Where are the histograms?" After all, this is a comprehensive guide to application metrics, and histograms are everywhere in monitoring discussions. Well, I deliberately left them out, and here's why.</p>
+<p>Prometheus histograms are fundamentally broken in ways that make them more dangerous than useful. The core problem is what I call the bucket pre-configuration paradox: you must define bucket boundaries before you know your data distribution. As LinuxCzar eloquently put it in his <a href="https://linuxczar.net/blog/2017/06/15/prometheus-histogram-2/">"tale of woe"</a>, this creates an impossible choice between accuracy (many buckets) and operability (few buckets). Get it wrong, and you either lose precision or crash your Prometheus server with <a href="https://github.com/prometheus/prometheus/discussions/10598">cardinality explosion</a>.</p>
+<p>But the problems run deeper. You <a href="https://www.solarwinds.com/blog/why-percentiles-dont-work-the-way-you-think">mathematically cannot aggregate percentiles</a> across instances because the underlying event data is lost. The linear interpolation algorithm produces <a href="https://prometheus.io/docs/practices/histograms/">significant estimation errors</a>, and Prometheus's scraping architecture introduces <a href="https://github.com/prometheus/prometheus/issues/1887">data corruption</a> where histogram buckets update inconsistently. The <a href="https://chronosphere.io/learn/histograms-for-complex-systems/">operational burden</a> never ends: every performance improvement potentially invalidates your bucket choices, forcing constant manual reconfiguration.</p>
+<p>Instead, I prefer the combination of simple counters and gauges paired with distributed tracing. Trace-derived global metrics give you actual data distributions without guessing bucket boundaries, eliminate the aggregation problem by preserving request context, and adapt automatically as your system evolves. You get better insights with less operational overhead, which seems like a better deal to me.</p>
+<h2 id="quick-reference-metrics-by-component"><a class="zola-anchor" href="#quick-reference-metrics-by-component" aria-label="Anchor link for: quick-reference-metrics-by-component">🔗</a>Quick Reference: Metrics by Component</h2>
+<table><thead><tr><th>Component</th><th>Essential Metrics</th><th>Purpose</th><th>Key Labels</th></tr></thead><tbody>
+<tr><td><strong>API Endpoints</strong></td><td><code>api.requests.total</code><br><code>api.response_time.ms</code><br><code>api.errors.count</code><br><code>auth.failures.count</code></td><td>Track every request lifecycle<br>Monitor user-facing performance<br>Catch errors before users complain<br>Security monitoring</td><td><code>method</code>, <code>endpoint</code>, <code>status_code</code><br><code>endpoint</code>, <code>user_type</code><br><code>error_type</code>, <code>endpoint</code><br><code>failure_reason</code></td></tr>
+<tr><td><strong>Database</strong></td><td><code>db.connections.active</code><br><code>db.queries.executed</code><br><code>db.query.duration.ms</code><br><code>db.errors.count</code><br><code>db.slow_queries.count</code></td><td>Prevent connection exhaustion<br>Track database usage patterns<br>Identify performance bottlenecks<br>Monitor database health<br>Catch expensive queries</td><td><code>pool_name</code><br><code>operation_type</code>, <code>table</code><br><code>operation_type</code>, <code>table</code><br><code>error_type</code>, <code>operation</code><br><code>table</code>, <code>query_type</code></td></tr>
+<tr><td><strong>Message Queues</strong></td><td><code>queue.messages.produced</code><br><code>queue.messages.consumed</code><br><code>queue.processing.time.ms</code><br><code>queue.processing.errors</code><br><code>jobs.queue.depth</code></td><td>Track producer health<br>Monitor consumer throughput<br>Identify processing bottlenecks<br>Catch processing failures<br>Detect backlog buildup</td><td><code>topic</code>, <code>producer_id</code><br><code>topic</code>, <code>consumer_group</code><br><code>topic</code>, <code>message_type</code><br><code>error_type</code>, <code>topic</code><br><code>queue_name</code>, <code>priority</code></td></tr>
+<tr><td><strong>Cache</strong></td><td><code>cache.requests.total</code><br><code>cache.hits</code><br><code>cache.misses</code><br><code>cache.size.entries</code><br><code>cache.evictions</code></td><td>Monitor cache usage<br>Track cache effectiveness<br>Identify cache problems<br>Monitor memory usage<br>Understand eviction patterns</td><td><code>cache_type</code>, <code>operation</code><br><code>cache_type</code>, <code>key_prefix</code><br><code>cache_type</code>, <code>miss_reason</code><br><code>cache_type</code><br><code>cache_type</code>, <code>eviction_reason</code></td></tr>
+<tr><td><strong>Locks</strong></td><td><code>locks.acquire.duration.ms</code><br><code>locks.held.duration.ms</code><br><code>locks.contention.count</code></td><td>Detect lock contention<br>Find locks held too long<br>Monitor thread blocking</td><td><code>lock_name</code>, <code>thread_type</code><br><code>lock_name</code>, <code>operation</code><br><code>lock_name</code></td></tr>
+<tr><td><strong>Business</strong></td><td><code>orders.placed</code><br><code>users.login</code><br><code>payments.processed</code><br><code>feature.usage.count</code><br><code>workflow.state_changes</code></td><td>Business KPI tracking<br>User activity monitoring<br>Revenue stream health<br>Feature adoption metrics<br>Process flow monitoring</td><td><code>user_type</code>, <code>order_value_range</code><br><code>user_type</code>, <code>login_method</code><br><code>payment_method</code>, <code>amount_range</code><br><code>feature_name</code>, <code>user_segment</code><br><code>workflow_name</code>, <code>from_state</code>, <code>to_state</code></td></tr>
+</tbody></table>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
+<p>Effective metrics instrumentation isn't about collecting everything; it's about collecting the right things in the right places. Start with the five essential metric types, instrument your critical components, and build from there.</p>
+<p>Think about metrics as part of your application design, not an afterthought. When writing code, ask yourself: "How will I know if this is working correctly in production?" The answer guides your instrumentation decisions.</p>
+<p>The best observability system helps you sleep better at night. If your metrics aren't giving you confidence in your system's health, you're measuring the wrong things.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with application metrics. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/observability/">#observability</a>
+          <a href="https://pierrezemb.fr/tags/metrics/">#metrics</a>
+          <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
