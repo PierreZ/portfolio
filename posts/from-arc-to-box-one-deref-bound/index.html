@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Arc to Box: One Deref Bound to Rule Them All | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="From Arc to Box: One Deref Bound to Rule Them All">
+<meta name="description" content="How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="From Arc to Box: One Deref Bound to Rule Them All" />
+<meta name="twitter:description" content="How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="From Arc to Box: One Deref Bound to Rule Them All">
+<meta property="og:description" content="How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-10-02" />
+
+
+
+<meta property="article:tag" content="rust" />
+
+<meta property="article:tag" content="foundationdb" />
+
+<meta property="article:tag" content="programming" />
+
+<meta property="article:tag" content="metaprogramming" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>From Arc to Box: One Deref Bound to Rule Them All</h1>
+      <p>
+        <i>
+          <time datetime="2025-10-02T00:00:00+00:00" pubdate>02 Oct, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/#the-problem-two-transaction-types-one-api">The Problem: Two Transaction Types, One API</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/#the-obvious-solutions-didn-t-work">The Obvious Solutions Didn&#x27;t Work</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/#the-accidental-solution">The Accidental Solution</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/#the-pattern-arc-deref-universal-apis">The Pattern: Arc + Deref = Universal APIs</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>While working on <a href="https://github.com/foundationdb-rs/foundationdb-rs">FoundationDB-rs</a>, I hit a design problem that seemed like it would require complex trait gymnastics. I had two transaction types with identical APIs but different ownership semantics, and I needed functions to accept both. The solution turned out to be embarrassingly simple. It was already implemented.</p>
+<h2 id="the-problem-two-transaction-types-one-api"><a class="zola-anchor" href="#the-problem-two-transaction-types-one-api" aria-label="Anchor link for: the-problem-two-transaction-types-one-api">🔗</a>The Problem: Two Transaction Types, One API</h2>
+<p>FoundationDB-rs has two transaction types that do exactly the same thing but with different ownership models:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub struct </span><span>Transaction {
+</span><span>    </span><span style="color:#bf616a;">inner</span><span>: NonNull&lt;fdb_sys::FDBTransaction&gt;,
+</span><span>    </span><span style="color:#bf616a;">metrics</span><span>: Option&lt;TransactionMetrics&gt;,
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">pub struct </span><span>RetryableTransaction {
+</span><span>    </span><span style="color:#bf616a;">inner</span><span>: Arc&lt;Transaction&gt;,  </span><span style="color:#65737e;">// Arc needed for retry loop ownership
+</span><span>}
+</span></code></pre>
+<p><strong>Why two types?</strong> FoundationDB requires retry loops for handling conflicts and retriable errors. The <code>Transaction</code> is perfect when you're managing retries manually or doing single-shot operations. The <code>RetryableTransaction</code> wraps it in an <code>Arc</code> so the automatic retry machinery in <code>Database::run()</code> can clone references across async boundaries and exponential backoff delays.</p>
+<p>The challenge: users need to write code that works with both. Real FoundationDB applications mix both patterns depending on the use case.</p>
+<h2 id="the-obvious-solutions-didn-t-work"><a class="zola-anchor" href="#the-obvious-solutions-didn-t-work" aria-label="Anchor link for: the-obvious-solutions-didn-t-work">🔗</a>The Obvious Solutions Didn't Work</h2>
+<p>My first instinct was creating a trait. But FoundationDB-rs operates directly on raw C pointers (<code>NonNull&lt;fdb_sys::FDBTransaction&gt;</code>) with custom <code>Future</code> implementations that handle FFI complexity and error mapping. Writing a trait with async methods that return these custom futures means associated types, lifetime bounds, and complex error handling. The resulting trait becomes painful to use and understand.</p>
+<p>I considered an enum wrapper:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">enum </span><span>AnyTransaction&lt;&#39;a&gt; {
+</span><span>    Regular(&amp;</span><span style="color:#b48ead;">&#39;a</span><span> Transaction),
+</span><span>    Retryable(&amp;</span><span style="color:#b48ead;">&#39;a</span><span> RetryableTransaction),
+</span><span>}
+</span></code></pre>
+<p>But this felt wrong. Users would need to match everywhere, and it adds runtime overhead for what should be a compile-time decision. Plus it doesn't feel natural to use.</p>
+<h2 id="the-accidental-solution"><a class="zola-anchor" href="#the-accidental-solution" aria-label="Anchor link for: the-accidental-solution">🔗</a>The Accidental Solution</h2>
+<p>The <code>RetryableTransaction</code> already had this implementation for convenience:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">impl </span><span>Deref </span><span style="color:#b48ead;">for </span><span>RetryableTransaction {
+</span><span>    </span><span style="color:#b48ead;">type </span><span>Target = Transaction;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">deref</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; &amp;Transaction {
+</span><span>        </span><span style="color:#bf616a;">self</span><span>.inner.</span><span style="color:#96b5b4;">deref</span><span>()
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>I'd added this so users could call transaction methods directly on <code>RetryableTransaction</code> instances. But this <strong>accidentally solved the entire design problem.</strong></p>
+<p>Functions can accept both types through a simple generic bound:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">perform_operations</span><span>&lt;T&gt;(</span><span style="color:#bf616a;">tx</span><span>: &amp;T) -&gt; FdbResult&lt;()&gt;
+</span><span style="color:#b48ead;">where
+</span><span>    T: Deref&lt;Target = Transaction&gt;,
+</span><span>{
+</span><span>    tx.</span><span style="color:#96b5b4;">set</span><span>(</span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">key</span><span>&quot;, </span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">value</span><span>&quot;);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> value = tx.</span><span style="color:#96b5b4;">get</span><span>(</span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">key</span><span>&quot;, </span><span style="color:#d08770;">false</span><span>).await?;
+</span><span>    tx.</span><span style="color:#96b5b4;">clear_range</span><span>(</span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">start</span><span>&quot;, </span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">end</span><span>&quot;);
+</span><span>    Ok(())
+</span><span>}
+</span></code></pre>
+<p>Now the same function works seamlessly with both transaction types:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Direct transaction usage
+</span><span style="color:#b48ead;">let</span><span> tx = db.</span><span style="color:#96b5b4;">create_transaction</span><span>()?;
+</span><span style="color:#96b5b4;">perform_operations</span><span>(&amp;tx).await?;
+</span><span>
+</span><span style="color:#65737e;">// Automatic retry loop usage
+</span><span>db.</span><span style="color:#96b5b4;">run</span><span>(|</span><span style="color:#bf616a;">rtx</span><span>| async </span><span style="color:#b48ead;">move </span><span>{
+</span><span>    </span><span style="color:#96b5b4;">perform_operations</span><span>(&amp;rtx).await?;  </span><span style="color:#65737e;">// Same function, no changes needed!
+</span><span>    Ok(())
+</span><span>}).await?;
+</span></code></pre>
+<p>The compiler handles everything through deref coercion. All methods of <code>Transaction</code> remain directly accessible on both types, and there's zero runtime overhead.</p>
+<h2 id="the-pattern-arc-deref-universal-apis"><a class="zola-anchor" href="#the-pattern-arc-deref-universal-apis" aria-label="Anchor link for: the-pattern-arc-deref-universal-apis">🔗</a>The Pattern: Arc<T> + Deref = Universal APIs</h2>
+<p>This pattern works whenever you have a type <code>T</code> and a wrapper containing <code>Arc&lt;T&gt;</code> (or <code>Box&lt;T&gt;</code>, <code>Rc&lt;T&gt;</code>, etc.). As long as the wrapper implements <code>Deref&lt;Target = T&gt;</code>, you can write generic functions that accept both:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Any function with this signature accepts:
+</span><span style="color:#65737e;">// - &amp;T directly  
+</span><span style="color:#65737e;">// - &amp;WrapperType where WrapperType: Deref&lt;Target = T&gt;
+</span><span style="color:#65737e;">// - &amp;Arc&lt;T&gt;, &amp;Box&lt;T&gt;, &amp;Rc&lt;T&gt; (stdlib types already implement Deref)
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">use_any_version</span><span>&lt;D&gt;(</span><span style="color:#bf616a;">val</span><span>: &amp;D)
+</span><span style="color:#b48ead;">where 
+</span><span>    D: Deref&lt;Target = T&gt;,
+</span><span>{
+</span><span>    val.</span><span style="color:#96b5b4;">some_method</span><span>();  </span><span style="color:#65737e;">// All methods of T available through deref coercion
+</span><span>}
+</span></code></pre>
+<p>The key insight: when you're designing APIs that need to work with both <code>T</code> and <code>Arc&lt;T&gt;</code>, don't reach for traits or enums. The standard library already solved this. <code>Arc&lt;T&gt;</code> implements <code>Deref&lt;Target = T&gt;</code>, and your custom wrapper types should do the same.</p>
+<p>Once you implement <code>Deref</code>, any function that accepts <code>&amp;D where D: Deref&lt;Target = T&gt;</code> automatically works with your owned type, your wrapper type, and any smart pointer containing your type. The compiler handles everything through deref coercion, and you get zero-cost abstraction that feels completely natural to use.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with Deref patterns in Rust. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/programming/">#programming</a>
+          <a href="https://pierrezemb.fr/tags/metaprogramming/">#metaprogramming</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

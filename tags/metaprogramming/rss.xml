@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Pierre Zemb&#x27;s Blog - metaprogramming</title>
+      <link>https://pierrezemb.fr</link>
+      <description>Pierre Zemb personal blog</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://pierrezemb.fr/tags/metaprogramming/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Thu, 02 Oct 2025 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>From Arc to Box: One Deref Bound to Rule Them All</title>
+          <pubDate>Thu, 02 Oct 2025 00:00:00 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/</link>
+          <guid>https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">&lt;p&gt;While working on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&quot;&gt;FoundationDB-rs&lt;&#x2F;a&gt;, I hit a design problem that seemed like it would require complex trait gymnastics. I had two transaction types with identical APIs but different ownership semantics, and I needed functions to accept both. The solution turned out to be embarrassingly simple. It was already implemented.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-problem-two-transaction-types-one-api&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-problem-two-transaction-types-one-api&quot; aria-label=&quot;Anchor link for: the-problem-two-transaction-types-one-api&quot;&gt;🔗&lt;&#x2F;a&gt;The Problem: Two Transaction Types, One API&lt;&#x2F;h2&gt;
+&lt;p&gt;FoundationDB-rs has two transaction types that do exactly the same thing but with different ownership models:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;Transaction {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;inner&lt;&#x2F;span&gt;&lt;span&gt;: NonNull&amp;lt;fdb_sys::FDBTransaction&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;metrics&lt;&#x2F;span&gt;&lt;span&gt;: Option&amp;lt;TransactionMetrics&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;RetryableTransaction {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;inner&lt;&#x2F;span&gt;&lt;span&gt;: Arc&amp;lt;Transaction&amp;gt;,  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Arc needed for retry loop ownership
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Why two types?&lt;&#x2F;strong&gt; FoundationDB requires retry loops for handling conflicts and retriable errors. The &lt;code&gt;Transaction&lt;&#x2F;code&gt; is perfect when you&#x27;re managing retries manually or doing single-shot operations. The &lt;code&gt;RetryableTransaction&lt;&#x2F;code&gt; wraps it in an &lt;code&gt;Arc&lt;&#x2F;code&gt; so the automatic retry machinery in &lt;code&gt;Database::run()&lt;&#x2F;code&gt; can clone references across async boundaries and exponential backoff delays.&lt;&#x2F;p&gt;
+&lt;p&gt;The challenge: users need to write code that works with both. Real FoundationDB applications mix both patterns depending on the use case.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-obvious-solutions-didn-t-work&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-obvious-solutions-didn-t-work&quot; aria-label=&quot;Anchor link for: the-obvious-solutions-didn-t-work&quot;&gt;🔗&lt;&#x2F;a&gt;The Obvious Solutions Didn&#x27;t Work&lt;&#x2F;h2&gt;
+&lt;p&gt;My first instinct was creating a trait. But FoundationDB-rs operates directly on raw C pointers (&lt;code&gt;NonNull&amp;lt;fdb_sys::FDBTransaction&amp;gt;&lt;&#x2F;code&gt;) with custom &lt;code&gt;Future&lt;&#x2F;code&gt; implementations that handle FFI complexity and error mapping. Writing a trait with async methods that return these custom futures means associated types, lifetime bounds, and complex error handling. The resulting trait becomes painful to use and understand.&lt;&#x2F;p&gt;
+&lt;p&gt;I considered an enum wrapper:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;enum &lt;&#x2F;span&gt;&lt;span&gt;AnyTransaction&amp;lt;&amp;#39;a&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    Regular(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt; Transaction),
+&lt;&#x2F;span&gt;&lt;span&gt;    Retryable(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt; RetryableTransaction),
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But this felt wrong. Users would need to match everywhere, and it adds runtime overhead for what should be a compile-time decision. Plus it doesn&#x27;t feel natural to use.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-accidental-solution&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-accidental-solution&quot; aria-label=&quot;Anchor link for: the-accidental-solution&quot;&gt;🔗&lt;&#x2F;a&gt;The Accidental Solution&lt;&#x2F;h2&gt;
+&lt;p&gt;The &lt;code&gt;RetryableTransaction&lt;&#x2F;code&gt; already had this implementation for convenience:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;impl &lt;&#x2F;span&gt;&lt;span&gt;Deref &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;RetryableTransaction {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;Target = Transaction;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;deref&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) -&amp;gt; &amp;amp;Transaction {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.inner.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;deref&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I&#x27;d added this so users could call transaction methods directly on &lt;code&gt;RetryableTransaction&lt;&#x2F;code&gt; instances. But this &lt;strong&gt;accidentally solved the entire design problem.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Functions can accept both types through a simple generic bound:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;perform_operations&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;T&amp;gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tx&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;T) -&amp;gt; FdbResult&amp;lt;()&amp;gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;where
+&lt;&#x2F;span&gt;&lt;span&gt;    T: Deref&amp;lt;Target = Transaction&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    tx.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;set&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;key&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;value&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; value = tx.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;get&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;key&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false&lt;&#x2F;span&gt;&lt;span&gt;).await?;
+&lt;&#x2F;span&gt;&lt;span&gt;    tx.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;clear_range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;    Ok(())
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now the same function works seamlessly with both transaction types:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Direct transaction usage
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; tx = db.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;create_transaction&lt;&#x2F;span&gt;&lt;span&gt;()?;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;perform_operations&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;tx).await?;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Automatic retry loop usage
+&lt;&#x2F;span&gt;&lt;span&gt;db.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;(|&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rtx&lt;&#x2F;span&gt;&lt;span&gt;| async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;move &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;perform_operations&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;rtx).await?;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Same function, no changes needed!
+&lt;&#x2F;span&gt;&lt;span&gt;    Ok(())
+&lt;&#x2F;span&gt;&lt;span&gt;}).await?;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The compiler handles everything through deref coercion. All methods of &lt;code&gt;Transaction&lt;&#x2F;code&gt; remain directly accessible on both types, and there&#x27;s zero runtime overhead.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-pattern-arc-deref-universal-apis&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-pattern-arc-deref-universal-apis&quot; aria-label=&quot;Anchor link for: the-pattern-arc-deref-universal-apis&quot;&gt;🔗&lt;&#x2F;a&gt;The Pattern: Arc&lt;T&gt; + Deref = Universal APIs&lt;&#x2F;h2&gt;
+&lt;p&gt;This pattern works whenever you have a type &lt;code&gt;T&lt;&#x2F;code&gt; and a wrapper containing &lt;code&gt;Arc&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; (or &lt;code&gt;Box&amp;lt;T&amp;gt;&lt;&#x2F;code&gt;, &lt;code&gt;Rc&amp;lt;T&amp;gt;&lt;&#x2F;code&gt;, etc.). As long as the wrapper implements &lt;code&gt;Deref&amp;lt;Target = T&amp;gt;&lt;&#x2F;code&gt;, you can write generic functions that accept both:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Any function with this signature accepts:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; - &amp;amp;T directly  
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; - &amp;amp;WrapperType where WrapperType: Deref&amp;lt;Target = T&amp;gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; - &amp;amp;Arc&amp;lt;T&amp;gt;, &amp;amp;Box&amp;lt;T&amp;gt;, &amp;amp;Rc&amp;lt;T&amp;gt; (stdlib types already implement Deref)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;use_any_version&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;D&amp;gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;val&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;D)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;where 
+&lt;&#x2F;span&gt;&lt;span&gt;    D: Deref&amp;lt;Target = T&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    val.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;some_method&lt;&#x2F;span&gt;&lt;span&gt;();  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; All methods of T available through deref coercion
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The key insight: when you&#x27;re designing APIs that need to work with both &lt;code&gt;T&lt;&#x2F;code&gt; and &lt;code&gt;Arc&amp;lt;T&amp;gt;&lt;&#x2F;code&gt;, don&#x27;t reach for traits or enums. The standard library already solved this. &lt;code&gt;Arc&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; implements &lt;code&gt;Deref&amp;lt;Target = T&amp;gt;&lt;&#x2F;code&gt;, and your custom wrapper types should do the same.&lt;&#x2F;p&gt;
+&lt;p&gt;Once you implement &lt;code&gt;Deref&lt;&#x2F;code&gt;, any function that accepts &lt;code&gt;&amp;amp;D where D: Deref&amp;lt;Target = T&amp;gt;&lt;&#x2F;code&gt; automatically works with your owned type, your wrapper type, and any smart pointer containing your type. The compiler handles everything through deref coercion, and you get zero-cost abstraction that feels completely natural to use.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with Deref patterns in Rust. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</description>
+          <category domain="tag">rust</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">programming</category>
+          <category domain="tag">metaprogramming</category>
+      </item>
+    </channel>
+</rss>
