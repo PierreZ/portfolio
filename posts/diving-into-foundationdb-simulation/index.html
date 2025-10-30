@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diving into FoundationDB&#x27;s Simulation Framework | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Diving into FoundationDB&#x27;s Simulation Framework">
+<meta name="description" content="How FoundationDB achieves legendary reliability through deterministic simulation, interface swapping, and one trillion CPU-hours of testing">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Diving into FoundationDB&#x27;s Simulation Framework" />
+<meta name="twitter:description" content="How FoundationDB achieves legendary reliability through deterministic simulation, interface swapping, and one trillion CPU-hours of testing" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Diving into FoundationDB&#x27;s Simulation Framework">
+<meta property="og:description" content="How FoundationDB achieves legendary reliability through deterministic simulation, interface swapping, and one trillion CPU-hours of testing"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-10-30" />
+
+
+
+<meta property="article:tag" content="foundationdb" />
+
+<meta property="article:tag" content="testing" />
+
+<meta property="article:tag" content="simulation" />
+
+<meta property="article:tag" content="deterministic" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+<meta property="article:tag" content="diving-into" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Diving into FoundationDB&#x27;s Simulation Framework</h1>
+      <p>
+        <i>
+          <time datetime="2025-10-30T00:00:00+00:00" pubdate>30 Oct, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#the-trick-interface-swapping">The Trick: Interface Swapping</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#biasing-the-simulator-buggify">Biasing the Simulator: BUGGIFY</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#the-developer-workflow-simulation-as-ci-cd">The Developer Workflow: Simulation as CI&#x2F;CD</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#flow-actors-and-cooperative-multitasking">Flow: Actors and Cooperative Multitasking</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#single-threaded-time-travel-the-event-loop">Single-Threaded Time Travel: The Event Loop</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#building-the-simulated-cluster">Building the Simulated Cluster</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#workloads-stress-testing-under-chaos">Workloads: Stress Testing Under Chaos</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#what-just-happened">What Just Happened?</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#how-does-cycle-work">How Does Cycle Work?</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#verifying-correctness-building-reliable-workloads">Verifying Correctness: Building Reliable Workloads</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#pattern-1-reference-implementation">Pattern 1: Reference Implementation</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#pattern-2-operation-logging">Pattern 2: Operation Logging</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#pattern-3-invariant-tracking">Pattern 3: Invariant Tracking</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#using-clientid-for-work-distribution">Using clientId for Work Distribution</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#randomize-everything">Randomize Everything</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#pattern-selection-guide">Pattern Selection Guide</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#writing-workloads-in-rust">Writing Workloads in Rust</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#simulation-at-clever-cloud-building-materia">Simulation at Clever Cloud: Building Materia</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#running-simulations-yourself">Running Simulations Yourself</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/#why-i-ve-never-been-woken-up-by-fdb">Why I&#x27;ve Never Been Woken Up by FDB</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <blockquote>
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost series where we are digging a specific part of the project's codebase. In this episode, we will dig into the implementation behind FoundationDB's simulation framework.</p>
+</blockquote>
+<p>After years of on-call shifts running FoundationDB at Clever Cloud, here's what I've learned: <strong>I've never been woken up by FDB</strong>. Every production incident traced back to our code, our infrastructure, our mistakes. Never FDB itself. That kind of reliability doesn't happen by accident.</p>
+<p>The secret? <strong>Deterministic simulation testing</strong>. FoundationDB runs the real database software (not mocks, not stubs) in a discrete-event simulator alongside randomized workloads and aggressive fault injection. All sources of nondeterminism are abstracted: network, disk, time, and random number generation. Multiple FDB servers communicate through a simulated network in a single-threaded process. The simulator injects machine crashes, rack failures, network partitions, disk corruption, bit flips. Every failure mode you can imagine, happening in rapid succession, deterministically. Same seed, same execution path, same bugs, every single time.</p>
+<p>After roughly <strong>one trillion CPU-hours of simulation testing</strong>, FoundationDB has been stress-tested under conditions far worse than any production environment will ever encounter. The development environment is deliberately harsher than production: network partitions every few seconds, machine crashes mid-transaction, disks randomly swapped between nodes on reboot. If your code survives the simulator, production is easy.</p>
+<p>I've written before about <a href="/posts/notes-about-foundationdb/">FoundationDB</a>, <a href="/posts/simulation-driven-development/">simulation-driven development</a>, and <a href="/posts/testing-prevention-vs-discovery/">testing prevention vs discovery</a>. Those posts cover the concepts and benefits. This post is different: <strong>this is how FoundationDB actually implements deterministic simulation</strong>. Interface swapping, deterministic event loops, BUGGIFY chaos injection, Flow actors, and the architecture that makes it all work. We're going deep into the implementation.</p>
+<div style="text-align: center;">
+  <img src="/images/fdb-simulation-deep-dive/simulator-architecture.jpeg" alt="FoundationDB Simulator Architecture" />
+  <p><em>FoundationDB's simulation architecture: the same FDB server code runs in both the simulator process (using simulated I/O) and the real world (using real I/O)</em></p>
+</div>
+<h2 id="the-trick-interface-swapping"><a class="zola-anchor" href="#the-trick-interface-swapping" aria-label="Anchor link for: the-trick-interface-swapping">🔗</a>The Trick: Interface Swapping</h2>
+<p>The genius of FDB's simulation is surprisingly simple: <strong>the same code runs in both production and simulation by swapping interface implementations</strong>. The global <code>g_network</code> pointer holds an <code>INetwork</code> interface. In production, this points to <code>Net2</code>, which creates real TCP connections using Boost.ASIO. In simulation, it points to <code>Sim2</code> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbrpc/sim2.actor.cpp">sim2.actor.cpp</a>), which creates <code>Sim2Conn</code> objects (fake connections that write to in-memory buffers).</p>
+<p>When code needs to send data, it gets a <code>Reference&lt;IConnection&gt;</code> from the network layer. In production, that's a real socket. In simulation, it's <code>Sim2Conn</code> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbrpc/sim2.actor.cpp">sim2.actor.cpp</a>) with a <code>std::deque&lt;uint8_t&gt;</code> buffer. Network latency? The simulator adds <code>delay()</code> calls with values from <code>deterministicRandom()</code>. Packet loss? Just throw <code>connection_failed()</code>. Network partition? <code>Sim2Conn</code> checks <code>g_clogging.disconnected()</code> and refuses delivery. <strong>It's all just memory operations with delays</strong>, running single-threaded and completely deterministic.</p>
+<p>What makes this truly deterministic is <code>deterministicRandom()</code>, a seeded PRNG that replaces all randomness. Every network latency value, every backoff delay (like the <code>Peer</code>'s exponential reconnection timing), every process crash timing goes through the same deterministic stream. Same seed, same execution path, every single time. When a test fails after 1 trillion simulated operations, you can reproduce the exact failure by running with the same seed.</p>
+<h3 id="biasing-the-simulator-buggify"><a class="zola-anchor" href="#biasing-the-simulator-buggify" aria-label="Anchor link for: biasing-the-simulator-buggify">🔗</a>Biasing the Simulator: BUGGIFY</h3>
+<p>Most deep bugs need a rare combination of events. A network partition <strong>and</strong> a slow disk <strong>and</strong> a coordinator crash happening at the exact same moment. The probability of all three aligning randomly? Astronomical. You'd burn CPU-centuries waiting.</p>
+<p>FoundationDB solves this with <code>BUGGIFY</code>, spread throughout the codebase. Each <code>BUGGIFY</code> point fires 25% of the time, deterministically, so every test explores a different corner of the state space (Alex Miller's <a href="https://transactional.blog/simulation/buggify">excellent post on BUGGIFY</a> covers the implementation details).</p>
+<p>Let's take timeout handling in data distribution as an example:</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#65737e;">// DDShardTracker.actor.cpp (fdbserver/DDShardTracker.actor.cpp:1508)
+</span><span>choose {
+</span><span>    </span><span style="color:#bf616a;">when</span><span>(</span><span style="color:#bf616a;">wait</span><span>(g_network-&gt;</span><span style="color:#bf616a;">isSimulated</span><span>() &amp;&amp; </span><span style="color:#bf616a;">BUGGIFY_WITH_PROB</span><span>(</span><span style="color:#d08770;">0.01</span><span>) ? </span><span style="color:#bf616a;">Never</span><span>()
+</span><span>                                                          : </span><span style="color:#bf616a;">fetchTopKShardMetrics_impl</span><span>(self, req))) {}
+</span><span>    </span><span style="color:#bf616a;">when</span><span>(</span><span style="color:#bf616a;">wait</span><span>(</span><span style="color:#bf616a;">delay</span><span>(SERVER_KNOBS-&gt;</span><span style="color:#bf616a;">DD_SHARD_METRICS_TIMEOUT</span><span>))) {
+</span><span>        </span><span style="color:#65737e;">// Timeout path
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>The <code>Never()</code> future never completes. Literally hangs forever. This happens only in simulation (<code>g_network-&gt;isSimulated()</code>) and with 1% probability (<code>BUGGIFY_WITH_PROB(0.01)</code>). When it fires, the operation gets stuck, forcing the timeout branch to execute. Simple, elegant failure injection.</p>
+<p>But here's the trick: <strong>the timeout value itself is also buggified</strong>:</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#65737e;">// ServerKnobs.cpp
+</span><span style="color:#bf616a;">init</span><span>( DD_SHARD_METRICS_TIMEOUT, </span><span style="color:#d08770;">60.0 </span><span>);  </span><span style="color:#65737e;">// Production: 60 seconds
+</span><span style="color:#b48ead;">if</span><span>( randomize &amp;&amp; BUGGIFY ) DD_SHARD_METRICS_TIMEOUT = </span><span style="color:#d08770;">0.1</span><span>;  </span><span style="color:#65737e;">// Simulation: 0.1 seconds!
+</span></code></pre>
+<p>Production timeout: 60 seconds. BUGGIFY timeout: 0.1 seconds (600x shorter). The shrinking timeout window means legitimate operations are far more likely to hit timeout paths. Even without <code>Never()</code> forcing a hang, simulated network delays and slow operations will trigger timeouts constantly. When <code>Never()</code> does fire, you get guaranteed timeout execution. Every knob marked <code>if (randomize &amp;&amp; BUGGIFY)</code> becomes a chaos variable. Timeouts shrink, cache sizes drop, I/O patterns randomize.</p>
+<p>This creates <strong>combinatorial explosion</strong>. FoundationDB has hundreds of randomized knobs. Each BUGGIFY-enabled test run picks a different configuration: maybe connection monitors are 4x slower, but file I/O is using 32KB blocks, and cache size is 1000 entries, and reconnection delays are doubled. The next run? Completely different knob values. Same code, thousands of different operating environments. After one trillion simulated operations across countless test runs, you've stress-tested your code under scenarios that would take decades to encounter in production.</p>
+<h2 id="the-developer-workflow-simulation-as-ci-cd"><a class="zola-anchor" href="#the-developer-workflow-simulation-as-ci-cd" aria-label="Anchor link for: the-developer-workflow-simulation-as-ci-cd">🔗</a>The Developer Workflow: Simulation as CI/CD</h2>
+<p>Here's the FoundationDB developer experience: <strong>write code, run a few local simulation tests to catch obvious bugs, submit your merge request, then let the machines do the hard work</strong>.</p>
+<p>Every pull request triggers <strong>hundreds of thousands of simulation tests</strong> running on hundreds of cores for hours before a human even begins code review. Different seeds explore different execution paths, different failure timings, different BUGGIFY configurations. Nightly testing runs tens of thousands more simulations, crawling through edge cases you'd never think to test manually.</p>
+<p>In the early days when FoundationDB was still a company, they took this philosophy to its logical extreme: <strong>merge requests were automatically merged if simulation passed</strong>. No human approval needed. The simulation was so trusted that passing tests meant the code was production-ready. (You can hear more about FoundationDB's early development culture on <a href="https://www.youtube.com/watch?v=C1nZzQqcPZw&amp;list=PLh4UhOpNuTJO1S8xkfa3QmQzJemsUhuL8&amp;index=6">The BugBash Podcast</a>).</p>
+<p>This changes how you think about distributed systems development. Instead of spending hours debugging race conditions or trying to mentally model all possible failure scenarios, you focus on building features. The simulation finds the edge cases. It discovers the bugs you'd never anticipate. It stress-tests your code under conditions that would take years to encounter in production.</p>
+<p>The scale ramps up through the development cycle: thousands of seeds during merge request testing, tens of thousands in nightly runs, potentially millions during major release cycles. Each seed represents a completely different execution path through your code. By the time your change reaches production, it's survived more chaos than most distributed systems see in their entire lifetime.</p>
+<p><strong>The confidence this gives developers is extraordinary</strong>: if your code survives hundreds of thousands of simulated disasters, production feels easy in comparison.</p>
+<h2 id="flow-actors-and-cooperative-multitasking"><a class="zola-anchor" href="#flow-actors-and-cooperative-multitasking" aria-label="Anchor link for: flow-actors-and-cooperative-multitasking">🔗</a>Flow: Actors and Cooperative Multitasking</h2>
+<p>FoundationDB doesn't use traditional threads. It uses Flow, a custom actor model built on C++. Here's a simple example:</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span>ACTOR Future&lt;</span><span style="color:#b48ead;">int</span><span>&gt; </span><span style="color:#8fa1b3;">asyncAdd</span><span>(Future&lt;</span><span style="color:#b48ead;">int</span><span>&gt; </span><span style="color:#bf616a;">f</span><span>, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">offset</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">int</span><span> value = </span><span style="color:#bf616a;">wait</span><span>(f);  </span><span style="color:#65737e;">// Suspend until f completes, then resume with its value
+</span><span>    </span><span style="color:#b48ead;">return</span><span> value + offset;
+</span><span>}
+</span></code></pre>
+<p>The <code>ACTOR</code> keyword marks functions that can use <code>wait()</code>. When you call <code>wait(f)</code>, the actor <strong>suspends</strong>. It returns control to the event loop and resumes later when the <code>Future</code> completes, continuing with the result. No blocking. All asynchronous. Use the <code>state</code> keyword for variables that need to persist across multiple <code>wait()</code> calls.</p>
+<p>If you know Rust's async/await, Flow is the same concept. <code>ACTOR</code> functions are like <code>async fn</code>, <code>wait()</code> is like <code>.await</code>, and <code>Future&lt;T&gt;</code> is like Rust's <code>Future</code>. The difference? Flow was built in 2009 for C++, and gets compiled by <code>actorcompiler.h</code> into state machines rather than relying on language support.</p>
+<p>The same Flow code runs in both production and simulation. An actor waiting for network I/O gets a real socket in production, a simulated buffer in simulation. The code doesn't know the difference. The Flow documentation at <a href="https://apple.github.io/foundationdb/flow.html">apple.github.io/foundationdb/flow.html</a> covers the full programming model.</p>
+<h2 id="single-threaded-time-travel-the-event-loop"><a class="zola-anchor" href="#single-threaded-time-travel-the-event-loop" aria-label="Anchor link for: single-threaded-time-travel-the-event-loop">🔗</a>Single-Threaded Time Travel: The Event Loop</h2>
+<p>Hundreds of actors running concurrently. Coordinators electing leaders, transaction logs replicating commits, storage servers handling reads. All happening in <strong>one thread</strong>.</p>
+<p>The trick is cooperative multitasking. Actors yield control with <code>wait()</code>. When all actors are waiting, the event loop can <strong>advance simulated time</strong>:</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart TD
+    Start([Event Loop]) --&gt; CheckReady{Any actors&lt;br&#x2F;&gt;ready to run?}
+    CheckReady --&gt;|Yes| RunActor[Run next ready actor&lt;br&#x2F;&gt;until it hits wait]
+    RunActor --&gt; CheckReady
+    CheckReady --&gt;|No, all waiting| CheckPending{Any pending&lt;br&#x2F;&gt;futures?}
+    CheckPending --&gt;|Yes| AdvanceTime[Advance simulated clock&lt;br&#x2F;&gt;to next event]
+    AdvanceTime --&gt; CheckReady
+    CheckPending --&gt;|No| Done([Simulation complete])
+    </pre>
+</div>
+<p>Here's the key insight: when all actors are blocked waiting on futures, the event loop finds the next scheduled event (the earliest timestamp) and <strong>jumps the simulated clock forward</strong> to that time. Then it wakes the actors waiting for that event and runs them until they <code>wait()</code> again.</p>
+<p>Example: 100 storage servers each execute <code>wait(delay(deterministicRandom()-&gt;random01() * 60.0))</code>. In wall-clock time, this takes microseconds. In simulated time, these delays are spread across 60 seconds. The event loop processes them in order, advancing time as it goes. <strong>Zero wall-clock time has passed. 60 simulated seconds have passed.</strong></p>
+<p>This gives you:</p>
+<ul>
+<li><strong>Compressed time</strong>: Years of uptime in seconds of testing. <code>wait(delay(86400.0))</code> simulates 24 hours instantly.</li>
+<li><strong>Perfect determinism</strong>: Single-threaded execution means no race conditions. Same seed, same event ordering, exact same execution path.</li>
+<li><strong>Reproducibility</strong>: Test fails after 1 trillion simulated operations? Run again with the same seed, get the exact same failure at the exact same point.</li>
+</ul>
+<p>No actor ever blocks. They all cooperate, yielding control back to the event loop. This is the foundation that makes realistic cluster simulation possible.</p>
+<h2 id="building-the-simulated-cluster"><a class="zola-anchor" href="#building-the-simulated-cluster" aria-label="Anchor link for: building-the-simulated-cluster">🔗</a>Building the Simulated Cluster</h2>
+<p>Now that we understand Flow actors and the event loop, let's see what runs on it. SimulatedCluster <strong>builds an entire distributed cluster in memory</strong>.</p>
+<p><code>SimulatedCluster</code> starts by generating a random cluster configuration: 1-5 datacenters, 1-10+ machines per DC, different storage engines (memory, ssd, redwood-1), different replication modes (single, double, triple). Every test run gets a different topology.</p>
+<p>The actor hierarchy looks like this: SimulatedCluster creates machine actors (<code>simulatedMachine</code>). Each machine actor creates process actors (<code>simulatedFDBDRebooter</code>). Each process actor runs <strong>actual fdbserver code</strong>. The machine actor sits in an infinite loop: wait for all processes to die, delay 10 simulated seconds, reboot.</p>
+<p><strong>The same fdbserver code that runs in production runs here</strong>. No mocks. No stubs. Real transaction logs writing to simulated disk. Real storage engines (RocksDB, Redwood). Real Paxos consensus. The only difference? <code>Sim2</code> network instead of <code>Net2</code>.</p>
+<p>And of course, BUGGIFY shows up here too. Remember how BUGGIFY shrinks timeouts and injects failures? It also does something <strong>completely insane</strong> during machine reboots. When a machine reboots, the simulator can <strong>swap its disks</strong>:</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#65737e;">// SimulatedCluster.actor.cpp - machine reboot
+</span><span>state </span><span style="color:#b48ead;">bool</span><span> swap = killType == ISimulator::KillType::Reboot &amp;&amp;
+</span><span>                  </span><span style="color:#bf616a;">BUGGIFY_WITH_PROB</span><span>(</span><span style="color:#d08770;">0.75</span><span>) &amp;&amp;
+</span><span>                  g_simulator-&gt;</span><span style="color:#bf616a;">canSwapToMachine</span><span>(localities.</span><span style="color:#bf616a;">zoneId</span><span>());
+</span><span style="color:#b48ead;">if </span><span>(swap) {
+</span><span>    availableFolders[localities.</span><span style="color:#bf616a;">dcId</span><span>()].</span><span style="color:#bf616a;">push_back</span><span>(myFolders);  </span><span style="color:#65737e;">// Return my disks to pool
+</span><span>    myFolders = availableFolders[localities.</span><span style="color:#bf616a;">dcId</span><span>()][randomIndex];  </span><span style="color:#65737e;">// Get random disks from pool
+</span><span>}
+</span></code></pre>
+<p>75% of the time when BUGGIFY is enabled, a rebooting machine gets <strong>random disks from the datacenter pool</strong>. Maybe it gets its own disks back. Maybe it gets another machine's disks with completely different data. Maybe it gets the disks from a machine that was destroyed 10 minutes ago. Your storage server just woke up with someone else's data (or no data at all). Can the cluster handle this? Can it detect the mismatch and rebuild correctly?</p>
+<p>For extra chaos, there's also <code>RebootAndDelete</code> which gives the machine <strong>brand new empty folders</strong>. No data. Fresh disks. This tests the actual failure mode of replacing a dead drive or provisioning a new machine.</p>
+<p>Read that again. During testing, FoundationDB <strong>randomly swaps or deletes storage server data on reboot</strong>. If your distributed database doesn't assume storage servers occasionally come back with amnesia or someone else's memories, you're not testing the real world. Because surely, no one has ever accidentally mounted the wrong volume in a Kubernetes deployment, right?</p>
+<p>What you get from all this:</p>
+<ul>
+<li><strong>Real cluster behavior</strong>: Coordinators elect leaders, transaction logs replicate commits, storage servers handle reads/writes, backup agents run</li>
+<li><strong>Real failure modes</strong>: Process crashes, machine reboots, network partitions (via <code>g_clogging</code>), slow disks (via <code>AsyncFileNonDurable</code>), disk swaps, data loss</li>
+<li><strong>Realistic topologies</strong>: Multi-region configurations, different storage engines, different replication modes, different machine counts</li>
+</ul>
+<p>When you run a simulation test, SimulatedCluster boots this entire virtual cluster, lets it stabilize, runs workloads against it while injecting chaos, then validates correctness.</p>
+<h2 id="workloads-stress-testing-under-chaos"><a class="zola-anchor" href="#workloads-stress-testing-under-chaos" aria-label="Anchor link for: workloads-stress-testing-under-chaos">🔗</a>Workloads: Stress Testing Under Chaos</h2>
+<p>30 seconds. 2500 transactions per second. Concurrent machines swapping edges in a distributed data structure while chaos engines inject failures. Let's see if the database survives.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Simulation Overview
+</span><span>┌────────────┬──────────────────┬────────────────┬─────────────────┬────────────────┐
+</span><span>│ Seed       ┆ Replication      ┆ Simulated Time ┆ Real Time       ┆ Storage Engine │
+</span><span>╞════════════╪══════════════════╪════════════════╪═════════════════╪════════════════╡
+</span><span>│ 1876983470 ┆ triple           ┆ 5m 47s         ┆ 18s 891ms       ┆ ssd-2          │
+</span><span>└────────────┴──────────────────┴────────────────┴─────────────────┴────────────────┘
+</span><span>
+</span><span>Timeline of Chaos Events
+</span><span>┌──────────┬────────────────────┬──────────────────────────────────────┐
+</span><span>│ Time (s) ┆ Event Type         ┆ Details                              │
+</span><span>╞══════════╪════════════════════╪══════════════════════════════════════╡
+</span><span>│ 87.234   ┆ Coordinator Change ┆ Triggering leader election           │
+</span><span>│ 92.156   ┆ Process Reboot     ┆ KillInstantly process at 10.0.4.2:3  │
+</span><span>│ 92.156   ┆ Process Reboot     ┆ KillInstantly process at 10.0.4.2:1  │
+</span><span>│ 95.871   ┆ Coordinator Change ┆ Triggering leader election           │
+</span><span>│ 103.445  ┆ Process Reboot     ┆ RebootAndDelete process at 10.0.2.1:4│
+</span><span>│ 103.445  ┆ Process Reboot     ┆ RebootAndDelete process at 10.0.2.1:2│
+</span><span>└──────────┴────────────────────┴──────────────────────────────────────┘
+</span><span>
+</span><span>Chaos Summary
+</span><span>  Network Partitions: 187 events (max duration: 5.2s)
+</span><span>  Process Kills: 2 KillInstantly, 2 RebootAndDelete
+</span><span>  Coordinator Changes: 2
+</span></code></pre>
+<p><strong>The cluster survived.</strong> 187 network partitions. 4 process kills. 2 coordinator changes. 5 minutes of simulated time compressed into 18 seconds of wall-clock time. Every transaction completed correctly. The cycle invariant never broke.</p>
+<p>How did we unleash this chaos? Here's the test configuration:</p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#c0c5ce;" class="language-toml "><code class="language-toml" data-lang="toml"><span>[configuration]
+</span><span style="color:#bf616a;">buggify </span><span>= </span><span style="color:#d08770;">true
+</span><span style="color:#bf616a;">minimumReplication </span><span>= </span><span style="color:#d08770;">3
+</span><span>
+</span><span>[[test]]
+</span><span style="color:#bf616a;">testTitle </span><span>= &#39;</span><span style="color:#a3be8c;">CycleWithAttrition</span><span>&#39;
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Cycle</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>    </span><span style="color:#bf616a;">transactionsPerSecond </span><span>= </span><span style="color:#d08770;">2500.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">RandomClogging</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Attrition</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Rollback</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span></code></pre>
+<h3 id="what-just-happened"><a class="zola-anchor" href="#what-just-happened" aria-label="Anchor link for: what-just-happened">🔗</a>What Just Happened?</h3>
+<p>Four concurrent workloads ran on the same simulated cluster for 30 seconds. <strong>Workloads</strong> are reusable scenario templates (180+ built-in in <a href="https://github.com/apple/foundationdb/tree/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads">fdbserver/workloads/</a>) that either generate transactions or inject chaos.</p>
+<p><strong>The application workload</strong> we ran:</p>
+<ul>
+<li><strong>Cycle</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/Cycle.actor.cpp">Cycle.actor.cpp</a>): Hammered the database with 2500 transactions/second, each one swapping edges in a distributed graph. Tests SERIALIZABLE isolation by maintaining a cycle invariant. If isolation breaks, the cycle splits or nodes vanish. We'll dive deep into how this works below.</li>
+</ul>
+<p><strong>The chaos workloads</strong> that tried to break it:</p>
+<ul>
+<li><strong>RandomClogging</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/RandomClogging.actor.cpp">RandomClogging.actor.cpp</a>): Calls <code>g_simulator-&gt;clogInterface(ip, duration)</code> to partition machines. Those <strong>187 network partitions</strong> we saw? This workload. Some lasted over 5 seconds.</li>
+<li><strong>Attrition</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/MachineAttrition.actor.cpp">MachineAttrition.actor.cpp</a>): Calls <code>g_simulator-&gt;killMachine()</code> and <code>g_simulator-&gt;rebootMachine()</code>. The <strong>4 process kills</strong> (2 instant, 2 with deleted data)? This workload.</li>
+<li><strong>Rollback</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/Rollback.actor.cpp">Rollback.actor.cpp</a>): Forces proxy-to-TLog failures, triggering coordinator recovery. The <strong>2 coordinator changes</strong>? This workload.</li>
+</ul>
+<p>Workloads are composable. The TOML format lets you stack them: <code>[configuration]</code> sets global parameters (BUGGIFY, replication), each <code>[[test.workload]]</code> adds another concurrent workload. Want to test atomic operations under network partitions? Stack <code>AtomicOps</code> + <code>RandomClogging</code>. Want to test backup during machine failures? Combine <code>BackupToBlob</code> + <code>Attrition</code>. Test files live in <a href="https://github.com/apple/foundationdb/tree/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/tests">tests/</a>.</p>
+<h3 id="how-does-cycle-work"><a class="zola-anchor" href="#how-does-cycle-work" aria-label="Anchor link for: how-does-cycle-work">🔗</a>How Does Cycle Work?</h3>
+<p>Remember that test we just ran? Let's break down how the <code>Cycle</code> workload actually works. It creates a directed graph where every node points to exactly one other node, forming a single cycle: <code>0→1→2→...→N→0</code>. Then it runs 2500 concurrent transactions per second, each one randomly swapping edges in the graph. Meanwhile, chaos workloads kill machines, partition the network, and force coordinator changes. <strong>If SERIALIZABLE isolation works correctly, the cycle never breaks</strong>. You always have exactly N nodes in one ring, never split cycles or dangling pointers.</p>
+<p>Every workload implements four phases (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/include/fdbserver/workloads/workloads.actor.h">workloads.actor.h</a>):</p>
+<p><strong>SETUP</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/Cycle.actor.cpp">Cycle.actor.cpp</a>): Creates <code>nodeCount</code> nodes. Each key stores the index of the next node in the cycle. Key 0 → value 1, key 1 → value 2, ..., key N-1 → value 0.</p>
+<p><strong>EXECUTION</strong>: Multiple concurrent <code>cycleClient</code> actors run this loop:</p>
+<ol>
+<li>Pick random node <code>r</code></li>
+<li>Read three hops: <code>r→r2→r3→r4</code></li>
+<li>Swap the middle two edges: make <code>r→r3</code> and <code>r2→r4</code></li>
+<li>Commit</li>
+</ol>
+<p>This transaction reads 3 keys and writes 2. If isolation breaks, you could create cycles of the wrong length or lose nodes entirely.</p>
+<p><strong>CHECK</strong>: One client reads the entire graph in a single transaction. Starting from node 0, follow pointers: 0→next→next→next. Count the hops. After exactly <code>nodeCount</code> hops, you must be back at node 0. If you get there earlier (cycle too short) or can't get there (broken chain), the test fails. Also verifies transaction throughput met the expected rate.</p>
+<p><strong>METRICS</strong>: Reports transactions completed, retry counts, latency percentiles.</p>
+<p>This is the pattern all workloads follow: SETUP initializes data, EXECUTION generates load, CHECK verifies correctness, METRICS reports results. When you execute a test, SimulatedCluster boots the cluster, runs SETUP phases sequentially, then runs all EXECUTION phases concurrently (they're Flow actors on the same event loop). After <code>testDuration</code>, CHECK phases verify correctness.</p>
+<p><strong>This is what runs before every FoundationDB commit.</strong> Not once. Not a few times. Thousands of test runs with different seeds, different cluster configurations, different workload combinations. Application workloads generate realistic transactions. Chaos workloads inject failures. The CHECK phases prove correctness survived the chaos. This is why FoundationDB doesn't fail in production. The simulator has already broken it every possible way, and every bug got fixed before shipping.</p>
+<p>I generated that simulation output using <a href="https://github.com/PierreZ/fdb-sim-visualizer">fdb-sim-visualizer</a>, a tool I wrote to parse simulation trace logs and understand what happened during testing.</p>
+<h2 id="verifying-correctness-building-reliable-workloads"><a class="zola-anchor" href="#verifying-correctness-building-reliable-workloads" aria-label="Anchor link for: verifying-correctness-building-reliable-workloads">🔗</a>Verifying Correctness: Building Reliable Workloads</h2>
+<p><strong>But here's the hard part: proving correctness when everything is randomized.</strong> The cluster survived. Transactions completed. The cycle invariant never broke... or did it? When you're running 2500 transactions per second with random edge swaps under 187 network partitions, how do you <strong>prove</strong> nothing went wrong? You can't just check if the database "looks okay." You need <strong>proof</strong> the invariants held.</p>
+<p>FoundationDB's approach: <strong>track during EXECUTION, verify in CHECK.</strong> Three patterns emerge across the codebase:</p>
+<h3 id="pattern-1-reference-implementation"><a class="zola-anchor" href="#pattern-1-reference-implementation" aria-label="Anchor link for: pattern-1-reference-implementation">🔗</a>Pattern 1: Reference Implementation</h3>
+<p><strong>The challenge</strong>: How do you verify complex API behavior under chaos?</p>
+<p><strong>The solution</strong>: Run every operation twice. <code>ApiCorrectness</code> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/ApiCorrectness.actor.cpp">ApiCorrectness.actor.cpp</a>) mirrors all operations in a simple <code>MemoryKeyValueStore</code> (just a <code>std::map&lt;Key, Value&gt;</code>). Every <code>transaction-&gt;set(k, v)</code> also executes <code>store.set(k, v)</code> in memory. The CHECK phase reads from FDB and compares with the memory model. Mismatch = bug found.</p>
+<h3 id="pattern-2-operation-logging"><a class="zola-anchor" href="#pattern-2-operation-logging" aria-label="Anchor link for: pattern-2-operation-logging">🔗</a>Pattern 2: Operation Logging</h3>
+<p><strong>The challenge</strong>: How do you verify atomic operations executed in the right order?</p>
+<p><strong>The solution</strong>: Log everything. <code>AtomicOps</code> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/AtomicOps.actor.cpp">AtomicOps.actor.cpp</a>) logs every operation to a separate keyspace. During EXECUTION: <code>atomicOp(ops_key, value)</code> on real data, <code>set(log_key, value)</code> to track what happened. During CHECK: replay all logged operations, compute what the final state should be, compare with actual database state.</p>
+<h3 id="pattern-3-invariant-tracking"><a class="zola-anchor" href="#pattern-3-invariant-tracking" aria-label="Anchor link for: pattern-3-invariant-tracking">🔗</a>Pattern 3: Invariant Tracking</h3>
+<p><strong>The challenge</strong>: How do you prove SERIALIZABLE isolation worked during chaos?</p>
+<p><strong>The solution</strong>: Maintain a mathematical invariant that breaks if isolation fails. <code>Cycle</code> (from our test earlier) maintains "exactly N nodes in one ring." During EXECUTION, random edge swaps must preserve the invariant. During CHECK, walk the graph: 0→next→next→next. After exactly N hops, you must be back at node 0. If you arrive earlier (cycle split) or can't arrive (broken chain), isolation failed. The CHECK phase catches this immediately.</p>
+<h3 id="using-clientid-for-work-distribution"><a class="zola-anchor" href="#using-clientid-for-work-distribution" aria-label="Anchor link for: using-clientid-for-work-distribution">🔗</a>Using clientId for Work Distribution</h3>
+<p>Every workload gets <code>clientId</code> (0, 1, 2...) and <code>clientCount</code> (total clients). Three patterns:</p>
+<p><strong>Client 0 only</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/AtomicOps.actor.cpp">AtomicOps.actor.cpp</a>):</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#b48ead;">if </span><span>(clientId != </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">true</span><span>;  </span><span style="color:#65737e;">// Common for CHECK phases
+</span></code></pre>
+<p><strong>Partition keyspace</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/WatchAndWait.actor.cpp">WatchAndWait.actor.cpp</a>):</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span>uint64_t startNode = (nodeCount * clientId) / clientCount;
+</span><span>uint64_t endNode = (nodeCount * (clientId + </span><span style="color:#d08770;">1</span><span>)) / clientCount;
+</span><span style="color:#65737e;">// Client 0: nodes 0-33, Client 1: nodes 34-66, Client 2: nodes 67-99
+</span></code></pre>
+<p><strong>Round-robin</strong> (<a href="https://github.com/apple/foundationdb/blob/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/fdbserver/workloads/Watches.actor.cpp">Watches.actor.cpp</a>):</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#b48ead;">if </span><span>(i % clientCount == clientId)
+</span><span style="color:#65737e;">// Client 0: keys 0,3,6,9... Client 1: keys 1,4,7,10...
+</span></code></pre>
+<p>Use <code>clientId</code> to create concurrency (multiple clients hitting different keys) or coordinate work (one client checks, others generate load).</p>
+<h3 id="randomize-everything"><a class="zola-anchor" href="#randomize-everything" aria-label="Anchor link for: randomize-everything">🔗</a>Randomize Everything</h3>
+<p>The key to finding bugs: <strong>randomize every decision</strong>. Which keys to read? Random. How many operations per transaction? Random. Which atomic operation type? Random. Order of operations? Random. When to inject chaos? Random.</p>
+<p>But use <code>deterministicRandom()</code> for all randomness. It's a seeded PRNG. Same seed = same random choices = reproducible failures. When a test fails after 10 million operations, rerun with the same seed, get the exact same failure at the exact same point.</p>
+<h3 id="pattern-selection-guide"><a class="zola-anchor" href="#pattern-selection-guide" aria-label="Anchor link for: pattern-selection-guide">🔗</a>Pattern Selection Guide</h3>
+<table><thead><tr><th>Testing</th><th>Use Pattern</th><th>Example Workload</th></tr></thead><tbody>
+<tr><td>API correctness</td><td>Reference implementation</td><td>ApiCorrectness</td></tr>
+<tr><td>Atomic operations</td><td>Operation logging</td><td>AtomicOps</td></tr>
+<tr><td>ACID guarantees</td><td>Invariant tracking</td><td>Cycle</td></tr>
+<tr><td>Backup/restore</td><td>Absence checking</td><td>BackupCorrectness</td></tr>
+</tbody></table>
+<p>Chaos workloads (<code>RandomClogging</code>, <code>Attrition</code>, <code>Rollback</code>) don't need CHECK phases. They just return <code>true</code>. They inject failures. Application workloads verify that correctness survived the chaos.</p>
+<h2 id="writing-workloads-in-rust"><a class="zola-anchor" href="#writing-workloads-in-rust" aria-label="Anchor link for: writing-workloads-in-rust">🔗</a>Writing Workloads in Rust</h2>
+<p>Remember those chaos workloads hammering the Cycle test? <code>RandomClogging</code>, <code>Attrition</code>, <code>Rollback</code>. All written in C++ Flow. But you can write workloads in <strong>Rust</strong> and compile them directly into the simulator. At Clever Cloud, we open-sourced <a href="https://github.com/foundationdb-rs/foundationdb-rs/tree/main/foundationdb-simulation">foundationdb-simulation</a>, which lets you implement the <code>RustWorkload</code> trait with <code>setup()</code>, <code>start()</code>, and <code>check()</code> methods using Rust's async/await:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">async_trait</span><span>]
+</span><span style="color:#b48ead;">impl </span><span>RustWorkload </span><span style="color:#b48ead;">for </span><span>MyWorkload {
+</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">setup</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: Database, </span><span style="color:#bf616a;">_ctx</span><span>: Context) -&gt; Result&lt;()&gt; {
+</span><span>        </span><span style="color:#65737e;">// Initialize test data
+</span><span>        db.</span><span style="color:#96b5b4;">run</span><span>(|</span><span style="color:#bf616a;">tx</span><span>, _| async </span><span style="color:#b48ead;">move </span><span>{
+</span><span>            tx.</span><span style="color:#96b5b4;">set</span><span>(</span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">key</span><span>&quot;, </span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">value</span><span>&quot;);
+</span><span>            Ok(())
+</span><span>        }).await
+</span><span>    }
+</span><span>
+</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">start</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: Database, </span><span style="color:#bf616a;">ctx</span><span>: Context) -&gt; Result&lt;()&gt; {
+</span><span>        </span><span style="color:#65737e;">// Generate load under simulation
+</span><span>        </span><span style="color:#b48ead;">for </span><span>_ in </span><span style="color:#d08770;">0</span><span>..ctx.</span><span style="color:#96b5b4;">get_option</span><span>(&quot;</span><span style="color:#a3be8c;">nodeCount</span><span>&quot;, </span><span style="color:#d08770;">100</span><span>) {
+</span><span>            db.</span><span style="color:#96b5b4;">run</span><span>(|</span><span style="color:#bf616a;">tx</span><span>, _| async </span><span style="color:#b48ead;">move </span><span>{
+</span><span>                </span><span style="color:#b48ead;">let</span><span> value = tx.</span><span style="color:#96b5b4;">get</span><span>(</span><span style="color:#b48ead;">b</span><span>&quot;</span><span style="color:#a3be8c;">key</span><span>&quot;, </span><span style="color:#d08770;">false</span><span>).await?;
+</span><span>                </span><span style="color:#65737e;">// Your workload logic here
+</span><span>                Ok(())
+</span><span>            }).await?;
+</span><span>        }
+</span><span>        Ok(())
+</span><span>    }
+</span><span>
+</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">check</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: Database, </span><span style="color:#bf616a;">_ctx</span><span>: Context) -&gt; Result&lt;()&gt; {
+</span><span>        </span><span style="color:#65737e;">// Verify correctness after chaos
+</span><span>        Ok(())
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>Your Rust code compiles to a shared library, FDB's <code>ExternalWorkload</code> loads it at runtime via FFI, and your Rust async functions run on the same Flow event loop as the C++ cluster. The FFI boundary is managed by the <code>foundationdb-simulation</code> crate, which handles marshaling between Flow's event loop and Rust futures. Same determinism, same reproducibility, same chaos injection. But you're writing <code>async fn</code> instead of <code>ACTOR Future&lt;Void&gt;</code>.</p>
+<p>Here's a <a href="https://github.com/foundationdb-rs/foundationdb-rs/blob/main/foundationdb-simulation/examples/atomic/lib.rs">complete example workload</a> testing atomic operations in ~100 lines of Rust.</p>
+<h3 id="simulation-at-clever-cloud-building-materia"><a class="zola-anchor" href="#simulation-at-clever-cloud-building-materia" aria-label="Anchor link for: simulation-at-clever-cloud-building-materia">🔗</a>Simulation at Clever Cloud: Building Materia</h3>
+<p>At Clever Cloud, we use simulation to build <a href="https://www.clever-cloud.com/blog/features/2024/06/11/materia-kv-our-easy-to-use-serverless-key-value-database-is-available-to-all/">Materia</a>, our serverless database products. I'm the lead engineer behind Materia and the main maintainer of <a href="https://github.com/foundationdb-rs/foundationdb-rs">foundationdb-rs</a>.</p>
+<p>We built a Rust SDK on top of FDB, similar to Apple's <a href="https://github.com/FoundationDB/fdb-record-layer">Record Layer</a>. It provides structured records, secondary indexes, query planning, and multi-tenant isolation. The result: a distributed transactional database built on FoundationDB's guarantees.</p>
+<p>FoundationDB is a hidden technology: you don't use it directly, you build layers on top. But here's the trick: <strong>patterns like index design, quota management, and schema management should be written once and consumed, not reimplemented in every product</strong>. Our SDK abstracts these patterns. Need secondary indexes? The SDK handles keyspace layout, index updates, and query planning. Need multi-tenant isolation? The SDK provides it. Need quota enforcement or permission management? <strong>We built a common control plane that works across all products</strong> built on the SDK. Write the hard distributed systems logic once, simulate it until it's bulletproof, then reuse it everywhere.</p>
+<p>Every merge request runs simulation tests in CI. We test SDK scenarios (indexing, query planning) and full product workloads under chaos. Multi-tenant isolation, concurrent queries, network partitions, machine crashes. The bugs we catch vary by layer. SDK changes catch nasty bugs like duplicated indexes during <code>maybe_committed</code> transactions. Product changes catch simpler errors like accidentally blocking FDB's retry logic or breaking atomicity.</p>
+<p>But the real value isn't just bug detection. <strong>Instead of writing hundreds of unit tests, we write workloads that fuzz our code under chaos.</strong> One workload with randomized operations and deterministic chaos replaces dozens of hand-crafted test cases. When engineers write workloads for their features, they're forced to think: "What happens when this retries during a partition?" "How do I verify correctness when transactions can commit in any order?" <strong>Designing for chaos</strong> becomes natural. The act of writing simulation workloads improves the design itself.</p>
+<p>The confidence this gives a small team is extraordinary. When you can prove your code survives hundreds of network partitions and machine crashes before shipping, you sleep better at night. Our latest layer, an etcd-compatible API for managed Kubernetes, was built from the ground up with simulation in mind. We're even <a href="https://github.com/apple/foundationdb/issues/12343">contributing features back to FoundationDB</a> to better support layers like ours.</p>
+<p>If it survives simulation, it survives production.</p>
+<h2 id="running-simulations-yourself"><a class="zola-anchor" href="#running-simulations-yourself" aria-label="Anchor link for: running-simulations-yourself">🔗</a>Running Simulations Yourself</h2>
+<p>Think you can break FoundationDB? You don't need to build from source or set up a cluster. Download a prebuilt <code>fdbserver</code> binary from the <a href="https://github.com/apple/foundationdb/releases">releases page</a>, create a test file, and unleash chaos:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;"># Download fdbserver (Linux example, adjust for your platform)
+</span><span style="color:#bf616a;">wget</span><span> https://github.com/apple/foundationdb/releases/download/7.3.27/fdbserver.x86_64
+</span><span style="color:#bf616a;">chmod</span><span> +x fdbserver.x86_64
+</span><span>
+</span><span style="color:#65737e;"># Create the folder for traces
+</span><span style="color:#bf616a;">mkdir</span><span> events
+</span><span>
+</span><span style="color:#65737e;"># Run a simulation test with JSON trace output
+</span><span style="color:#bf616a;">./fdbserver.x86_64 -r</span><span> simulation</span><span style="color:#bf616a;"> -f</span><span> Attritions.toml</span><span style="color:#bf616a;"> --trace-format</span><span> json</span><span style="color:#bf616a;"> -L</span><span> ./events</span><span style="color:#bf616a;"> --logsize</span><span> 1GiB
+</span></code></pre>
+<p>Here are two test files to get you started. Save either as a <code>.toml</code> file and run with the command above.</p>
+<p><strong>Attritions.toml</strong> - Network partitions + machine crashes + database reconfigurations (the NemesisTest shown earlier):</p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#c0c5ce;" class="language-toml "><code class="language-toml" data-lang="toml"><span>[configuration]
+</span><span style="color:#bf616a;">buggify </span><span>= </span><span style="color:#d08770;">true
+</span><span style="color:#bf616a;">minimumReplication </span><span>= </span><span style="color:#d08770;">3
+</span><span>
+</span><span>[[test]]
+</span><span style="color:#bf616a;">testTitle </span><span>= &#39;</span><span style="color:#a3be8c;">NemesisTest</span><span>&#39;
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">ReadWrite</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>    </span><span style="color:#bf616a;">transactionsPerSecond </span><span>= </span><span style="color:#d08770;">1000.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">RandomClogging</span><span>&#39;  </span><span style="color:#65737e;"># Network partitions
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>    </span><span style="color:#bf616a;">swizzle </span><span>= </span><span style="color:#d08770;">1  </span><span style="color:#65737e;"># Unclog in reversed order
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Attrition</span><span>&#39;  </span><span style="color:#65737e;"># Machine crashes
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Rollback</span><span>&#39;  </span><span style="color:#65737e;"># Proxy-to-TLog errors
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">ChangeConfig</span><span>&#39;  </span><span style="color:#65737e;"># Database reconfigurations
+</span><span>    </span><span style="color:#bf616a;">coordinators </span><span>= &#39;</span><span style="color:#a3be8c;">auto</span><span>&#39;
+</span></code></pre>
+<p><strong>DiskFailureCycle.toml</strong> - Disk failures + bit flips during the Cycle workload:</p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#c0c5ce;" class="language-toml "><code class="language-toml" data-lang="toml"><span>[configuration]
+</span><span style="color:#bf616a;">minimumReplication </span><span>= </span><span style="color:#d08770;">3
+</span><span style="color:#bf616a;">minimumRegions </span><span>= </span><span style="color:#d08770;">3
+</span><span>
+</span><span>[[test]]
+</span><span style="color:#bf616a;">testTitle </span><span>= &#39;</span><span style="color:#a3be8c;">DiskFailureCycle</span><span>&#39;
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">Cycle</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">transactionsPerSecond </span><span>= </span><span style="color:#d08770;">2500.0
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>
+</span><span>    [[test.workload]]
+</span><span>    </span><span style="color:#bf616a;">testName </span><span>= &#39;</span><span style="color:#a3be8c;">DiskFailureInjection</span><span>&#39;
+</span><span>    </span><span style="color:#bf616a;">testDuration </span><span>= </span><span style="color:#d08770;">120.0
+</span><span>    </span><span style="color:#bf616a;">stallInterval </span><span>= </span><span style="color:#d08770;">5.0
+</span><span>    </span><span style="color:#bf616a;">stallPeriod </span><span>= </span><span style="color:#d08770;">5.0
+</span><span>    </span><span style="color:#bf616a;">throttlePeriod </span><span>= </span><span style="color:#d08770;">30.0
+</span><span>    </span><span style="color:#bf616a;">corruptFile </span><span>= </span><span style="color:#d08770;">true
+</span><span>    </span><span style="color:#bf616a;">percentBitFlips </span><span>= </span><span style="color:#d08770;">10
+</span></code></pre>
+<p>The simulation generates JSON trace logs in <code>./events/</code>. Parse them with <a href="https://github.com/PierreZ/fdb-sim-visualizer">fdb-sim-visualizer</a>.</p>
+<p>For more test examples, check FoundationDB's <a href="https://github.com/apple/foundationdb/tree/dfbb0ea72ce01ba87148ef67cf216200e8b249cd/tests">tests/</a> directory. Hundreds of workload combinations testing every corner of the system.</p>
+<h2 id="why-i-ve-never-been-woken-up-by-fdb"><a class="zola-anchor" href="#why-i-ve-never-been-woken-up-by-fdb" aria-label="Anchor link for: why-i-ve-never-been-woken-up-by-fdb">🔗</a>Why I've Never Been Woken Up by FDB</h2>
+<p>After years of on-call and one trillion CPU-hours of simulation, I've never been woken up by FoundationDB. Now you know why.</p>
+<p>Interface swapping lets the same code run in both production and simulation. Flow actors enable single-threaded determinism. The event loop compresses years into seconds. BUGGIFY injects chaos into every corner of the codebase. SimulatedCluster builds entire distributed systems in memory. Workloads generate realistic transactions while chaos engines try to break everything. And deterministic randomness guarantees every bug can be reproduced, diagnosed, and fixed before shipping.</p>
+<p>The simulator has already broken FoundationDB in every possible way. Network partitions during coordinator elections. Machine crashes mid-transaction. Disks swapped between nodes on reboot. Bit flips. Slow I/O. Every edge case, every race condition, every distributed systems nightmare. Found, fixed, and verified before production ever sees it.</p>
+<p><strong>Want to try breaking FoundationDB yourself?</strong> Grab a test config from above, run the simulator, inject chaos, and see if you can find a bug that survived one trillion CPU-hours. If you do, the FDB team would love to hear about it.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your simulation testing experiences or FDB workloads. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+          <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+          <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script defer data-domain="pierrezemb.fr" src="https://plausible.io/js/script.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>

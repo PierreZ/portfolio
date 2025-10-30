@@ -57,6 +57,10 @@
         <lastmod>2020-09-18T05:24:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/</loc>
+        <lastmod>2025-10-30</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/diving-into-hbase-memstore/</loc>
         <lastmod>2019-11-17T10:24:27+01:00</lastmod>
     </url>
@@ -226,7 +230,7 @@
         <loc>https://pierrezemb.fr/tags/distributed/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/diving/</loc>
+        <loc>https://pierrezemb.fr/tags/diving-into/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/docker/</loc>
