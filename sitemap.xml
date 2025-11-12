@@ -69,6 +69,10 @@
         <lastmod>2019-12-08T15:00:00+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/</loc>
+        <lastmod>2025-11-12</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/</loc>
         <lastmod>2017-10-08T20:43:05.198Z</lastmod>
     </url>
@@ -188,6 +192,9 @@
         <loc>https://pierrezemb.fr/tags/async/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/caching/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/concurrency/</loc>
     </url>
     <url>
@@ -273,6 +280,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/kafka/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/kubernetes/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/learning/</loc>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diving into Kubernetes&#x27; Watch Cache | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Diving into Kubernetes&#x27; Watch Cache">
+<meta name="description" content="Understanding how Kubernetes apiserver caches etcd, the 3-second timeout, and K8s 1.34 consistent read feature">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Diving into Kubernetes&#x27; Watch Cache" />
+<meta name="twitter:description" content="Understanding how Kubernetes apiserver caches etcd, the 3-second timeout, and K8s 1.34 consistent read feature" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Diving into Kubernetes&#x27; Watch Cache">
+<meta property="og:description" content="Understanding how Kubernetes apiserver caches etcd, the 3-second timeout, and K8s 1.34 consistent read feature"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-11-12" />
+
+
+
+<meta property="article:tag" content="diving-into" />
+
+<meta property="article:tag" content="kubernetes" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+<meta property="article:tag" content="etcd" />
+
+<meta property="article:tag" content="caching" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Diving into Kubernetes&#x27; Watch Cache</h1>
+      <p>
+        <i>
+          <time datetime="2025-11-12T00:00:00+00:00" pubdate>12 Nov, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#overview-of-the-watch-cache">Overview of the Watch Cache</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#architecture">Architecture</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#how-the-cache-gets-fed">How The Cache Gets Fed</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#initialization-the-list-phase">Initialization: The LIST Phase</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#continuous-sync-the-watch-phase">Continuous Sync: The WATCH Phase</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#the-problem-timeout-too-large-resource-version">The Problem: &quot;Timeout: Too large resource version&quot;</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#understanding-cache-freshness">Understanding Cache Freshness</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#the-freshness-check">The Freshness Check</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#the-problem-with-quiet-resources">The Problem with Quiet Resources</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#timeout-behavior-summary">Timeout Behavior Summary</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#progress-notifications-keeping-quiet-resources-fresh">Progress Notifications: Keeping Quiet Resources Fresh</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#what-are-progress-notifications">What Are Progress Notifications?</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#two-mechanisms">Two Mechanisms</a>
+            <ul>
+                <li>
+                  <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#1-on-demand-requestwatchprogress">1. On-Demand: RequestWatchProgress()</a>
+                </li>
+                <li>
+                  <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#2-proactive-periodic-progress-requests">2. Proactive: Periodic Progress Requests</a>
+                </li>
+            </ul>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#the-complete-flow">The Complete Flow</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#key-takeaways">Key Takeaways</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/#related-posts">Related Posts</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <hr />
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost series where we dig into specific parts of a project's codebase. In this episode, we dig into Kubernetes' watch cache implementation.</p>
+<hr />
+<p>While debugging an etcd-shim on FoundationDB, I kept hitting <code>"Timeout: Too large resource version"</code> errors. The cache was stuck at revision 3044, but clients requested 3047. Three seconds later: timeout. This led me into the watch cache internals: specifically the 3-second timeout in <code>waitUntilFreshAndBlock()</code> and how progress notifications solve the problem. Let's dig into how it actually works.</p>
+<blockquote>
+<p><strong>Note:</strong> Yes, <a href="https://clever.cloud">Clever Cloud</a> runs an etcd-shim on top of FoundationDB for Kubernetes. Truth is, we're not alone: <a href="https://aws.amazon.com/blogs/containers/under-the-hood-amazon-eks-ultra-scale-clusters/">AWS</a> and <a href="https://cloud.google.com/blog/products/containers-kubernetes/gke-65k-nodes-and-counting?hl=en">GKE</a> have custom storage layers too. After <a href="https://www.youtube.com/watch?v=IrJyrGQ_R9c">operating etcd at OVHcloud</a>, we chose a different path. I actually wrote a naive PoC during COVID (<a href="https://github.com/PierreZ/fdb-etcd">fdb-etcd</a>) without testing it against a real apiserver 😅 it was mostly an excuse to discover <a href="https://pierrez.github.io/fdb-book/the-record-layer/what-is-record-layer.html">the Record-Layer</a>. You can read more about the technical challenges in <a href="https://forums.foundationdb.org/t/a-foundationdb-layer-for-apiserver-as-an-alternative-to-etcd/2697">this FoundationDB forum discussion</a>.</p>
+</blockquote>
+<h2 id="overview-of-the-watch-cache"><a class="zola-anchor" href="#overview-of-the-watch-cache" aria-label="Anchor link for: overview-of-the-watch-cache">🔗</a>Overview of the Watch Cache</h2>
+<p>When I first looked at the watch cache implementation, I expected a single monolithic cache sitting between the apiserver and etcd. It took compiling my own apiserver with additional logging to realize the architecture is more interesting: <strong>each resource type gets its own independent Cacher instance</strong>. Pods have one. Services have another. Deployments get their own. Every resource group runs an isolated LIST+WATCH loop, maintaining its own in-memory cache.</p>
+<p>As the <a href="https://kubernetes.io/blog/2024/08/15/consistent-read-from-cache-beta/">Kubernetes 1.34 blog post</a> explains, this enhancement allows the API server to serve consistent read requests directly from the watch cache, significantly reducing the load on etcd and improving overall cluster performance.</p>
+<h2 id="architecture"><a class="zola-anchor" href="#architecture" aria-label="Anchor link for: architecture">🔗</a>Architecture</h2>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Client Requests (kubectl, controllers)
+</span><span>          ↓
+</span><span>    Cacher (per resource)
+</span><span>          ↓ In-memory watch cache
+</span><span>          ↓ (on cache miss/delegate)
+</span><span>    etcd3/Store
+</span><span>          ↓
+</span><span>    etcd / etcd-shim
+</span></code></pre>
+<p>The main components:</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go">cacher.go</a> - The in-memory watch cache</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/etcd3/store.go">store.go</a> - Direct <a href="/posts/notes-about-etcd/">etcd</a> communication layer</li>
+</ul>
+<h2 id="how-the-cache-gets-fed"><a class="zola-anchor" href="#how-the-cache-gets-fed" aria-label="Anchor link for: how-the-cache-gets-fed">🔗</a>How The Cache Gets Fed</h2>
+<h3 id="initialization-the-list-phase"><a class="zola-anchor" href="#initialization-the-list-phase" aria-label="Anchor link for: initialization-the-list-phase">🔗</a>Initialization: The LIST Phase</h3>
+<p><strong>Nothing works until the cache initializes</strong>. When a Cacher starts, every read for that resource blocks until initialization completes. This matters because initialization isn't instant: it's a paginated LIST operation fetching 10,000 items per page. For a large cluster with thousands of pods, this takes time.</p>
+<p>Here's the sequence: The Reflector pattern kicks off with a complete LIST operation. Each resource cache fetches all existing objects through paginated requests. Once the LIST completes, <code>watchCache.Replace()</code> populates the in-memory cache with these objects. The <strong>critical moment</strong> happens when the <code>SetOnReplace()</code> callback fires (<a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go#L468-L478">cacher.go:468-478</a>), marking the cache as READY. Until that callback fires, every request for that resource waits.</p>
+<h3 id="continuous-sync-the-watch-phase"><a class="zola-anchor" href="#continuous-sync-the-watch-phase" aria-label="Anchor link for: continuous-sync-the-watch-phase">🔗</a>Continuous Sync: The WATCH Phase</h3>
+<p>After initialization, the real trick begins: the cache maintains synchronization through a Watch stream that starts at LIST revision + 1. This <strong>guarantees no events are missed</strong> between the LIST and WATCH operations. The watch picks up exactly where the list left off. Events flow from etcd through a buffered channel (capacity: 100 events) and are processed by the <code>dispatchEvents()</code> goroutine, which runs continuously, matching events to interested watchers.</p>
+<p>This pattern depends on continuous event flow. When events stop arriving, when resources go quiet, that's when progress notifications become essential. See <a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/client-go/tools/cache/reflector.go">Reflector documentation</a> for the complete pattern.</p>
+<h2 id="the-problem-timeout-too-large-resource-version"><a class="zola-anchor" href="#the-problem-timeout-too-large-resource-version" aria-label="Anchor link for: the-problem-timeout-too-large-resource-version">🔗</a>The Problem: "Timeout: Too large resource version"</h2>
+<p>While debugging our etcd-shim, we kept hitting this error:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Error getting keys: err=&quot;Timeout: Too large resource version: 3047, current: 3044&quot;
+</span></code></pre>
+<p>A client was requesting ResourceVersion 3047, but the cache only knew about revision 3044. The cache would wait... and timeout after 3 seconds.</p>
+<h2 id="understanding-cache-freshness"><a class="zola-anchor" href="#understanding-cache-freshness" aria-label="Anchor link for: understanding-cache-freshness">🔗</a>Understanding Cache Freshness</h2>
+<h3 id="the-freshness-check"><a class="zola-anchor" href="#the-freshness-check" aria-label="Anchor link for: the-freshness-check">🔗</a>The Freshness Check</h3>
+<p>When a client requests a consistent read at a specific ResourceVersion, Kubernetes needs to ensure the cache is "fresh enough" to serve that request. Here's the check: is my current revision at least as high as the requested revision? If not, it calls <code>waitUntilFreshAndBlock()</code> with a 3-second timeout, waiting for Watch events to bring the cache up to date.</p>
+<p>From <a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go#L1257-L1261">cacher.go:1257-1261</a>:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">if </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">watchCache</span><span>.</span><span style="color:#bf616a;">notFresh</span><span>(</span><span style="color:#bf616a;">requestedWatchRV</span><span>) {
+</span><span>    </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">watchCache</span><span>.</span><span style="color:#bf616a;">waitingUntilFresh</span><span>.</span><span style="color:#bf616a;">Add</span><span>()
+</span><span>    </span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">watchCache</span><span>.</span><span style="color:#bf616a;">waitingUntilFresh</span><span>.</span><span style="color:#bf616a;">Remove</span><span>()
+</span><span>}
+</span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">watchCache</span><span>.</span><span style="color:#bf616a;">waitUntilFreshAndBlock</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">requestedWatchRV</span><span>)
+</span></code></pre>
+<p>The actual timeout implementation (<a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/watch_cache.go#L448-L488">watch_cache.go:448-488</a>):</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">w </span><span>*</span><span style="color:#b48ead;">watchCache</span><span>) </span><span style="color:#8fa1b3;">waitUntilFreshAndBlock</span><span>(</span><span style="color:#bf616a;">ctx context</span><span>.</span><span style="color:#b48ead;">Context</span><span>, </span><span style="color:#bf616a;">resourceVersion </span><span style="color:#b48ead;">uint64</span><span>) </span><span style="color:#b48ead;">error </span><span>{
+</span><span>    </span><span style="color:#bf616a;">startTime </span><span>:= </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">clock</span><span>.</span><span style="color:#bf616a;">Now</span><span>()
+</span><span>    </span><span style="color:#b48ead;">defer func</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">resourceVersion </span><span>&gt; </span><span style="color:#d08770;">0 </span><span>{
+</span><span>            </span><span style="color:#bf616a;">metrics</span><span>.</span><span style="color:#bf616a;">WatchCacheReadWait</span><span>.</span><span style="color:#bf616a;">WithContext</span><span>(</span><span style="color:#bf616a;">ctx</span><span>).</span><span style="color:#bf616a;">WithLabelValues</span><span>(</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">groupResource</span><span>.</span><span style="color:#bf616a;">Group</span><span>, </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">groupResource</span><span>.</span><span style="color:#bf616a;">Resource</span><span>).</span><span style="color:#bf616a;">Observe</span><span>(</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">clock</span><span>.</span><span style="color:#bf616a;">Since</span><span>(</span><span style="color:#bf616a;">startTime</span><span>).</span><span style="color:#bf616a;">Seconds</span><span>())
+</span><span>        }
+</span><span>    }()
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// In case resourceVersion is 0, we accept arbitrarily stale result.
+</span><span>    </span><span style="color:#65737e;">// As a result, the condition in the below for loop will never be
+</span><span>    </span><span style="color:#65737e;">// satisfied (w.resourceVersion is never negative), this call will
+</span><span>    </span><span style="color:#65737e;">// never hit the w.cond.Wait().
+</span><span>    </span><span style="color:#65737e;">// As a result - we can optimize the code by not firing the wakeup
+</span><span>    </span><span style="color:#65737e;">// function (and avoid starting a gorotuine), especially given that
+</span><span>    </span><span style="color:#65737e;">// resourceVersion=0 is the most common case.
+</span><span>    </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">resourceVersion </span><span>&gt; </span><span style="color:#d08770;">0 </span><span>{
+</span><span>        </span><span style="color:#b48ead;">go func</span><span>() {
+</span><span>            </span><span style="color:#65737e;">// Wake us up when the time limit has expired.  The docs
+</span><span>            </span><span style="color:#65737e;">// promise that time.After (well, NewTimer, which it calls)
+</span><span>            </span><span style="color:#65737e;">// will wait *at least* the duration given. Since this go
+</span><span>            </span><span style="color:#65737e;">// routine starts sometime after we record the start time, and
+</span><span>            </span><span style="color:#65737e;">// it will wake up the loop below sometime after the broadcast,
+</span><span>            </span><span style="color:#65737e;">// we don&#39;t need to worry about waking it up before the time
+</span><span>            </span><span style="color:#65737e;">// has expired accidentally.
+</span><span>            &lt;-</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">clock</span><span>.</span><span style="color:#bf616a;">After</span><span>(</span><span style="color:#bf616a;">blockTimeout</span><span>)
+</span><span>            </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">cond</span><span>.</span><span style="color:#bf616a;">Broadcast</span><span>()
+</span><span>        }()
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">RLock</span><span>()
+</span><span>    </span><span style="color:#bf616a;">span </span><span>:= </span><span style="color:#bf616a;">tracing</span><span>.</span><span style="color:#bf616a;">SpanFromContext</span><span>(</span><span style="color:#bf616a;">ctx</span><span>)
+</span><span>    </span><span style="color:#bf616a;">span</span><span>.</span><span style="color:#bf616a;">AddEvent</span><span>(&quot;</span><span style="color:#a3be8c;">watchCache locked acquired</span><span>&quot;)
+</span><span>    </span><span style="color:#b48ead;">for </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">resourceVersion </span><span>&lt; </span><span style="color:#bf616a;">resourceVersion </span><span>{
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">clock</span><span>.</span><span style="color:#bf616a;">Since</span><span>(</span><span style="color:#bf616a;">startTime</span><span>) &gt;= </span><span style="color:#bf616a;">blockTimeout </span><span>{
+</span><span>            </span><span style="color:#65737e;">// Request that the client retry after &#39;resourceVersionTooHighRetrySeconds&#39; seconds.
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">storage</span><span>.</span><span style="color:#bf616a;">NewTooLargeResourceVersionError</span><span>(</span><span style="color:#bf616a;">resourceVersion</span><span>, </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">resourceVersion</span><span>, </span><span style="color:#bf616a;">resourceVersionTooHighRetrySeconds</span><span>)
+</span><span>        }
+</span><span>        </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">cond</span><span>.</span><span style="color:#bf616a;">Wait</span><span>()
+</span><span>    }
+</span><span>    </span><span style="color:#bf616a;">span</span><span>.</span><span style="color:#bf616a;">AddEvent</span><span>(&quot;</span><span style="color:#a3be8c;">watchCache fresh enough</span><span>&quot;)
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil
+</span><span>}
+</span></code></pre>
+<p>If the cache can't catch up within those 3 seconds, the request times out.</p>
+<p>If you've ever seen kubectl commands hang for exactly 3 seconds before returning data, this is why. The cache is waiting for events that will never come.</p>
+<h3 id="the-problem-with-quiet-resources"><a class="zola-anchor" href="#the-problem-with-quiet-resources" aria-label="Anchor link for: the-problem-with-quiet-resources">🔗</a>The Problem with Quiet Resources</h3>
+<p>This is where things get tricky. For infrequently-updated resources (namespaces, configmaps, etc.):</p>
+<table><thead><tr><th>Time</th><th>Component</th><th>Event</th><th>Cache RV</th><th>etcd RV</th><th>Notes</th></tr></thead><tbody>
+<tr><td>T0</td><td>Namespace cache</td><td>Idle, no changes</td><td>3044</td><td>3044</td><td>No namespace changes for 5 minutes</td></tr>
+<tr><td>T1</td><td>Pod/Service caches</td><td>Resources changing</td><td>-</td><td>3047</td><td>Global etcd revision advances</td></tr>
+<tr><td>T2</td><td>Namespace watch</td><td>Receives nothing</td><td>3044</td><td>3047</td><td>No namespace events to process</td></tr>
+<tr><td>T3</td><td>Namespace cache</td><td>Still waiting</td><td>3044</td><td>3047</td><td>Cache stuck, unaware of global progress</td></tr>
+<tr><td>T4</td><td>Client</td><td>Lists pods successfully</td><td>-</td><td>3047</td><td>Response includes current RV 3047</td></tr>
+<tr><td>T5</td><td>Client</td><td>Requests namespace read at RV ≥ 3047</td><td>-</td><td>3047</td><td>Consistent read requirement</td></tr>
+<tr><td>T6</td><td>Namespace cache</td><td><code>waitUntilFreshAndBlock()</code></td><td>3044</td><td>3047</td><td>"I'm at 3044, need 3047... waiting"</td></tr>
+<tr><td>T7</td><td>Namespace cache</td><td>Timeout!</td><td>3044</td><td>3047</td><td>3 seconds elapsed, returns error</td></tr>
+</tbody></table>
+<p>The cache has no way to know if etcd has moved forward. Is the system healthy? Is something broken? It just sees... nothing.</p>
+<h3 id="timeout-behavior-summary"><a class="zola-anchor" href="#timeout-behavior-summary" aria-label="Anchor link for: timeout-behavior-summary">🔗</a>Timeout Behavior Summary</h3>
+<table><thead><tr><th>Scenario</th><th>Cache RV</th><th>Requested RV</th><th>Result</th></tr></thead><tbody>
+<tr><td>Fresh cache</td><td>3047</td><td>3045</td><td>✓ Serve immediately</td></tr>
+<tr><td>Stale cache</td><td>3044</td><td>3047</td><td>⏱ Wait 3s → timeout</td></tr>
+<tr><td>With progress</td><td>3044</td><td>3047</td><td>✓ RequestProgress → serve</td></tr>
+</tbody></table>
+<h2 id="progress-notifications-keeping-quiet-resources-fresh"><a class="zola-anchor" href="#progress-notifications-keeping-quiet-resources-fresh" aria-label="Anchor link for: progress-notifications-keeping-quiet-resources-fresh">🔗</a>Progress Notifications: Keeping Quiet Resources Fresh</h2>
+<h3 id="what-are-progress-notifications"><a class="zola-anchor" href="#what-are-progress-notifications" aria-label="Anchor link for: what-are-progress-notifications">🔗</a>What Are Progress Notifications?</h3>
+<p>Here's the trick: progress notifications are <strong>empty Watch responses</strong> that only update the revision:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#bf616a;">WatchResponse </span><span>{
+</span><span>    </span><span style="color:#bf616a;">Header</span><span>: { </span><span style="color:#bf616a;">Revision</span><span>: </span><span style="color:#d08770;">3047 </span><span>},  </span><span style="color:#65737e;">// Current etcd revision
+</span><span>    </span><span style="color:#bf616a;">Events</span><span>: []                     </span><span style="color:#65737e;">// No actual data changes
+</span><span>}
+</span></code></pre>
+<p>They solve the quiet resource problem by telling the cache: "etcd is now at revision X, even though your resource hasn't changed."</p>
+<p>This is exactly what we had forgotten to implement in our etcd-shim. We handled regular Watch events perfectly, but didn't support progress notifications. The result? Kubernetes' watch cache would timeout waiting for revisions that would never arrive through normal events. Once we added <code>RequestProgress</code> support and started sending these empty bookmark responses, the timeouts disappeared.</p>
+<h3 id="two-mechanisms"><a class="zola-anchor" href="#two-mechanisms" aria-label="Anchor link for: two-mechanisms">🔗</a>Two Mechanisms</h3>
+<h4 id="1-on-demand-requestwatchprogress"><a class="zola-anchor" href="#1-on-demand-requestwatchprogress" aria-label="Anchor link for: 1-on-demand-requestwatchprogress">🔗</a>1. On-Demand: RequestWatchProgress()</h4>
+<p>When the cache needs to catch up, it can explicitly request a progress notification. See <a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/etcd3/store.go#L99-L103">store.go:99-103</a>:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">store</span><span>) </span><span style="color:#8fa1b3;">RequestWatchProgress</span><span>(</span><span style="color:#bf616a;">ctx context</span><span>.</span><span style="color:#b48ead;">Context</span><span>) </span><span style="color:#b48ead;">error </span><span>{
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">client</span><span>.</span><span style="color:#bf616a;">RequestProgress</span><span>(</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">watchContext</span><span>(</span><span style="color:#bf616a;">ctx</span><span>))
+</span><span>}
+</span></code></pre>
+<p>When called, etcd responds with a bookmark (also called a progress notification) containing the current revision. The cache at revision 3044 calls <code>RequestProgress()</code>, receives <code>{ Revision: 3047, Events: [] }</code>, and immediately updates its internal state to 3047.</p>
+<p>The progress notification is detected in the watch stream (<a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/etcd3/watcher.go#L401-L404">watcher.go:401-404</a>):</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#65737e;">// Handle progress notifications (bookmarks)
+</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">wres</span><span>.</span><span style="color:#bf616a;">IsProgressNotify</span><span>() {
+</span><span>    </span><span style="color:#bf616a;">wc</span><span>.</span><span style="color:#bf616a;">queueEvent</span><span>(</span><span style="color:#bf616a;">progressNotifyEvent</span><span>(</span><span style="color:#bf616a;">wres</span><span>.</span><span style="color:#bf616a;">Header</span><span>.</span><span style="color:#bf616a;">GetRevision</span><span>()))
+</span><span>    </span><span style="color:#bf616a;">metrics</span><span>.</span><span style="color:#bf616a;">RecordEtcdBookmark</span><span>(</span><span style="color:#bf616a;">wc</span><span>.</span><span style="color:#bf616a;">watcher</span><span>.</span><span style="color:#bf616a;">groupResource</span><span>)
+</span><span>    </span><span style="color:#b48ead;">continue
+</span><span>}
+</span></code></pre>
+<h4 id="2-proactive-periodic-progress-requests"><a class="zola-anchor" href="#2-proactive-periodic-progress-requests" aria-label="Anchor link for: 2-proactive-periodic-progress-requests">🔗</a>2. Proactive: Periodic Progress Requests</h4>
+<p>Kubernetes also runs a background component called <a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go#L425-L428">progressRequester</a> that monitors quiet watches. This component detects when watches haven't received events for a while and periodically calls <code>RequestProgress()</code> to ensure even completely idle resources stay fresh. This proactive approach prevents timeout errors before they happen.</p>
+<p>The progress requester is initialized when the Cacher is created (<a href="https://github.com/kubernetes/kubernetes/blob/release-1.34/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go#L425-L428">cacher.go:425-428</a>):</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#bf616a;">progressRequester </span><span>:= </span><span style="color:#bf616a;">progress</span><span>.</span><span style="color:#bf616a;">NewConditionalProgressRequester</span><span>(
+</span><span>    </span><span style="color:#bf616a;">config</span><span>.</span><span style="color:#bf616a;">Storage</span><span>.</span><span style="color:#bf616a;">RequestWatchProgress</span><span>,  </span><span style="color:#65737e;">// The function to call
+</span><span>    </span><span style="color:#bf616a;">config</span><span>.</span><span style="color:#bf616a;">Clock</span><span>,
+</span><span>    </span><span style="color:#bf616a;">contextMetadata
+</span><span>)
+</span></code></pre>
+<h2 id="the-complete-flow"><a class="zola-anchor" href="#the-complete-flow" aria-label="Anchor link for: the-complete-flow">🔗</a>The Complete Flow</h2>
+<p><strong>Timeline showing how progress notifications solve the timeout:</strong></p>
+<table><thead><tr><th>Time</th><th>Component</th><th>Action</th><th>Cache RV</th><th>etcd RV</th><th>Details</th></tr></thead><tbody>
+<tr><td>T0</td><td>Namespace watch</td><td>Established</td><td>3044</td><td>3044</td><td>No namespace changes happening</td></tr>
+<tr><td>T1</td><td>Pod resources</td><td>Creates/updates</td><td>3044</td><td>3047</td><td>Namespace watch: silent, cache stuck at 3044</td></tr>
+<tr><td>T2</td><td>Client</td><td>Requests namespace LIST at RV 3047</td><td>3044</td><td>3047</td><td><code>notFresh(3047)</code> → true, starts <code>waitUntilFreshAndBlock()</code></td></tr>
+<tr><td>T3</td><td>progressRequester</td><td>Detects quiet watch</td><td>3044</td><td>3047</td><td>Calls <code>RequestProgress()</code> on namespace watch stream</td></tr>
+<tr><td>T4</td><td>etcd</td><td>Sends progress notification</td><td>3044</td><td>3047</td><td><code>WatchResponse { Header: { Revision: 3047 }, Events: [] }</code></td></tr>
+<tr><td>T5</td><td>Namespace cache</td><td>Processes bookmark</td><td>3047</td><td>3047</td><td>Updates internal revision 3044 → 3047, signals waiters</td></tr>
+<tr><td>T6</td><td>Namespace cache</td><td>Returns successfully</td><td>3047</td><td>3047</td><td><code>waitUntilFreshAndBlock()</code> completes, request served from cache</td></tr>
+</tbody></table>
+<h2 id="key-takeaways"><a class="zola-anchor" href="#key-takeaways" aria-label="Anchor link for: key-takeaways">🔗</a>Key Takeaways</h2>
+<p>Here's what you need to know: Kubernetes runs a separate watch cache for each resource type (pods, services, deployments, etc.), and each one maintains its own LIST+WATCH loop. When you request a consistent read, the cache performs a freshness check with a <strong>3-second timeout</strong> via <code>waitUntilFreshAndBlock()</code>. Without this mechanism, you'd see 3-second hangs on every consistent read to quiet resources.</p>
+<p><strong>Progress notifications</strong> solve the critical problem of quiet resources: those that don't receive updates for extended periods. These empty Watch responses update the cache's revision without transferring data. Kubernetes implements this through two mechanisms: <strong>on-demand</strong> (explicit RequestProgress calls when the cache needs to catch up) and <strong>proactive</strong> (periodic monitoring by the progressRequester component).</p>
+<p>Without progress notifications, consistent reads must bypass the cache entirely and go directly to etcd, significantly increasing load on the storage layer. This is the difference between a responsive cluster and one where every kubectl command feels sluggish.</p>
+<h2 id="related-posts"><a class="zola-anchor" href="#related-posts" aria-label="Anchor link for: related-posts">🔗</a>Related Posts</h2>
+<p>If you enjoyed this deep dive into Kubernetes watch caching, you might also be interested in:</p>
+<ul>
+<li><a href="/posts/notes-about-etcd/">Notes about ETCD</a> - An overview and collection of resources about etcd, the distributed key-value store that powers Kubernetes</li>
+<li><a href="/posts/diving-into-etcd-linearizable/">Diving into ETCD's linearizable reads</a> - A deep dive into how etcd implements linearizable reads using Raft consensus</li>
+</ul>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with Kubernetes watch caching. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a>
+          <a href="https://pierrezemb.fr/tags/kubernetes/">#kubernetes</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+          <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a>
+          <a href="https://pierrezemb.fr/tags/caching/">#caching</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
