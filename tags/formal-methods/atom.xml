@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Pierre Zemb&#x27;s Blog - formal-methods</title>
+    <subtitle>Pierre Zemb personal blog</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/formal-methods/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-12-19T00:00:00+00:00</updated>
+    <id>https://pierrezemb.fr/tags/formal-methods/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Specs Are Back, But We&#x27;re Missing the Tools</title>
+        <published>2025-12-19T00:00:00+00:00</published>
+        <updated>2025-12-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/specs-are-back/"/>
+        <id>https://pierrezemb.fr/posts/specs-are-back/</id>
+        
+        <category term="software-engineering" schema="https://pierrezemb.fr/tags/" label="software-engineering"/>
+        <category term="llm" schema="https://pierrezemb.fr/tags/" label="llm"/>
+        <category term="specifications" schema="https://pierrezemb.fr/tags/" label="specifications"/>
+        <category term="formal-methods" schema="https://pierrezemb.fr/tags/" label="formal-methods"/>
+        <category term="model-checking" schema="https://pierrezemb.fr/tags/" label="model-checking"/>
+        <category term="fizzbee" schema="https://pierrezemb.fr/tags/" label="fizzbee"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/specs-are-back/">&lt;p&gt;I truly think LLMs are changing how we write software. For me, it&#x27;s been a massive productivity boost. I can ask Claude to read some piece of code and explain it to me, or make a quick PoC of something, or refactor stuff that would take me hours. I even used it to help me &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;moonpool&quot;&gt;backport features from FoundationDB in Rust&lt;&#x2F;a&gt;, and it worked surprisingly well 🤯&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;world.hey.com&#x2F;joaoqalves&#x2F;when-software-becomes-fast-food-23147c9b&quot;&gt;João Alves made a great point recently&lt;&#x2F;a&gt;: code is becoming like fast food. Cheap, fast, everywhere. You ask an LLM to generate something, it compiles, the tests pass, and you ship it. For critical systems, &lt;a href=&quot;&#x2F;posts&#x2F;diving-into-foundationdb-simulation&#x2F;&quot;&gt;simulation testing&lt;&#x2F;a&gt; can validate that code actually survives production chaos.&lt;&#x2F;p&gt;
+&lt;p&gt;But here&#x27;s what I keep running into: we&#x27;re still using &lt;strong&gt;natural language&lt;&#x2F;strong&gt; to prompt, correct, and guide LLMs. Vague instructions produce vague code. The bottleneck isn&#x27;t writing code anymore, it&#x27;s knowing &lt;strong&gt;what&lt;&#x2F;strong&gt; to write in the first place.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-specs-died-in-the-first-place&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-specs-died-in-the-first-place&quot; aria-label=&quot;Anchor link for: why-specs-died-in-the-first-place&quot;&gt;🔗&lt;&#x2F;a&gt;Why specs died in the first place&lt;&#x2F;h2&gt;
+&lt;p&gt;Ask any engineering team &quot;where&#x27;s the spec for this service?&quot; and you&#x27;ll probably get one of three answers: blank stares, a link to some 3-year-old Google doc that&#x27;s completely outdated, or my personal favorite, &quot;the code is the spec.&quot;&lt;&#x2F;p&gt;
+&lt;p&gt;I think the problem was simple: &lt;strong&gt;specs had no feedback loop&lt;&#x2F;strong&gt;. Code compiles, tests pass, but specs? They just sit there. Nobody validates them, nobody updates them. Six months later, the spec has become archaeology, and new team members learn to ignore it because they can&#x27;t trust it anyway.&lt;&#x2F;p&gt;
+&lt;p&gt;What changed is that LLMs can actually &lt;strong&gt;read&lt;&#x2F;strong&gt; specifications now. And suddenly, specs aren&#x27;t dead documents anymore. They&#x27;re instructions that can be executed. I&#x27;ve found two modes that actually work:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Generation&lt;&#x2F;strong&gt;: you give an LLM a structured spec, and it gives you an implementation&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Validation&lt;&#x2F;strong&gt;: you give an LLM some existing code and a spec, and ask &quot;does this implementation actually respect the specification?&quot;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;spec-kit-and-the-right-prompt-chain&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#spec-kit-and-the-right-prompt-chain&quot; aria-label=&quot;Anchor link for: spec-kit-and-the-right-prompt-chain&quot;&gt;🔗&lt;&#x2F;a&gt;spec-kit and the right prompt chain&lt;&#x2F;h2&gt;
+&lt;p&gt;I tried &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;github&#x2F;spec-kit&quot;&gt;spec-kit&lt;&#x2F;a&gt; a while ago and found it pretty useful. What it does well is guide you through a structured chain of prompts: you start with a Constitution (your project principles), then you write Specifications (requirements with acceptance criteria), then Technical Plans, then Tasks, and finally Implementation.&lt;&#x2F;p&gt;
+&lt;p&gt;It sounds obvious when I write it like that, but it&#x27;s surprisingly effective. This isn&#x27;t scattered TODO comments. It&#x27;s a queryable structure that builds context progressively, and the LLM can use all of it.&lt;&#x2F;p&gt;
+&lt;p&gt;The generated code was actually good, because spec-kit forced me to build the right context first. And here&#x27;s what surprised me: the LLM kept challenging my vague requirements. Every time I wrote something like &quot;handle edge cases,&quot; it would ask &quot;what happens when X? what about Y?&quot; until the spec was actually implementable.&lt;&#x2F;p&gt;
+&lt;p&gt;I think that&#x27;s the trick. &lt;strong&gt;Context is everything&lt;&#x2F;strong&gt;. Build the right context, and the LLM produces the right code.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-limits-of-english&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-limits-of-english&quot; aria-label=&quot;Anchor link for: the-limits-of-english&quot;&gt;🔗&lt;&#x2F;a&gt;The limits of English&lt;&#x2F;h2&gt;
+&lt;p&gt;Here&#x27;s where I hit a wall though. English-based specs work great for user stories and acceptance criteria, the kind of stuff product managers care about. But for algorithms and system behavior? Natural language gets ambiguous really fast.&lt;&#x2F;p&gt;
+&lt;p&gt;&quot;Handle concurrent access&quot; means different things to different people. &quot;Ensure consistency&quot; is even worse. When you&#x27;re designing distributed algorithms with subtle timing constraints, you need precision. English just doesn&#x27;t cut it.&lt;&#x2F;p&gt;
+&lt;p&gt;I needed something more engineering-driven. Not formal verification for academic purposes, but practical precision that the whole team could read and reason about.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;finding-an-engineering-driven-approach&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#finding-an-engineering-driven-approach&quot; aria-label=&quot;Anchor link for: finding-an-engineering-driven-approach&quot;&gt;🔗&lt;&#x2F;a&gt;Finding an engineering-driven approach&lt;&#x2F;h2&gt;
+&lt;p&gt;I started looking at formal methods. &lt;a href=&quot;https:&#x2F;&#x2F;lamport.azurewebsites.net&#x2F;video&#x2F;videos.html&quot;&gt;TLA+&lt;&#x2F;a&gt; is the classic choice, but the notation felt like another language to maintain. I didn&#x27;t want to be the only one on the team who could read the specs. I&#x27;ve been there before with other technologies, and it&#x27;s not a great place to be 😅&lt;&#x2F;p&gt;
+&lt;p&gt;Then &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;alexmillerdb.bsky.social&#x2F;post&#x2F;3m6ptancmus2o&quot;&gt;a friend&lt;&#x2F;a&gt; suggested &lt;a href=&quot;https:&#x2F;&#x2F;fizzbee.io&quot;&gt;Fizzbee&lt;&#x2F;a&gt;. It&#x27;s based on Starlark, a Python dialect. Model checking without the TLA+ notation. The whole team can contribute.&lt;&#x2F;p&gt;
+&lt;p&gt;Learning new languages with LLMs works well. The trick is to find or generate a spec of the language first, then ask for a tutorial tailored to your specific problem. I asked Claude to write a Starlark reference and a Fizzbee concepts recap. Now we share vocabulary, and the conversations are productive.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-we-re-still-missing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-we-re-still-missing&quot; aria-label=&quot;Anchor link for: what-we-re-still-missing&quot;&gt;🔗&lt;&#x2F;a&gt;What we&#x27;re still missing&lt;&#x2F;h2&gt;
+&lt;p&gt;Fizzbee is great for what it does. For algorithms and concurrency, model checking feels like the Rust compiler but for higher-level design. It explores all possible states and finds bugs before any code exists. Here&#x27;s what an invariant looks like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Safety: no duplicate completions
+&lt;&#x2F;span&gt;&lt;span&gt;always assertion NoDuplicateCompletions:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(completed) == &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set&lt;&#x2F;span&gt;&lt;span&gt;(completed))
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Readable by anyone who knows Python.&lt;&#x2F;p&gt;
+&lt;p&gt;But most software isn&#x27;t distributed algorithms. Most of what we build is about storing data in databases, sending messages to queues, calling other services, transforming inputs into outputs.&lt;&#x2F;p&gt;
+&lt;p&gt;And we describe this behavior in a dozen different places: C4 diagrams for architecture, OpenAPI for HTTP endpoints, protobuf for message schemas, ADRs for decisions, markdown for everything else. No single notation captures the full picture.&lt;&#x2F;p&gt;
+&lt;p&gt;I keep thinking about what this tool would need to be. It should be &lt;strong&gt;compact&lt;&#x2F;strong&gt;, short enough to fit in an LLM&#x27;s context window without eating thousands of tokens. It should work at both levels: service interactions (&quot;UserService stores in Postgres, publishes to Kafka&quot;) and function behavior (&quot;validateUser checks format, queries DB, returns DTO&quot;). It should be the &lt;strong&gt;common language&lt;&#x2F;strong&gt; that both the team and the LLM can read, write, and reason about.&lt;&#x2F;p&gt;
+&lt;p&gt;Most importantly, it should be &lt;strong&gt;verifiable&lt;&#x2F;strong&gt;. Not just documentation that sits there, but something that can actually validate whether an implementation matches what we said it would do. The feedback loop that specs never had.&lt;&#x2F;p&gt;
+&lt;p&gt;OpenAPI gets close for HTTP APIs. You can validate requests, generate clients, catch breaking changes. But for the rest? For business logic, for service contracts that aren&#x27;t just endpoints, for the behavior that actually matters? The tooling doesn&#x27;t exist yet.&lt;&#x2F;p&gt;
+&lt;p&gt;As the old joke goes, &lt;a href=&quot;https:&#x2F;&#x2F;www.commitstrip.com&#x2F;en&#x2F;2016&#x2F;08&#x2F;25&#x2F;a-very-comprehensive-and-precise-spec&#x2F;&quot;&gt;a spec precise enough to generate code is just called code&lt;&#x2F;a&gt;. But there has to be something in between prose and implementation. And yes, I&#x27;m aware that proposing a new format makes me &lt;a href=&quot;https:&#x2F;&#x2F;xkcd.com&#x2F;927&#x2F;&quot;&gt;the 15th competing standard&lt;&#x2F;a&gt;. But if you&#x27;ve found something that fills this gap, or have ideas about what it should look like, I&#x27;d love to hear about it.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out to share your thoughts on spec tooling. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

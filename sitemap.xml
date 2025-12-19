@@ -153,6 +153,10 @@
         <lastmod>2025-04-18T11:12:12+02:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/specs-are-back/</loc>
+        <lastmod>2025-12-19</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/ten-years-programming/</loc>
         <lastmod>2020-09-30T00:24:27+01:00</lastmod>
     </url>
@@ -262,7 +266,13 @@
         <loc>https://pierrezemb.fr/tags/filesystem/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/fizzbee/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/flink/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/formal-methods/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
@@ -308,6 +318,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/metrics/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/model-checking/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/monitoring/</loc>
@@ -382,7 +395,13 @@
         <loc>https://pierrezemb.fr/tags/simulation/</loc>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/tags/software-engineering/</loc>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/tags/space/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/specifications/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/sql/</loc>
