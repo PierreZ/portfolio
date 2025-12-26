@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025: A Year in Review | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="2025: A Year in Review">
+<meta name="description" content="Reflections on returning to engineering, discovering simulation as a superpower, learning to work with LLMs, and the compounding value of years of distributed systems work.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="2025: A Year in Review" />
+<meta name="twitter:description" content="Reflections on returning to engineering, discovering simulation as a superpower, learning to work with LLMs, and the compounding value of years of distributed systems work." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="2025: A Year in Review">
+<meta property="og:description" content="Reflections on returning to engineering, discovering simulation as a superpower, learning to work with LLMs, and the compounding value of years of distributed systems work."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/2025-year-in-review/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2025-12-26" />
+
+
+
+<meta property="article:tag" content="personal" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>2025: A Year in Review</h1>
+      <p>
+        <i>
+          <time datetime="2025-12-26T00:00:00+00:00" pubdate>26 Dec, 2025</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/2025-year-in-review/#back-in-engineering">Back in Engineering</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/2025-year-in-review/#the-transition">The Transition</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/2025-year-in-review/#building-the-toolbox-behind-materia-the-long-way-around">Building the Toolbox Behind Materia, the Long Way Around</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/2025-year-in-review/#the-simulation-year">The Simulation Year</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/2025-year-in-review/#the-awakening">The Awakening</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/2025-year-in-review/#from-understanding-to-building">From Understanding to Building</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/2025-year-in-review/#sharing">Sharing</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/2025-year-in-review/#how-llms-changed-my-work">How LLMs Changed My Work</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/2025-year-in-review/#looking-ahead">Looking Ahead</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>2025 was the year I stopped managing and started shipping software again. After nearly two years of context-switching between fires and people issues, I returned to the keyboard. As the year closes, it feels like the right time to look back. It was about <strong>going deeper</strong>: into code, into writing, and into understanding why simulation testing is a superpower.</p>
+<h2 id="back-in-engineering"><a class="zola-anchor" href="#back-in-engineering" aria-label="Anchor link for: back-in-engineering">🔗</a>Back in Engineering</h2>
+<h3 id="the-transition"><a class="zola-anchor" href="#the-transition" aria-label="Anchor link for: the-transition">🔗</a>The Transition</h3>
+<p>In January, I <a href="/posts/back-engineering/">went back to engineering</a> after nearly two years in management. It felt like coming home.</p>
+<p>But I will be honest: the transition was harder than I expected. There was real imposter syndrome. Had I lost my edge? Was I still the technical person I used to be? The hardest part was not the code itself but giving myself <strong>permission to focus</strong>. Having another engineering manager handle the team and another SRE team handling the fires while I dove into low-level work was the perfect setup. I am also <strong>grateful</strong> to the whole team for making that transition possible. But after three years of context-switching between fires and people issues, sitting down to write code without interruption felt almost wrong. It took months to fully allow myself to focus without afterthoughts.</p>
+<h3 id="building-the-toolbox-behind-materia-the-long-way-around"><a class="zola-anchor" href="#building-the-toolbox-behind-materia-the-long-way-around" aria-label="Anchor link for: building-the-toolbox-behind-materia-the-long-way-around">🔗</a>Building the Toolbox Behind Materia, the Long Way Around</h3>
+<p>Helping put <a href="https://www.clever-cloud.com/blog/company/2025/06/27/why-we-finally-built-our-own-managed-kubernetes-etcd/">Clever Cloud's etcd shim</a> into production was meaningful because of the long arc behind it.</p>
+<p>At OVHcloud, I got paged too often when etcd hit its performance ceiling. We were adding hundreds of customers per etcd cluster, each with their own Kubernetes control plane. I <a href="https://www.youtube.com/watch?v=IrJyrGQ_R9c">talked about this at KubeCon</a>. Spawning three etcd nodes per customer is not a valid approach at scale, whether in the cloud or on-premise. You need to mutualize, but you cannot scale etcd horizontally because the whole keyspace must fit on every member and the recommended storage limit is <strong>8GB</strong>. When you outgrow one cluster, you boot another, split your keys, and now you operate two, three, or many clusters. We had to balance customers manually across clusters. After <a href="/posts/hbase-custom-data-balancing/">contributing a custom balancer to HBase</a> to solve exactly this problem, doing it by hand for etcd felt like going backward.</p>
+<p>Then I discovered Apple's <a href="https://pierrez.github.io/fdb-book/the-record-layer/what-is-record-layer.html">FDB Record Layer</a>. It was an eye-opener: here was a way to <strong>virtualize database-like systems</strong> on top of FoundationDB, building any storage abstraction you want on a rock-solid distributed foundation. During France's first lockdown, I <a href="https://forums.foundationdb.org/t/a-foundationdb-layer-for-apiserver-as-an-alternative-to-etcd/2697">prototyped an etcd layer</a> using the Record Layer. The prototype worked, but more importantly, the Record Layer showed me what was important: <strong>a reusable toolbox to encapsulate FoundationDB knowledge</strong>.</p>
+<p>I moved to Clever Cloud to build exactly that: serverless systems based on FoundationDB. We started building the toolbox in Rust, piece by piece, driven by what our layers actually needed. Our first layer was <a href="https://www.clever-cloud.com/product/materia-kv/">Materia KV</a>, exposing the Redis protocol. That forced us to build the foundational primitives.</p>
+<p>One highlight was building the query engine for Materia. I wrote <a href="https://github.com/datafusion-contrib/datafusion-index-provider">datafusion-index-provider</a>, a library that extends Apache DataFusion with index-based query acceleration. I had a lot of fun digging into how a query plan might look when fetching indexes: a two-phase model where you first scan indexes to identify matching row IDs, then fetch complete records. The interesting part was combining <strong>AND</strong> and <strong>OR</strong> operations. AND predicates build a left-deep tree of joins to intersect row IDs across indexes. OR predicates use unions with deduplication to merge results without fetching the same record twice. The first time DataFusion, FoundationDB, and our indexes all connected and a SELECT query returned real data, <a href="/posts/thank-you-datafusion/">I remembered why I write software</a>.</p>
+<p>Then came etcd, which required <strong>a lot</strong> more work: watches, leases, revision tracking. I <a href="/posts/diving-into-kubernetes-watch-cache/">debugged the watch cache</a> along the way. We are not alone in this approach: <a href="https://aws.amazon.com/blogs/containers/under-the-hood-amazon-eks-ultra-scale-clusters/">AWS</a> and <a href="https://cloud.google.com/blog/products/containers-kubernetes/gke-65k-nodes-and-counting?hl=en">GKE</a> also run custom storage layers for Kubernetes at scale. No more splitting clusters, no more manual data balancing, no more operational nightmares. FoundationDB handles the hard distributed systems parts. Years of frustration with etcd turned into an etcd-compatible API backing Kubernetes control planes.</p>
+<h2 id="the-simulation-year"><a class="zola-anchor" href="#the-simulation-year" aria-label="Anchor link for: the-simulation-year">🔗</a>The Simulation Year</h2>
+<h3 id="the-awakening"><a class="zola-anchor" href="#the-awakening" aria-label="Anchor link for: the-awakening">🔗</a>The Awakening</h3>
+<p>Then came <a href="https://bugbash.antithesis.com/">BugBash 2025</a> in early April.</p>
+<p>The conference in Washington D.C., organized by Antithesis, brought together people like Kyle Kingsbury, Ankush Desai, and Mitchell Hashimoto to discuss software reliability. The highlight was meeting some of the original FoundationDB creators. Hearing their war stories and seeing how deeply simulation shaped FDB's legendary reliability reignited something in me. I had been using FDB's simulation for years, but I had never fully internalized that <strong><a href="/posts/simulation-driven-development/">this could be how I write all software</a></strong>.</p>
+<p>BugBash reminded me of my painful on-call years at OVHcloud. Before etcd, I operated a massive HBase cluster: 255 machines, 2 million writes per second, 6 million reads. HBase was weak to network issues, and every incident triggered region split inconsistencies. We ran hbck in brutal ways just to keep things running. HBase led me to FDB, a system <strong>built to handle network chaos</strong>, and that robustness comes from simulation.</p>
+<h3 id="from-understanding-to-building"><a class="zola-anchor" href="#from-understanding-to-building" aria-label="Anchor link for: from-understanding-to-building">🔗</a>From Understanding to Building</h3>
+<p>2025 was about turning that understanding into something real. At work, we added simulation workloads to critical software running on top of Materia. I <a href="https://docs.google.com/presentation/d/1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc/edit?usp=sharing">spoke at Devoxx France</a> about embracing simulation-driven development. But I wanted to go deeper: to understand how FoundationDB created its robustness. So I <a href="/posts/diving-into-foundationdb-simulation/">dug into the implementation</a>, then started backporting it to Rust.</p>
+<p>That became <a href="https://github.com/PierreZ/moonpool">moonpool</a>.</p>
+<p>I split moonpool into four crates, each a foundational block for distributed systems. <strong><a href="https://docs.rs/moonpool-core/latest/moonpool_core/">moonpool-core</a></strong> defines provider traits for time, networking, task spawning, and randomness. Same code runs in production and simulation. <strong><a href="https://docs.rs/moonpool-sim/latest/moonpool_sim/">moonpool-sim</a></strong> is the simulation engine: virtual time, event queues, and fault injection. <strong><a href="https://docs.rs/moonpool-transport/latest/moonpool_transport/">moonpool-transport</a></strong> provides FDB-style RPC: connection management, checksummed wire formats, automatic reconnection. Claude accelerated this work significantly. I used it to translate C++ patterns into Rust. At some point, <a href="/posts/testing-prevention-vs-discovery/">Claude started fixing bugs on its own</a>.</p>
+<p>At the beginning of 2025, I had basic knowledge of deterministic simulation. By the end, I had built a framework. In 2026, I will start a <strong>blogpost series</strong> explaining moonpool's internals. Maybe it becomes something others can use. Maybe it stays a hobby project. Either way, I am convinced: <strong>simulation is the future</strong>.</p>
+<h2 id="sharing"><a class="zola-anchor" href="#sharing" aria-label="Anchor link for: sharing">🔗</a>Sharing</h2>
+<p>I set a goal to write one or two posts per month, and I published 22. You can trace my monthly focus just by looking at what I published. The results surprised me: traffic multiplied by 2.5x according to Plausible. This was also the first year where people actually reached out to say <strong>thank you</strong> for sharing. I always assumed no one was reading.</p>
+<p>The top posts by visitors: <a href="/posts/nixos-good-bad-ugly/">NixOS: The Good, The Bad, and The Ugly</a>, <a href="/posts/tokio-hidden-gems/">Unlocking Tokio's Hidden Gems</a>, <a href="/posts/distsys-resources/">Distributed Systems Resources</a>, and <a href="/posts/simulation-driven-development/">What if we embraced simulation-driven development?</a>. Strangely enough, my most shared post was not about distributed systems or FoundationDB but about NixOS. I think people appreciated the honest take: the good, the bad, <strong>and</strong> the ugly. The Tokio post being #2 was also unexpected. Sometimes the posts you almost do not publish are the ones that resonate.</p>
+<p>I love making presentations. In 2025, I gave two talks at Devoxx France: one about <a href="https://docs.google.com/presentation/d/1xm4yNGnV2Oi8Lk3ZHEvg4aDMNEFieSmW06CkItCigSc/edit?usp=sharing">simulation-driven development</a> and another about <a href="https://docs.google.com/presentation/d/1UbJ7drA_6hX7kLN2nV8IxOsAt1k8WOnfGrEfRlbIa7k/edit?usp=sharing">prototyping distributed systems with Maelstrom</a>. I also presented <a href="https://docs.google.com/presentation/d/13pCaWXNkITj5Sh4dKofILbxPg_Wb2BBedbbi2Mv4PoE/edit?usp=sharing">my fdb-rs journey</a> at <a href="https://finistdevs.org/">FinistDevs</a>, which I help organize in Brest.</p>
+<p>The <a href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> keeps growing: 11 million downloads, used in production by real companies. But I was not a great maintainer this year. Development followed Clever Cloud's requirements. People asked for documentation about simulation testing and a roadmap, and I did not deliver. That is not a complaint about open source, just honesty. Being a solo maintainer without foundation backing means priorities get driven by the day job. Last week I finally wrote a roadmap and flushed my brain into GitHub issues so contributors can pick up work. I hope to do better in 2026.</p>
+<h2 id="how-llms-changed-my-work"><a class="zola-anchor" href="#how-llms-changed-my-work" aria-label="Anchor link for: how-llms-changed-my-work">🔗</a>How LLMs Changed My Work</h2>
+<p>I cannot write about 2025 without talking about LLMs. I spent a <strong>lot</strong> of time learning how to use them in my work.</p>
+<p>For years, I had a weekly habit: two hours dedicated to reading codebases I depend on, understanding the internals of libraries, frameworks, and databases. Then I stopped. Life got busy, management took over, and diving into unfamiliar code took too long to justify. With LLMs, I picked the habit back up. What used to take hours now takes minutes. I can explore a codebase conversationally, asking questions, jumping to relevant sections, building mental models faster than ever. I learn more now than I did before.</p>
+<p>They handle peripheral code well: glue code, boilerplate, scaffolding. Geoffrey Litt calls this "<a href="https://www.geoffreylitt.com/2025/10/24/code-like-a-surgeon">coding like a surgeon</a>": delegate the prep work, focus on what matters. Moonpool is a good example. Claude translated C++ Flow patterns into Rust and generated test scaffolding. But knowing <strong>what</strong> to translate required years of operating distributed systems: why FDB uses interface swapping, why buggify has two-phase activation, why virtual time compresses hours into seconds. As João Alves wrote, when "<a href="https://world.hey.com/joaoqalves/when-software-becomes-fast-food-23147c9b">software becomes fast food</a>", expertise becomes the scarce resource.</p>
+<p>But what I did not expect is that working with LLMs forces me to flesh out invariants and hidden rules somewhere explicit. You need to write things down for the LLM to understand, and that documentation ends up being useful for humans too. <strong>Context is everything</strong>: given the right context, LLMs generate the right code. So I spent a lot of time (and tokens) generating project recaps and summaries to feed them. When working with libraries, I make local git clones so the LLM can browse the actual source code instead of relying on potentially outdated training data. I have been using Claude extensively, and I found <a href="https://github.com/github/spec-kit">spec-kit</a> helpful for framing my prompts. It is a toolkit for "spec-driven development" that helps you focus on product scenarios instead of what Simon Willison calls "<a href="https://simonwillison.net/2025/Oct/7/vibe-engineering/">vibe coding</a>". But <a href="/posts/specs-are-back/">we are still missing the tools</a> to make this workflow seamless.</p>
+<p>Some posts became unexpectedly useful as LLM context. My <a href="/posts/practical-guide-to-application-metrics/">practical guide to application metrics</a> and my <a href="/posts/writing-rust-fdb-workloads-that-find-bugs/">guidelines for FDB workloads</a> now live in project contexts. When I ask Claude to add instrumentation or write a simulation workload, it already knows my patterns.</p>
+<h2 id="looking-ahead"><a class="zola-anchor" href="#looking-ahead" aria-label="Anchor link for: looking-ahead">🔗</a>Looking Ahead</h2>
+<p>2025 reminded me why I love this work: building systems, learning in public, watching years of investment pay off.</p>
+<p>For 2026, the habits stay: writing one or two posts per month, reading codebases with LLM assistance, speaking at conferences. I want to push moonpool toward something others can actually use. We have ambitious plans for Materia at Clever Cloud, and some of them should lead me to contribute to FoundationDB directly. I will keep helping organize <a href="https://finistdevs.org/">FinistDevs</a> in Brest. And I will definitely be back at BugBash 2026.</p>
+<p>The theme is the same as 2025: go deeper, share what I learn, build things that last. <strong>What did your 2025 look like?</strong></p>
+<hr />
+<p>Feel free to reach out to share your own 2025 reflections. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/personal/">#personal</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
