@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoundationDB&#x27;s Transaction Model for Layer Engineers | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="FoundationDB&#x27;s Transaction Model for Layer Engineers">
+<meta name="description" content="How optimistic concurrency control works in FoundationDB, and how to design data structures that stop fighting it">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="FoundationDB&#x27;s Transaction Model for Layer Engineers" />
+<meta name="twitter:description" content="How optimistic concurrency control works in FoundationDB, and how to design data structures that stop fighting it" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="FoundationDB&#x27;s Transaction Model for Layer Engineers">
+<meta property="og:description" content="How optimistic concurrency control works in FoundationDB, and how to design data structures that stop fighting it"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2026-01-30" />
+
+
+
+<meta property="article:tag" content="foundationdb" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+<meta property="article:tag" content="database" />
+
+<meta property="article:tag" content="transactions" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>FoundationDB&#x27;s Transaction Model for Layer Engineers</h1>
+      <p>
+        <i>
+          <time datetime="2026-01-30T00:00:00+00:00" pubdate>30 Jan, 2026</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#how-occ-works">How OCC Works</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#read-version-commit-version-and-the-window-of-vulnerability">Read Version, Commit Version, and the Window of Vulnerability</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#how-conflicts-actually-work">How Conflicts Actually Work</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#the-phantom-conflict-problem">The Phantom Conflict Problem</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#snapshot-reads">Snapshot Reads</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#atomic-operations-writing-without-reading">Atomic Operations: Writing Without Reading</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#versionstamps-conflict-free-ordering">Versionstamps: Conflict-Free Ordering</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#cross-cluster-ordering">Cross-Cluster Ordering</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/#conclusion">Conclusion</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>FoundationDB gives you serializable transactions with external consistency, automatic sharding, and fault tolerance. But once your first layer hits production under real load, you start seeing transaction conflicts you don't understand. The logic looks correct: read a key, check a condition, write the result. Under load, conflicts pile up and throughput collapses.</p>
+<h2 id="how-occ-works"><a class="zola-anchor" href="#how-occ-works" aria-label="Anchor link for: how-occ-works">🔗</a>How OCC Works</h2>
+<p>FoundationDB implements these guarantees using <strong>Optimistic Concurrency Control</strong> (OCC). Your transaction runs without holding any locks. It reads from a consistent snapshot, does its work, and at commit time the system checks whether anything you read was modified by another transaction since you started. If yes, your transaction is aborted and retried. If no, it commits atomically.</p>
+<p>All writes are buffered locally in the client until commit. Nothing goes to the cluster while your transaction is running. At commit time, the client sends the buffered writes and the read/write conflict sets to the Resolver in a single request. A read-only transaction that calls commit is mostly a no-op: the network thread checks there are no writes to send and skips the round-trip.</p>
+<p>No locks means no waiting, but it also means your reads and writes play different roles in conflict detection. <strong>Your reads determine whether YOU can conflict. Your writes determine what OTHER transactions will conflict with.</strong></p>
+<p>A read-only transaction never conflicts. It observes a snapshot and goes away. A write-only transaction also never conflicts. It blindly sets keys and commits. Only transactions that both read and write can fail. When they do, your writes don't cause your conflicts. Your reads do. The writes cause problems for future transactions, but your transaction was doomed the moment you issued reads on keys that someone else was modifying. Every time you add a read to a transaction, ask yourself: <strong>do I actually need to conflict on this?</strong></p>
+<h2 id="read-version-commit-version-and-the-window-of-vulnerability"><a class="zola-anchor" href="#read-version-commit-version-and-the-window-of-vulnerability" aria-label="Anchor link for: read-version-commit-version-and-the-window-of-vulnerability">🔗</a>Read Version, Commit Version, and the Window of Vulnerability</h2>
+<p>When your transaction starts, it obtains a <strong>read version</strong> from the cluster. All your reads see a consistent snapshot frozen at that version. When you commit, your transaction gets a <strong>commit version</strong>, guaranteed to be higher. Between these two versions lies what I call <strong>the Window of Vulnerability</strong>: any key you read that was modified by another committed transaction within this window will cause your transaction to abort.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>read version                                          commit version
+</span><span>     │                                                      │
+</span><span>     ▼                                                      ▼
+</span><span>─────┼──────────────────────────────────────────────────────┼────── time
+</span><span>     │              Window of Vulnerability                 │
+</span><span>     │◄────────────────────────────────────────────────────►│
+</span><span>     │                                                      │
+</span><span>     │   your reads see          other transactions         │
+</span><span>     │   a frozen snapshot       may commit writes here     │
+</span></code></pre>
+<p>The longer your transaction runs, the wider this window grows. FoundationDB enforces a strict <strong>5-second transaction limit</strong>, which is exactly <strong>5 million versions</strong> (<code>MAX_WRITE_TRANSACTION_LIFE_VERSIONS = 5 * VERSIONS_PER_SECOND</code>). The Resolver tracks conflict history in memory up to this age; transactions older than <code>currentVersion - 5,000,000</code> are rejected as "transaction too old."</p>
+<p>A transaction that completes in 50 milliseconds has almost no exposure. A transaction that takes 4.5 seconds is exposed to every concurrent write on every key it read.</p>
+<p>This is why long transactions are one of the most common sources of production trouble. More work means more time, wider window, more conflicts. The fix is parallelizing your reads so the transaction completes faster, splitting work into smaller transactions when full atomicity isn't required, or using <a href="/posts/understanding-fdb-record-layer-continuations/">continuations</a> to checkpoint progress across transaction boundaries.</p>
+<h2 id="how-conflicts-actually-work"><a class="zola-anchor" href="#how-conflicts-actually-work" aria-label="Anchor link for: how-conflicts-actually-work">🔗</a>How Conflicts Actually Work</h2>
+<p>Every read your transaction performs adds a <strong>read-conflict range</strong> to your transaction. Every write adds a <strong>write-conflict range</strong>. At commit time, the Resolver checks: does your read-conflict set intersect any committed write-conflict set since your read version? If yes, your transaction is aborted. The Resolver uses a version-aware skiplist to make this check efficient, pruning entire subtrees of committed writes that predate your read version.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span> Your Transaction                Resolver               Another Transaction
+</span><span>┌─────────────────┐                                    ┌─────────────────┐
+</span><span>│ get(key_A)      │─► read conflict: {key_A}           │                 │
+</span><span>│ get_range(B, D) │─► read conflict: {B..D}            │ set(key_C)      │─► write conflict: {key_C}
+</span><span>│ set(key_X)      │─► write conflict: {key_X}          │                 │
+</span><span>└─────────────────┘                                    └─────────────────┘
+</span><span>                              │
+</span><span>                     at commit time:
+</span><span>                     read conflicts ∩ write conflicts
+</span><span>                     from txns committed since read version?
+</span><span>                              │
+</span><span>                     key_C ∈ {B..D}? → YES → ABORT
+</span></code></pre>
+<p><code>get</code> and <code>get_range</code> create read conflicts. <code>set</code>, <code>clear</code>, and <code>clear_range</code> create write conflicts.</p>
+<p>The simplest conflict pattern is the <strong>hot key</strong>: a single key read and written by many concurrent transactions. A naive global counter, a "last updated" timestamp, a configuration value everyone checks. The read-modify-write creates a read conflict, and under concurrent updates, all but one transaction fails.</p>
+<h2 id="the-phantom-conflict-problem"><a class="zola-anchor" href="#the-phantom-conflict-problem" aria-label="Anchor link for: the-phantom-conflict-problem">🔗</a>The Phantom Conflict Problem</h2>
+<p>When you call <code>get(key)</code>, FDB adds that single key to your read conflict set. Straightforward. But when you call <code>get_range(start, end)</code>, FDB adds <strong>the entire range</strong> to your conflict set, not just the keys that happened to exist, not just the keys your code iterated over. The mathematical range from start to end, including every possible key that could exist within it. The SIGMOD 2021 paper calls this <strong>phantom read prevention</strong>: "The read set is checked against the modified key ranges of concurrent committed transactions, which prevents phantom reads." <strong>You can conflict on keys you never saw.</strong></p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Your range read: get_range(&quot;order/user1/&quot;, &quot;order/user1/\xff&quot;)
+</span><span>
+</span><span>Keyspace:
+</span><span>  order/user1/001  ◄── exists, returned
+</span><span>  order/user1/002  ◄── exists, returned
+</span><span>  order/user1/003  ◄── exists, returned
+</span><span>  order/user1/004  ◄── DOES NOT EXIST YET
+</span><span>  ···
+</span><span>
+</span><span>Read conflict range: [ &quot;order/user1/&quot; , &quot;order/user1/\xff&quot; )
+</span><span>                       ◄──────── covers EVERYTHING ────────►
+</span><span>
+</span><span>Another transaction: set(&quot;order/user1/004&quot;, ...)
+</span><span>  → write conflict on &quot;order/user1/004&quot;
+</span><span>  → inside your read conflict range
+</span><span>  → YOUR transaction aborts (you never saw this key)
+</span></code></pre>
+<p>Imagine you're scanning a user's orders to check if they have any pending shipments. Your range read returns 3 orders. You check each one, they're all shipped, great. You decide to update a status flag. Meanwhile, another transaction inserts a brand new order for that same user. The key for that new order falls within your scanned range. Your transaction conflicts and aborts, even though you never touched that key, never saw it, and your business logic doesn't care about it at all. Full table scans are the extreme version of this problem: the wider your range, the more phantom writes can abort you. The fix requires either narrowing your reads to touch less keyspace, or using snapshot reads with selective conflicts.</p>
+<h2 id="snapshot-reads"><a class="zola-anchor" href="#snapshot-reads" aria-label="Anchor link for: snapshot-reads">🔗</a>Snapshot Reads</h2>
+<p>A snapshot read returns the same data as a regular read from the same consistent snapshot, but it does not add any read conflicts to your transaction. The operation is <code>tr.snapshot().get(key)</code> or <code>tr.snapshot().get_range(start, end)</code>. The data you get back is identical. The only difference is what happens at commit time: the Resolver won't check whether those keys changed.</p>
+<p>When would you want this? Whenever you need to read data for your logic but don't need the transaction to abort if that data changes concurrently. A common case is reading configuration or metadata that rarely changes and where a slightly stale value is acceptable within the transaction's own snapshot.</p>
+<p>The trade-off is that you're accepting your decision might be based on data that changed concurrently. This is safe for read-mostly metadata or filtering logic. It's dangerous for business-critical checks like balance verification or uniqueness constraints. If your code path is "read X, decide based on X, write Y", and the decision must hold at commit time, you need the read conflict.</p>
+<p>But what if you need to read broadly and conflict narrowly? FDB exposes <strong>manual conflict APIs</strong> that complement snapshot reads. <code>add_read_conflict_key</code> and <code>add_read_conflict_range</code> let you inject read conflicts explicitly: you read without conflicts, then selectively add conflicts on exactly the keys you care about. On the write side, <code>add_write_conflict_key</code> and <code>add_write_conflict_range</code> let you inject write conflicts without actually writing data. This is useful for implementing locks or coordination primitives where your transaction claims a key to block others without storing anything there.</p>
+<p>Go back to the phantom conflict problem: you need to scan a user's orders to check for pending shipments, but you don't want inserts of new orders to abort your transaction. With a regular <code>get_range</code>, any write within that range kills you. With a snapshot range read plus manual conflicts, you read the entire range via <code>tr.snapshot().get_range()</code> without adding any read conflicts, then call <code>add_read_conflict_key</code> only on the specific pending orders your logic depends on. If another transaction inserts a new order, your transaction doesn't care. If another transaction modifies a pending order you're acting on, your transaction correctly conflicts. You went from conflicting on the entire keyspace range to conflicting on exactly the keys that matter.</p>
+<h2 id="atomic-operations-writing-without-reading"><a class="zola-anchor" href="#atomic-operations-writing-without-reading" aria-label="Anchor link for: atomic-operations-writing-without-reading">🔗</a>Atomic Operations: Writing Without Reading</h2>
+<p>When you need to increment a counter, the obvious approach is to read the current value, add one, and write the result back. This creates a read conflict on that key, and under concurrent updates, transactions start failing because they all race to write their incremented value. <strong>Atomic operations</strong> take a different approach: they send an instruction to the storage server ("add this delta to whatever value is there") without your transaction ever knowing the current value. No read, no read conflict. Instead of <code>tr.get(key)</code> followed by <code>tr.set(key, value + 1)</code>, you call <code>tr.atomic_add(key, 1)</code> and concurrent updates all succeed.</p>
+<p>The <a href="https://foundationdb.github.io/fdb-record-layer/">Record Layer</a> exploits this for aggregate indexes. A <code>COUNT</code> index issues <code>atomic_add(count_key, 1)</code> on every record insertion and <code>atomic_add(count_key, -1)</code> on deletion. A <code>SUM</code> index adds the field's value. <code>MAX_EVER</code> and <code>MIN_EVER</code> use <code>atomic_max</code> and <code>atomic_min</code>. Unlimited concurrent updates to the same aggregate, zero conflicts between writers.</p>
+<p>But there's a trap: if you read a key and also atomically modify it in the same transaction, you lose all the benefits. The FoundationDB documentation is explicit: "If a transaction uses both an atomic operation and a strictly serializable read on the same key, the benefits of using the atomic operation (for both conflict checking and performance) are lost." The read already poisoned the transaction. The pattern only works when you genuinely don't need to see the current value.</p>
+<h2 id="versionstamps-conflict-free-ordering"><a class="zola-anchor" href="#versionstamps-conflict-free-ordering" aria-label="Anchor link for: versionstamps-conflict-free-ordering">🔗</a>Versionstamps: Conflict-Free Ordering</h2>
+<p>Generating sequential IDs the obvious way means reading the current maximum, incrementing it, and writing the new value. That's a read-modify-write on a single key, which is exactly the conflict pattern we've been trying to avoid. Every concurrent transaction reads the same max ID, and all but one will abort.</p>
+<p><strong>Versionstamps</strong> solve this by deferring ID assignment to commit time. Instead of your transaction deciding what the next ID is, FoundationDB fills it in at the moment of commit. A versionstamp is a <strong>12-byte value</strong>: 8 bytes of commit version (assigned by the Sequencer), 2 bytes of batch ordering, and 2 bytes of user version. The result is globally unique and monotonically increasing across the entire cluster. You write a key containing a placeholder that FDB replaces with the actual versionstamp at commit. Your transaction doesn't know the final key until it commits, but multiple concurrent appends generate different versionstamps and write to different keys. Zero conflicts. Versionstamps also spread writes across shards, avoiding the hot spots that monotonic keys create. For more key design patterns, see <a href="/posts/crafting-keys-in-fdb/">crafting keys in FoundationDB</a>.</p>
+<p>The Record Layer uses this for its <code>VERSION</code> index, which powers CloudKit's sync protocol. Each record stores its commit version, and a secondary index maps versions to primary keys. When a mobile device syncs, it scans the version index starting from its last-known version. Writers don't coordinate at all.</p>
+<p>One limitation: you cannot read a versionstamped key within the same transaction that creates it. The final key doesn't exist until commit. Versionstamps work beautifully for append-only structures where you write and walk away.</p>
+<h3 id="cross-cluster-ordering"><a class="zola-anchor" href="#cross-cluster-ordering" aria-label="Anchor link for: cross-cluster-ordering">🔗</a>Cross-Cluster Ordering</h3>
+<p>Versionstamps work within a single cluster. But what happens when data moves between clusters? Versions assigned by different FoundationDB clusters are uncorrelated. This creates a problem when migrating data between clusters for load balancing or locality. A sync index based purely on versionstamps would break: updates committed after the move might sort before updates committed before the move.</p>
+<p>The Record Layer solves this with an <strong>incarnation</strong> counter. Each user starts with incarnation 1, incremented every time their data moves to a different cluster. On every record update, the current incarnation is written to the record's header. The VERSION sync index maps <code>(incarnation, version)</code> pairs to changed records, sorting first by incarnation, then by version. Updates after a move have a higher incarnation and correctly sort after pre-move updates, even if the new cluster's version numbers are lower.</p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
+<p>The next time you see a conflict error, ask yourself: what did I read that I didn't need to? The answer is usually hiding in a range read that could have been narrower, a read-modify-write that could have been an atomic operation, or a check that could have used a snapshot read.</p>
+<p>None of these techniques require changing FoundationDB itself. They're all about how you design your key schema and structure your transactions. As always, data-modeling in ordered key-value stores is the hard part of the job. What's the most surprising conflict you've debugged?</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with FDB transaction debugging. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+          <a href="https://pierrezemb.fr/tags/database/">#database</a>
+          <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
