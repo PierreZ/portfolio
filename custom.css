@@ -110,22 +110,22 @@ a code {
   }
 }
 
-/* Table styling */
+/* Table styling with text wrapping */
 table {
   border-collapse: collapse;
-  margin: 1em auto;
+  margin: 1em 0;
   font-size: 0.9em;
   font-family: sans-serif;
-  width: auto;
-  max-width: 100%;
+  width: 100%;
+  table-layout: fixed;
 }
 
 table th,
 table td {
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #444;
   text-align: left;
-  white-space: nowrap;
+  vertical-align: top;
 }
 
 table th {
@@ -133,17 +133,129 @@ table th {
   font-weight: bold;
 }
 
-/* Responsive table */
-@media screen and (max-width: 600px) {
+/* Column widths for 4-column tables (Invariant/What/Why/How) */
+table th:first-child,
+table td:first-child {
+  width: 18%;
+}
+
+table th:nth-child(2),
+table td:nth-child(2),
+table th:nth-child(3),
+table td:nth-child(3),
+table th:nth-child(4),
+table td:nth-child(4) {
+  width: 27%;
+}
+
+/* Mobile: vertical stacked layout */
+@media screen and (max-width: 768px) {
   table {
-    font-size: 0.8em;
+    table-layout: auto;
     width: 100%;
   }
-  
-  table th,
-  table td {
-    padding: 8px 10px;
-    white-space: normal;
-    word-wrap: break-word;
+
+  table thead {
+    display: none;
   }
+
+  table tbody tr {
+    display: block;
+    margin-bottom: 1.5em;
+    border: 1px solid #444;
+    padding: 0.75em;
+  }
+
+  table td {
+    display: block;
+    width: 100% !important;
+    border: none;
+    padding: 6px 0;
+    box-sizing: border-box;
+  }
+
+  /* Override column width constraints */
+  table th:first-child,
+  table td:first-child,
+  table th:nth-child(2),
+  table td:nth-child(2),
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    width: 100% !important;
+  }
+
+  /* First cell is the title/name - make it stand out */
+  table td:first-child {
+    font-size: 1.1em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Labels for each cell */
+  table td:nth-child(2):before {
+    content: "What: ";
+    font-weight: bold;
+    color: var(--link-color);
+  }
+
+  table td:nth-child(3):before {
+    content: "Why: ";
+    font-weight: bold;
+    color: var(--link-color);
+  }
+
+  table td:nth-child(4):before {
+    content: "How: ";
+    font-weight: bold;
+    color: var(--link-color);
+  }
+}
+
+/* Heading anchors - hide icon, highlight heading on hover */
+.zola-anchor {
+  font-size: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+  color: var(--link-color);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Tag cloud styling */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75em;
+}
+
+.tag-item {
+    display: inline-block;
+    padding: 0.4em 0.8em;
+    background-color: rgba(0, 217, 146, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.tag-item:hover {
+    background-color: rgba(0, 217, 146, 0.25);
+}
+
+.tag-count {
+    color: #888;
+    font-size: 0.85em;
 }

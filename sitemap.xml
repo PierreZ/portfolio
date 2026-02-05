@@ -161,6 +161,10 @@
         <lastmod>2025-08-18</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/</loc>
+        <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/simulation-driven-development/</loc>
         <lastmod>2025-04-18T11:12:12+02:00</lastmod>
     </url>
@@ -309,6 +313,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/kubernetes/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/leader-election/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/learning/</loc>
