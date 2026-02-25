@@ -5,8 +5,114 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/distributed-systems/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-05T00:00:00+00:00</updated>
+    <updated>2026-02-25T00:00:00+00:00</updated>
     <id>https://pierrezemb.fr/tags/distributed-systems/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Building Index-Backed Query Plans in DataFusion</title>
+        <published>2026-02-25T00:00:00+00:00</published>
+        <updated>2026-02-25T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/datafusion-index-provider/"/>
+        <id>https://pierrezemb.fr/posts/datafusion-index-provider/</id>
+        
+        <category term="rust" schema="https://pierrezemb.fr/tags/" label="rust"/>
+        <category term="datafusion" schema="https://pierrezemb.fr/tags/" label="datafusion"/>
+        <category term="sql" schema="https://pierrezemb.fr/tags/" label="sql"/>
+        <category term="query-engine" schema="https://pierrezemb.fr/tags/" label="query-engine"/>
+        <category term="databases" schema="https://pierrezemb.fr/tags/" label="databases"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/datafusion-index-provider/">&lt;p&gt;When you build a system on top of a key-value store like FoundationDB, you eventually need secondary indexes. You create them, you maintain them, and then one day you need to query them. Not just scan a single index, but combine results from multiple indexes: intersect them for AND conditions, union them for OR conditions, and fetch the actual records at the end. That&#x27;s a query engine&#x27;s job. I didn&#x27;t want to write a query engine. But I had to learn how one thinks.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;posts&#x2F;thank-you-datafusion&#x2F;&quot;&gt;Last year&lt;&#x2F;a&gt;, I wrote about integrating DataFusion and mentioned a PoC library for index-backed queries. That PoC has grown into &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafusion-contrib&#x2F;datafusion-index-provider&quot;&gt;&lt;code&gt;datafusion-index-provider&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, a real library in &lt;code&gt;datafusion-contrib&lt;&#x2F;code&gt; running in production. Building it meant learning how to construct physical query plans by hand, assembling them from existing DataFusion operators instead of writing execution logic from scratch.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-postgresql-pattern&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-postgresql-pattern&quot; aria-label=&quot;Anchor link for: the-postgresql-pattern&quot;&gt;🔗&lt;&#x2F;a&gt;The PostgreSQL Pattern&lt;&#x2F;h2&gt;
+&lt;p&gt;Every database with secondary indexes follows the same two-phase pattern. Take &lt;code&gt;SELECT * FROM employees WHERE age &amp;gt; 30&lt;&#x2F;code&gt;. PostgreSQL doesn&#x27;t scan every row. It walks the B-tree index on &lt;code&gt;age&lt;&#x2F;code&gt;, collecting &lt;strong&gt;TIDs&lt;&#x2F;strong&gt; (tuple identifiers) pointing to matching rows. Then it fetches the actual data using those TIDs. &lt;strong&gt;Find where, then fetch what.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;For multi-index queries like &lt;code&gt;WHERE age &amp;lt; 25 OR department = &#x27;Sales&#x27;&lt;&#x2F;code&gt;, PostgreSQL uses &lt;strong&gt;BitmapIndexScan&lt;&#x2F;strong&gt;: each index produces a bitmap of matching TIDs, bitmaps get combined (OR for union, AND for intersection), and one pass fetches the results. No duplicates, no wasted reads.&lt;&#x2F;p&gt;
+&lt;p&gt;This is the pattern I wanted to bring to DataFusion. But DataFusion&#x27;s existing index support (ParquetAccessPlan, zone maps) works at &lt;strong&gt;planning time&lt;&#x2F;strong&gt; on &lt;strong&gt;row groups&lt;&#x2F;strong&gt;. What I needed was OLTP-style indexes that resolve at &lt;strong&gt;execution time&lt;&#x2F;strong&gt; and produce &lt;strong&gt;specific row identifiers&lt;&#x2F;strong&gt;. The DataFusion community has &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;datafusion&#x2F;discussions&#x2F;9963#discussioncomment-6464175&quot;&gt;discussed both approaches&lt;&#x2F;a&gt;. &lt;code&gt;datafusion-index-provider&lt;&#x2F;code&gt; implements the OLTP path.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;primary-keys-as-the-universal-glue&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#primary-keys-as-the-universal-glue&quot; aria-label=&quot;Anchor link for: primary-keys-as-the-universal-glue&quot;&gt;🔗&lt;&#x2F;a&gt;Primary Keys as the Universal Glue&lt;&#x2F;h2&gt;
+&lt;p&gt;In PostgreSQL, TIDs connect everything. In my system, that role falls to the &lt;strong&gt;primary key schema&lt;&#x2F;strong&gt;. Every index declares an &lt;code&gt;index_schema()&lt;&#x2F;code&gt; defining the columns that form the row&#x27;s primary key. Could be a single &lt;code&gt;id&lt;&#x2F;code&gt; column, could be a composite &lt;code&gt;(tenant_id, employee_id)&lt;&#x2F;code&gt;. Every index scan produces batches of these primary key columns, every join operates on them, every record fetch consumes them. Because every operator in the pipeline agrees on what a &quot;row identifier&quot; looks like, you can wire up standard DataFusion joins, unions, and aggregations without any custom glue.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;from-filters-to-execution-plans&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#from-filters-to-execution-plans&quot; aria-label=&quot;Anchor link for: from-filters-to-execution-plans&quot;&gt;🔗&lt;&#x2F;a&gt;From Filters to Execution Plans&lt;&#x2F;h2&gt;
+&lt;p&gt;The library first converts SQL filters into an intermediate &lt;code&gt;IndexFilter&lt;&#x2F;code&gt; enum: &lt;code&gt;Single&lt;&#x2F;code&gt; (one index handles one filter), &lt;code&gt;And&lt;&#x2F;code&gt; (intersection), or &lt;code&gt;Or&lt;&#x2F;code&gt; (union). Then it recursively builds the physical plan from that intermediate representation.&lt;&#x2F;p&gt;
+&lt;p&gt;The library introduces only two custom &lt;code&gt;ExecutionPlan&lt;&#x2F;code&gt; nodes: &lt;code&gt;IndexScanExec&lt;&#x2F;code&gt; (which wraps your index) and &lt;code&gt;RecordFetchExec&lt;&#x2F;code&gt; (which wraps your storage). No custom join logic, no custom dedup, no custom union. Everything in between is standard DataFusion operators wired together.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;single-index&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#single-index&quot; aria-label=&quot;Anchor link for: single-index&quot;&gt;🔗&lt;&#x2F;a&gt;Single Index&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;sql&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-sql &quot;&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;SELECT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; employees &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;WHERE&lt;&#x2F;span&gt;&lt;span&gt; age &amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;29
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The simplest case needs just these two custom nodes wired together. &lt;code&gt;IndexScanExec&lt;&#x2F;code&gt; calls &lt;code&gt;index.scan(filters, limit)&lt;&#x2F;code&gt; and streams primary key batches. &lt;code&gt;RecordFetchExec&lt;&#x2F;code&gt; consumes those batches and calls a &lt;code&gt;RecordFetcher&lt;&#x2F;code&gt; to look up complete records.&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart BT
+    A[IndexScanExec] --&amp;gt; B[RecordFetchExec]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;&lt;h3 id=&quot;and-intersection-through-joins&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#and-intersection-through-joins&quot; aria-label=&quot;Anchor link for: and-intersection-through-joins&quot;&gt;🔗&lt;&#x2F;a&gt;AND: Intersection Through Joins&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;sql&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-sql &quot;&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;SELECT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; employees &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;WHERE&lt;&#x2F;span&gt;&lt;span&gt; age &amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;25 &lt;&#x2F;span&gt;&lt;span&gt;AND department = &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Engineering&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Both conditions must hold. Each index produces a separate stream of primary keys, and we need their intersection: only keys that appear in both streams. How do you compute an intersection of two streams? That&#x27;s exactly what an &lt;strong&gt;INNER JOIN&lt;&#x2F;strong&gt; does when both sides share the same key columns.&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart BT
+    A[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;age index] --&amp;gt; C[HashJoinExec&amp;lt;br&amp;#x2F;&amp;gt;INNER on PK columns]
+    B[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;department index] --&amp;gt; C
+    C --&amp;gt; P[ProjectionExec&amp;lt;br&amp;#x2F;&amp;gt;PK columns]
+    P --&amp;gt; D[RecordFetchExec]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;DataFusion ships two join implementations that we can pick from. &lt;strong&gt;HashJoinExec&lt;&#x2F;strong&gt; works in two phases: it reads the entire left (build) side into memory, constructs a hash table keyed on the join columns, then streams the right (probe) side through, looking up each row&#x27;s key in that table. Matches produce output rows. Memory cost is proportional to the build side, but the probe side streams through with no buffering. The library uses &lt;code&gt;PartitionMode::CollectLeft&lt;&#x2F;code&gt;, which collects the left input into a single partition before building the hash table.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;SortMergeJoinExec&lt;&#x2F;strong&gt; takes a different approach. When both inputs are already sorted on the join keys, it walks both streams in lockstep, comparing keys as it goes. When keys match, it buffers rows sharing that key value and outputs all combinations. For unique primary keys (the common case with index scans), this means constant memory: one row buffered from each side at a time. No hash table, no bulk memory allocation, just two cursors advancing together.&lt;&#x2F;p&gt;
+&lt;p&gt;How does the library choose? If both indexes report sorted output via &lt;code&gt;is_ordered()&lt;&#x2F;code&gt;, it picks SortMergeJoin. Otherwise, HashJoin. For ordered key-value stores like FoundationDB, indexes naturally return sorted keys, so SortMergeJoin is the common path in practice.&lt;&#x2F;p&gt;
+&lt;p&gt;There&#x27;s a wrinkle after the join. An inner join on column &lt;code&gt;id&lt;&#x2F;code&gt; from both sides produces output with columns &lt;code&gt;(id_left, id_right)&lt;&#x2F;code&gt;, but downstream operators expect just &lt;code&gt;(id)&lt;&#x2F;code&gt;. A &lt;code&gt;ProjectionExec&lt;&#x2F;code&gt; after the join strips the duplicates back to the primary key schema. This matters because when three or more indexes are involved, the library builds a &lt;strong&gt;left-deep join tree&lt;&#x2F;strong&gt;: join the first two, project back to the primary key schema, then join that result with the third, and so on. Each join progressively narrows the result set, and the projection keeps the schema clean between steps.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;or-union-with-deduplication&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#or-union-with-deduplication&quot; aria-label=&quot;Anchor link for: or-union-with-deduplication&quot;&gt;🔗&lt;&#x2F;a&gt;OR: Union with Deduplication&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;sql&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-sql &quot;&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;SELECT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; employees &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;WHERE&lt;&#x2F;span&gt;&lt;span&gt; age &amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;25 &lt;&#x2F;span&gt;&lt;span&gt;OR department = &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Sales&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;A row matches if either condition is true, but a row satisfying both should appear exactly once. The plan needs to combine both index results and deduplicate before fetching.&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart BT
+    A[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;age index] --&amp;gt; C[UnionExec]
+    B[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;department index] --&amp;gt; C
+    C --&amp;gt; D[AggregateExec&amp;lt;br&amp;#x2F;&amp;gt;GROUP BY PK columns]
+    D --&amp;gt; E[RecordFetchExec]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Each index scan feeds into DataFusion&#x27;s &lt;code&gt;UnionExec&lt;&#x2F;code&gt;, which concatenates streams with zero-copy partition pass-through. But a row matching both conditions appears twice, once from each index. The deduplication step uses DataFusion&#x27;s &lt;code&gt;AggregateExec&lt;&#x2F;code&gt; with a &lt;code&gt;GROUP BY&lt;&#x2F;code&gt; on all primary key columns. AggregateExec maintains a hash table mapping group key values to group indices. For pure dedup (no aggregate functions, just GROUP BY), it&#x27;s essentially a hash set of seen primary keys. When memory pressure exceeds limits, it spills groups to disk in Arrow IPC format and merges them back later.&lt;&#x2F;p&gt;
+&lt;p&gt;Why not write a custom dedup node? Because &lt;code&gt;AggregateExec&lt;&#x2F;code&gt; already handles hash-based grouping, memory tracking against DataFusion&#x27;s memory pool, and spill-to-disk. Writing a custom dedup operator would mean reimplementing all of that. The library&#x27;s philosophy is to construct a query plan that DataFusion already knows how to execute, not to reinvent execution primitives.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;combining-and-and-or&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#combining-and-and-or&quot; aria-label=&quot;Anchor link for: combining-and-and-or&quot;&gt;🔗&lt;&#x2F;a&gt;Combining AND and OR&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;sql&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-sql &quot;&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;SELECT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; employees
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;WHERE&lt;&#x2F;span&gt;&lt;span&gt; (age &amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;30 &lt;&#x2F;span&gt;&lt;span&gt;AND department = &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Engineering&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;span&gt;   OR (age &amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;25 &lt;&#x2F;span&gt;&lt;span&gt;AND department = &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Sales&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The &lt;code&gt;IndexFilter&lt;&#x2F;code&gt; tree for this query is an &lt;code&gt;Or&lt;&#x2F;code&gt; of two &lt;code&gt;And&lt;&#x2F;code&gt; branches. Each &lt;code&gt;And&lt;&#x2F;code&gt; branch becomes a join subtree (two IndexScanExec nodes joined on primary key columns), and the two subtrees feed into a UnionExec + AggregateExec for deduplication, just like a simple OR.&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        flowchart BT
+    A1[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;age &amp;gt; 30] --&amp;gt; J1[HashJoinExec&amp;lt;br&amp;#x2F;&amp;gt;INNER on PK]
+    B1[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;dept = Engineering] --&amp;gt; J1
+    J1 --&amp;gt; P1[ProjectionExec]
+    A2[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;age &amp;lt; 25] --&amp;gt; J2[HashJoinExec&amp;lt;br&amp;#x2F;&amp;gt;INNER on PK]
+    B2[IndexScanExec&amp;lt;br&amp;#x2F;&amp;gt;dept = Sales] --&amp;gt; J2
+    J2 --&amp;gt; P2[ProjectionExec]
+    P1 --&amp;gt; U[UnionExec]
+    P2 --&amp;gt; U
+    U --&amp;gt; AG[AggregateExec&amp;lt;br&amp;#x2F;&amp;gt;GROUP BY PK columns]
+    AG --&amp;gt; RF[RecordFetchExec]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Joins for AND and union + dedup for OR compose naturally into nested plans. The library doesn&#x27;t need special handling for nested expressions. It recurses down the &lt;code&gt;IndexFilter&lt;&#x2F;code&gt; tree, builds the appropriate subtree for each node, and DataFusion executes the whole thing as one pipeline.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;limitations-and-what-s-next&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#limitations-and-what-s-next&quot; aria-label=&quot;Anchor link for: limitations-and-what-s-next&quot;&gt;🔗&lt;&#x2F;a&gt;Limitations and What&#x27;s Next&lt;&#x2F;h2&gt;
+&lt;p&gt;The filter analysis has one important simplification: if any part of an AND&#x2F;OR expression can&#x27;t be handled by an index, the entire expression falls back to a regular scan. Consider &lt;code&gt;WHERE age &amp;gt; 30 AND color = &#x27;blue&#x27;&lt;&#x2F;code&gt; with an index on &lt;code&gt;age&lt;&#x2F;code&gt; but not &lt;code&gt;color&lt;&#x2F;code&gt;. A smarter approach would use the age index then scan-filter for color, but mixing index-backed and scan-based execution paths complicates plan construction, especially when AND&#x2F;OR expressions are nested. For v1, the clean boundary keeps things correct. Partial index usage is on the roadmap, along with &lt;strong&gt;projection pushdown&lt;&#x2F;strong&gt; into the fetch phase and &lt;strong&gt;multi-partition execution&lt;&#x2F;strong&gt; for parallelism. Each is an opportunity for &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafusion-contrib&#x2F;datafusion-index-provider&quot;&gt;contribution&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;try-it&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#try-it&quot; aria-label=&quot;Anchor link for: try-it&quot;&gt;🔗&lt;&#x2F;a&gt;Try It&lt;&#x2F;h2&gt;
+&lt;p&gt;If you&#x27;re building a system that needs secondary index queries over your own storage, give &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafusion-contrib&#x2F;datafusion-index-provider&quot;&gt;&lt;code&gt;datafusion-index-provider&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; a try. The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafusion-contrib&#x2F;datafusion-index-provider&#x2F;tree&#x2F;main&#x2F;tests&#x2F;common&quot;&gt;tests directory&lt;&#x2F;a&gt; has reference implementations for both single-column and composite primary keys.&lt;&#x2F;p&gt;
+&lt;p&gt;This library only works because DataFusion&#x27;s architecture is genuinely composable. Special thanks to &lt;strong&gt;Andrew Lamb&lt;&#x2F;strong&gt;, whose work on DataFusion and the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;datafusion&#x2F;issues&#x2F;6782&quot;&gt;architecture paper&lt;&#x2F;a&gt; has been instrumental. HashJoinExec, SortMergeJoinExec, AggregateExec, UnionExec, ProjectionExec: all ready to be wired up into whatever query plan your system needs. Do you have a custom storage layer that could benefit from secondary index queries?&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with DataFusion. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Simulating Leader Election on top of FoundationDB</title>
         <published>2026-02-05T00:00:00+00:00</published>

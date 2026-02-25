@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building Index-Backed Query Plans in DataFusion | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Building Index-Backed Query Plans in DataFusion">
+<meta name="description" content="What I learned about manually constructing physical query plans for secondary index queries, and the library that came out of it.">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Building Index-Backed Query Plans in DataFusion" />
+<meta name="twitter:description" content="What I learned about manually constructing physical query plans for secondary index queries, and the library that came out of it." />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Building Index-Backed Query Plans in DataFusion">
+<meta property="og:description" content="What I learned about manually constructing physical query plans for secondary index queries, and the library that came out of it."> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/datafusion-index-provider/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2026-02-25" />
+
+
+
+<meta property="article:tag" content="rust" />
+
+<meta property="article:tag" content="datafusion" />
+
+<meta property="article:tag" content="sql" />
+
+<meta property="article:tag" content="query-engine" />
+
+<meta property="article:tag" content="databases" />
+
+<meta property="article:tag" content="distributed-systems" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Building Index-Backed Query Plans in DataFusion</h1>
+      <p>
+        <i>
+          <time datetime="2026-02-25T00:00:00+00:00" pubdate>25 Feb, 2026</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#the-postgresql-pattern">The PostgreSQL Pattern</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#primary-keys-as-the-universal-glue">Primary Keys as the Universal Glue</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#from-filters-to-execution-plans">From Filters to Execution Plans</a>
+        <ul>
+            <li>
+              <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#single-index">Single Index</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#and-intersection-through-joins">AND: Intersection Through Joins</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#or-union-with-deduplication">OR: Union with Deduplication</a>
+            </li>
+            <li>
+              <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#combining-and-and-or">Combining AND and OR</a>
+            </li>
+        </ul>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#limitations-and-what-s-next">Limitations and What&#x27;s Next</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/datafusion-index-provider/#try-it">Try It</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <p>When you build a system on top of a key-value store like FoundationDB, you eventually need secondary indexes. You create them, you maintain them, and then one day you need to query them. Not just scan a single index, but combine results from multiple indexes: intersect them for AND conditions, union them for OR conditions, and fetch the actual records at the end. That's a query engine's job. I didn't want to write a query engine. But I had to learn how one thinks.</p>
+<p><a href="/posts/thank-you-datafusion/">Last year</a>, I wrote about integrating DataFusion and mentioned a PoC library for index-backed queries. That PoC has grown into <a href="https://github.com/datafusion-contrib/datafusion-index-provider"><code>datafusion-index-provider</code></a>, a real library in <code>datafusion-contrib</code> running in production. Building it meant learning how to construct physical query plans by hand, assembling them from existing DataFusion operators instead of writing execution logic from scratch.</p>
+<h2 id="the-postgresql-pattern"><a class="zola-anchor" href="#the-postgresql-pattern" aria-label="Anchor link for: the-postgresql-pattern">🔗</a>The PostgreSQL Pattern</h2>
+<p>Every database with secondary indexes follows the same two-phase pattern. Take <code>SELECT * FROM employees WHERE age &gt; 30</code>. PostgreSQL doesn't scan every row. It walks the B-tree index on <code>age</code>, collecting <strong>TIDs</strong> (tuple identifiers) pointing to matching rows. Then it fetches the actual data using those TIDs. <strong>Find where, then fetch what.</strong></p>
+<p>For multi-index queries like <code>WHERE age &lt; 25 OR department = 'Sales'</code>, PostgreSQL uses <strong>BitmapIndexScan</strong>: each index produces a bitmap of matching TIDs, bitmaps get combined (OR for union, AND for intersection), and one pass fetches the results. No duplicates, no wasted reads.</p>
+<p>This is the pattern I wanted to bring to DataFusion. But DataFusion's existing index support (ParquetAccessPlan, zone maps) works at <strong>planning time</strong> on <strong>row groups</strong>. What I needed was OLTP-style indexes that resolve at <strong>execution time</strong> and produce <strong>specific row identifiers</strong>. The DataFusion community has <a href="https://github.com/apache/datafusion/discussions/9963#discussioncomment-6464175">discussed both approaches</a>. <code>datafusion-index-provider</code> implements the OLTP path.</p>
+<h2 id="primary-keys-as-the-universal-glue"><a class="zola-anchor" href="#primary-keys-as-the-universal-glue" aria-label="Anchor link for: primary-keys-as-the-universal-glue">🔗</a>Primary Keys as the Universal Glue</h2>
+<p>In PostgreSQL, TIDs connect everything. In my system, that role falls to the <strong>primary key schema</strong>. Every index declares an <code>index_schema()</code> defining the columns that form the row's primary key. Could be a single <code>id</code> column, could be a composite <code>(tenant_id, employee_id)</code>. Every index scan produces batches of these primary key columns, every join operates on them, every record fetch consumes them. Because every operator in the pipeline agrees on what a "row identifier" looks like, you can wire up standard DataFusion joins, unions, and aggregations without any custom glue.</p>
+<h2 id="from-filters-to-execution-plans"><a class="zola-anchor" href="#from-filters-to-execution-plans" aria-label="Anchor link for: from-filters-to-execution-plans">🔗</a>From Filters to Execution Plans</h2>
+<p>The library first converts SQL filters into an intermediate <code>IndexFilter</code> enum: <code>Single</code> (one index handles one filter), <code>And</code> (intersection), or <code>Or</code> (union). Then it recursively builds the physical plan from that intermediate representation.</p>
+<p>The library introduces only two custom <code>ExecutionPlan</code> nodes: <code>IndexScanExec</code> (which wraps your index) and <code>RecordFetchExec</code> (which wraps your storage). No custom join logic, no custom dedup, no custom union. Everything in between is standard DataFusion operators wired together.</p>
+<h3 id="single-index"><a class="zola-anchor" href="#single-index" aria-label="Anchor link for: single-index">🔗</a>Single Index</h3>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">SELECT </span><span style="color:#bf616a;">* </span><span style="color:#b48ead;">FROM</span><span> employees </span><span style="color:#b48ead;">WHERE</span><span> age &gt; </span><span style="color:#d08770;">29
+</span></code></pre>
+<p>The simplest case needs just these two custom nodes wired together. <code>IndexScanExec</code> calls <code>index.scan(filters, limit)</code> and streams primary key batches. <code>RecordFetchExec</code> consumes those batches and calls a <code>RecordFetcher</code> to look up complete records.</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart BT
+    A[IndexScanExec] --&gt; B[RecordFetchExec]
+    </pre>
+</div><h3 id="and-intersection-through-joins"><a class="zola-anchor" href="#and-intersection-through-joins" aria-label="Anchor link for: and-intersection-through-joins">🔗</a>AND: Intersection Through Joins</h3>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">SELECT </span><span style="color:#bf616a;">* </span><span style="color:#b48ead;">FROM</span><span> employees </span><span style="color:#b48ead;">WHERE</span><span> age &gt; </span><span style="color:#d08770;">25 </span><span>AND department = &#39;</span><span style="color:#a3be8c;">Engineering</span><span>&#39;
+</span></code></pre>
+<p>Both conditions must hold. Each index produces a separate stream of primary keys, and we need their intersection: only keys that appear in both streams. How do you compute an intersection of two streams? That's exactly what an <strong>INNER JOIN</strong> does when both sides share the same key columns.</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart BT
+    A[IndexScanExec&lt;br&#x2F;&gt;age index] --&gt; C[HashJoinExec&lt;br&#x2F;&gt;INNER on PK columns]
+    B[IndexScanExec&lt;br&#x2F;&gt;department index] --&gt; C
+    C --&gt; P[ProjectionExec&lt;br&#x2F;&gt;PK columns]
+    P --&gt; D[RecordFetchExec]
+    </pre>
+</div>
+<p>DataFusion ships two join implementations that we can pick from. <strong>HashJoinExec</strong> works in two phases: it reads the entire left (build) side into memory, constructs a hash table keyed on the join columns, then streams the right (probe) side through, looking up each row's key in that table. Matches produce output rows. Memory cost is proportional to the build side, but the probe side streams through with no buffering. The library uses <code>PartitionMode::CollectLeft</code>, which collects the left input into a single partition before building the hash table.</p>
+<p><strong>SortMergeJoinExec</strong> takes a different approach. When both inputs are already sorted on the join keys, it walks both streams in lockstep, comparing keys as it goes. When keys match, it buffers rows sharing that key value and outputs all combinations. For unique primary keys (the common case with index scans), this means constant memory: one row buffered from each side at a time. No hash table, no bulk memory allocation, just two cursors advancing together.</p>
+<p>How does the library choose? If both indexes report sorted output via <code>is_ordered()</code>, it picks SortMergeJoin. Otherwise, HashJoin. For ordered key-value stores like FoundationDB, indexes naturally return sorted keys, so SortMergeJoin is the common path in practice.</p>
+<p>There's a wrinkle after the join. An inner join on column <code>id</code> from both sides produces output with columns <code>(id_left, id_right)</code>, but downstream operators expect just <code>(id)</code>. A <code>ProjectionExec</code> after the join strips the duplicates back to the primary key schema. This matters because when three or more indexes are involved, the library builds a <strong>left-deep join tree</strong>: join the first two, project back to the primary key schema, then join that result with the third, and so on. Each join progressively narrows the result set, and the projection keeps the schema clean between steps.</p>
+<h3 id="or-union-with-deduplication"><a class="zola-anchor" href="#or-union-with-deduplication" aria-label="Anchor link for: or-union-with-deduplication">🔗</a>OR: Union with Deduplication</h3>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">SELECT </span><span style="color:#bf616a;">* </span><span style="color:#b48ead;">FROM</span><span> employees </span><span style="color:#b48ead;">WHERE</span><span> age &lt; </span><span style="color:#d08770;">25 </span><span>OR department = &#39;</span><span style="color:#a3be8c;">Sales</span><span>&#39;
+</span></code></pre>
+<p>A row matches if either condition is true, but a row satisfying both should appear exactly once. The plan needs to combine both index results and deduplicate before fetching.</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart BT
+    A[IndexScanExec&lt;br&#x2F;&gt;age index] --&gt; C[UnionExec]
+    B[IndexScanExec&lt;br&#x2F;&gt;department index] --&gt; C
+    C --&gt; D[AggregateExec&lt;br&#x2F;&gt;GROUP BY PK columns]
+    D --&gt; E[RecordFetchExec]
+    </pre>
+</div>
+<p>Each index scan feeds into DataFusion's <code>UnionExec</code>, which concatenates streams with zero-copy partition pass-through. But a row matching both conditions appears twice, once from each index. The deduplication step uses DataFusion's <code>AggregateExec</code> with a <code>GROUP BY</code> on all primary key columns. AggregateExec maintains a hash table mapping group key values to group indices. For pure dedup (no aggregate functions, just GROUP BY), it's essentially a hash set of seen primary keys. When memory pressure exceeds limits, it spills groups to disk in Arrow IPC format and merges them back later.</p>
+<p>Why not write a custom dedup node? Because <code>AggregateExec</code> already handles hash-based grouping, memory tracking against DataFusion's memory pool, and spill-to-disk. Writing a custom dedup operator would mean reimplementing all of that. The library's philosophy is to construct a query plan that DataFusion already knows how to execute, not to reinvent execution primitives.</p>
+<h3 id="combining-and-and-or"><a class="zola-anchor" href="#combining-and-and-or" aria-label="Anchor link for: combining-and-and-or">🔗</a>Combining AND and OR</h3>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">SELECT </span><span style="color:#bf616a;">* </span><span style="color:#b48ead;">FROM</span><span> employees
+</span><span style="color:#b48ead;">WHERE</span><span> (age &gt; </span><span style="color:#d08770;">30 </span><span>AND department = &#39;</span><span style="color:#a3be8c;">Engineering</span><span>&#39;)
+</span><span>   OR (age &lt; </span><span style="color:#d08770;">25 </span><span>AND department = &#39;</span><span style="color:#a3be8c;">Sales</span><span>&#39;)
+</span></code></pre>
+<p>The <code>IndexFilter</code> tree for this query is an <code>Or</code> of two <code>And</code> branches. Each <code>And</code> branch becomes a join subtree (two IndexScanExec nodes joined on primary key columns), and the two subtrees feed into a UnionExec + AggregateExec for deduplication, just like a simple OR.</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        flowchart BT
+    A1[IndexScanExec&lt;br&#x2F;&gt;age &gt; 30] --&gt; J1[HashJoinExec&lt;br&#x2F;&gt;INNER on PK]
+    B1[IndexScanExec&lt;br&#x2F;&gt;dept = Engineering] --&gt; J1
+    J1 --&gt; P1[ProjectionExec]
+    A2[IndexScanExec&lt;br&#x2F;&gt;age &lt; 25] --&gt; J2[HashJoinExec&lt;br&#x2F;&gt;INNER on PK]
+    B2[IndexScanExec&lt;br&#x2F;&gt;dept = Sales] --&gt; J2
+    J2 --&gt; P2[ProjectionExec]
+    P1 --&gt; U[UnionExec]
+    P2 --&gt; U
+    U --&gt; AG[AggregateExec&lt;br&#x2F;&gt;GROUP BY PK columns]
+    AG --&gt; RF[RecordFetchExec]
+    </pre>
+</div>
+<p>Joins for AND and union + dedup for OR compose naturally into nested plans. The library doesn't need special handling for nested expressions. It recurses down the <code>IndexFilter</code> tree, builds the appropriate subtree for each node, and DataFusion executes the whole thing as one pipeline.</p>
+<h2 id="limitations-and-what-s-next"><a class="zola-anchor" href="#limitations-and-what-s-next" aria-label="Anchor link for: limitations-and-what-s-next">🔗</a>Limitations and What's Next</h2>
+<p>The filter analysis has one important simplification: if any part of an AND/OR expression can't be handled by an index, the entire expression falls back to a regular scan. Consider <code>WHERE age &gt; 30 AND color = 'blue'</code> with an index on <code>age</code> but not <code>color</code>. A smarter approach would use the age index then scan-filter for color, but mixing index-backed and scan-based execution paths complicates plan construction, especially when AND/OR expressions are nested. For v1, the clean boundary keeps things correct. Partial index usage is on the roadmap, along with <strong>projection pushdown</strong> into the fetch phase and <strong>multi-partition execution</strong> for parallelism. Each is an opportunity for <a href="https://github.com/datafusion-contrib/datafusion-index-provider">contribution</a>.</p>
+<h2 id="try-it"><a class="zola-anchor" href="#try-it" aria-label="Anchor link for: try-it">🔗</a>Try It</h2>
+<p>If you're building a system that needs secondary index queries over your own storage, give <a href="https://github.com/datafusion-contrib/datafusion-index-provider"><code>datafusion-index-provider</code></a> a try. The <a href="https://github.com/datafusion-contrib/datafusion-index-provider/tree/main/tests/common">tests directory</a> has reference implementations for both single-column and composite primary keys.</p>
+<p>This library only works because DataFusion's architecture is genuinely composable. Special thanks to <strong>Andrew Lamb</strong>, whose work on DataFusion and the <a href="https://github.com/apache/datafusion/issues/6782">architecture paper</a> has been instrumental. HashJoinExec, SortMergeJoinExec, AggregateExec, UnionExec, ProjectionExec: all ready to be wired up into whatever query plan your system needs. Do you have a custom storage layer that could benefit from secondary index queries?</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with DataFusion. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
+          <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a>
+          <a href="https://pierrezemb.fr/tags/sql/">#sql</a>
+          <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a>
+          <a href="https://pierrezemb.fr/tags/databases/">#databases</a>
+          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
