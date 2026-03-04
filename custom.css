@@ -110,14 +110,14 @@ a code {
   }
 }
 
-/* Table styling with text wrapping */
+/* Table styling */
 table {
   border-collapse: collapse;
   margin: 1em 0;
   font-size: 0.9em;
   font-family: sans-serif;
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 table th,
@@ -126,6 +126,7 @@ table td {
   border: 1px solid #444;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: break-word;
 }
 
 table th {
@@ -133,84 +134,31 @@ table th {
   font-weight: bold;
 }
 
-/* Column widths for 4-column tables (Invariant/What/Why/How) */
-table th:first-child,
-table td:first-child {
-  width: 18%;
-}
-
-table th:nth-child(2),
-table td:nth-child(2),
-table th:nth-child(3),
-table td:nth-child(3),
-table th:nth-child(4),
-table td:nth-child(4) {
-  width: 27%;
-}
-
-/* Mobile: vertical stacked layout */
+/* Mobile: vertical card layout */
 @media screen and (max-width: 768px) {
-  table {
-    table-layout: auto;
-    width: 100%;
-  }
-
   table thead {
     display: none;
   }
 
   table tbody tr {
     display: block;
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
     border: 1px solid #444;
     padding: 0.75em;
   }
 
   table td {
     display: block;
-    width: 100% !important;
     border: none;
     padding: 6px 0;
-    box-sizing: border-box;
   }
 
-  /* Override column width constraints */
-  table th:first-child,
-  table td:first-child,
-  table th:nth-child(2),
-  table td:nth-child(2),
-  table th:nth-child(3),
-  table td:nth-child(3),
-  table th:nth-child(4),
-  table td:nth-child(4) {
-    width: 100% !important;
-  }
-
-  /* First cell is the title/name - make it stand out */
   table td:first-child {
-    font-size: 1.1em;
+    font-weight: bold;
+    font-size: 1.05em;
     border-bottom: 1px solid #444;
     padding-bottom: 8px;
-    margin-bottom: 8px;
-  }
-
-  /* Labels for each cell */
-  table td:nth-child(2):before {
-    content: "What: ";
-    font-weight: bold;
-    color: var(--link-color);
-  }
-
-  table td:nth-child(3):before {
-    content: "Why: ";
-    font-weight: bold;
-    color: var(--link-color);
-  }
-
-  table td:nth-child(4):before {
-    content: "How: ";
-    font-weight: bold;
-    color: var(--link-color);
+    margin-bottom: 4px;
   }
 }
 
