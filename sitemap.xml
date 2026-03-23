@@ -61,6 +61,10 @@
         <lastmod>2022-01-17T01:37:27+01:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/</loc>
+        <lastmod>2026-03-23</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</loc>
         <lastmod>2020-09-18T05:24:27+01:00</lastmod>
     </url>
@@ -296,6 +300,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/foundationdb/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/fuzzing/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/google/</loc>

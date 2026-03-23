@@ -5,8 +5,208 @@
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/testing/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-01-15T00:00:00+00:00</updated>
+    <updated>2026-03-23T00:00:00+00:00</updated>
     <id>https://pierrezemb.fr/tags/testing/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Diving Into Coverage-Guided Fuzzing</title>
+        <published>2026-03-23T00:00:00+00:00</published>
+        <updated>2026-03-23T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/"/>
+        <id>https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/</id>
+        
+        <category term="rust" schema="https://pierrezemb.fr/tags/" label="rust"/>
+        <category term="fuzzing" schema="https://pierrezemb.fr/tags/" label="fuzzing"/>
+        <category term="testing" schema="https://pierrezemb.fr/tags/" label="testing"/>
+        <category term="simulation" schema="https://pierrezemb.fr/tags/" label="simulation"/>
+        <category term="diving-into" schema="https://pierrezemb.fr/tags/" label="diving-into"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost series where we are digging a specific part of the project&#x27;s codebase. In this episode, we will dig into the implementation behind coverage-guided fuzzing.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I have spent a lot of time building &lt;a href=&quot;&#x2F;posts&#x2F;simulation-driven-development&#x2F;&quot;&gt;simulation tests&lt;&#x2F;a&gt;. Sometimes I throw random operations at the system with different seeds, hoping something breaks. Sometimes I manually craft failure scenarios based on intuition about what might go wrong. The interesting bugs always hide behind specific combinations of inputs, and random testing finds the easy ones quickly. But then the iteration counter keeps climbing and nothing new breaks, and you start wondering whether the fuzzer is making progress or just burning CPU. The hard bugs need guidance.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&#x2F;&quot;&gt;Antithesis&lt;&#x2F;a&gt; solves this by using &lt;strong&gt;coverage-guided fuzzing&lt;&#x2F;strong&gt; to steer their simulation framework. After each test input, they observe which code paths were executed and push the next mutation toward branches never taken before. Instead of bruteforcing the input space, coverage becomes the compass. I built &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&quot;&gt;rust-mini-fuzzer&lt;&#x2F;a&gt; to understand how this works from the inside. A function that crashes only on a specific 3-byte sequence: 9,000 iterations to find it with coverage guidance, instead of the 16 million a random fuzzer would need.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-vocabulary&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-vocabulary&quot; aria-label=&quot;Anchor link for: the-vocabulary&quot;&gt;🔗&lt;&#x2F;a&gt;The vocabulary&lt;&#x2F;h2&gt;
+&lt;p&gt;Three concepts make this work.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Fuzzing&lt;&#x2F;strong&gt; is throwing generated inputs at a program and watching if it crashes. Unlike property-based testing, which checks invariants (&quot;this function always returns a sorted list&quot;), fuzzing asks a simpler question: does this input make the program blow up? You do not write assertions. The crash &lt;strong&gt;is&lt;&#x2F;strong&gt; the signal.&lt;&#x2F;p&gt;
+&lt;p&gt;A &lt;strong&gt;corpus&lt;&#x2F;strong&gt; is the collection of inputs the fuzzer has found interesting so far. It starts from a seed, often just a handful of zero bytes, and grows as the fuzzer discovers inputs that trigger new behavior. You do not write the corpus by hand. The fuzzer builds it for you, one mutation at a time. It is the fuzzer&#x27;s memory of what worked.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Coverage guidance&lt;&#x2F;strong&gt; is the insight that makes modern fuzzing practical. After each run, the fuzzer observes which code paths the input exercised. If the input reached a branch that no previous input ever touched, that input is &quot;interesting&quot; and enters the corpus. The next round of mutations starts from that new interesting input, pushing deeper. &lt;a href=&quot;https:&#x2F;&#x2F;lcamtuf.coredump.cx&#x2F;afl&#x2F;&quot;&gt;AFL&lt;&#x2F;a&gt; (American Fuzzy Lop), written by Michal Zalewski, popularized this approach, and most of the techniques we will implement here come from AFL&#x27;s design.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-target&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-target&quot; aria-label=&quot;Anchor link for: the-target&quot;&gt;🔗&lt;&#x2F;a&gt;The target&lt;&#x2F;h2&gt;
+&lt;p&gt;Here is the function we are fuzzing. It panics only when the first three bytes are &lt;code&gt;F&lt;&#x2F;code&gt;, &lt;code&gt;U&lt;&#x2F;code&gt;, &lt;code&gt;Z&lt;&#x2F;code&gt; in sequence:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;inline&lt;&#x2F;span&gt;&lt;span&gt;(never)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;target&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;data&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;]) -&amp;gt; &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;static str &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; data.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;() &amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;too-short&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; data[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;] == &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;F&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39; {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; data[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;] == &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;U&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39; {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; data[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;] == &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Z&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39; {
+&lt;&#x2F;span&gt;&lt;span&gt;                panic!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;BOOM! Found the magic sequence: FUZ&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;);
+&lt;&#x2F;span&gt;&lt;span&gt;            }
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;partial-FU&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;partial-F&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;;
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;miss&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Look at the nesting. A random fuzzer must guess all three bytes simultaneously. Each byte has 256 possible values, and the byte values are independent, so the probability of a random 3-byte input hitting the panic is &lt;strong&gt;1 in 256 x 256 x 256 = 1 in 16,777,216&lt;&#x2F;strong&gt;. On average, the fuzzer needs 16 million attempts before stumbling on &lt;code&gt;[&#x27;F&#x27;, &#x27;U&#x27;, &#x27;Z&#x27;]&lt;&#x2F;code&gt; by pure luck.&lt;&#x2F;p&gt;
+&lt;p&gt;But a fuzzer that observes which branches were taken breaks this into three &lt;strong&gt;independent searches&lt;&#x2F;strong&gt;. First it discovers an input where &lt;code&gt;data[0] == b&#x27;F&#x27;&lt;&#x2F;code&gt; (new branch covered, ~1 in 256 attempts). That input enters the corpus. Next mutation round, it starts from that &lt;code&gt;F&lt;&#x2F;code&gt; input and finds &lt;code&gt;data[1] == b&#x27;U&#x27;&lt;&#x2F;code&gt; (~1 in 256 again). Then &lt;code&gt;data[2] == b&#x27;Z&#x27;&lt;&#x2F;code&gt; (~1 in 256). The expected total: &lt;strong&gt;256 + 256 + 256 = 768 attempts&lt;&#x2F;strong&gt;, not 16 million.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Coverage turns a multiplicative problem into an additive one.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-feedback-loop&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-feedback-loop&quot; aria-label=&quot;Anchor link for: the-feedback-loop&quot;&gt;🔗&lt;&#x2F;a&gt;The feedback loop&lt;&#x2F;h2&gt;
+&lt;p&gt;The entire fuzzer is a single loop:&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        graph TD
+    A[Corpus] --&amp;gt;|pick random input| B[Mutate]
+    B --&amp;gt;|insert&amp;#x2F;flip&amp;#x2F;erase byte| C[Run Target]
+    C --&amp;gt;|observe| D[Coverage Counters]
+    D --&amp;gt;|new coverage?| E{Novel?}
+    E --&amp;gt;|yes| A
+    E --&amp;gt;|no| F[Discard]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Pick an input from the corpus. Mutate it. Run the target. Check if the mutated input triggered any new coverage. If yes, add it to the corpus. If the target panicked, we found a crash. Repeat. The corpus starts with a single seed input, in our case three zero bytes, and that is enough. It does not matter that the seed is garbage, because coverage feedback will steer mutations toward interesting territory. Every time the fuzzer discovers an input that makes the program do something it has never done before, that input joins the corpus and becomes a starting point for future mutations. The corpus evolves on its own.&lt;&#x2F;p&gt;
+&lt;p&gt;The mutation strategy is deliberately simple: three operations chosen at random. &lt;strong&gt;Insert&lt;&#x2F;strong&gt; a random byte at a random position, &lt;strong&gt;flip&lt;&#x2F;strong&gt; a random byte to a random value, or &lt;strong&gt;erase&lt;&#x2F;strong&gt; a random byte. No grammar awareness, no structure, no knowledge of the target. This sounds too dumb to work, but it does not need to be smart. The mutations are the fuzzer&#x27;s hands, coverage feedback is its eyes. Dumb hands with good eyes beat smart hands that are blind. But how does the fuzzer actually observe which branches were taken?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;getting-coverage-from-the-compiler&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#getting-coverage-from-the-compiler&quot; aria-label=&quot;Anchor link for: getting-coverage-from-the-compiler&quot;&gt;🔗&lt;&#x2F;a&gt;Getting coverage from the compiler&lt;&#x2F;h2&gt;
+&lt;p&gt;LLVM&#x27;s &lt;a href=&quot;https:&#x2F;&#x2F;clang.llvm.org&#x2F;docs&#x2F;SanitizerCoverage.html&quot;&gt;SanitizerCoverage&lt;&#x2F;a&gt; pass injects a counter increment at every &lt;strong&gt;control-flow edge&lt;&#x2F;strong&gt;. An edge is not a line of code or a branch. It is a transition between basic blocks in the control flow graph. Here is the control flow graph of our target function:&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        graph TD
+    A{&amp;quot;if data.len() &amp;lt; 3&amp;quot;} --&amp;gt;|true| B[&amp;quot;return too-short&amp;quot;]
+    A --&amp;gt;|false| C{&amp;quot;if data[0] == b&amp;#x27;F&amp;#x27;&amp;quot;}
+    C --&amp;gt;|true| D{&amp;quot;if data[1] == b&amp;#x27;U&amp;#x27;&amp;quot;}
+    C --&amp;gt;|false| E[&amp;quot;return miss&amp;quot;]
+    D --&amp;gt;|true| F{&amp;quot;if data[2] == b&amp;#x27;Z&amp;#x27;&amp;quot;}
+    D --&amp;gt;|false| G[&amp;quot;return partial-F&amp;quot;]
+    F --&amp;gt;|true| H[&amp;quot;panic!&amp;quot;]
+    F --&amp;gt;|false| I[&amp;quot;return partial-FU&amp;quot;]
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Each arrow is an edge that LLVM instruments with its own counter. Count the arrows in the diagram: 8 edges from the branches we wrote. But LLVM also inserts counters for &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Control_flow_graph#Special_edges&quot;&gt;critical edges&lt;&#x2F;a&gt;, transitions that skip intermediate blocks in the control flow graph. The compiler splits these by adding dummy blocks with their own counters, even though they do not appear in the source. This is why our simple function produces 10 instrumented edges, not the 8 you see in the diagram. After running the target, each counter tells you how many times that edge was taken, giving us 10 bytes of coverage data per execution.&lt;&#x2F;p&gt;
+&lt;p&gt;Here is what happens at runtime. When the program starts, before &lt;code&gt;main()&lt;&#x2F;code&gt; even runs, LLVM fires two callbacks during static initialization. The first, &lt;code&gt;__sanitizer_cov_8bit_counters_init&lt;&#x2F;code&gt;, hands us a pointer to the counter array so we know where the bytes live in memory. The second, &lt;code&gt;__sanitizer_cov_pcs_init&lt;&#x2F;code&gt;, hands us a parallel &lt;strong&gt;PC table&lt;&#x2F;strong&gt; that maps each counter index back to a code address, useful for printing human-readable edge names when reporting crashes. Once we have those pointers, the fuzzer loop becomes mechanical: zero all counters with &lt;code&gt;reset()&lt;&#x2F;code&gt;, run the target, then &lt;code&gt;snapshot()&lt;&#x2F;code&gt; the counters into an owned &lt;code&gt;Vec&amp;lt;u8&amp;gt;&lt;&#x2F;code&gt; before they get wiped for the next round. Ten bytes in, ten bytes out, thousands of times per second.&lt;&#x2F;p&gt;
+&lt;p&gt;The tricky part is &lt;strong&gt;selective instrumentation&lt;&#x2F;strong&gt;. If you instrument the fuzzer itself, its own mutation logic, string formatting, and random number generation create thousands of edges that have nothing to do with the target&#x27;s behavior. Every &lt;code&gt;format!&lt;&#x2F;code&gt; call, every &lt;code&gt;Vec::push&lt;&#x2F;code&gt;, every branch inside the RNG would show up in the coverage map and drown out the signal from the target. The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&quot;&gt;project&lt;&#x2F;a&gt; solves this with a three-crate workspace:&lt;&#x2F;p&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+    &lt;pre class=&quot;mermaid&quot;&gt;
+        graph TB
+    subgraph &amp;quot;Instrumented&amp;quot;
+        FT[fuzz-target]
+    end
+    subgraph &amp;quot;NOT instrumented&amp;quot;
+        SR[sancov-rt&amp;lt;br&amp;#x2F;&amp;gt;coverage runtime]
+        MF[mini-fuzzer&amp;lt;br&amp;#x2F;&amp;gt;fuzzer engine]
+    end
+    MF --&amp;gt;|calls| FT
+    MF --&amp;gt;|reads counters| SR
+    FT -.-&amp;gt;|LLVM callbacks| SR
+    &lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;A &lt;code&gt;RUSTC_WRAPPER&lt;&#x2F;code&gt; script injects the SanitizerCoverage flags only when compiling &lt;code&gt;fuzz_target&lt;&#x2F;code&gt;. The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&#x2F;blob&#x2F;f379b6f&#x2F;sancov-rt&#x2F;src&#x2F;lib.rs&quot;&gt;sancov-rt&lt;&#x2F;a&gt; crate implements the callbacks and provides safe APIs to reset, snapshot, and classify the counters. The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&#x2F;blob&#x2F;f379b6f&#x2F;mini-fuzzer&#x2F;src&#x2F;main.rs&quot;&gt;mini-fuzzer&lt;&#x2F;a&gt; engine stays clean.&lt;&#x2F;p&gt;
+&lt;p&gt;So after each run we have 10 counters. The obvious next step: compare them to what we saw before. Any counter at a new value means new coverage, right? Not quite.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;from-raw-counts-to-useful-signal&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#from-raw-counts-to-useful-signal&quot; aria-label=&quot;Anchor link for: from-raw-counts-to-useful-signal&quot;&gt;🔗&lt;&#x2F;a&gt;From raw counts to useful signal&lt;&#x2F;h2&gt;
+&lt;p&gt;An edge hit 37 times versus 38 times is not meaningfully different, but a naive comparison would flag it as &quot;new coverage.&quot; Without some form of noise reduction, every tiny variation in execution counts looks like progress. The corpus grows unbounded with functionally identical inputs, and the fuzzer wastes time mutating duplicates instead of exploring new territory.&lt;&#x2F;p&gt;
+&lt;p&gt;AFL solved this with a simple insight: &lt;strong&gt;bucket&lt;&#x2F;strong&gt; the raw counts into coarse classes. The technique maps each 8-bit counter value through a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&#x2F;blob&#x2F;f379b6f&#x2F;sancov-rt&#x2F;src&#x2F;lib.rs#L187&quot;&gt;lookup table&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Raw count&lt;&#x2F;th&gt;&lt;th&gt;Bucket&lt;&#x2F;th&gt;&lt;th&gt;Meaning&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;0&lt;&#x2F;td&gt;&lt;td&gt;0&lt;&#x2F;td&gt;&lt;td&gt;never executed&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;once&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;twice&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;&#x2F;td&gt;&lt;td&gt;4&lt;&#x2F;td&gt;&lt;td&gt;a few times&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;4-7&lt;&#x2F;td&gt;&lt;td&gt;8&lt;&#x2F;td&gt;&lt;td&gt;small loop&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;8-15&lt;&#x2F;td&gt;&lt;td&gt;16&lt;&#x2F;td&gt;&lt;td&gt;moderate loop&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;16-31&lt;&#x2F;td&gt;&lt;td&gt;32&lt;&#x2F;td&gt;&lt;td&gt;many iterations&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;32-127&lt;&#x2F;td&gt;&lt;td&gt;64&lt;&#x2F;td&gt;&lt;td&gt;heavy loop&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;128-255&lt;&#x2F;td&gt;&lt;td&gt;128&lt;&#x2F;td&gt;&lt;td&gt;very heavy loop&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;After each snapshot, every counter goes through this table:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;classify_counts&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;buf&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;]) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span&gt; b in buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;iter_mut&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;        *b = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;COUNT_CLASS_LOOKUP&lt;&#x2F;span&gt;&lt;span&gt;[*b as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span&gt;];
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now 37 and 38 both map to bucket 64. But 7 (bucket 8) and 8 (bucket 16) are genuinely different behaviors: the loop crossed a threshold. Remember that counters are reset to zero before each run, so the count reflects how many times an edge was hit &lt;strong&gt;within a single execution&lt;&#x2F;strong&gt;. Imagine a target with a retry loop. An input that triggers 3 retries (bucket 4) and one that triggers 7 retries (bucket 8) exercise genuinely different behavior. But 5 retries and 6 retries both land in bucket 8, and the fuzzer correctly ignores the difference. Our target has no loops, so every edge is hit 0 or 1 times per run, and bucketing barely comes into play. The real benefit shows up in targets with loops, parsers, and recursion, where raw counts fluctuate wildly but the coarse bucket stays stable. &lt;strong&gt;Bucketing filters noise while preserving signal.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Bucketing tells us what changed, but we still need to decide: is it worth keeping?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;detecting-novelty-max-reduce&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#detecting-novelty-max-reduce&quot; aria-label=&quot;Anchor link for: detecting-novelty-max-reduce&quot;&gt;🔗&lt;&#x2F;a&gt;Detecting novelty: max-reduce&lt;&#x2F;h2&gt;
+&lt;p&gt;The simplest approach is binary: track which edges have been seen, flag any new edge. But this misses inputs that exercise &lt;strong&gt;known edges more deeply&lt;&#x2F;strong&gt; (a loop that now iterates 20 times instead of 5).&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;AFLplusplus&#x2F;LibAFL&quot;&gt;max-reduce strategy from LibAFL&lt;&#x2F;a&gt; tracks the &lt;strong&gt;highest bucket ever seen&lt;&#x2F;strong&gt; for each edge. An input is novel if any edge reaches a higher bucket than previously observed:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;has_new_coverage&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;current&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;]) -&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;bool &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; dominated = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(i, &amp;amp;val) in current.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;iter&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;enumerate&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; val == &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;continue&lt;&#x2F;span&gt;&lt;span&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; skip unexecuted edges
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; i &amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.history.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;() &amp;amp;&amp;amp; val &amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.history[i] {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.history[i] = val;
+&lt;&#x2F;span&gt;&lt;span&gt;            dominated = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;    !dominated
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Walk through it with our target. The seed &lt;code&gt;[0, 0, 0]&lt;&#x2F;code&gt; goes straight into the corpus without being tested. The history starts at all zeros. The first mutation runs and exercises some edges, say the &lt;code&gt;data[0] != b&#x27;F&#x27;&lt;&#x2F;code&gt; path. Those edges jump from bucket 0 to bucket 1, higher than the history, so: novel input, add to corpus, update history. Many mutations later, one happens to land &lt;code&gt;&#x27;F&#x27;&lt;&#x2F;code&gt; at position 0. The edge for &lt;code&gt;data[0] == b&#x27;F&#x27;&lt;&#x2F;code&gt; fires for the first time, bucket 1. That is higher than the history&#x27;s 0 for that edge, so the function returns &lt;code&gt;true&lt;&#x2F;code&gt;: novel again, into the corpus. Now suppose the fuzzer runs another input that also hits &lt;code&gt;data[0] == b&#x27;F&#x27;&lt;&#x2F;code&gt; once. Same edge, same bucket 1. Not higher than the stored 1, so not novel. Discarded. The fuzzer only keeps inputs that push the frontier forward, which is why the corpus does not explode.&lt;&#x2F;p&gt;
+&lt;p&gt;Our target has no loops, so in this example every new corpus entry comes from a brand new edge. But in a target with loops, an input that hits a loop body 20 times (bucket 32) is genuinely different from one that hits it 5 times (bucket 8). The binary &quot;seen or not seen&quot; approach would ignore the longer input because the edge was already known. Max-reduce keeps it because the bucket is higher. The corpus evolves toward both &lt;strong&gt;breadth&lt;&#x2F;strong&gt; (new edges) and &lt;strong&gt;depth&lt;&#x2F;strong&gt; (deeper execution of known edges).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;watching-it-work&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watching-it-work&quot; aria-label=&quot;Anchor link for: watching-it-work&quot;&gt;🔗&lt;&#x2F;a&gt;Watching it work&lt;&#x2F;h2&gt;
+&lt;p&gt;The mutation function is three operations, nothing fancy:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;mutate&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;base&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;], &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rng&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; impl Rng) -&amp;gt; Vec&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; buf = base.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;to_vec&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; strategy = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;is_empty&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0
+&lt;&#x2F;span&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random_range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;..&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;match&lt;&#x2F;span&gt;&lt;span&gt; strategy {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0 &lt;&#x2F;span&gt;&lt;span&gt;=&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Insert a random byte
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; pos = rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random_range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;..=buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; val: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8 &lt;&#x2F;span&gt;&lt;span&gt;= rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;            buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;insert&lt;&#x2F;span&gt;&lt;span&gt;(pos, val);
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span&gt;=&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Flip a random byte
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; pos = rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random_range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;..buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;            buf[pos] = rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span&gt;=&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Erase a random byte
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; pos = rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;random_range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;..buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;            buf.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;remove&lt;&#x2F;span&gt;&lt;span&gt;(pos);
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;        _ =&amp;gt; unreachable!(),
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;    buf
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The corpus starts from a 3-byte seed of zeroes and grows toward inputs that probe deeper branches. Running against our target:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;[sancov] 8-bit counters registered: 10 edges
+&lt;&#x2F;span&gt;&lt;span&gt;[init] 10 edges instrumented
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;#0       NEW  input=&amp;quot;[0x00, 0x00, &amp;#39;-&amp;#39;]&amp;quot; (3B)   corpus=2  edges=2&#x2F;10  (20.0%)
+&lt;&#x2F;span&gt;&lt;span&gt;#3       NEW  input=&amp;quot;[0x00, 0x00]&amp;quot; (2B)         corpus=3  edges=3&#x2F;10  (30.0%)
+&lt;&#x2F;span&gt;&lt;span&gt;#1876    NEW  input=&amp;quot;[&amp;#39;F&amp;#39;, 0x00, 0x00]&amp;quot; (3B)    corpus=4  edges=4&#x2F;10  (40.0%)
+&lt;&#x2F;span&gt;&lt;span&gt;#6743    NEW  input=&amp;quot;[&amp;#39;F&amp;#39;, &amp;#39;U&amp;#39;, 0x00]&amp;quot; (3B)     corpus=5  edges=5&#x2F;10  (50.0%)
+&lt;&#x2F;span&gt;&lt;span&gt;#9066    CRASH! input=&amp;quot;[&amp;#39;F&amp;#39;, &amp;#39;U&amp;#39;, &amp;#39;Z&amp;#39;, 0x00]&amp;quot; (4B)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In the first 3 iterations, coverage jumps to 30% as the fuzzer discovers the length check and the &lt;code&gt;&quot;miss&quot;&lt;&#x2F;code&gt; branch. Then a &lt;strong&gt;plateau&lt;&#x2F;strong&gt;: from iteration #3 to #1876, about 1,800 mutations, and none of them produce &lt;code&gt;data[0] == b&#x27;F&#x27;&lt;&#x2F;code&gt;. The fuzzer is not stuck, it is doing honest work, flipping and inserting random bytes, but &lt;code&gt;&#x27;F&#x27;&lt;&#x2F;code&gt; is one specific value out of 256.&lt;&#x2F;p&gt;
+&lt;p&gt;At iteration 1876, a mutation finally lands &lt;code&gt;&#x27;F&#x27;&lt;&#x2F;code&gt; at position 0. The &lt;code&gt;if data[0] == b&#x27;F&#x27;&lt;&#x2F;code&gt; branch fires for the first time. New edge, into the corpus. Now the fuzzer has a starting point with &lt;code&gt;&#x27;F&#x27;&lt;&#x2F;code&gt; already in place. 4,800 mutations later, one of its descendants flips position 1 to &lt;code&gt;&#x27;U&#x27;&lt;&#x2F;code&gt;. One edge deeper. Then &lt;code&gt;&#x27;Z&#x27;&lt;&#x2F;code&gt; at position 2, iteration 9,066: &lt;strong&gt;crash found&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Notice that the output tracks two numbers: &lt;strong&gt;corpus&lt;&#x2F;strong&gt; size and &lt;strong&gt;edges&lt;&#x2F;strong&gt; covered. In this run they grow together because each new corpus entry happens to discover a new edge. But they measure different things. A corpus entry is any input that triggered new coverage, which can mean a new edge &lt;strong&gt;or&lt;&#x2F;strong&gt; a deeper bucket on a known edge (thanks to max-reduce). Edges covered just counts how many distinct edges were hit at least once. In more complex targets, the corpus can grow much faster than the edge count as the fuzzer discovers inputs that exercise known loops more deeply.&lt;&#x2F;p&gt;
+&lt;p&gt;The fuzzer found the crash at 50% coverage: 5 out of 10 edges. The remaining 5 are structural edges that LLVM inserted for transitions between blocks (function entry, return paths, fallthrough edges). &lt;strong&gt;You do not need 100% coverage to find bugs.&lt;&#x2F;strong&gt; Coverage guidance found the crash by exploring just the edges on the path to the panic.&lt;&#x2F;p&gt;
+&lt;p&gt;Three searches of ~256, not one search of 16 million. The multiplicative problem, solved additively.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;from-bytes-to-distributed-systems&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#from-bytes-to-distributed-systems&quot; aria-label=&quot;Anchor link for: from-bytes-to-distributed-systems&quot;&gt;🔗&lt;&#x2F;a&gt;From bytes to distributed systems&lt;&#x2F;h2&gt;
+&lt;p&gt;This same loop works beyond byte buffers. Tools like &lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&#x2F;&quot;&gt;Antithesis&lt;&#x2F;a&gt; extend it to &lt;strong&gt;distributed systems&lt;&#x2F;strong&gt;: instead of mutating bytes, they mutate scheduling decisions, network events, and failure injections across a cluster of real processes. The input space is no longer &quot;bytes fed to a function&quot; but &quot;the sequence of everything that can happen to a distributed system.&quot; The core primitive is the same: observe coverage, steer toward unexplored territory, find bugs that no amount of &lt;a href=&quot;&#x2F;posts&#x2F;testing-prevention-vs-discovery&#x2F;&quot;&gt;manual testing would catch&lt;&#x2F;a&gt;. The same additive-versus-multiplicative insight applies. Instead of hoping that random scheduling stumbles on the one interleaving that breaks consensus, coverage guidance steers toward interleavings that exercise new code paths. The search space explodes, but coverage still compresses it.&lt;&#x2F;p&gt;
+&lt;p&gt;This is what I was missing in my &lt;a href=&quot;&#x2F;posts&#x2F;simulation-driven-development&#x2F;&quot;&gt;simulation tests&lt;&#x2F;a&gt;. Random seeds find the shallow bugs. Coverage-guided mutations find the ones hiding behind specific sequences that no amount of intuition would predict. The full source is on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;rust-mini-fuzzer&quot;&gt;GitHub&lt;&#x2F;a&gt;, no dependencies beyond &lt;code&gt;rand&lt;&#x2F;code&gt; and &lt;code&gt;backtrace&lt;&#x2F;code&gt;. What would happen to your system under millions of randomized scenarios, with coverage guidance steering every mutation toward the code paths you have never tested?&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with fuzzing and simulation testing. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>What I Tell Colleagues About Using LLMs for Engineering</title>
         <published>2026-01-15T00:00:00+00:00</published>

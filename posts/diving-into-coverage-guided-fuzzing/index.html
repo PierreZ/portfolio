@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diving Into Coverage-Guided Fuzzing | Pierre Zemb&#x27;s Blog</title>
+  <meta name="title" content="Diving Into Coverage-Guided Fuzzing">
+<meta name="description" content="How a 600-line Rust fuzzer discovers a 3-byte crash sequence in 9,000 iterations instead of 16 million">
+<meta name="author" content="Pierre Zemb">
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@pierrez" />
+<meta name="twitter:creator" content="@pierrez" />
+<meta name="twitter:title" content="Diving Into Coverage-Guided Fuzzing" />
+<meta name="twitter:description" content="How a 600-line Rust fuzzer discovers a 3-byte crash sequence in 9,000 iterations instead of 16 million" />
+
+<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+
+<!-- OpenGraph tags -->
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+<meta property="og:title" content="Diving Into Coverage-Guided Fuzzing">
+<meta property="og:description" content="How a 600-line Rust fuzzer discovers a 3-byte crash sequence in 9,000 iterations instead of 16 million"> 
+<meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">
+
+<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+
+<meta property="article:published_time" content="2026-03-23" />
+
+
+
+<meta property="article:tag" content="rust" />
+
+<meta property="article:tag" content="fuzzing" />
+
+<meta property="article:tag" content="testing" />
+
+<meta property="article:tag" content="simulation" />
+
+<meta property="article:tag" content="diving-into" />
+
+
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
+  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
+  <style>
+    :root {
+    --width: 800px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  nav span.active {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre code {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+  /* blog post list */
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+  .tags {
+    font-size: smaller;
+  }
+
+  </style><link rel="stylesheet" href="/custom.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+  <header>
+  <a href="https://pierrezemb.fr/" class="title">
+    <h1>Pierre Zemb&#x27;s Blog</h1>
+  </a>
+  <nav aria-label="site">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+</header>
+<h1>Diving Into Coverage-Guided Fuzzing</h1>
+      <p>
+        <i>
+          <time datetime="2026-03-23T00:00:00+00:00" pubdate>23 Mar, 2026</time>
+        </i>
+      </p>
+    <details open>
+      <summary>Table of contents</summary>
+    <ul>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#the-vocabulary">The vocabulary</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#the-target">The target</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#the-feedback-loop">The feedback loop</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#getting-coverage-from-the-compiler">Getting coverage from the compiler</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#from-raw-counts-to-useful-signal">From raw counts to useful signal</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#detecting-novelty-max-reduce">Detecting novelty: max-reduce</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#watching-it-work">Watching it work</a>
+        </li>
+        <li>
+          <a href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/#from-bytes-to-distributed-systems">From bytes to distributed systems</a>
+        </li>
+    </ul>
+    </details>
+  <main>
+    <blockquote>
+<p><a href="/tags/diving-into/">Diving Into</a> is a blogpost series where we are digging a specific part of the project's codebase. In this episode, we will dig into the implementation behind coverage-guided fuzzing.</p>
+</blockquote>
+<p>I have spent a lot of time building <a href="/posts/simulation-driven-development/">simulation tests</a>. Sometimes I throw random operations at the system with different seeds, hoping something breaks. Sometimes I manually craft failure scenarios based on intuition about what might go wrong. The interesting bugs always hide behind specific combinations of inputs, and random testing finds the easy ones quickly. But then the iteration counter keeps climbing and nothing new breaks, and you start wondering whether the fuzzer is making progress or just burning CPU. The hard bugs need guidance.</p>
+<p><a href="https://antithesis.com/">Antithesis</a> solves this by using <strong>coverage-guided fuzzing</strong> to steer their simulation framework. After each test input, they observe which code paths were executed and push the next mutation toward branches never taken before. Instead of bruteforcing the input space, coverage becomes the compass. I built <a href="https://github.com/PierreZ/rust-mini-fuzzer">rust-mini-fuzzer</a> to understand how this works from the inside. A function that crashes only on a specific 3-byte sequence: 9,000 iterations to find it with coverage guidance, instead of the 16 million a random fuzzer would need.</p>
+<h2 id="the-vocabulary"><a class="zola-anchor" href="#the-vocabulary" aria-label="Anchor link for: the-vocabulary">🔗</a>The vocabulary</h2>
+<p>Three concepts make this work.</p>
+<p><strong>Fuzzing</strong> is throwing generated inputs at a program and watching if it crashes. Unlike property-based testing, which checks invariants ("this function always returns a sorted list"), fuzzing asks a simpler question: does this input make the program blow up? You do not write assertions. The crash <strong>is</strong> the signal.</p>
+<p>A <strong>corpus</strong> is the collection of inputs the fuzzer has found interesting so far. It starts from a seed, often just a handful of zero bytes, and grows as the fuzzer discovers inputs that trigger new behavior. You do not write the corpus by hand. The fuzzer builds it for you, one mutation at a time. It is the fuzzer's memory of what worked.</p>
+<p><strong>Coverage guidance</strong> is the insight that makes modern fuzzing practical. After each run, the fuzzer observes which code paths the input exercised. If the input reached a branch that no previous input ever touched, that input is "interesting" and enters the corpus. The next round of mutations starts from that new interesting input, pushing deeper. <a href="https://lcamtuf.coredump.cx/afl/">AFL</a> (American Fuzzy Lop), written by Michal Zalewski, popularized this approach, and most of the techniques we will implement here come from AFL's design.</p>
+<h2 id="the-target"><a class="zola-anchor" href="#the-target" aria-label="Anchor link for: the-target">🔗</a>The target</h2>
+<p>Here is the function we are fuzzing. It panics only when the first three bytes are <code>F</code>, <code>U</code>, <code>Z</code> in sequence:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">target</span><span>(</span><span style="color:#bf616a;">data</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; &amp;</span><span style="color:#b48ead;">&#39;static str </span><span>{
+</span><span>    </span><span style="color:#b48ead;">if</span><span> data.</span><span style="color:#96b5b4;">len</span><span>() &lt; </span><span style="color:#d08770;">3 </span><span>{
+</span><span>        </span><span style="color:#b48ead;">return </span><span>&quot;</span><span style="color:#a3be8c;">too-short</span><span>&quot;;
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> data[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">F</span><span>&#39; {
+</span><span>        </span><span style="color:#b48ead;">if</span><span> data[</span><span style="color:#d08770;">1</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">U</span><span>&#39; {
+</span><span>            </span><span style="color:#b48ead;">if</span><span> data[</span><span style="color:#d08770;">2</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">Z</span><span>&#39; {
+</span><span>                panic!(&quot;</span><span style="color:#a3be8c;">BOOM! Found the magic sequence: FUZ</span><span>&quot;);
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">return </span><span>&quot;</span><span style="color:#a3be8c;">partial-FU</span><span>&quot;;
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">return </span><span>&quot;</span><span style="color:#a3be8c;">partial-F</span><span>&quot;;
+</span><span>    }
+</span><span>    &quot;</span><span style="color:#a3be8c;">miss</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<p>Look at the nesting. A random fuzzer must guess all three bytes simultaneously. Each byte has 256 possible values, and the byte values are independent, so the probability of a random 3-byte input hitting the panic is <strong>1 in 256 x 256 x 256 = 1 in 16,777,216</strong>. On average, the fuzzer needs 16 million attempts before stumbling on <code>['F', 'U', 'Z']</code> by pure luck.</p>
+<p>But a fuzzer that observes which branches were taken breaks this into three <strong>independent searches</strong>. First it discovers an input where <code>data[0] == b'F'</code> (new branch covered, ~1 in 256 attempts). That input enters the corpus. Next mutation round, it starts from that <code>F</code> input and finds <code>data[1] == b'U'</code> (~1 in 256 again). Then <code>data[2] == b'Z'</code> (~1 in 256). The expected total: <strong>256 + 256 + 256 = 768 attempts</strong>, not 16 million.</p>
+<p><strong>Coverage turns a multiplicative problem into an additive one.</strong></p>
+<h2 id="the-feedback-loop"><a class="zola-anchor" href="#the-feedback-loop" aria-label="Anchor link for: the-feedback-loop">🔗</a>The feedback loop</h2>
+<p>The entire fuzzer is a single loop:</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        graph TD
+    A[Corpus] --&gt;|pick random input| B[Mutate]
+    B --&gt;|insert&#x2F;flip&#x2F;erase byte| C[Run Target]
+    C --&gt;|observe| D[Coverage Counters]
+    D --&gt;|new coverage?| E{Novel?}
+    E --&gt;|yes| A
+    E --&gt;|no| F[Discard]
+    </pre>
+</div>
+<p>Pick an input from the corpus. Mutate it. Run the target. Check if the mutated input triggered any new coverage. If yes, add it to the corpus. If the target panicked, we found a crash. Repeat. The corpus starts with a single seed input, in our case three zero bytes, and that is enough. It does not matter that the seed is garbage, because coverage feedback will steer mutations toward interesting territory. Every time the fuzzer discovers an input that makes the program do something it has never done before, that input joins the corpus and becomes a starting point for future mutations. The corpus evolves on its own.</p>
+<p>The mutation strategy is deliberately simple: three operations chosen at random. <strong>Insert</strong> a random byte at a random position, <strong>flip</strong> a random byte to a random value, or <strong>erase</strong> a random byte. No grammar awareness, no structure, no knowledge of the target. This sounds too dumb to work, but it does not need to be smart. The mutations are the fuzzer's hands, coverage feedback is its eyes. Dumb hands with good eyes beat smart hands that are blind. But how does the fuzzer actually observe which branches were taken?</p>
+<h2 id="getting-coverage-from-the-compiler"><a class="zola-anchor" href="#getting-coverage-from-the-compiler" aria-label="Anchor link for: getting-coverage-from-the-compiler">🔗</a>Getting coverage from the compiler</h2>
+<p>LLVM's <a href="https://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> pass injects a counter increment at every <strong>control-flow edge</strong>. An edge is not a line of code or a branch. It is a transition between basic blocks in the control flow graph. Here is the control flow graph of our target function:</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        graph TD
+    A{&quot;if data.len() &lt; 3&quot;} --&gt;|true| B[&quot;return too-short&quot;]
+    A --&gt;|false| C{&quot;if data[0] == b&#x27;F&#x27;&quot;}
+    C --&gt;|true| D{&quot;if data[1] == b&#x27;U&#x27;&quot;}
+    C --&gt;|false| E[&quot;return miss&quot;]
+    D --&gt;|true| F{&quot;if data[2] == b&#x27;Z&#x27;&quot;}
+    D --&gt;|false| G[&quot;return partial-F&quot;]
+    F --&gt;|true| H[&quot;panic!&quot;]
+    F --&gt;|false| I[&quot;return partial-FU&quot;]
+    </pre>
+</div>
+<p>Each arrow is an edge that LLVM instruments with its own counter. Count the arrows in the diagram: 8 edges from the branches we wrote. But LLVM also inserts counters for <a href="https://en.wikipedia.org/wiki/Control_flow_graph#Special_edges">critical edges</a>, transitions that skip intermediate blocks in the control flow graph. The compiler splits these by adding dummy blocks with their own counters, even though they do not appear in the source. This is why our simple function produces 10 instrumented edges, not the 8 you see in the diagram. After running the target, each counter tells you how many times that edge was taken, giving us 10 bytes of coverage data per execution.</p>
+<p>Here is what happens at runtime. When the program starts, before <code>main()</code> even runs, LLVM fires two callbacks during static initialization. The first, <code>__sanitizer_cov_8bit_counters_init</code>, hands us a pointer to the counter array so we know where the bytes live in memory. The second, <code>__sanitizer_cov_pcs_init</code>, hands us a parallel <strong>PC table</strong> that maps each counter index back to a code address, useful for printing human-readable edge names when reporting crashes. Once we have those pointers, the fuzzer loop becomes mechanical: zero all counters with <code>reset()</code>, run the target, then <code>snapshot()</code> the counters into an owned <code>Vec&lt;u8&gt;</code> before they get wiped for the next round. Ten bytes in, ten bytes out, thousands of times per second.</p>
+<p>The tricky part is <strong>selective instrumentation</strong>. If you instrument the fuzzer itself, its own mutation logic, string formatting, and random number generation create thousands of edges that have nothing to do with the target's behavior. Every <code>format!</code> call, every <code>Vec::push</code>, every branch inside the RNG would show up in the coverage map and drown out the signal from the target. The <a href="https://github.com/PierreZ/rust-mini-fuzzer">project</a> solves this with a three-crate workspace:</p>
+<div style="text-align: center;">
+    <pre class="mermaid">
+        graph TB
+    subgraph &quot;Instrumented&quot;
+        FT[fuzz-target]
+    end
+    subgraph &quot;NOT instrumented&quot;
+        SR[sancov-rt&lt;br&#x2F;&gt;coverage runtime]
+        MF[mini-fuzzer&lt;br&#x2F;&gt;fuzzer engine]
+    end
+    MF --&gt;|calls| FT
+    MF --&gt;|reads counters| SR
+    FT -.-&gt;|LLVM callbacks| SR
+    </pre>
+</div>
+<p>A <code>RUSTC_WRAPPER</code> script injects the SanitizerCoverage flags only when compiling <code>fuzz_target</code>. The <a href="https://github.com/PierreZ/rust-mini-fuzzer/blob/f379b6f/sancov-rt/src/lib.rs">sancov-rt</a> crate implements the callbacks and provides safe APIs to reset, snapshot, and classify the counters. The <a href="https://github.com/PierreZ/rust-mini-fuzzer/blob/f379b6f/mini-fuzzer/src/main.rs">mini-fuzzer</a> engine stays clean.</p>
+<p>So after each run we have 10 counters. The obvious next step: compare them to what we saw before. Any counter at a new value means new coverage, right? Not quite.</p>
+<h2 id="from-raw-counts-to-useful-signal"><a class="zola-anchor" href="#from-raw-counts-to-useful-signal" aria-label="Anchor link for: from-raw-counts-to-useful-signal">🔗</a>From raw counts to useful signal</h2>
+<p>An edge hit 37 times versus 38 times is not meaningfully different, but a naive comparison would flag it as "new coverage." Without some form of noise reduction, every tiny variation in execution counts looks like progress. The corpus grows unbounded with functionally identical inputs, and the fuzzer wastes time mutating duplicates instead of exploring new territory.</p>
+<p>AFL solved this with a simple insight: <strong>bucket</strong> the raw counts into coarse classes. The technique maps each 8-bit counter value through a <a href="https://github.com/PierreZ/rust-mini-fuzzer/blob/f379b6f/sancov-rt/src/lib.rs#L187">lookup table</a>:</p>
+<table><thead><tr><th>Raw count</th><th>Bucket</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>never executed</td></tr>
+<tr><td>1</td><td>1</td><td>once</td></tr>
+<tr><td>2</td><td>2</td><td>twice</td></tr>
+<tr><td>3</td><td>4</td><td>a few times</td></tr>
+<tr><td>4-7</td><td>8</td><td>small loop</td></tr>
+<tr><td>8-15</td><td>16</td><td>moderate loop</td></tr>
+<tr><td>16-31</td><td>32</td><td>many iterations</td></tr>
+<tr><td>32-127</td><td>64</td><td>heavy loop</td></tr>
+<tr><td>128-255</td><td>128</td><td>very heavy loop</td></tr>
+</tbody></table>
+<p>After each snapshot, every counter goes through this table:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">classify_counts</span><span>(</span><span style="color:#bf616a;">buf</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">u8</span><span>]) {
+</span><span>    </span><span style="color:#b48ead;">for</span><span> b in buf.</span><span style="color:#96b5b4;">iter_mut</span><span>() {
+</span><span>        *b = </span><span style="color:#d08770;">COUNT_CLASS_LOOKUP</span><span>[*b as </span><span style="color:#b48ead;">usize</span><span>];
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>Now 37 and 38 both map to bucket 64. But 7 (bucket 8) and 8 (bucket 16) are genuinely different behaviors: the loop crossed a threshold. Remember that counters are reset to zero before each run, so the count reflects how many times an edge was hit <strong>within a single execution</strong>. Imagine a target with a retry loop. An input that triggers 3 retries (bucket 4) and one that triggers 7 retries (bucket 8) exercise genuinely different behavior. But 5 retries and 6 retries both land in bucket 8, and the fuzzer correctly ignores the difference. Our target has no loops, so every edge is hit 0 or 1 times per run, and bucketing barely comes into play. The real benefit shows up in targets with loops, parsers, and recursion, where raw counts fluctuate wildly but the coarse bucket stays stable. <strong>Bucketing filters noise while preserving signal.</strong></p>
+<p>Bucketing tells us what changed, but we still need to decide: is it worth keeping?</p>
+<h2 id="detecting-novelty-max-reduce"><a class="zola-anchor" href="#detecting-novelty-max-reduce" aria-label="Anchor link for: detecting-novelty-max-reduce">🔗</a>Detecting novelty: max-reduce</h2>
+<p>The simplest approach is binary: track which edges have been seen, flag any new edge. But this misses inputs that exercise <strong>known edges more deeply</strong> (a loop that now iterates 20 times instead of 5).</p>
+<p>The <a href="https://github.com/AFLplusplus/LibAFL">max-reduce strategy from LibAFL</a> tracks the <strong>highest bucket ever seen</strong> for each edge. An input is novel if any edge reaches a higher bucket than previously observed:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">has_new_coverage</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">current</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">bool </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> dominated = </span><span style="color:#d08770;">true</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for </span><span>(i, &amp;val) in current.</span><span style="color:#96b5b4;">iter</span><span>().</span><span style="color:#96b5b4;">enumerate</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">if</span><span> val == </span><span style="color:#d08770;">0 </span><span>{
+</span><span>            </span><span style="color:#b48ead;">continue</span><span>; </span><span style="color:#65737e;">// skip unexecuted edges
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">if</span><span> i &lt; </span><span style="color:#bf616a;">self</span><span>.history.</span><span style="color:#96b5b4;">len</span><span>() &amp;&amp; val &gt; </span><span style="color:#bf616a;">self</span><span>.history[i] {
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.history[i] = val;
+</span><span>            dominated = </span><span style="color:#d08770;">false</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    !dominated
+</span><span>}
+</span></code></pre>
+<p>Walk through it with our target. The seed <code>[0, 0, 0]</code> goes straight into the corpus without being tested. The history starts at all zeros. The first mutation runs and exercises some edges, say the <code>data[0] != b'F'</code> path. Those edges jump from bucket 0 to bucket 1, higher than the history, so: novel input, add to corpus, update history. Many mutations later, one happens to land <code>'F'</code> at position 0. The edge for <code>data[0] == b'F'</code> fires for the first time, bucket 1. That is higher than the history's 0 for that edge, so the function returns <code>true</code>: novel again, into the corpus. Now suppose the fuzzer runs another input that also hits <code>data[0] == b'F'</code> once. Same edge, same bucket 1. Not higher than the stored 1, so not novel. Discarded. The fuzzer only keeps inputs that push the frontier forward, which is why the corpus does not explode.</p>
+<p>Our target has no loops, so in this example every new corpus entry comes from a brand new edge. But in a target with loops, an input that hits a loop body 20 times (bucket 32) is genuinely different from one that hits it 5 times (bucket 8). The binary "seen or not seen" approach would ignore the longer input because the edge was already known. Max-reduce keeps it because the bucket is higher. The corpus evolves toward both <strong>breadth</strong> (new edges) and <strong>depth</strong> (deeper execution of known edges).</p>
+<h2 id="watching-it-work"><a class="zola-anchor" href="#watching-it-work" aria-label="Anchor link for: watching-it-work">🔗</a>Watching it work</h2>
+<p>The mutation function is three operations, nothing fancy:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">mutate</span><span>(</span><span style="color:#bf616a;">base</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">rng</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> impl Rng) -&gt; Vec&lt;</span><span style="color:#b48ead;">u8</span><span>&gt; {
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> buf = base.</span><span style="color:#96b5b4;">to_vec</span><span>();
+</span><span>    </span><span style="color:#b48ead;">let</span><span> strategy = </span><span style="color:#b48ead;">if</span><span> buf.</span><span style="color:#96b5b4;">is_empty</span><span>() {
+</span><span>        </span><span style="color:#d08770;">0
+</span><span>    } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>        rng.</span><span style="color:#96b5b4;">random_range</span><span>(</span><span style="color:#d08770;">0</span><span>..</span><span style="color:#d08770;">3</span><span style="color:#b48ead;">u8</span><span>)
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">match</span><span> strategy {
+</span><span>        </span><span style="color:#d08770;">0 </span><span>=&gt; {
+</span><span>            </span><span style="color:#65737e;">// Insert a random byte
+</span><span>            </span><span style="color:#b48ead;">let</span><span> pos = rng.</span><span style="color:#96b5b4;">random_range</span><span>(</span><span style="color:#d08770;">0</span><span>..=buf.</span><span style="color:#96b5b4;">len</span><span>());
+</span><span>            </span><span style="color:#b48ead;">let</span><span> val: </span><span style="color:#b48ead;">u8 </span><span>= rng.</span><span style="color:#96b5b4;">random</span><span>();
+</span><span>            buf.</span><span style="color:#96b5b4;">insert</span><span>(pos, val);
+</span><span>        }
+</span><span>        </span><span style="color:#d08770;">1 </span><span>=&gt; {
+</span><span>            </span><span style="color:#65737e;">// Flip a random byte
+</span><span>            </span><span style="color:#b48ead;">let</span><span> pos = rng.</span><span style="color:#96b5b4;">random_range</span><span>(</span><span style="color:#d08770;">0</span><span>..buf.</span><span style="color:#96b5b4;">len</span><span>());
+</span><span>            buf[pos] = rng.</span><span style="color:#96b5b4;">random</span><span>();
+</span><span>        }
+</span><span>        </span><span style="color:#d08770;">2 </span><span>=&gt; {
+</span><span>            </span><span style="color:#65737e;">// Erase a random byte
+</span><span>            </span><span style="color:#b48ead;">let</span><span> pos = rng.</span><span style="color:#96b5b4;">random_range</span><span>(</span><span style="color:#d08770;">0</span><span>..buf.</span><span style="color:#96b5b4;">len</span><span>());
+</span><span>            buf.</span><span style="color:#96b5b4;">remove</span><span>(pos);
+</span><span>        }
+</span><span>        _ =&gt; unreachable!(),
+</span><span>    }
+</span><span>    buf
+</span><span>}
+</span></code></pre>
+<p>The corpus starts from a 3-byte seed of zeroes and grows toward inputs that probe deeper branches. Running against our target:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>[sancov] 8-bit counters registered: 10 edges
+</span><span>[init] 10 edges instrumented
+</span><span>
+</span><span>#0       NEW  input=&quot;[0x00, 0x00, &#39;-&#39;]&quot; (3B)   corpus=2  edges=2/10  (20.0%)
+</span><span>#3       NEW  input=&quot;[0x00, 0x00]&quot; (2B)         corpus=3  edges=3/10  (30.0%)
+</span><span>#1876    NEW  input=&quot;[&#39;F&#39;, 0x00, 0x00]&quot; (3B)    corpus=4  edges=4/10  (40.0%)
+</span><span>#6743    NEW  input=&quot;[&#39;F&#39;, &#39;U&#39;, 0x00]&quot; (3B)     corpus=5  edges=5/10  (50.0%)
+</span><span>#9066    CRASH! input=&quot;[&#39;F&#39;, &#39;U&#39;, &#39;Z&#39;, 0x00]&quot; (4B)
+</span></code></pre>
+<p>In the first 3 iterations, coverage jumps to 30% as the fuzzer discovers the length check and the <code>"miss"</code> branch. Then a <strong>plateau</strong>: from iteration #3 to #1876, about 1,800 mutations, and none of them produce <code>data[0] == b'F'</code>. The fuzzer is not stuck, it is doing honest work, flipping and inserting random bytes, but <code>'F'</code> is one specific value out of 256.</p>
+<p>At iteration 1876, a mutation finally lands <code>'F'</code> at position 0. The <code>if data[0] == b'F'</code> branch fires for the first time. New edge, into the corpus. Now the fuzzer has a starting point with <code>'F'</code> already in place. 4,800 mutations later, one of its descendants flips position 1 to <code>'U'</code>. One edge deeper. Then <code>'Z'</code> at position 2, iteration 9,066: <strong>crash found</strong>.</p>
+<p>Notice that the output tracks two numbers: <strong>corpus</strong> size and <strong>edges</strong> covered. In this run they grow together because each new corpus entry happens to discover a new edge. But they measure different things. A corpus entry is any input that triggered new coverage, which can mean a new edge <strong>or</strong> a deeper bucket on a known edge (thanks to max-reduce). Edges covered just counts how many distinct edges were hit at least once. In more complex targets, the corpus can grow much faster than the edge count as the fuzzer discovers inputs that exercise known loops more deeply.</p>
+<p>The fuzzer found the crash at 50% coverage: 5 out of 10 edges. The remaining 5 are structural edges that LLVM inserted for transitions between blocks (function entry, return paths, fallthrough edges). <strong>You do not need 100% coverage to find bugs.</strong> Coverage guidance found the crash by exploring just the edges on the path to the panic.</p>
+<p>Three searches of ~256, not one search of 16 million. The multiplicative problem, solved additively.</p>
+<h2 id="from-bytes-to-distributed-systems"><a class="zola-anchor" href="#from-bytes-to-distributed-systems" aria-label="Anchor link for: from-bytes-to-distributed-systems">🔗</a>From bytes to distributed systems</h2>
+<p>This same loop works beyond byte buffers. Tools like <a href="https://antithesis.com/">Antithesis</a> extend it to <strong>distributed systems</strong>: instead of mutating bytes, they mutate scheduling decisions, network events, and failure injections across a cluster of real processes. The input space is no longer "bytes fed to a function" but "the sequence of everything that can happen to a distributed system." The core primitive is the same: observe coverage, steer toward unexplored territory, find bugs that no amount of <a href="/posts/testing-prevention-vs-discovery/">manual testing would catch</a>. The same additive-versus-multiplicative insight applies. Instead of hoping that random scheduling stumbles on the one interleaving that breaks consensus, coverage guidance steers toward interleavings that exercise new code paths. The search space explodes, but coverage still compresses it.</p>
+<p>This is what I was missing in my <a href="/posts/simulation-driven-development/">simulation tests</a>. Random seeds find the shallow bugs. Coverage-guided mutations find the ones hiding behind specific sequences that no amount of intuition would predict. The full source is on <a href="https://github.com/PierreZ/rust-mini-fuzzer">GitHub</a>, no dependencies beyond <code>rand</code> and <code>backtrace</code>. What would happen to your system under millions of randomized scenarios, with coverage guidance steering every mutation toward the code paths you have never tested?</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with fuzzing and simulation testing. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+
+  </main>
+  <p>
+        Tags:
+          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
+          <a href="https://pierrezemb.fr/tags/fuzzing/">#fuzzing</a>
+          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
+          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
+          <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a>
+  </p>
+<footer>
+    <p>© 2025 Pierre Zemb</p>
+    <div class="social-links">
+        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
+        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    </div>
+</footer>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+    });
+</script>
+<script>
+    feather.replace();
+</script></body>
+</html>
