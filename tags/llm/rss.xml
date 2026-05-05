@@ -7,7 +7,54 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/llm/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Thu, 15 Jan 2026 00:00:00 +0000</lastBuildDate>
+      <lastBuildDate>Tue, 05 May 2026 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>BugBash 2026, or how the correctness decade has started</title>
+          <pubDate>Tue, 05 May 2026 00:00:00 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/bugbash-2026/</link>
+          <guid>https://pierrezemb.fr/posts/bugbash-2026/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/bugbash-2026/">&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;antithesis.com&#x2F;bugbash&#x2F;conference2026&quot;&gt;BugBash 2026&lt;&#x2F;a&gt; was two days in Washington D.C., organized by Antithesis, dedicated to &lt;strong&gt;extracting reliable software from the slop factory&lt;&#x2F;strong&gt;. The conference brought together thirty speakers from across the correctness landscape: Kyle Kingsbury running a seminar on transaction safety, Peter Alvaro reflecting on twenty years of attacking distributed systems, Brian Potter explaining why buildings don&#x27;t fall down, Frank McSherry on why Materialize works for one reason, and Steve Klabnik connecting Descartes to Rust. I attended &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;2025-year-in-review&#x2F;#the-awakening&quot;&gt;the first edition last year&lt;&#x2F;a&gt; and it was where I finally met the correctness niche in person. This year I was back with &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&#x2F;slides&#x2F;2026-04-fdb-sim.pdf&quot;&gt;a lightning talk on borrowing FoundationDB&#x27;s simulator&lt;&#x2F;a&gt;, sharing the stage with people whose work shaped how I think about distributed systems.&lt;&#x2F;p&gt;
+&lt;p&gt;Despite being a conference where we talk about simulation, formal methods and property-based testing, this year almost everyone was asking a single question: &lt;strong&gt;how can we trust LLM-generated code?&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-gap-agents-opened&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-gap-agents-opened&quot; aria-label=&quot;Anchor link for: the-gap-agents-opened&quot;&gt;🔗&lt;&#x2F;a&gt;The gap agents opened&lt;&#x2F;h2&gt;
+&lt;p&gt;Steve Klabnik named the problem in his keynote, &lt;em&gt;Steel, Rust, and truth&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We said &quot;good enough&quot; because we wrote it, we understood it, we tried it. AI broke all three.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;That gap, between the speed at which agents produce code and the confidence we have that the code is right, is what filled the conference. Engineers had used LLMs to ship faster, then discovered a new class of correctness problem they did not have before. At Clever Cloud, we saw it firsthand: once we ran our &lt;a href=&quot;https:&#x2F;&#x2F;www.clever.cloud&#x2F;materia&quot;&gt;Materia&lt;&#x2F;a&gt; layers through FoundationDB&#x27;s simulator, it found bugs that neither humans nor agents had anticipated. Query planners picking the wrong index, data corruption during reindexing, dual leader election under clock skew. The kind of bugs that pass code review and unit tests but explode under real failure conditions.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-loop-that-closes-the-gap&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-loop-that-closes-the-gap&quot; aria-label=&quot;Anchor link for: the-loop-that-closes-the-gap&quot;&gt;🔗&lt;&#x2F;a&gt;The loop that closes the gap&lt;&#x2F;h2&gt;
+&lt;p&gt;On the side, I am doing &lt;a href=&quot;https:&#x2F;&#x2F;simonwillison.net&#x2F;2025&#x2F;Oct&#x2F;7&#x2F;vibe-engineering&#x2F;&quot;&gt;agentic engineering&lt;&#x2F;a&gt; on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PierreZ&#x2F;moonpool&quot;&gt;moonpool&lt;&#x2F;a&gt;, my own hobby-grade DST framework in Rust, inspired by FoundationDB and TigerBeetle. I am having more fun engineering than at any point in my career. Claude writes a lot of the code, the simulator beats it up, &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;testing-prevention-vs-discovery&#x2F;&quot;&gt;a faulty seed reproduces the bug deterministically&lt;&#x2F;a&gt;, and the loop closes the same way for me as it does for the agent. You do not trust Claude. You trust the simulator. It finds what you never thought to test.&lt;&#x2F;p&gt;
+&lt;p&gt;This is what I told people at BugBash when they asked the question. But the more interesting story is that I was no longer the only one saying it.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;from-tribe-to-requirement&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#from-tribe-to-requirement&quot; aria-label=&quot;Anchor link for: from-tribe-to-requirement&quot;&gt;🔗&lt;&#x2F;a&gt;From tribe to requirement&lt;&#x2F;h2&gt;
+&lt;p&gt;Will Wilson opened the conference with a keynote titled &lt;em&gt;We won, what now?&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;bugbash-2026&#x2F;property-based-testing.png&quot; alt=&quot;property-based testing search interest, near-zero through 2024, vertical spike in late 2025&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;bugbash-2026&#x2F;formal-methods.png&quot; alt=&quot;formal methods search interest, flat baseline, sharp climb in late 2025&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;In 2025 that &quot;we&quot; was a small tribe. In 2026 it was a packed room. The conversations confirmed it. People came up after my talk wanting to know how we designed &lt;a href=&quot;https:&#x2F;&#x2F;www.clever.cloud&#x2F;materia&quot;&gt;Materia&lt;&#x2F;a&gt; at Clever Cloud, how to introduce simulation to an existing team, whether their system was complex enough to need it. Practical questions from people who had decided to start.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;understanding-lives-in-behaviors&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#understanding-lives-in-behaviors&quot; aria-label=&quot;Anchor link for: understanding-lives-in-behaviors&quot;&gt;🔗&lt;&#x2F;a&gt;Understanding lives in behaviors&lt;&#x2F;h2&gt;
+&lt;p&gt;Gabriela Moreira walked the chain backwards in her keynote &lt;em&gt;Behaviors as the backbone of software correctness&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We start wanting correctness. We realize we need confidence. Confidence requires understanding. Understanding lives in behaviors.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The original way to learn the behaviors of software was to operate it. &lt;a href=&quot;https:&#x2F;&#x2F;www.honeycomb.io&#x2F;blog&#x2F;testing-in-production&quot;&gt;Charity Majors&lt;&#x2F;a&gt; has been making this case for years, and I have been advocating that developers should be on the on-call rotation for the systems they ship, because nothing teaches you what your code actually does like getting paged by it at 3am. Simulation gives you a second way to witness behaviors, this time in a controlled environment instead of in production. Both routes lead to the same place: understanding.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;sixty-years-of-preparation&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#sixty-years-of-preparation&quot; aria-label=&quot;Anchor link for: sixty-years-of-preparation&quot;&gt;🔗&lt;&#x2F;a&gt;Sixty years of preparation&lt;&#x2F;h2&gt;
+&lt;p&gt;Klabnik finished his keynote with another slide:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;You&#x27;ve been taking this seriously for sixty years. The rest of the field is about to catch up in a hurry. Contracts. Specifications. Invariants. Refinement. Types. Proof. You&#x27;re the ones who know how to wield this. Every programmer is about to need what you already know.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The techniques to restore trust in code we did not fully write, &lt;strong&gt;deterministic replay, simulation, property-based testing, model checking, types&lt;&#x2F;strong&gt;, are not new. They have been refined for decades by people who cared about correctness when caring about correctness was a niche interest. The agents made these techniques mandatory. The techniques themselves are mature, documented, and getting cheaper to adopt every year.&lt;&#x2F;p&gt;
+&lt;p&gt;The academic world keeps pushing too. Peter Alvaro showed how &lt;a href=&quot;https:&#x2F;&#x2F;sigops.org&#x2F;s&#x2F;conferences&#x2F;hotos&#x2F;2025&#x2F;papers&#x2F;hotos25-106.pdf&quot;&gt;mathematical models combined with simulation&lt;&#x2F;a&gt; can now predict where distributed systems are vulnerable to &lt;a href=&quot;https:&#x2F;&#x2F;sigops.org&#x2F;s&#x2F;conferences&#x2F;hotos&#x2F;2021&#x2F;papers&#x2F;hotos21-s11-bronson.pdf&quot;&gt;metastable failures&lt;&#x2F;a&gt; before they hit production.&lt;&#x2F;p&gt;
+&lt;p&gt;The boring parts of the job are getting cheaper. The interesting parts, &lt;strong&gt;the right abstractions, designing for chaos, finding unknown unknowns, building tools that catch what humans miss&lt;&#x2F;strong&gt;, are becoming central. The people in the room were not worried about their careers. They were too busy figuring out what to build next.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-correctness-decade&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-correctness-decade&quot; aria-label=&quot;Anchor link for: the-correctness-decade&quot;&gt;🔗&lt;&#x2F;a&gt;The correctness decade&lt;&#x2F;h2&gt;
+&lt;p&gt;Every generation of engineers gets a moment where the field shifts underneath them. The correctness crowd waited sixty years for theirs. It is here.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences from BugBash. You can find me on &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</description>
+          <category domain="tag">software-engineering</category>
+          <category domain="tag">testing</category>
+          <category domain="tag">simulation</category>
+          <category domain="tag">correctness</category>
+          <category domain="tag">llm</category>
+      </item>
       <item>
           <title>What I Tell Colleagues About Using LLMs for Engineering</title>
           <pubDate>Thu, 15 Jan 2026 00:00:00 +0000</pubDate>
