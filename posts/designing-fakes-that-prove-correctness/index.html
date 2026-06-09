@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="blueprint">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designing Fakes That Prove Correctness | Pierre Zemb&#x27;s Blog</title>
+  <meta name="description" content="You fake the handful of methods your code actually calls, prove the fake stays honest, and then make it fail the way production does.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">
+  <meta property="og:title" content="Designing Fakes That Prove Correctness">
+  <meta property="og:description" content="You fake the handful of methods your code actually calls, prove the fake stays honest, and then make it fail the way production does.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Designing Fakes That Prove Correctness">
+  <meta name="twitter:description" content="You fake the handful of methods your code actually calls, prove the fake stays honest, and then make it fail the way production does.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2026-06-09T00:00:00+00:00">
+  <meta property="article:tag" content="testing">
+  <meta property="article:tag" content="simulation">
+  <meta property="article:tag" content="distributed-systems">
+  <meta property="article:tag" content="software-engineering">
+  <meta property="article:tag" content="rust"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
+
+  
+
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
+</head>
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;designing-fakes-that-prove-correctness">./read --quorum posts&#x2F;designing-fakes-that-prove-correctness</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
+  <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / designing-fakes-that-prove-correctness
+  </div>
+
+  <h2 class="title">Designing Fakes That Prove Correctness</h2>
+  <div class="meta-row"><span class="m"><b>2026-06-09</b></span>
+    <span class="m">read: <b>~6 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/#fakes-are-all-about-ownership">Fakes are all about ownership</a>
+<ol>
+  <li>
+    <span class="n">1.1</span><a href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/#fakes-must-own-their-world">Fakes must own their world</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/#fakes-are-not-hard-to-build">Fakes are not hard to build</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/#prove-it-can-be-honest">Prove it can be honest</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/#design-the-deterministic-failures">Design the (deterministic) failures</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
+    <p>"I'm not going to write a PostgreSQL fake."</p>
+<p>My <a href="/posts/why-fakes-beat-mocks-and-testcontainers/">last post on why fakes beat mocks and Testcontainers</a> kept coming up in conversations with colleagues, and that sentence was the most common reaction. They are picturing a reimplementation of a query planner, a write-ahead log, and twenty years of MVCC subtlety, and they are right to refuse that, because it was never the job. Fakes are way easier than you think, for several reasons.</p>
+<h2 id="fakes-are-all-about-ownership"><a class="zola-anchor" href="#fakes-are-all-about-ownership" aria-label="Anchor link for: fakes-are-all-about-ownership">🔗</a>Fakes are all about ownership</h2>
+<p>Every fake starts with two questions. <strong>What code do you actually own</strong>, and <strong>where is the fallible boundary it leans on</strong>? The first you own by definition, it is the code you wrote and have to keep correct. The second is any point where that code hands off to something it does not control, a syscall, a library, an RPC across the network, a file write, a TLS handshake, anything that can fail on its own schedule. You fake at that boundary, and which side of it you take depends on which one you own.</p>
+<p>Say you wrote the client for an external system, like a database or an S3 client. You own the code that opens the connection, issues the request, and parses what comes back, and what you need to prove is that it survives that system misbehaving under it. So the fake becomes the server, a stand-in that answers your real client with the timeouts and errors the real thing throws on a bad day. FoundationDB does this on its backup path, where the real S3 client <code>S3BlobStoreEndpoint</code> runs completely unmodified and talks to a <code>MockS3Server</code> that answers over <code>Sim2</code>'s in-memory network instead of a real socket.</p>
+<p>Now not everyone is writing low-level systems like the one above, but the logic still applies. Say you own a handful of microservices that talk to each other through a messaging system you did not write, like RabbitMQ or Kafka. The broker is just a dependency there, and the code you care about is the logic sitting on top of it. You hide the messaging system behind a trait your own services call, and you fake the trait. Same rule as the client case, just one layer up, only depending on <strong>what you own</strong> and <strong>what is the fallible boundary</strong>.</p>
+<h3 id="fakes-must-own-their-world"><a class="zola-anchor" href="#fakes-must-own-their-world" aria-label="Anchor link for: fakes-must-own-their-world">🔗</a>Fakes must own their world</h3>
+<p>Another hint for finding the boundary is to look at your trait and ask if it owns its own world. Take the network as an example. To fake the network you have to own both ends of the connection, because a client that sends a request to nothing never gets a response, and the test goes nowhere. So you fake the whole network, you host every process in a single runtime and you own the wire between them, and a <code>send</code> on one node travels through your fake network and lands in another node's <code>recv</code>. You own the clock the same way, a node that sleeps for thirty seconds does not actually wait, the simulated time jumps forward and the whole test runs in a frozen instant. Once you own the world like that, you can create a partial partition where A and B are cut off from each other while B and C keep talking, and the <a rel="external" href="https://www.usenix.org/system/files/osdi18-alquraan.pdf">OSDI 2018 study of 136 partition failures</a> found 80% of them catastrophic. This is how FoundationDB's simulator, Madsim, and TigerBeetle's VOPR all work.</p>
+<h2 id="fakes-are-not-hard-to-build"><a class="zola-anchor" href="#fakes-are-not-hard-to-build" aria-label="Anchor link for: fakes-are-not-hard-to-build">🔗</a>Fakes are not hard to build</h2>
+<p>Now that we have the right boundary, we still need to build the fake, and that sounds like the hard part, but it is the easy part, because a fake only has to implement a behavior and it skips the hardest thing any program carries, which is everything you build to survive production. S3 is famously hundreds of microservices working together to handle security, scaling, and failover, but your code never touches any of that, it only ever sees four verbs, GET, PUT, LIST, and DELETE, so you fake those four with a singleton holding a <code>HashMap</code> and you are done. It is the same trick as the weekend tutorial that rebuilds Twitter in an afternoon, you keep the timeline you can actually see and you throw away the sharding and fan-out underneath that make the real thing hard, and the surface your own code touches is almost always that small.</p>
+<h2 id="prove-it-can-be-honest"><a class="zola-anchor" href="#prove-it-can-be-honest" aria-label="Anchor link for: prove-it-can-be-honest">🔗</a>Prove it can be honest</h2>
+<p>Now the fair worry. How do I know my <code>HashMap</code> behaves like Postgres for the handful of operations I kept? You do not know until you check, and checking is easy, you write one behavioral suite against the interface and you run it twice. On every commit you run it against the fake, where it is fast and deterministic, and on a nightly tier you run it against the real dependency, where it is slower but it tells you the truth. Martin Fowler called this a <a rel="external" href="https://martinfowler.com/bliki/ContractTest.html">contract test</a>, Itamar Turner-Trauring calls the result a <a rel="external" href="https://pythonspeed.com/articles/verified-fakes/">verified fake</a>, and the <a rel="external" href="https://abseil.io/resources/swe-book/html/ch13.html">Software Engineering at Google</a> book makes the same point, a fake is only worth trusting if the real implementation passes the very same suite, so the whole mechanism is nothing more than pointing one set of assertions at two implementations.</p>
+<h2 id="design-the-deterministic-failures"><a class="zola-anchor" href="#design-the-deterministic-failures" aria-label="Anchor link for: design-the-deterministic-failures">🔗</a>Design the (deterministic) failures</h2>
+<p>Now that we have a verified fake, we can start the most interesting work: injecting failures! Fakes have unique opportunities, because they own their world, they can take a lot of decisions to mess up things. They can be slow, they can return an error, they can lose your write, and all of it happens inside the test.</p>
+<p>The easiest thing is to roll a dice and decide if you throw an error. Now you can easily represent the most difficult problem in distributed systems: did your operations succeed or not during your error? When the dice says error, you roll again and decide if the write landed or not, and you return the same error in both cases. Your code does not know which one happened, that is exactly the situation you want to test.</p>
+<p>Galera is a good example, because <a rel="external" href="https://jepsen.io/analyses/mariadb-galera-cluster-12.1.2">a healthy cluster Jepsen tested with no faults injected</a> still served stale reads, so old data is not a failure you invented, it is something a real database does even when nothing is wrong. You can reproduce that easily, you keep the history in-memory and sometimes return old data, which costs you a <code>Vec</code> instead of a single value and a dice roll on each read. And if you seed your random source, you have determinism, the same seed replays the same failures, so you can find a bug once and replay it as many times as you need.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with fakes and simulation. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</article>
+
+  </main>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
+</html>

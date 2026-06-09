@@ -1,277 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Pierre Zemb&#x27;s Blog">
-<meta name="description" content="Pierre Zemb personal blog">
-<meta name="author" content="Pierre Zemb">
+  <title>#linux | Pierre Zemb&#x27;s Blog</title>
+  <meta name="description" content="Posts tagged #linux.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Pierre Zemb&#x27;s Blog" />
-<meta name="twitter:description" content="Pierre Zemb personal blog" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/tags/linux/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pierrezemb.fr/tags/linux/">
+  <meta property="og:title" content="#linux">
+  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="#linux">
+  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:description" content="Pierre Zemb personal blog"> 
-<meta property="og:url" content="https://pierrezemb.fr">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags&#x2F;linux">./read --quorum tags&#x2F;linux</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 1 document · committed</span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
 
   <main>
-    <ul class="blog-posts">
-      
-        <li>
-          <span>
-            <i>
-              <time datetime='2025-07-02T00:37:27+01:00' pubdate>
-                02 Jul, 2025
-              </time>
-            </i>
-          </span>
-          <a href="https:&#x2F;&#x2F;pierrezemb.fr&#x2F;posts&#x2F;nixos-good-bad-ugly&#x2F;">Three Years of Nix and NixOS: The Good, the Bad, and the Ugly</a>
-        </li>
-      
-    </ul>
-  </main>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+    
+<div class="sec-head">ls ./tags/linux</div>
+<div class="bom">
+  
+  <div class="row">
+    <div class="date">2025-07-02</div>
+    <div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/">Three Years of Nix and NixOS: The Good, the Bad, and the Ugly</a><a class="desc" href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/">A review of Nix&#x2F;NixOS after using it on all my machines for three years. I&#x27;ll cover what works, what doesn&#x27;t, and why it&#x27;s the first OS that&#x27;s stuck with me.</a>
+      <div class="tg"><a href="https://pierrezemb.fr/tags/nixos/">#nixos</a> <a href="https://pierrezemb.fr/tags/nix/">#nix</a> <a href="https://pierrezemb.fr/tags/linux/">#linux</a> <a href="https://pierrezemb.fr/tags/devops/">#devops</a></div>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+
+</div>
+
+  </main>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

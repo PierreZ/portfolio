@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="quorum schematics">
+  <rect width="32" height="32" fill="#f6f7f4"/>
+  <rect x="4.5" y="4.5" width="23" height="23" fill="none" stroke="#15324d" stroke-width="2"/>
+  <rect x="16.5" y="8.5" width="7" height="7" fill="#0a85b0"/>
+</svg>

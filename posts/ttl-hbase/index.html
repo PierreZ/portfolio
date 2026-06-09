@@ -1,273 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Playing with TTL in HBase | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Playing with TTL in HBase">
-<meta name="description" content="Pierre Zemb personal blog">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Playing with TTL in HBase" />
-<meta name="twitter:description" content="Pierre Zemb personal blog" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/ttl-hbase/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/ttl-hbase/">
+  <meta property="og:title" content="Playing with TTL in HBase">
+  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Playing with TTL in HBase">
+  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2019-05-27T22:07:11+02:00">
+  <meta property="article:tag" content="database">
+  <meta property="article:tag" content="hbase">
+  <meta property="article:tag" content="storage">
+  <meta property="article:tag" content="expiration"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Playing with TTL in HBase">
-<meta property="og:description" content="Pierre Zemb personal blog"> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/ttl-hbase/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2019-05-27T22:07:11+02:00" />
-
-
-
-<meta property="article:tag" content="database" />
-
-<meta property="article:tag" content="hbase" />
-
-<meta property="article:tag" content="storage" />
-
-<meta property="article:tag" content="expiration" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Playing with TTL in HBase</h1>
-      <p>
-        <i>
-          <time datetime="2019-05-27T22:07:11+02:00" pubdate>27 May, 2019</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/ttl-hbase/#time-to-live-ttl">Time To Live (TTL)</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/ttl-hbase/#how-does-it-works">How does it works?</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;ttl-hbase">./read --quorum posts&#x2F;ttl-hbase</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / ttl-hbase
+  </div>
+
+  <h2 class="title">Playing with TTL in HBase</h2>
+  <div class="meta-row"><span class="m"><b>2019-05-27</b></span>
+    <span class="m">read: <b>~3 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/expiration/">#expiration</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/ttl-hbase/#time-to-live-ttl">Time To Live (TTL)</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/ttl-hbase/#how-does-it-works">How does it works?</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <header class="row text-center header">
    <img src="/images/hbase-data-model/hbase.jpg" alt="HBase Image" class="text-center">
 </header>
@@ -277,32 +137,27 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <blockquote>
 <p>ColumnFamilies can set a TTL length in seconds, and <strong>HBase will automatically delete rows once the expiration time is reached</strong>.</p>
 </blockquote>
-<p><a href="https://hbase.apache.org/book.html#ttl">HBase Book: Time To Live (TTL)</a></p>
-<p>Let's play with it! You can easily start an standalone HBase by following <a href="https://hbase.apache.org/book.html#quickstart">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">./bin/hbase</span><span> shell
-</span><span>
-</span><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:001:0</span><span>&gt; create &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;, {&#39;</span><span style="color:#a3be8c;">NAME</span><span>&#39; =&gt; &#39;</span><span style="color:#a3be8c;">cf1</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">TTL</span><span>&#39; =&gt; 30} </span><span style="color:#65737e;"># 30 sec
-</span></code></pre>
+<p><a rel="external" href="https://hbase.apache.org/book.html#ttl">HBase Book: Time To Live (TTL)</a></p>
+<p>Let's play with it! You can easily start an standalone HBase by following <a rel="external" href="https://hbase.apache.org/book.html#quickstart">the HBase Book</a>. Once your standalone cluster is started, we can get started:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">./bin/hbase</span><span class="z-string"> shell</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):001:</span><span class="z-keyword">0&gt;</span><span> create </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>, </span><span>{</span><span class="z-entity z-name z-function">&#39;</span><span class="z-entity z-name z-function">NAME</span><span class="z-entity z-name z-function">&#39;</span><span> =</span><span class="z-keyword">&gt;</span><span class="z-string"> &#39;</span><span class="z-string">cf1</span><span class="z-string">&#39;</span><span class="z-string">,</span><span class="z-string">&#39;</span><span class="z-string">TTL</span><span class="z-string">&#39;</span><span> =</span><span class="z-keyword">&gt;</span><span class="z-constant z-numeric"> 30</span><span class="z-string">}</span><span class="z-comment"> #</span><span class="z-comment"> 30 sec</span></span></code></pre>
 <p>Now that our test_table is created, we can <code>put</code> some data on it:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:002:0</span><span>&gt; put &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">row123</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">cf1:desc</span><span>&#39;, &#39;</span><span style="color:#a3be8c;">TTL Demo</span><span>&#39;
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):002:</span><span class="z-keyword">0&gt;</span><span> put </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">row123</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">cf1:desc</span><span class="z-string">&#39;</span><span>, </span><span class="z-string">&#39;</span><span class="z-string">TTL Demo</span><span class="z-string">&#39;</span></span></code></pre>
 <p>And you can <code>get</code> it with:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:003:0</span><span>&gt; get &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">row123</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">cf1:desc</span><span>&#39;
-</span><span style="color:#bf616a;">COLUMN</span><span>                             CELL
-</span><span> </span><span style="color:#bf616a;">cf1:desc</span><span>                          timestamp=1558366581134, value=TTL Demo
-</span><span style="color:#bf616a;">1</span><span> row(s) </span><span style="color:#bf616a;">in</span><span> 0.0080 seconds
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):003:</span><span class="z-keyword">0&gt;</span><span> get </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">row123</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">cf1:desc</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">COLUMN</span><span class="z-string">                             CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function"> cf1:desc</span><span class="z-string">                          timestamp=1558366581134,</span><span class="z-string"> value=TTL</span><span class="z-string"> Demo</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">1</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> in</span><span class="z-constant z-numeric"> 0.0080</span><span class="z-string"> seconds</span></span></code></pre>
 <p>Here's our row! But if you wait a bit, it will <strong>disappear</strong> thanks to the TTL:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:004:0</span><span>&gt; get &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">row123</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">cf1:desc</span><span>&#39;
-</span><span style="color:#bf616a;">COLUMN</span><span>                             CELL
-</span><span style="color:#bf616a;">0</span><span> row(s) </span><span style="color:#bf616a;">in</span><span> 0.0220 seconds
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):004:</span><span class="z-keyword">0&gt;</span><span> get </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">row123</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">cf1:desc</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">COLUMN</span><span class="z-string">                             CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">0</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> in</span><span class="z-constant z-numeric"> 0.0220</span><span class="z-string"> seconds</span></span></code></pre>
 <p>It has been filtered from the result, but the data is still here.  You can trigger a <strong>raw</strong> scan to check:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:002:0</span><span>&gt; scan &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;, {RAW =&gt; true}
-</span><span style="color:#bf616a;">ROW</span><span>                                COLUMN+CELL
-</span><span> </span><span style="color:#bf616a;">row123</span><span>                            column=cf1:desc, timestamp=1558366581134, value=TTL Demo
-</span><span style="color:#bf616a;">1</span><span> row(s) </span><span style="color:#bf616a;">in</span><span> 0.3280 seconds
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):002:</span><span class="z-keyword">0&gt;</span><span> scan </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>, {</span><span class="z-entity z-name z-function">RAW</span><span> =</span><span class="z-keyword">&gt;</span><span class="z-constant z-language"> true</span><span class="z-string">}</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">ROW</span><span class="z-string">                                COLUMN+CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function"> row123</span><span class="z-string">                            column=cf1:desc,</span><span class="z-string"> timestamp=1558366581134,</span><span class="z-string"> value=TTL</span><span class="z-string"> Demo</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">1</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> in</span><span class="z-constant z-numeric"> 0.3280</span><span class="z-string"> seconds</span></span></code></pre>
 <p>It will be removed only when a <strong>major-compaction</strong> will occur. As we are playing, we can:</p>
 <ul>
 <li>force the memstore to be <strong>flushed as HFiles</strong></li>
@@ -311,17 +166,15 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="bs-callout bs-callout-info">
 You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hbase/entry/accordion-hbase-breathes-with-in">Accordion</a></b>, the new feature in HBase 2. If you are playing with HBase 2, you can enable it by following <a target="_blank" href="https://hbase.apache.org/book.html#inmemory_compaction">this link</a> and run <b>compactions directly in the MemStores.</b>
 </div>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:014:0</span><span>&gt; flush &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;
-</span><span style="color:#bf616a;">Took</span><span> 0.4456 seconds    
-</span><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:015:0</span><span>&gt; compact &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;
-</span><span style="color:#bf616a;">Took</span><span> 0.0468 seconds
-</span><span style="color:#65737e;"># wait a bit
-</span><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:016:0</span><span>&gt; scan &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;, {RAW =&gt; true}
-</span><span style="color:#bf616a;">ROW</span><span>                            COLUMN+CELL
-</span><span style="color:#bf616a;">0</span><span> row(s)
-</span><span style="color:#bf616a;">Took</span><span> 0.0060 seconds
-</span></code></pre>
-<h1 id="how-does-it-works"><a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a>How does it works?</h1>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):014:</span><span class="z-keyword">0&gt;</span><span> flush </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.4456</span><span class="z-string"> seconds</span><span>    </span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):015:</span><span class="z-keyword">0&gt;</span><span> compact </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.0468</span><span class="z-string"> seconds</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> wait a bit</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):016:</span><span class="z-keyword">0&gt;</span><span> scan </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>, {</span><span class="z-entity z-name z-function">RAW</span><span> =</span><span class="z-keyword">&gt;</span><span class="z-constant z-language"> true</span><span class="z-string">}</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">ROW</span><span class="z-string">                            COLUMN+CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">0</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.0060</span><span class="z-string"> seconds</span></span></code></pre><h1 id="how-does-it-works"><a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a>How does it works?</h1>
 <p>As always, the truth is held by the documentation:</p>
 <blockquote>
 <p>A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.</p>
@@ -329,63 +182,63 @@ You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hb
 <blockquote>
 <p>While rows and column keys are expressed as bytes, <strong>the version is specified using a long integer</strong>. Typically <strong>this long contains time instances</strong> such as those returned by java.util.Date.getTime() or <strong>System.currentTimeMillis()</strong>,</p>
 </blockquote>
-<p><a href="https://hbase.apache.org/book.html#versions">HBase Book: Versions</a></p>
+<p><a rel="external" href="https://hbase.apache.org/book.html#versions">HBase Book: Versions</a></p>
 <p>You may have seen it during our scan earlier, there is a <strong>timestamp associated</strong> with the version of the cell:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:003:0</span><span>&gt; get &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">row123</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">cf1:desc</span><span>&#39;
-</span><span style="color:#bf616a;">COLUMN</span><span>                             CELL
-</span><span> </span><span style="color:#bf616a;">cf1:desc</span><span>                          timestamp=1558366581134, value=TTL Demo
-</span><span> </span><span style="color:#65737e;">#                           here  ^^^^^^^^^^^^^^^^^^^^^^^ 
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):003:</span><span class="z-keyword">0&gt;</span><span> get </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">row123</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">cf1:desc</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">COLUMN</span><span class="z-string">                             CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function"> cf1:desc</span><span class="z-string">                          timestamp=1558366581134,</span><span class="z-string"> value=TTL</span><span class="z-string"> Demo</span></span>
+<span class="giallo-l"><span class="z-comment"> #</span><span class="z-comment">                           here  ^^^^^^^^^^^^^^^^^^^^^^^ </span></span></code></pre>
 <p>Hbase used the <code>System.currentTimeMillis()</code> at ingest time to add it. During scanner and compaction, as time went by, <strong>there was more than TTL seconds between the cell version and now, so the row was discarded</strong>.</p>
 <p>Now the real question is: <strong>can you set it by yourself and be real Time-Lord</strong> (of HBase)?</p>
-<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
+<p>The reponse is <em>yes!</em> There is also a bit of a warning a bit <a rel="external" href="https://hbase.apache.org/book.html#_explicit_version_example">below:</a></p>
 <blockquote>
 <p><em>Caution:</em> the version timestamp is used internally by HBase for things like <strong>time-to-live calculations</strong>. It’s usually best to avoid setting this timestamp yourself. Prefer using a separate timestamp attribute of the row, or have the timestamp as a part of the row key, or both.</p>
 </blockquote>
 <p>Let's try it:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">date</span><span> +%</span><span style="color:#bf616a;">s -d </span><span>&quot;</span><span style="color:#a3be8c;">+2 min</span><span>&quot;
-</span><span style="color:#bf616a;">1558472441  </span><span style="color:#65737e;"># don&#39;t forget to add 3 zeroes as the time need to be in millisecond!
-</span><span>
-</span><span style="color:#bf616a;">./bin/hbase</span><span> shell
-</span><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:001:0</span><span>&gt; put &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">row1234</span><span>&#39;,&#39;</span><span style="color:#a3be8c;">cf1:desc</span><span>&#39;, &#39;</span><span style="color:#a3be8c;">timestamp Demo</span><span>&#39;, 1558472441000  
-</span><span style="color:#bf616a;">hbase</span><span>(main)</span><span style="color:#bf616a;">:044:0</span><span>&gt; scan &#39;</span><span style="color:#a3be8c;">test_table</span><span>&#39;
-</span><span style="color:#bf616a;">ROW</span><span>                            COLUMN+CELL
-</span><span> </span><span style="color:#bf616a;">row1234</span><span>                       column=cf1:desc, timestamp=1558473315, value=timestamp Demo
-</span><span style="color:#bf616a;">1</span><span> row(s)
-</span><span style="color:#bf616a;">Took</span><span> 0.0031 seconds
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">date</span><span class="z-string"> +%s</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">d</span><span class="z-string"> &quot;</span><span class="z-string">+2 min</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">1558472441</span><span class="z-comment">  #</span><span class="z-comment"> don&#39;t forget to add 3 zeroes as the time need to be in millisecond!</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">./bin/hbase</span><span class="z-string"> shell</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):001:</span><span class="z-keyword">0&gt;</span><span> put </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">row1234</span><span class="z-string">&#39;</span><span>,</span><span class="z-string">&#39;</span><span class="z-string">cf1:desc</span><span class="z-string">&#39;</span><span>, </span><span class="z-string">&#39;</span><span class="z-string">timestamp Demo</span><span class="z-string">&#39;</span><span>, 1558472441000  </span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):044:</span><span class="z-keyword">0&gt;</span><span> scan </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">ROW</span><span class="z-string">                            COLUMN+CELL</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function"> row1234</span><span class="z-string">                       column=cf1:desc,</span><span class="z-string"> timestamp=1558473315,</span><span class="z-string"> value=timestamp</span><span class="z-string"> Demo</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">1</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.0031</span><span class="z-string"> seconds</span></span></code></pre>
 <p>Notice that we are using a timestamp at the end of the <code>put</code> method? This will <strong>add the desired timestamp to the version</strong>. Which means that <strong>your application can control when your version will be removed, even with a TTL on your column-qualifier.</strong> You just need to compute a timestamp like this:</p>
 <blockquote>
 <p><code>ts = now - ttlCF + desiredTTL</code>.</p>
 </blockquote>
 <hr />
-<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+<p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/database/">#database</a>
-          <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a>
-          <a href="https://pierrezemb.fr/tags/storage/">#storage</a>
-          <a href="https://pierrezemb.fr/tags/expiration/">#expiration</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

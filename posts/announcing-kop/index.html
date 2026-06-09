@@ -1,322 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar">
-<meta name="description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar" />
-<meta name="twitter:description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/">
+  <meta property="og:title" content="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar">
+  <meta property="og:description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar">
+  <meta name="twitter:description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2020-03-24T10:24:27+01:00">
+  <meta property="article:tag" content="messaging">
+  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="kafka">
+  <meta property="article:tag" content="pulsar">
+  <meta property="article:tag" content="opensource"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar">
-<meta property="og:description" content="We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers"> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/announcing-kop/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2020-03-24T10:24:27+01:00" />
-
-
-
-<meta property="article:tag" content="messaging" />
-
-<meta property="article:tag" content="distributed" />
-
-<meta property="article:tag" content="kafka" />
-
-<meta property="article:tag" content="pulsar" />
-
-<meta property="article:tag" content="opensource" />
-
-
-
-
-<link rel="canonical" href="https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar&#x2F;" />
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</h1>
-      <p>
-        <i>
-          <time datetime="2020-03-24T10:24:27+01:00" pubdate>24 Mar, 2020</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#what-is-apache-pulsar">What is Apache Pulsar?</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#the-need-behind-kop">The need behind KoP</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#streamnative-and-ovhcloud-s-collaboration">StreamNative and OVHcloud&#x27;s collaboration</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#the-distributed-log">The distributed log</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#implementations">Implementations</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#topics">Topics</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#message-id-and-offset">Message ID and offset</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#messages">Messages</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#topic-lookup">Topic lookup</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#produce-messages">Produce Messages</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#consume-messages">Consume Messages</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/announcing-kop/#group-coordinator-offsets-management">Group coordinator &amp; offsets management</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#bridge-two-popular-messaging-ecosystems">Bridge two popular messaging ecosystems</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#try-it-out">Try it out</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/announcing-kop/#thanks">Thanks</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;announcing-kop">./read --quorum posts&#x2F;announcing-kop</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / announcing-kop
+  </div>
+
+  <h2 class="title">Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</h2>
+  <div class="meta-row"><span class="m"><b>2020-03-24</b></span>
+    <span class="m">read: <b>~11 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/pulsar/">#pulsar</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/announcing-kop/#what-is-apache-pulsar">What is Apache Pulsar?</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/announcing-kop/#the-need-behind-kop">The need behind KoP</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/announcing-kop/#streamnative-and-ovhcloud-s-collaboration">StreamNative and OVHcloud&#x27;s collaboration</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/announcing-kop/#the-distributed-log">The distributed log</a>
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/announcing-kop/#implementations">Implementations</a>
+<ol>
+  <li>
+    <span class="n">5.1</span><a href="https://pierrezemb.fr/posts/announcing-kop/#topics">Topics</a>
+  </li>
+  <li>
+    <span class="n">5.2</span><a href="https://pierrezemb.fr/posts/announcing-kop/#message-id-and-offset">Message ID and offset</a>
+  </li>
+  <li>
+    <span class="n">5.3</span><a href="https://pierrezemb.fr/posts/announcing-kop/#messages">Messages</a>
+  </li>
+  <li>
+    <span class="n">5.4</span><a href="https://pierrezemb.fr/posts/announcing-kop/#topic-lookup">Topic lookup</a>
+  </li>
+  <li>
+    <span class="n">5.5</span><a href="https://pierrezemb.fr/posts/announcing-kop/#produce-messages">Produce Messages</a>
+  </li>
+  <li>
+    <span class="n">5.6</span><a href="https://pierrezemb.fr/posts/announcing-kop/#consume-messages">Consume Messages</a>
+  </li>
+  <li>
+    <span class="n">5.7</span><a href="https://pierrezemb.fr/posts/announcing-kop/#group-coordinator-offsets-management">Group coordinator &amp; offsets management</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/announcing-kop/#bridge-two-popular-messaging-ecosystems">Bridge two popular messaging ecosystems</a>
+  </li>
+  <li>
+    <span class="n">7</span><a href="https://pierrezemb.fr/posts/announcing-kop/#try-it-out">Try it out</a>
+  </li>
+  <li>
+    <span class="n">8</span><a href="https://pierrezemb.fr/posts/announcing-kop/#thanks">Thanks</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <blockquote>
-<p>This is a repost from <a href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/" title="Permalink to announcing KoP">OVHcloud's official blogpost.</a>, please read it there to support my company. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+<p>This is a repost from <a rel="external" title="Permalink to announcing KoP" href="https://www.ovh.com/blog/announcing-kafka-on-pulsar-bring-native-kafka-protocol-support-to-apache-pulsar/">OVHcloud's official blogpost.</a>, please read it there to support my company. Thanks <a rel="external" href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
 </blockquote>
-<p>This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by <a href="https://twitter.com/sijieg">Sijie Guo</a>, <a href="https://twitter.com/Jia_Zhai">Jia Zhai</a> and <a href="https://twitter.com/PierreZ">Pierre Zemb</a>. Thanks <a href="https://twitter.com/LostInBrittany">Horacio Gonzalez</a> for the illustrations!</p>
+<p>This post has been published on both the StreamNative and OVHcloud blogs and was co-authored by <a rel="external" href="https://twitter.com/sijieg">Sijie Guo</a>, <a rel="external" href="https://twitter.com/Jia_Zhai">Jia Zhai</a> and <a rel="external" href="https://twitter.com/PierreZ">Pierre Zemb</a>. Thanks <a rel="external" href="https://twitter.com/LostInBrittany">Horacio Gonzalez</a> for the illustrations!</p>
 <p><img src="/images/announcing-kop/kop-1.png" alt="hbase image" /></p>
 <p>We are excited to announce that StreamNative and OVHcloud are open-sourcing "Kafka on Pulsar" (KoP). KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers. By adding the KoP protocol handler to your existing Pulsar cluster, you can now migrate your existing Kafka applications and services to Pulsar without modifying the code. This enables Kafka applications to leverage Pulsar's powerful features, such as:</p>
 <ul>
@@ -328,8 +186,8 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h2 id="what-is-apache-pulsar"><a class="zola-anchor" href="#what-is-apache-pulsar" aria-label="Anchor link for: what-is-apache-pulsar">🔗</a>What is Apache Pulsar?</h2>
 <p>Apache Pulsar is an event streaming platform designed from the ground up to be cloud-native- deploying a multi-layer and segment-centric architecture. The architecture separates serving and storage into different layers, making the system container-friendly. The cloud-native architecture provides scalability, availability and resiliency and enables companies to expand their offerings with real-time data-enabled solutions. Pulsar has gained wide adoption since it was open-sourced in 2016 and was designated an Apache Top-Level project in 2018.</p>
 <h2 id="the-need-behind-kop"><a class="zola-anchor" href="#the-need-behind-kop" aria-label="Anchor link for: the-need-behind-kop">🔗</a>The need behind KoP</h2>
-<p>Pulsar provides a unified messaging model for both queueing and streaming workloads. Pulsar implemented its own protobuf-based binary protocol to provide high performance and low latency. This choice of protobuf makes it convenient to implement Pulsar <a href="https://pulsar.apache.org/docs/en/client-libraries/">clients</a> and the project already supports Java, Go, Python and C++ languages alongside <a href="https://pulsar.apache.org/docs/en/client-libraries/#thirdparty-clients">thirdparty clients</a> provided by the community. However, existing applications written using other messaging protocols had to be rewritten to adopt Pulsar's new unified messaging protocol.</p>
-<p>To address this, the Pulsar community developed applications to facilitate the migration to Pulsar from other messaging systems. For example, Pulsar provides a <a href="http://(https://pulsar.apache.org/docs/en/adaptors-kafka">Kafka wrapper</a> on Kafka Java API, which allows existing applications that already use Kafka Java client switching from Kafka to Pulsar <a href="https://www.youtube.com/watch?v=Cy9ev9nAZpI">without code change</a>. Pulsar also has a rich connector ecosystem, connecting Pulsar with other data systems. Yet, there was still a strong demand from those looking to switch from other Kafka applications to Pulsar.</p>
+<p>Pulsar provides a unified messaging model for both queueing and streaming workloads. Pulsar implemented its own protobuf-based binary protocol to provide high performance and low latency. This choice of protobuf makes it convenient to implement Pulsar <a rel="external" href="https://pulsar.apache.org/docs/en/client-libraries/">clients</a> and the project already supports Java, Go, Python and C++ languages alongside <a rel="external" href="https://pulsar.apache.org/docs/en/client-libraries/#thirdparty-clients">thirdparty clients</a> provided by the community. However, existing applications written using other messaging protocols had to be rewritten to adopt Pulsar's new unified messaging protocol.</p>
+<p>To address this, the Pulsar community developed applications to facilitate the migration to Pulsar from other messaging systems. For example, Pulsar provides a <a rel="external" href="http://(https://pulsar.apache.org/docs/en/adaptors-kafka">Kafka wrapper</a> on Kafka Java API, which allows existing applications that already use Kafka Java client switching from Kafka to Pulsar <a rel="external" href="https://www.youtube.com/watch?v=Cy9ev9nAZpI">without code change</a>. Pulsar also has a rich connector ecosystem, connecting Pulsar with other data systems. Yet, there was still a strong demand from those looking to switch from other Kafka applications to Pulsar.</p>
 <h2 id="streamnative-and-ovhcloud-s-collaboration"><a class="zola-anchor" href="#streamnative-and-ovhcloud-s-collaboration" aria-label="Anchor link for: streamnative-and-ovhcloud-s-collaboration">🔗</a>StreamNative and OVHcloud's collaboration</h2>
 <p>StreamNative was receiving a lot of inbound requests for help migrating from other messaging systems to Pulsar and recognized the need to support other messaging protocols (such as AMQP and Kafka) natively on Pulsar. StreamNative began working on introducing a general protocol handler framework in Pulsar that would allow developers using other messaging protocols to use Pulsar.</p>
 <p>Internally, OVHcloud had been running Apache Kafka for years, but despite their experience operating multiple clusters with millions of messages per second on Kafka, there were painful operational challenges. For example, putting thousands of topics from thousands of users into a single cluster was difficult without multi-tenancy.</p>
@@ -338,7 +196,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p><img src="/images/announcing-kop/kop-2.png" alt="kop image" /></p>
 <p>KoP was developed to provide a streamlined and comprehensive solution leveraging Pulsar and BookKeeper's event stream storage infrastructure and Pulsar's pluggable protocol handler framework. KoP is implemented as a protocol handler plugin with protocol name "kafka". It can be installed and configured to run as part of Pulsar brokers.</p>
 <h2 id="the-distributed-log"><a class="zola-anchor" href="#the-distributed-log" aria-label="Anchor link for: the-distributed-log">🔗</a>The distributed log</h2>
-<p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar's <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
+<p>Both Pulsar and Kafka share a very similar data model around <strong>log</strong> for both pub/sub messaging and event streaming. For example, both are built on top of a distributed log. Kafka implements the distributed log in a partition-basis architecture, where a distributed log (a partition in Kafka) is designated to store in a set of brokers, while Pulsar deploys a <strong>segment</strong>-based architecture to implement its distributed log by leveraging Apache BookKeeper as its scale-out segment storage layer. Pulsar's <em>segment</em> based architecture provides benefits such as rebalance-free, instant scalability, and infinite event stream storage. You can learn more about the key differences between Pulsar and Kafka in <a rel="external" href="https://www.splunk.com/en_us/blog/it/comparing-pulsar-and-kafka-how-a-segment-based-architecture-delivers-better-performance-scalability-and-resilience.html">this Splunk blog</a> and in <a rel="external" href="http://bookkeeper.apache.org/distributedlog/technical-review/2016/09/19/kafka-vs-distributedlog.html">this blog from the Bookkeeper project</a>.</p>
 <p>Since both of the systems are built on a similar data model, a distributed log, it is very simple to implement a Kafka-compatible protocol handler by leveraging Pulsar's distributed log storage and its pluggable protocol handler framework (introduced in the 2.5.0 release).</p>
 <h2 id="implementations"><a class="zola-anchor" href="#implementations" aria-label="Anchor link for: implementations">🔗</a>Implementations</h2>
 <p>The implementation is done by comparing the protocols between Pulsar and Kafka. We found that there are a lot of similarities between these two protocols. Both protocols are comprised of the following operations:</p>
@@ -373,39 +231,40 @@ The following figure illustrates how we add the Kafka protocol support within Pu
 <p>At both companies, we value customer success. We believe that providing a native Kafka protocol on Apache Pulsar will reduce the barriers for people adopting Pulsar to achieve their business success. By integrating two popular event streaming ecosystems, KoP unlocks new use cases. Customers can leverage advantages from each ecosystem and build a truly unified event streaming platform with Apache Pulsar to accelerate the development of real-time applications and services.</p>
 <p>With KoP, a log collector can continue collecting log data from its sources and producing messages to Apache Pulsar using existing Kafka integrations. The downstream applications can use Pulsar Functions to process the events arriving in the system to do serverless event streaming.</p>
 <h2 id="try-it-out"><a class="zola-anchor" href="#try-it-out" aria-label="Anchor link for: try-it-out">🔗</a>Try it out</h2>
-<p>KoP is open sourced under Apache License V2 in <a href="https://github.com/streamnative/kop">https://github.com/streamnative/kop</a>.</p>
-<p>We are looking forward to your issues, and PRs. You can also <a href="https://apache-pulsar.herokuapp.com/">join #kop channel in Pulsar Slack</a> to discuss all things about Kafka-on-Pulsar.</p>
-<p>StreamNative and OVHcloud are also hosting a webinar about KoP on March 31. If you are interested in learning more details about KoP,<a href="https://zoom.us/webinar/register/6515842602644/WN_l_i-3ekDSg6PwPFn7tqRvA">please sign up</a>. Looking forward to meeting you online.</p>
+<p>KoP is open sourced under Apache License V2 in <a rel="external" href="https://github.com/streamnative/kop">https://github.com/streamnative/kop</a>.</p>
+<p>We are looking forward to your issues, and PRs. You can also <a rel="external" href="https://apache-pulsar.herokuapp.com/">join #kop channel in Pulsar Slack</a> to discuss all things about Kafka-on-Pulsar.</p>
+<p>StreamNative and OVHcloud are also hosting a webinar about KoP on March 31. If you are interested in learning more details about KoP,<a rel="external" href="https://zoom.us/webinar/register/6515842602644/WN_l_i-3ekDSg6PwPFn7tqRvA">please sign up</a>. Looking forward to meeting you online.</p>
 <p><img src="/images/announcing-kop/kop-4.png" alt="hbase image" /></p>
 <h2 id="thanks"><a class="zola-anchor" href="#thanks" aria-label="Anchor link for: thanks">🔗</a>Thanks</h2>
 <p>The KoP project was originally initiated by StreamNative. The OVHcloud team joined the project to collaborate on the development of the KoP project. Many thanks to Pierre Zemb and Steven Le Roux from OVHcloud for their contributions to this project!</p>
 
+  </div>
+</article>
+
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a>
-          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
-          <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a>
-          <a href="https://pierrezemb.fr/tags/pulsar/">#pulsar</a>
-          <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

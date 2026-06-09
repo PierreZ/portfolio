@@ -1,283 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Why Fakes Beat Mocks and Testcontainers | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Why Fakes Beat Mocks and Testcontainers">
-<meta name="description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Why Fakes Beat Mocks and Testcontainers" />
-<meta name="twitter:description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development." />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">
+  <meta property="og:title" content="Why Fakes Beat Mocks and Testcontainers">
+  <meta property="og:description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Why Fakes Beat Mocks and Testcontainers">
+  <meta name="twitter:description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2026-03-26T00:00:00+00:00">
+  <meta property="article:tag" content="testing">
+  <meta property="article:tag" content="simulation">
+  <meta property="article:tag" content="distributed-systems"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Why Fakes Beat Mocks and Testcontainers">
-<meta property="og:description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development."> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2026-03-26" />
-
-
-
-<meta property="article:tag" content="testing" />
-
-<meta property="article:tag" content="simulation" />
-
-<meta property="article:tag" content="distributed-systems" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Why Fakes Beat Mocks and Testcontainers</h1>
-      <p>
-        <i>
-          <time datetime="2026-03-26T00:00:00+00:00" pubdate>26 Mar, 2026</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#mocks-testcontainers-and-fakes">Mocks, Testcontainers, and fakes</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#what-is-wrong-with-mocks">What is wrong with mocks</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#the-pattern">The pattern</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#the-failures-containers-miss">The failures containers miss</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#be-worse-than-production">Be worse than production</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#you-are-not-alone">You are not alone</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;why-fakes-beat-mocks-and-testcontainers">./read --quorum posts&#x2F;why-fakes-beat-mocks-and-testcontainers</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / why-fakes-beat-mocks-and-testcontainers
+  </div>
+
+  <h2 class="title">Why Fakes Beat Mocks and Testcontainers</h2>
+  <div class="meta-row"><span class="m"><b>2026-03-26</b></span>
+    <span class="m">read: <b>~8 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#mocks-testcontainers-and-fakes">Mocks, Testcontainers, and fakes</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#what-is-wrong-with-mocks">What is wrong with mocks</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#the-pattern">The pattern</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#the-failures-containers-miss">The failures containers miss</a>
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#be-worse-than-production">Be worse than production</a>
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/#you-are-not-alone">You are not alone</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <p>Your CI pipeline spins up Kafka, Postgres, and Redis in Docker containers. It takes 4 minutes to start. Every test passes. And none of them can simulate the one failure mode that will page you at 3 AM.</p>
 <p>The problem is not speed or convenience. The problem is that Testcontainers give you a binary outcome: the whole service is up, or it is down. But production failures are <strong>partial</strong>. A Kafka broker loses partition 3 while partitions 1, 2, and 4 stay healthy. A Postgres replica falls behind by 30 seconds while the primary is fine. A Redis cluster has one shard OOM while five others serve normally. These are the failures where the real bugs hide, and Testcontainers simply cannot produce them.</p>
 <h2 id="mocks-testcontainers-and-fakes"><a class="zola-anchor" href="#mocks-testcontainers-and-fakes" aria-label="Anchor link for: mocks-testcontainers-and-fakes">🔗</a>Mocks, Testcontainers, and fakes</h2>
@@ -291,7 +152,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </tbody></table>
 <p>A fake is a real implementation of a dependency's interface that runs in-memory, maintains realistic state, and can inject failures at arbitrary granularity. Not a compromise between mocks and real dependencies, but something <strong>more powerful</strong> than both.</p>
 <h2 id="what-is-wrong-with-mocks"><a class="zola-anchor" href="#what-is-wrong-with-mocks" aria-label="Anchor link for: what-is-wrong-with-mocks">🔗</a>What is wrong with mocks</h2>
-<p>The first problem is that mock expectations couple your tests to implementation details. Oxide Computer's <a href="https://github.com/oxidecomputer/omicron/blob/main/illumos-utils/src/fakes/README.adoc">README on fakes</a> captures it:</p>
+<p>The first problem is that mock expectations couple your tests to implementation details. Oxide Computer's <a rel="external" href="https://github.com/oxidecomputer/omicron/blob/main/illumos-utils/src/fakes/README.adoc">README on fakes</a> captures it:</p>
 <blockquote>
 <p>"If you're calling a mocked API which accesses the host OS several call stacks down, your test must have an expect call for that API, or it will fail."</p>
 </blockquote>
@@ -323,32 +184,30 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </tbody></table>
 <p>Not every fake needs the same depth. A no-op that returns <code>Ok(())</code> is enough when you do not care about the component's behavior. An in-memory implementation with real data operations covers most cases. Chaos injection is only needed when you want to test failure handling. Start with the simplest fake that catches the bugs you care about.</p>
 <p>Start with the trait:</p>
-<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">trait </span><span>UserRepository {
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">save</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">user</span><span>: User) -&gt; Result&lt;(), StorageError&gt;;
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">find_by_id</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">id</span><span>: </span><span style="color:#b48ead;">u64</span><span>) -&gt; Result&lt;Option&lt;User&gt;, StorageError&gt;;
-</span><span>}
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-storage">trait</span><span class="z-entity z-name z-type"> UserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span class="z-entity z-name z-type">Option</span><span>&lt;</span><span class="z-entity z-name z-type">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
 <p>Your code depends on this trait, not on PostgreSQL. Now write two implementations:</p>
-<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Production
-</span><span style="color:#b48ead;">struct </span><span>PostgresUserRepository { </span><span style="color:#bf616a;">pool</span><span>: PgPool }
-</span><span>
-</span><span style="color:#b48ead;">impl </span><span>UserRepository </span><span style="color:#b48ead;">for </span><span>PostgresUserRepository {
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">save</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">user</span><span>: User) -&gt; Result&lt;(), StorageError&gt; {
-</span><span>        sqlx::query(&quot;</span><span style="color:#a3be8c;">INSERT INTO users ...</span><span>&quot;).</span><span style="color:#96b5b4;">execute</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>.pool).await?;
-</span><span>        Ok(())
-</span><span>    }
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// Test
-</span><span style="color:#b48ead;">struct </span><span>FakeUserRepository { </span><span style="color:#bf616a;">store</span><span>: HashMap&lt;</span><span style="color:#b48ead;">u64</span><span>, User&gt; }
-</span><span>
-</span><span style="color:#b48ead;">impl </span><span>UserRepository </span><span style="color:#b48ead;">for </span><span>FakeUserRepository {
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">save</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">user</span><span>: User) -&gt; Result&lt;(), StorageError&gt; {
-</span><span>        </span><span style="color:#bf616a;">self</span><span>.store.</span><span style="color:#96b5b4;">insert</span><span>(user.id, user);
-</span><span>        Ok(())
-</span><span>    }
-</span><span>}
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Production</span></span>
+<span class="giallo-l"><span class="z-storage">struct</span><span class="z-entity z-name z-type"> PostgresUserRepository</span><span> {</span><span class="z-variable z-other"> pool</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> PgPool</span><span> }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> PostgresUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-namespace">        sqlx</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">query</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">INSERT INTO users ...</span><span class="z-string">&quot;</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">execute</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>pool</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">?</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Test</span></span>
+<span class="giallo-l"><span class="z-storage">struct</span><span class="z-entity z-name z-type"> FakeUserRepository</span><span> {</span><span class="z-variable z-other"> store</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> HashMap</span><span>&lt;</span><span class="z-entity z-name z-type">u64</span><span>,</span><span class="z-entity z-name z-type"> User</span><span>&gt;</span><span> }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> FakeUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
 <p>Same trait. One talks to Postgres. One lives in memory. Your system cannot tell the difference. The fake maintains real state, supports real queries against that state, and runs in microseconds with zero infrastructure.</p>
 <p>So the pattern is straightforward. But why is it better than just running the real dependency in a container?</p>
 <h2 id="the-failures-containers-miss"><a class="zola-anchor" href="#the-failures-containers-miss" aria-label="Anchor link for: the-failures-containers-miss">🔗</a>The failures containers miss</h2>
@@ -356,73 +215,75 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>These are not exotic edge cases. They are Tuesday in production. And containers cannot produce any of them because containers faithfully implement the dependency's happy path. A fake controls the failure surface at arbitrary granularity: which operation fails, when it fails, and how it fails.</p>
 <p>A fake that covers 80% of a dependency's behavior with determinism and fault injection is strictly better than Testcontainers covering 100% with none of those properties. The 20% you do not model belongs in a separate integration test against the real dependency, run less frequently.</p>
 <h2 id="be-worse-than-production"><a class="zola-anchor" href="#be-worse-than-production" aria-label="Anchor link for: be-worse-than-production">🔗</a>Be worse than production</h2>
-<p>A fake that faithfully reproduces production behavior is useful, but a fake that is <strong>worse</strong> than production is powerful. Consider MariaDB Galera Cluster: the documentation claims transaction isolation "between Serializable and Repeatable Read." <a href="https://jepsen.io/analyses/mariadb-galera-cluster-12.1.2">Jepsen tested a healthy cluster with zero injected faults</a> and found lost committed transactions, lost updates, and stale reads. The actual isolation appeared <strong>weaker than Read Uncommitted</strong>.</p>
+<p>A fake that faithfully reproduces production behavior is useful, but a fake that is <strong>worse</strong> than production is powerful. Consider MariaDB Galera Cluster: the documentation claims transaction isolation "between Serializable and Repeatable Read." <a rel="external" href="https://jepsen.io/analyses/mariadb-galera-cluster-12.1.2">Jepsen tested a healthy cluster with zero injected faults</a> and found lost committed transactions, lost updates, and stale reads. The actual isolation appeared <strong>weaker than Read Uncommitted</strong>.</p>
 <p>Most code handles loud failures: errors, timeouts, connection resets. The dangerous failures are <strong>silent</strong>. A write that reports success but vanishes. A read that returns stale data. An operation that simply never comes back. No error to catch. Your code thinks everything is fine.</p>
 <p>Take the <code>FakeUserRepository</code> from earlier and make it lie:</p>
-<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">impl </span><span>UserRepository </span><span style="color:#b48ead;">for </span><span>ChaosUserRepository {
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">save</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">user</span><span>: User) -&gt; Result&lt;(), StorageError&gt; {
-</span><span>        </span><span style="color:#65737e;">// Loud failure: connection lost
-</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.rng.</span><span style="color:#96b5b4;">next_f32</span><span>() &lt; </span><span style="color:#d08770;">0.1 </span><span>{
-</span><span>            </span><span style="color:#b48ead;">return </span><span>Err(StorageError::ConnectionLost);
-</span><span>        }
-</span><span>
-</span><span>        </span><span style="color:#65737e;">// Silent failure: lost committed transaction
-</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.rng.</span><span style="color:#96b5b4;">next_f32</span><span>() &lt; </span><span style="color:#d08770;">0.1 </span><span>{
-</span><span>            </span><span style="color:#b48ead;">return </span><span>Ok(());
-</span><span>        }
-</span><span>
-</span><span>        </span><span style="color:#65737e;">// Silent failure: hangs forever
-</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.rng.</span><span style="color:#96b5b4;">next_f32</span><span>() &lt; </span><span style="color:#d08770;">0.05 </span><span>{
-</span><span>            std::future::pending().await
-</span><span>        }
-</span><span>
-</span><span>        </span><span style="color:#bf616a;">self</span><span>.stale.</span><span style="color:#96b5b4;">insert</span><span>(user.id, </span><span style="color:#bf616a;">self</span><span>.store.</span><span style="color:#96b5b4;">get</span><span>(&amp;user.id).</span><span style="color:#96b5b4;">cloned</span><span>());
-</span><span>        </span><span style="color:#bf616a;">self</span><span>.store.</span><span style="color:#96b5b4;">insert</span><span>(user.id, user);
-</span><span>        Ok(())
-</span><span>    }
-</span><span>
-</span><span>    async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">find_by_id</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">id</span><span>: </span><span style="color:#b48ead;">u64</span><span>) -&gt; Result&lt;Option&lt;User&gt;, StorageError&gt; {
-</span><span>        </span><span style="color:#65737e;">// Silent failure: stale read
-</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.rng.</span><span style="color:#96b5b4;">next_f32</span><span>() &lt; </span><span style="color:#d08770;">0.2 </span><span>{
-</span><span>            </span><span style="color:#b48ead;">return </span><span>Ok(</span><span style="color:#bf616a;">self</span><span>.stale.</span><span style="color:#96b5b4;">get</span><span>(&amp;id).</span><span style="color:#96b5b4;">cloned</span><span>().</span><span style="color:#96b5b4;">flatten</span><span>());
-</span><span>        }
-</span><span>
-</span><span>        Ok(</span><span style="color:#bf616a;">self</span><span>.store.</span><span style="color:#96b5b4;">get</span><span>(&amp;id).</span><span style="color:#96b5b4;">cloned</span><span>())
-</span><span>    }
-</span><span>}
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> ChaosUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Loud failure: connection lost</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">1</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Err</span><span>(</span><span class="z-entity z-name z-type">StorageError</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">ConnectionLost</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: lost committed transaction</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">1</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Ok</span><span>(</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: hangs forever</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">05</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-namespace">            std</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">future</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">pending</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span class="z-entity z-name z-type">Option</span><span>&lt;</span><span class="z-entity z-name z-type">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: stale read</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">2</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">flatten</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
 <p>This fake does not just return errors. It silently drops writes, returns stale data, and sometimes never responds at all. Every one of these failure modes exists in production. If your code detects and handles them, it survives the real thing.</p>
 <p>So fakes are more powerful than Testcontainers, and cranking up their hostility makes them even more effective. But is this a fringe idea?</p>
 <h2 id="you-are-not-alone"><a class="zola-anchor" href="#you-are-not-alone" aria-label="Anchor link for: you-are-not-alone">🔗</a>You are not alone</h2>
-<p>This is not a niche technique. AWS has used interface-swapped simulation for <a href="https://www.usenix.org/conference/nsdi20/presentation/brooker">15+ years</a> to test distributed consensus, with typical correctness tests executing in under 100 milliseconds. Google's <a href="https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/">Fauxmaster</a> runs real scheduler code against simulated workers replaying production data. Microsoft's <a href="https://www.microsoft.com/en-us/research/publication/crystalnet-faithfully-emulating-large-production-networks/">CrystalNet</a> found <strong>50+ bugs</strong> using virtualized network hardware, catching <strong>69%</strong> of Azure network outage categories. <a href="https://github.com/oxidecomputer/omicron">Oxide Computer</a> uses trait-based fakes across 500,000+ lines of Rust with a mock framework in exactly one place. The pattern scales from startups to hyperscalers.</p>
+<p>This is not a niche technique. AWS has used interface-swapped simulation for <a rel="external" href="https://www.usenix.org/conference/nsdi20/presentation/brooker">15+ years</a> to test distributed consensus, with typical correctness tests executing in under 100 milliseconds. Google's <a rel="external" href="https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/">Fauxmaster</a> runs real scheduler code against simulated workers replaying production data. Microsoft's <a rel="external" href="https://www.microsoft.com/en-us/research/publication/crystalnet-faithfully-emulating-large-production-networks/">CrystalNet</a> found <strong>50+ bugs</strong> using virtualized network hardware, catching <strong>69%</strong> of Azure network outage categories. <a rel="external" href="https://github.com/oxidecomputer/omicron">Oxide Computer</a> uses trait-based fakes across 500,000+ lines of Rust with a mock framework in exactly one place. The pattern scales from startups to hyperscalers.</p>
 <p>Start with one fake. Replace one mock with a stateful, injectable implementation of the same trait. Every fake you write is a step toward <a href="/posts/simulation-driven-development/">simulation</a>.</p>
 <hr />
-<p>Feel free to reach out with any questions or to share your experiences with fakes and simulation. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+<p>Feel free to reach out with any questions or to share your experiences with fakes and simulation. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
-          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
-          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

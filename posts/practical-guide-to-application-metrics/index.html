@@ -1,331 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Practical Guide to Application Metrics: Where to Put Your Instrumentation | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
-<meta name="description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation" />
-<meta name="twitter:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">
+  <meta property="og:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
+  <meta property="og:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
+  <meta name="twitter:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2025-09-24T00:00:00+00:00">
+  <meta property="article:tag" content="observability">
+  <meta property="article:tag" content="metrics">
+  <meta property="article:tag" content="monitoring">
+  <meta property="article:tag" content="distributed-systems"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="A Practical Guide to Application Metrics: Where to Put Your Instrumentation">
-<meta property="og:description" content="A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs"> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2025-09-24" />
-
-
-
-<meta property="article:tag" content="observability" />
-
-<meta property="article:tag" content="metrics" />
-
-<meta property="article:tag" content="monitoring" />
-
-<meta property="article:tag" content="distributed-systems" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>A Practical Guide to Application Metrics: Where to Put Your Instrumentation</h1>
-      <p>
-        <i>
-          <time datetime="2025-09-24T00:00:00+00:00" pubdate>24 Sep, 2025</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-five-essential-metric-types">The Five Essential Metric Types</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#where-to-instrument-a-component-guide">Where to Instrument: A Component Guide</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#api-endpoints-and-http-requests">API Endpoints and HTTP Requests</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#database-layer">Database Layer</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#message-queues-and-background-processing">Message Queues and Background Processing</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#caching-and-locks">Caching and Locks</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#real-world-instrumentation-patterns">Real-World Instrumentation Patterns</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-request-lifecycle-pattern">The Request Lifecycle Pattern</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-resource-exhaustion-pattern">The Resource Exhaustion Pattern</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-business-context-pattern">The Business Context Pattern</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-error-classification-pattern">The Error Classification Pattern</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#best-practices-for-production-metrics">Best Practices for Production Metrics</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#naming-conventions-that-scale">Naming Conventions That Scale</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#critical-mistakes-to-avoid">Critical Mistakes to Avoid</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#a-note-on-histograms-or-why-they-re-not-here">A Note on Histograms (Or: Why They&#x27;re Not Here)</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#quick-reference-metrics-by-component">Quick Reference: Metrics by Component</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#conclusion">Conclusion</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;practical-guide-to-application-metrics">./read --quorum posts&#x2F;practical-guide-to-application-metrics</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / practical-guide-to-application-metrics
+  </div>
+
+  <h2 class="title">A Practical Guide to Application Metrics: Where to Put Your Instrumentation</h2>
+  <div class="meta-row"><span class="m"><b>2025-09-24</b></span>
+    <span class="m">read: <b>~14 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/observability/">#observability</a> <a href="https://pierrezemb.fr/tags/metrics/">#metrics</a> <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-five-essential-metric-types">The Five Essential Metric Types</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#where-to-instrument-a-component-guide">Where to Instrument: A Component Guide</a>
+<ol>
+  <li>
+    <span class="n">2.1</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#api-endpoints-and-http-requests">API Endpoints and HTTP Requests</a>
+  </li>
+  <li>
+    <span class="n">2.2</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#database-layer">Database Layer</a>
+  </li>
+  <li>
+    <span class="n">2.3</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#message-queues-and-background-processing">Message Queues and Background Processing</a>
+  </li>
+  <li>
+    <span class="n">2.4</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#caching-and-locks">Caching and Locks</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#real-world-instrumentation-patterns">Real-World Instrumentation Patterns</a>
+<ol>
+  <li>
+    <span class="n">3.1</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-request-lifecycle-pattern">The Request Lifecycle Pattern</a>
+  </li>
+  <li>
+    <span class="n">3.2</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-resource-exhaustion-pattern">The Resource Exhaustion Pattern</a>
+  </li>
+  <li>
+    <span class="n">3.3</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-business-context-pattern">The Business Context Pattern</a>
+  </li>
+  <li>
+    <span class="n">3.4</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#the-error-classification-pattern">The Error Classification Pattern</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#best-practices-for-production-metrics">Best Practices for Production Metrics</a>
+<ol>
+  <li>
+    <span class="n">4.1</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#naming-conventions-that-scale">Naming Conventions That Scale</a>
+  </li>
+  <li>
+    <span class="n">4.2</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#critical-mistakes-to-avoid">Critical Mistakes to Avoid</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#a-note-on-histograms-or-why-they-re-not-here">A Note on Histograms (Or: Why They&#x27;re Not Here)</a>
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#quick-reference-metrics-by-component">Quick Reference: Metrics by Component</a>
+  </li>
+  <li>
+    <span class="n">7</span><a href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/#conclusion">Conclusion</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <p>I keep having the same conversation with junior developers. They're building their first production service, and they ask: "Where should I put metrics in my application?" Then, inevitably: "What should I actually measure?"</p>
 <p>After mentoring dozens of engineers and running distributed systems for years, I've learned these aren't just beginner questions. Even experienced developers struggle with metrics placement because most of us learned observability as an afterthought, not as a core design principle.</p>
 <p>I've been on both sides: deploying services with no metrics and scrambling at 3 AM to understand what broke, and also building comprehensive monitoring that caught issues before users noticed. The difference isn't just about sleep quality; it's about building systems you can actually operate with confidence.</p>
 <p>This post gives you a practical framework for where to instrument your applications. No theory, just patterns I've learned from years of production incidents.</p>
 <h2 id="the-five-essential-metric-types"><a class="zola-anchor" href="#the-five-essential-metric-types" aria-label="Anchor link for: the-five-essential-metric-types">🔗</a>The Five Essential Metric Types</h2>
 <blockquote>
-<p><strong>Quick note on naming:</strong> Throughout this post, I use dots (<code>.</code>) as metric separators like <code>api.requests.total</code>. This works perfectly for us because we're heavy <a href="https://warp10.io/">Warp 10</a> users, and Warp 10 handles dots beautifully. If you're using Prometheus or other systems that prefer underscores, just replace the dots with underscores (<code>api_requests_total</code>). The patterns remain the same!</p>
+<p><strong>Quick note on naming:</strong> Throughout this post, I use dots (<code>.</code>) as metric separators like <code>api.requests.total</code>. This works perfectly for us because we're heavy <a rel="external" href="https://warp10.io/">Warp 10</a> users, and Warp 10 handles dots beautifully. If you're using Prometheus or other systems that prefer underscores, just replace the dots with underscores (<code>api_requests_total</code>). The patterns remain the same!</p>
 </blockquote>
 <p>All useful application metrics fall into five categories. Understanding these helps you decide what to instrument and where:</p>
 <p><strong>1. Operational Counters</strong> track discrete events in your system. Every time something happens (a request arrives, a job finishes, an error occurs), you increment a counter. The most critical insight here is measuring both success and failure paths. Most developers remember to count successful operations but forget the errors, leaving them blind when things break. Examples include <code>api.requests.total</code>, <code>db.queries.executed</code>, <code>auth.failures.count</code>, <code>payments.declined.count</code>, <code>jobs.started</code>, and <code>cache.evictions</code>. Always include labels like <code>method</code>, <code>endpoint</code>, <code>error_type</code> to provide context.</p>
@@ -366,10 +229,10 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>The biggest mistake is using unbounded values as labels. Don't tag metrics with user IDs, session tokens, IP addresses, or other unlimited values; your metrics system will eventually explode from too many unique series. Use <code>api.requests{user_type="premium", region="us-west"}</code> instead of <code>api.requests{user_id="12345", session="abc123xyz"}</code>. Always instrument failure cases, not just success paths. Track both <code>payments.succeeded</code> AND <code>payments.failed</code> with error type labels, monitor <code>auth.attempts</code> alongside <code>auth.failures</code> to understand failure rates, and count <code>file.uploads.completed</code> and <code>file.uploads.failed</code> to see processing reliability. Every metric has a cost in storage, network bandwidth, and cognitive load. If you can't explain why a metric matters for operations or business decisions, skip it. Ask yourself: "Would this metric help me during an incident?" Metrics that stop updating can be worse than no metrics at all. Always include heartbeat or health check metrics to verify your instrumentation is working; track <code>metrics.last_updated.timestamp</code> to detect collection failures.</p>
 <h2 id="a-note-on-histograms-or-why-they-re-not-here"><a class="zola-anchor" href="#a-note-on-histograms-or-why-they-re-not-here" aria-label="Anchor link for: a-note-on-histograms-or-why-they-re-not-here">🔗</a>A Note on Histograms (Or: Why They're Not Here)</h2>
 <p>I know what some of you are thinking: "Where are the histograms?" After all, this is a comprehensive guide to application metrics, and histograms are everywhere in monitoring discussions. Well, I deliberately left them out, and here's why.</p>
-<p>Prometheus histograms are fundamentally broken in ways that make them more dangerous than useful. The core problem is what I call the bucket pre-configuration paradox: you must define bucket boundaries before you know your data distribution. As LinuxCzar eloquently put it in his <a href="https://linuxczar.net/blog/2017/06/15/prometheus-histogram-2/">"tale of woe"</a>, this creates an impossible choice between accuracy (many buckets) and operability (few buckets). Get it wrong, and you either lose precision or crash your Prometheus server with <a href="https://github.com/prometheus/prometheus/discussions/10598">cardinality explosion</a>.</p>
-<p>But the problems run deeper. You <a href="https://www.solarwinds.com/blog/why-percentiles-dont-work-the-way-you-think">mathematically cannot aggregate percentiles</a> across instances because the underlying event data is lost. The linear interpolation algorithm produces <a href="https://prometheus.io/docs/practices/histograms/">significant estimation errors</a>, and Prometheus's scraping architecture introduces <a href="https://github.com/prometheus/prometheus/issues/1887">data corruption</a> where histogram buckets update inconsistently. The <a href="https://chronosphere.io/learn/histograms-for-complex-systems/">operational burden</a> never ends: every performance improvement potentially invalidates your bucket choices, forcing constant manual reconfiguration.</p>
+<p>Prometheus histograms are fundamentally broken in ways that make them more dangerous than useful. The core problem is what I call the bucket pre-configuration paradox: you must define bucket boundaries before you know your data distribution. As LinuxCzar eloquently put it in his <a rel="external" href="https://linuxczar.net/blog/2017/06/15/prometheus-histogram-2/">"tale of woe"</a>, this creates an impossible choice between accuracy (many buckets) and operability (few buckets). Get it wrong, and you either lose precision or crash your Prometheus server with <a rel="external" href="https://github.com/prometheus/prometheus/discussions/10598">cardinality explosion</a>.</p>
+<p>But the problems run deeper. You <a rel="external" href="https://www.solarwinds.com/blog/why-percentiles-dont-work-the-way-you-think">mathematically cannot aggregate percentiles</a> across instances because the underlying event data is lost. The linear interpolation algorithm produces <a rel="external" href="https://prometheus.io/docs/practices/histograms/">significant estimation errors</a>, and Prometheus's scraping architecture introduces <a rel="external" href="https://github.com/prometheus/prometheus/issues/1887">data corruption</a> where histogram buckets update inconsistently. The <a rel="external" href="https://chronosphere.io/learn/histograms-for-complex-systems/">operational burden</a> never ends: every performance improvement potentially invalidates your bucket choices, forcing constant manual reconfiguration.</p>
 <blockquote>
-<p><a href="https://bsky.app/profile/catwell.info">Pierre Chapuis</a> <a href="https://bsky.app/profile/catwell.info/post/3lzxliivegs2k">pointed out</a> the root cause I missed: Prometheus implements an outdated 2005 algorithm from Cormode et al. for histogram summaries and quantiles. There are much better algorithms available now, including improved versions from the same authors. Check out <a href="https://cs.uwaterloo.ca/~kdaudjee/Daudjee_Sketches.pdf">this paper</a> for a good overview of modern sketch algorithms. The estimation errors and operational problems I described are symptoms of using this old algorithm.</p>
+<p><a rel="external" href="https://bsky.app/profile/catwell.info">Pierre Chapuis</a> <a rel="external" href="https://bsky.app/profile/catwell.info/post/3lzxliivegs2k">pointed out</a> the root cause I missed: Prometheus implements an outdated 2005 algorithm from Cormode et al. for histogram summaries and quantiles. There are much better algorithms available now, including improved versions from the same authors. Check out <a rel="external" href="https://cs.uwaterloo.ca/~kdaudjee/Daudjee_Sketches.pdf">this paper</a> for a good overview of modern sketch algorithms. The estimation errors and operational problems I described are symptoms of using this old algorithm.</p>
 </blockquote>
 <p>Instead, I prefer the combination of simple counters and gauges paired with distributed tracing. Trace-derived global metrics give you actual data distributions without guessing bucket boundaries, eliminate the aggregation problem by preserving request context, and adapt automatically as your system evolves. You get better insights with less operational overhead, which seems like a better deal to me.</p>
 <h2 id="quick-reference-metrics-by-component"><a class="zola-anchor" href="#quick-reference-metrics-by-component" aria-label="Anchor link for: quick-reference-metrics-by-component">🔗</a>Quick Reference: Metrics by Component</h2>
@@ -386,33 +249,35 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>Think about metrics as part of your application design, not an afterthought. When writing code, ask yourself: "How will I know if this is working correctly in production?" The answer guides your instrumentation decisions.</p>
 <p>The best observability system helps you sleep better at night. If your metrics aren't giving you confidence in your system's health, you're measuring the wrong things.</p>
 <hr />
-<p>Feel free to reach out with any questions or to share your experiences with application metrics. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+<p>Feel free to reach out with any questions or to share your experiences with application metrics. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/observability/">#observability</a>
-          <a href="https://pierrezemb.fr/tags/metrics/">#metrics</a>
-          <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a>
-          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

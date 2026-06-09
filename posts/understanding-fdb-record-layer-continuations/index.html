@@ -1,312 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
-<meta name="description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations" />
-<meta name="twitter:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits." />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">
+  <meta property="og:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
+  <meta property="og:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
+  <meta name="twitter:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2025-06-03T00:30:00+02:00">
+  <meta property="article:tag" content="foundationdb">
+  <meta property="article:tag" content="record-layer">
+  <meta property="article:tag" content="java">
+  <meta property="article:tag" content="database">
+  <meta property="article:tag" content="continuation">
+  <meta property="article:tag" content="pagination">
+  <meta property="article:tag" content="distributed-systems"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations">
-<meta property="og:description" content="A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits."> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2025-06-03T00:30:00+02:00" />
-
-
-
-<meta property="article:tag" content="foundationdb" />
-
-<meta property="article:tag" content="record-layer" />
-
-<meta property="article:tag" content="java" />
-
-<meta property="article:tag" content="database" />
-
-<meta property="article:tag" content="continuation" />
-
-<meta property="article:tag" content="pagination" />
-
-<meta property="article:tag" content="distributed-systems" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</h1>
-      <p>
-        <i>
-          <time datetime="2025-06-03T00:30:00+02:00" pubdate>03 Jun, 2025</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#introducing-the-foundationdb-record-layer">Introducing the FoundationDB Record Layer</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#the-challenge-fdb-s-transaction-constraints">The Challenge: FDB&#x27;s Transaction Constraints</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#bridging-transactions-the-role-of-continuations">Bridging Transactions: The Role of Continuations</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#dissecting-the-continuation-token">Dissecting the Continuation Token</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#resuming-query-execution-via-continuations">Resuming Query Execution via Continuations</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#implications-of-non-atomicity">Implications of Non-Atomicity</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#conclusion">Conclusion</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;understanding-fdb-record-layer-continuations">./read --quorum posts&#x2F;understanding-fdb-record-layer-continuations</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / understanding-fdb-record-layer-continuations
+  </div>
+
+  <h2 class="title">Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</h2>
+  <div class="meta-row"><span class="m"><b>2025-06-03</b></span>
+    <span class="m">read: <b>~7 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/record-layer/">#record-layer</a> <a href="https://pierrezemb.fr/tags/java/">#java</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/continuation/">#continuation</a> <a href="https://pierrezemb.fr/tags/pagination/">#pagination</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#introducing-the-foundationdb-record-layer">Introducing the FoundationDB Record Layer</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#the-challenge-fdb-s-transaction-constraints">The Challenge: FDB&#x27;s Transaction Constraints</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#bridging-transactions-the-role-of-continuations">Bridging Transactions: The Role of Continuations</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#dissecting-the-continuation-token">Dissecting the Continuation Token</a>
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#resuming-query-execution-via-continuations">Resuming Query Execution via Continuations</a>
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#implications-of-non-atomicity">Implications of Non-Atomicity</a>
+  </li>
+  <li>
+    <span class="n">7</span><a href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/#conclusion">Conclusion</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <h2 id="introducing-the-foundationdb-record-layer"><a class="zola-anchor" href="#introducing-the-foundationdb-record-layer" aria-label="Anchor link for: introducing-the-foundationdb-record-layer">🔗</a>Introducing the FoundationDB Record Layer</h2>
-<p>Before we dive into the specifics of handling large operations with continuations (the main topic of this post), let's briefly introduce the <a href="https://foundationdb.github.io/fdb-record-layer/index.html"><strong>FoundationDB Record Layer</strong></a>. It's a powerful open-source library built atop FoundationDB that brings a structured, record-oriented data model to FDB's highly scalable key-value store. Think of it as adding schema management, rich indexing capabilities, and a sophisticated query engine, making it easier to build complex applications.</p>
+<p>Before we dive into the specifics of handling large operations with continuations (the main topic of this post), let's briefly introduce the <a rel="external" href="https://foundationdb.github.io/fdb-record-layer/index.html"><strong>FoundationDB Record Layer</strong></a>. It's a powerful open-source library built atop FoundationDB that brings a structured, record-oriented data model to FDB's highly scalable key-value store. Think of it as adding schema management, rich indexing capabilities, and a sophisticated query engine, making it easier to build complex applications.</p>
 <p>The Record Layer is versatile and has been adopted for demanding use-cases, most notably by Apple as the core of CloudKit, powering services for millions of users. It allows developers to define their data models using Protocol Buffers and then query them in a flexible manner.</p>
 <p>For instance, you can express queries like finding all 'Order' records for roses costing less than $50 with a declarative API (example in Java):</p>
-<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#ebcb8b;">RecordQuery</span><span> query = </span><span style="color:#ebcb8b;">RecordQuery</span><span>.</span><span style="color:#bf616a;">newBuilder</span><span>()
-</span><span>        .</span><span style="color:#bf616a;">setRecordType</span><span>(&quot;</span><span style="color:#a3be8c;">Order</span><span>&quot;)
-</span><span>        .</span><span style="color:#bf616a;">setFilter</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">and</span><span>(
-</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">price</span><span>&quot;).</span><span style="color:#bf616a;">lessThan</span><span>(</span><span style="color:#d08770;">50</span><span>),
-</span><span>                </span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">flower</span><span>&quot;).</span><span style="color:#bf616a;">matches</span><span>(</span><span style="color:#ebcb8b;">Query</span><span>.</span><span style="color:#bf616a;">field</span><span>(&quot;</span><span style="color:#a3be8c;">type</span><span>&quot;).</span><span style="color:#bf616a;">equalsValue</span><span>(</span><span style="color:#ebcb8b;">FlowerType</span><span>.</span><span style="color:#d08770;">ROSE</span><span>.</span><span style="color:#bf616a;">name</span><span>()))))
-</span><span>        .</span><span style="color:#bf616a;">build</span><span>();
-</span></code></pre>
-<p>To get started and explore its capabilities further, the official <a href="https://foundationdb.github.io/fdb-record-layer/GettingStarted.html">Getting Started Guide</a> is an excellent resource. You can also watch these talks for a deeper understanding:</p>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage">RecordQuery</span><span class="z-variable z-other"> query</span><span class="z-keyword"> =</span><span class="z-variable z-other"> RecordQuery</span><span>.</span><span class="z-entity z-name z-function">newBuilder</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">setRecordType</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Order</span><span class="z-string">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">setFilter</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name z-function">and</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">price</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">lessThan</span><span>(</span><span class="z-constant z-numeric">50</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">flower</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">matches</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">type</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">equalsValue</span><span>(</span><span class="z-variable z-other">FlowerType</span><span>.</span><span class="z-variable z-other">ROSE</span><span>.</span><span class="z-entity z-name z-function">name</span><span>(</span><span>)</span><span>)</span><span>)</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">build</span><span>(</span><span>)</span><span>;</span></span></code></pre>
+<p>To get started and explore its capabilities further, the official <a rel="external" href="https://foundationdb.github.io/fdb-record-layer/GettingStarted.html">Getting Started Guide</a> is an excellent resource. You can also watch these talks for a deeper understanding:</p>
 <ul>
-<li><a href="https://www.youtube.com/watch?v=SvoUHHM9IKU">Using FoundationDB and the FDB Record Layer to Build CloudKit - Scott Gray, Apple</a></li>
-<li><a href="https://www.youtube.com/watch?v=HLE8chgw6LI">FoundationDB Record Layer: Open Source Structured Storage on FoundationDB - Nicholas Schiefer, Apple</a></li>
+<li><a rel="external" href="https://www.youtube.com/watch?v=SvoUHHM9IKU">Using FoundationDB and the FDB Record Layer to Build CloudKit - Scott Gray, Apple</a></li>
+<li><a rel="external" href="https://www.youtube.com/watch?v=HLE8chgw6LI">FoundationDB Record Layer: Open Source Structured Storage on FoundationDB - Nicholas Schiefer, Apple</a></li>
 </ul>
 <blockquote>
-<p>For a detailed academic perspective on its design and how CloudKit uses it, refer to the <a href="https://www.foundationdb.org/files/record-layer-paper.pdf">SIGMOD'19 paper: FoundationDB Record Layer: A Multi-Tenant Structured Datastore</a>.</p>
+<p>For a detailed academic perspective on its design and how CloudKit uses it, refer to the <a rel="external" href="https://www.foundationdb.org/files/record-layer-paper.pdf">SIGMOD'19 paper: FoundationDB Record Layer: A Multi-Tenant Structured Datastore</a>.</p>
 </blockquote>
 <h2 id="the-challenge-fdb-s-transaction-constraints"><a class="zola-anchor" href="#the-challenge-fdb-s-transaction-constraints" aria-label="Anchor link for: the-challenge-fdb-s-transaction-constraints">🔗</a>The Challenge: FDB's Transaction Constraints</h2>
 <p>FoundationDB (FDB) imposes strict constraints on its transactions: they must complete within 5 seconds and are limited to 10MB of manipulated data, either writes or reads. These constraints are fundamental to FDB's design, ensuring high performance and serializable isolation. However, they pose a significant challenge for operations that inherently require processing large datasets or executing complex queries that cannot complete within these tight boundaries, such as full table scans, large analytical queries, or bulk data exports.</p>
@@ -345,36 +201,35 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a>Conclusion</h2>
 <p>The Record Layer's continuation feature is a powerful tool for handling large datasets and complex queries in FoundationDB, but it's important to understand the implications of non-atomicity. By breaking operations into smaller, FDB-compliant transactions, the Record Layer provides a flexible and scalable solution while maintaining the core principles of FDB's transactional model.</p>
 <hr />
-<p>Feel free to reach out with any questions or to share your thoughts. You can find me on <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a>, <a href="https://twitter.com/PierreZ">Twitter</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+<p>Feel free to reach out with any questions or to share your thoughts. You can find me on <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a>, <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
-          <a href="https://pierrezemb.fr/tags/record-layer/">#record-layer</a>
-          <a href="https://pierrezemb.fr/tags/java/">#java</a>
-          <a href="https://pierrezemb.fr/tags/database/">#database</a>
-          <a href="https://pierrezemb.fr/tags/continuation/">#continuation</a>
-          <a href="https://pierrezemb.fr/tags/pagination/">#pagination</a>
-          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

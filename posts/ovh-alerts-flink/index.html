@@ -1,301 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Handling OVH&#x27;s alerts with Apache Flink | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Handling OVH&#x27;s alerts with Apache Flink">
-<meta name="description" content="Pierre Zemb personal blog">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Handling OVH&#x27;s alerts with Apache Flink" />
-<meta name="twitter:description" content="Pierre Zemb personal blog" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/">
+  <meta property="og:title" content="Handling OVH&#x27;s alerts with Apache Flink">
+  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Handling OVH&#x27;s alerts with Apache Flink">
+  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2019-02-03T15:37:27+01:00">
+  <meta property="article:tag" content="streaming">
+  <meta property="article:tag" content="flink">
+  <meta property="article:tag" content="monitoring">
+  <meta property="article:tag" content="distributed"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Handling OVH&#x27;s alerts with Apache Flink">
-<meta property="og:description" content="Pierre Zemb personal blog"> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/ovh-alerts-flink/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2019-02-03T15:37:27+01:00" />
-
-
-
-<meta property="article:tag" content="streaming" />
-
-<meta property="article:tag" content="flink" />
-
-<meta property="article:tag" content="monitoring" />
-
-<meta property="article:tag" content="distributed" />
-
-
-
-
-<link rel="canonical" href="https:&#x2F;&#x2F;www.ovh.com&#x2F;fr&#x2F;blog&#x2F;handling-ovhs-alerts-with-apache-flink&#x2F;" />
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Handling OVH&#x27;s alerts with Apache Flink</h1>
-      <p>
-        <i>
-          <time datetime="2019-02-03T15:37:27+01:00" pubdate>03 Feb, 2019</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#handling-ovh-s-alerts-with-apache-flink">Handling OVH&#x27;s alerts with Apache Flink</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#meet-omni-our-alerting-layer">Meet OMNI, our alerting layer</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#beacon-architecture">Beacon architecture</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#handling-states">Handling States</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#integration-tests">Integration tests</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#queryable-state">Queryable state</a>
-            <ul>
-                <li>
-                  <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#apache-flink-deployment">Apache Flink deployment</a>
-                </li>
-                <li>
-                  <a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#in-short-we-love-apache-flink">In short, we love Apache Flink</a>
-                </li>
-            </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;ovh-alerts-flink">./read --quorum posts&#x2F;ovh-alerts-flink</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
-    <p>This is a repost from <a href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/" title="Permalink to Handling OVH&#39;s alerts with Apache Flink">OVH's official blogpost.</a>. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / ovh-alerts-flink
+  </div>
+
+  <h2 class="title">Handling OVH&#x27;s alerts with Apache Flink</h2>
+  <div class="meta-row"><span class="m"><b>2019-02-03</b></span>
+    <span class="m">read: <b>~6 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/streaming/">#streaming</a> <a href="https://pierrezemb.fr/tags/flink/">#flink</a> <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#handling-ovh-s-alerts-with-apache-flink">Handling OVH&#x27;s alerts with Apache Flink</a>
+<ol>
+  <li>
+    <span class="n">1.1</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#meet-omni-our-alerting-layer">Meet OMNI, our alerting layer</a>
+  </li>
+  <li>
+    <span class="n">1.2</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#beacon-architecture">Beacon architecture</a>
+  </li>
+  <li>
+    <span class="n">1.3</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#handling-states">Handling States</a>
+  </li>
+  <li>
+    <span class="n">1.4</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#integration-tests">Integration tests</a>
+  </li>
+  <li>
+    <span class="n">1.5</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#queryable-state">Queryable state</a>
+<ol>
+  <li>
+    <span class="n">1.5.1</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#apache-flink-deployment">Apache Flink deployment</a>
+  </li>
+  <li>
+    <span class="n">1.5.2</span><a href="https://pierrezemb.fr/posts/ovh-alerts-flink/#in-short-we-love-apache-flink">In short, we love Apache Flink</a>
+  </li>
+</ol>
+
+  </li>
+</ol>
+
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
+    <p>This is a repost from <a rel="external" title="Permalink to Handling OVH's alerts with Apache Flink" href="https://www.ovh.com/fr/blog/handling-ovhs-alerts-with-apache-flink/">OVH's official blogpost.</a>. Thanks <a rel="external" href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
 <h1 id="handling-ovh-s-alerts-with-apache-flink"><a class="zola-anchor" href="#handling-ovh-s-alerts-with-apache-flink" aria-label="Anchor link for: handling-ovh-s-alerts-with-apache-flink">🔗</a>Handling OVH's alerts with Apache Flink</h1>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/001-1.png?x70472" alt="OVH &amp; Apache Flink" /></p>
-<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a href="https://www.ovh.com/fr/data-platforms/metrics/">**Metrics Data Platform</a>.<strong>By relying on <a href="https://hbase.apache.org/">**Apache Hbase</a>, <a href="https://kafka.apache.org/">Apache Kafka</a></strong> and <a href="https://www.warp10.io/"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
+<p>OVH relies extensively on <strong>metrics</strong> to effectively monitor its entire stack. Whether they are <strong>low-level</strong> or <strong>business</strong> centric, they allow teams to gain <strong>insight</strong> into how our services are operating on a daily basis. The need to store <strong>millions of datapoints per second</strong> has produced the need to create a dedicated team to build a operate a product to handle that load: <a rel="external" href="https://www.ovh.com/fr/data-platforms/metrics/">**Metrics Data Platform</a>.<strong>By relying on <a rel="external" href="https://hbase.apache.org/">**Apache Hbase</a>, <a rel="external" href="https://kafka.apache.org/">Apache Kafka</a></strong> and <a rel="external" href="https://www.warp10.io/"><strong>Warp 10</strong></a>, we succeeded in creating a fully distributed platform that is handling all our metrics… and yours!</p>
 <p>After building the platform to deal with all those metrics, our next challenge was to build one of the most needed feature for Metrics: the <strong>Alerting.</strong></p>
 <h2 id="meet-omni-our-alerting-layer"><a class="zola-anchor" href="#meet-omni-our-alerting-layer" aria-label="Anchor link for: meet-omni-our-alerting-layer">🔗</a>Meet OMNI, our alerting layer</h2>
 <p>OMNI is our code name for a <strong>fully distributed</strong>, <strong>as-code</strong>, <strong>alerting</strong> system that we developed on top of Metrics. It is split into components:</p>
@@ -305,17 +165,17 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </ul>
 <p>The query executor is pushing the query results into Kafka, ready to be handled! We now need to perform all the tasks that an alerting system does:</p>
 <ul>
-<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a href="https://en.wikipedia.org/wiki/Alarm_fatigue">alert fatigue.</a></li>
+<li>Handling alerts <strong>deduplication</strong> and <strong>grouping</strong>, to avoid <a rel="external" href="https://en.wikipedia.org/wiki/Alarm_fatigue">alert fatigue.</a></li>
 <li>Handling <strong>escalation</strong> steps, <strong>acknowledgement</strong>or <strong>snooze</strong>.</li>
 <li><strong>Notify</strong> the end user, through differents <strong>channels</strong>: SMS, mail, Push notifications, …</li>
 </ul>
-<p>To handle that, we looked at open-source projects, such as <a href="https://github.com/prometheus/alertmanager">Prometheus AlertManager,</a> <a href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
+<p>To handle that, we looked at open-source projects, such as <a rel="external" href="https://github.com/prometheus/alertmanager">Prometheus AlertManager,</a> <a rel="external" href="https://engineering.linkedin.com/blog/2017/06/open-sourcing-iris-and-oncall">LinkedIn Iris,</a> we discovered the <em>hidden</em> truth:</p>
 <blockquote>
 <p>Handling alerts as streams of data,<br />
 moving from operators to another.</p>
 </blockquote>
-<p>We embraced it, and decided to leverage <a href="https://flink.apache.org/">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
-<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a href="https://flink.apache.org/flink-architecture.html">What is Apache Flink?</a></p>
+<p>We embraced it, and decided to leverage <a rel="external" href="https://flink.apache.org/">Apache Flink</a> to create <strong>Beacon</strong>. In the next section we are going to describe the architecture of Beacon, and how we built and operate it.</p>
+<p>If you want some more information on Apache Flink, we suggest to read the introduction article on the official website: <a rel="external" href="https://flink.apache.org/flink-architecture.html">What is Apache Flink?</a></p>
 <h2 id="beacon-architecture"><a class="zola-anchor" href="#beacon-architecture" aria-label="Anchor link for: beacon-architecture">🔗</a><strong>Beacon architecture</strong></h2>
 <p>At his core, Beacon is reading events from <strong>Kafka</strong>. Everything is represented as a <strong>message</strong>, from alerts to aggregations rules, snooze orders and so on. The pipeline is divided into two branches:</p>
 <ul>
@@ -324,32 +184,31 @@ moving from operators to another.</p>
 </ul>
 <p>Then everything is merged to <strong>generate</strong> <strong>a</strong> <strong>notification</strong>, that is going to be forward to the right person. A notification message is pushed into Kafka, that will be consumed by another component called <strong>beacon-notifier.</strong></p>
 <h2 id="handling-states"><a class="zola-anchor" href="#handling-states" aria-label="Anchor link for: handling-states">🔗</a>Handling States</h2>
-<p>If you are new to streaming architecture, I recommend reading <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html">Dataflow Programming Model</a> from Flink official documentation.</p>
-<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state">keyed by</a>in Flink API) by users. Here's an example:</p>
-<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>    </span><span style="color:#b48ead;">final </span><span style="color:#ebcb8b;">DataStream</span><span>&gt; alertStream =
-</span><span>    
-</span><span>      </span><span style="color:#65737e;">// Partitioning Stream per AlertIdentifier
-</span><span>      cleanedAlertsStream.</span><span style="color:#bf616a;">keyBy</span><span>(</span><span style="color:#d08770;">0</span><span>)
-</span><span>      </span><span style="color:#65737e;">// Applying a Map Operation which is setting since when an alert is triggered
-</span><span>      .</span><span style="color:#bf616a;">map</span><span>(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">SetSinceOnSelector</span><span>())
-</span><span>      .</span><span style="color:#bf616a;">name</span><span>(&quot;</span><span style="color:#a3be8c;">setting-since-on-selector</span><span>&quot;).</span><span style="color:#bf616a;">uid</span><span>(&quot;</span><span style="color:#a3be8c;">setting-since-on-selector</span><span>&quot;)
-</span><span>    
-</span><span>      </span><span style="color:#65737e;">// Partitioning again Stream per AlertIdentifier
-</span><span>      .</span><span style="color:#bf616a;">keyBy</span><span>(</span><span style="color:#d08770;">0</span><span>)
-</span><span>      </span><span style="color:#65737e;">// Applying another Map Operation which is setting State and Trend
-</span><span>      .</span><span style="color:#bf616a;">map</span><span>(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">SetStateAndTrend</span><span>())
-</span><span>      .</span><span style="color:#bf616a;">name</span><span>(&quot;</span><span style="color:#a3be8c;">setting-state</span><span>&quot;).</span><span style="color:#bf616a;">uid</span><span>(&quot;</span><span style="color:#a3be8c;">setting-state</span><span>&quot;);
-</span></code></pre>
+<p>If you are new to streaming architecture, I recommend reading <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/concepts/programming-model.html">Dataflow Programming Model</a> from Flink official documentation.</p>
+<p>Everything is merged into a dataStream, <strong>partitionned</strong> (<a rel="external" href="https://medium.com/r/?url=https%3A%2F%2Fci.apache.org%2Fprojects%2Fflink%2Fflink-docs-release-1.7%2Fdev%2Fstream%2Fstate%2Fstate.html%23keyed-state">keyed by</a>in Flink API) by users. Here's an example:</p>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage">    final</span><span> DataStream</span><span class="z-keyword">&gt;</span><span> alertStream </span><span class="z-keyword">=</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span class="z-comment">      //</span><span class="z-comment"> Partitioning Stream per AlertIdentifier</span></span>
+<span class="giallo-l"><span class="z-variable z-other">      cleanedAlertsStream</span><span>.</span><span class="z-entity z-name z-function">keyBy</span><span>(</span><span class="z-constant z-numeric">0</span><span>)</span></span>
+<span class="giallo-l"><span class="z-comment">      //</span><span class="z-comment"> Applying a Map Operation which is setting since when an alert is triggered</span></span>
+<span class="giallo-l"><span>      .</span><span class="z-entity z-name z-function">map</span><span>(</span><span class="z-keyword">new</span><span class="z-entity z-name z-function"> SetSinceOnSelector</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>      .</span><span class="z-entity z-name z-function">name</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">setting-since-on-selector</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">uid</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">setting-since-on-selector</span><span class="z-string">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span class="z-comment">      //</span><span class="z-comment"> Partitioning again Stream per AlertIdentifier</span></span>
+<span class="giallo-l"><span>      .</span><span class="z-entity z-name z-function">keyBy</span><span>(</span><span class="z-constant z-numeric">0</span><span>)</span></span>
+<span class="giallo-l"><span class="z-comment">      //</span><span class="z-comment"> Applying another Map Operation which is setting State and Trend</span></span>
+<span class="giallo-l"><span>      .</span><span class="z-entity z-name z-function">map</span><span>(</span><span class="z-keyword">new</span><span class="z-entity z-name z-function"> SetStateAndTrend</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>      .</span><span class="z-entity z-name z-function">name</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">setting-state</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">uid</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">setting-state</span><span class="z-string">&quot;</span><span>)</span><span>;</span></span></code></pre>
 <p>In the example above, we are chaining two keyed operations:</p>
 <ul>
 <li><strong>SetSinceOnSelector</strong>, which is setting <strong>since</strong> when the alert is triggered</li>
 <li><strong>SetStateAndTrend</strong>, which is setting the <strong>state</strong>(ONGOING, RECOVERY or OK) and the <strong>trend</strong>(do we have more or less metrics in errors).</li>
 </ul>
-<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/">Map, FlatMap, Reduce</a>, including their <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions">Rich</a> and <a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state">Keyed</a> version. We have a few <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
+<p>Each of this class is under 120 lines of codes because Flink is <strong>handling all the difficulties</strong>. Most of the pipeline are <strong>only composed</strong> of <strong>classic transformations</strong> such as <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/">Map, FlatMap, Reduce</a>, including their <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/api_concepts.html#rich-functions">Rich</a> and <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-keyed-state">Keyed</a> version. We have a few <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/operators/process_function.html">Process Functions</a>, which are <strong>very handy</strong> to develop, for example, the escalation timer.</p>
 <h2 id="integration-tests"><a class="zola-anchor" href="#integration-tests" aria-label="Anchor link for: integration-tests">🔗</a>Integration tests</h2>
 <p>As the number of classes was growing, we needed to test our pipeline. Because it is only wired to Kafka, we wrapped consumer and producer to create what we call **scenari:**a series of integration tests running different scenarios.</p>
 <h2 id="queryable-state"><a class="zola-anchor" href="#queryable-state" aria-label="Anchor link for: queryable-state">🔗</a>Queryable state</h2>
-<p>One killer feature of Apache Flink is the <strong>capabilities of <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html">**<strong>querying the internal state</strong></a></strong> of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
+<p>One killer feature of Apache Flink is the <strong>capabilities of <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/stream/state/queryable_state.html">**<strong>querying the internal state</strong></a></strong> of an operator**. Even if it is a beta feature, it allows us the get the current state of the different parts of the job:</p>
 <ul>
 <li>at which escalation steps are we on</li>
 <li>is it snoozed or <em>ack</em>-ed</li>
@@ -357,41 +216,43 @@ moving from operators to another.</p>
 <li>and so on.</li>
 </ul>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/004-1.png?x70472" alt="Queryable state overview" />Queryable state overview</p>
-<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a href="https://studio.metrics.ovh.net/">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
+<p>Thanks to this, we easily developed an <strong>API</strong> over the queryable state, that is powering our <strong>alerting view</strong> in <a rel="external" href="https://studio.metrics.ovh.net/">Metrics Studio,</a> our codename for the Web UI of the Metrics Data Platform.</p>
 <h3 id="apache-flink-deployment"><a class="zola-anchor" href="#apache-flink-deployment" aria-label="Anchor link for: apache-flink-deployment">🔗</a>Apache Flink deployment</h3>
 <p>We deployed the latest version of Flink (<strong>1.7.1</strong> at the time of writing) directly on bare metal servers with a dedicated Zookeeper's cluster using Ansible. Operating Flink has been a really nice surprise for us, with <strong>clear documentation and configuration</strong>, and an <strong>impressive resilience</strong>. We are capable of <strong>rebooting</strong> the whole Flink cluster, and the job is <strong>restarting at his last saved state</strong>, like nothing happened.</p>
 <p>We are using <strong>RockDB</strong> as a state backend, backed by OpenStack <strong>Swift storage</strong>provided by OVH Public Cloud.</p>
-<p>For monitoring, we are relying on <a href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter">Prometheus Exporter</a> with <a href="https://github.com/ovh/beamium">Beamium</a> to gain <strong>observability</strong> over job's health.</p>
+<p>For monitoring, we are relying on <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/metrics.html#prometheus-orgapacheflinkmetricsprometheusprometheusreporter">Prometheus Exporter</a> with <a rel="external" href="https://github.com/ovh/beamium">Beamium</a> to gain <strong>observability</strong> over job's health.</p>
 <h3 id="in-short-we-love-apache-flink"><a class="zola-anchor" href="#in-short-we-love-apache-flink" aria-label="Anchor link for: in-short-we-love-apache-flink">🔗</a>In short, we love Apache Flink</h3>
 <p>If you are used to work with stream related software, you may have realized that we did not used any rocket science or tricks. We may be relying on basics streaming features offered by Apache Flink, but they allowed us to tackle many business and scalability problems with ease.</p>
 <p><img src="https://www.ovh.com/fr/blog/wp-content/uploads/2019/01/0F28C7F7-9701-4C19-BAFB-E40439FA1C77.png?x70472" alt="Apache Flink" /></p>
-<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
+<p>As such, we highly recommend that any developers should have a look to Apache Flink. I encourage you to go through <a rel="external" href="https://medium.com/r/?url=https%3A%2F%2Ftraining.da-platform.com%2F">Apache Flink Training</a>, written by Data Artisans. Furthermore, the community has put a lot of effort to easily deploy Apache Flink to Kubernetes, so you can easily try Flink using our Managed Kubernetes!</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/streaming/">#streaming</a>
-          <a href="https://pierrezemb.fr/tags/flink/">#flink</a>
-          <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a>
-          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

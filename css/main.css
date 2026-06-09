@@ -1,0 +1,315 @@
+/* ============================================================
+   PIERRE ZEMB — BLUEPRINT × TERMINAL
+   Architect's drawing sheet, but it breathes like a terminal:
+   prompt line, live cursor, console echo, dark flip.
+   ============================================================ */
+
+/* ---- SELF-HOSTED FONT (no CDN) ---- */
+/* Roboto variable (latin subset) for prose; Consolas stays a system stack
+   (proprietary, can't be bundled) for code + terminal chrome. */
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/Roboto-Variable.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/Roboto-Italic-Variable.woff2") format("woff2");
+  font-weight: 100 900; font-style: italic; font-display: swap;
+}
+
+:root {
+  --font-sans: "Roboto", system-ui, sans-serif;
+  --font-mono: Consolas, ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root[data-theme="blueprint"] {
+  --paper:     #f6f7f4;
+  --paper-2:   #eef0ea;
+  --ink:       #15324d;
+  --ink-dim:   #576e8b; /* ≥4.5:1 on --paper-2 (WCAG AA) */
+  --ink-faint: #a9b8c8;
+  --grid:      #cdd9e3;
+  --grid-bold: #b4c6d6;
+  --cyan:      #097398; /* ≥4.5:1 on --paper-2 (WCAG AA) */
+  --amber:     #b9770e;
+  --red:       #c0392b;
+  --selection: #cfe4ee;
+}
+/* dark flip = blueprint negative = the classic cyanotype */
+:root[data-theme="cyanotype"] {
+  --paper:     #0d1f2d;
+  --paper-2:   #122838;
+  --ink:       #cfe4ee;
+  --ink-dim:   #6f93ab;
+  --ink-faint: #3c5469;
+  --grid:      #1c374a;
+  --grid-bold: #244658;
+  --cyan:      #38c5e8;
+  --amber:     #e0a850;
+  --red:       #e06c75;
+  --selection: #1f4257;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+::selection { background: var(--selection); }
+
+html { font-size: 16px; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s ease, color .25s ease;
+}
+
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--grid-bold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-bold) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+  opacity: .6;
+}
+
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* links inside text blocks need a non-color cue (axe: link-in-text-block) */
+.prose a, .hero p a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* terminal chrome + code stay monospace; everything else inherits Roboto.
+   .topnav covers logo/nav/flip/search (inherit); .console covers readmode. */
+.topnav, .console, .sec-head, .article .crumbs,
+pre, code, kbd { font-family: var(--font-mono); }
+
+.cursor { display: inline-block; width: .55ch; height: 1.05em; background: var(--cyan); vertical-align: -2px; margin-left: 1px; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+
+/* ---- SHEET ---- */
+.sheet { border: 1.5px solid var(--ink); background: var(--paper); margin: 1.4rem auto; max-width: 960px; position: relative; z-index: 1; }
+
+/* ---- NAV = terminal command history ---- */
+.topnav { display: flex; align-items: center; gap: 1.2rem; padding: .7rem 1.2rem; border-bottom: 1px solid var(--grid-bold); font-size: .86rem; }
+.topnav .logo { font-weight: 800; font-size: 1.22rem; color: var(--ink); letter-spacing: -.02em; white-space: nowrap; }
+.topnav nav { display: flex; gap: 1rem; margin-left: auto; }
+.topnav nav a { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.topnav nav a::before { content: "$ "; color: var(--ink-dim); }
+.topnav nav a:hover { color: var(--cyan); text-decoration: none; }
+.flip { background: none; border: 1px solid var(--grid-bold); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; }
+.flip:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ---- CONSOLE STRIP (the terminal client) ---- */
+.console { display: flex; align-items: center; gap: 1rem; padding: .8rem 1.2rem; border-bottom: 1px dashed var(--grid-bold); font-size: .8rem; color: var(--ink-dim); background: var(--paper-2); }
+.console .log { min-width: 0; flex: 1; }
+.console .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+.console .sig { color: var(--cyan); }
+.console .path { color: var(--ink); }
+.console .ok { color: var(--cyan); }
+.console .warn { color: var(--red); }
+.console .out { color: var(--ink-dim); }
+.console .cluster-cell { flex: none; display: flex; align-items: center; padding: .35rem .9rem; border-left: 1px solid var(--grid-bold); }
+
+/* ---- HERO ---- */
+.hero { padding: 2.2rem 1.6rem; border-bottom: 1px dashed var(--grid-bold); position: relative; }
+.hero-head { display: flex; align-items: center; gap: 1.6rem; }
+.hero-text { flex: 1; min-width: 0; }
+.hero-avatar { flex: none; width: 150px; height: 150px; border-radius: 50%; border: 1px solid var(--ink); object-fit: cover; }
+.hero h1 { font-size: clamp(1.7rem, 4.5vw, 2.5rem); letter-spacing: -.02em; line-height: 1.12; margin-bottom: 1rem; font-weight: 800; }
+.hero h1 .u { text-decoration: underline; text-decoration-color: var(--cyan); text-underline-offset: 6px; text-decoration-thickness: 2px; }
+.hero p { color: var(--ink-dim); margin-bottom: .6rem; font-size: .94rem; }
+.hero p a { color: var(--cyan); }
+
+.dimline { display: flex; align-items: center; gap: .5rem; margin-top: 1.4rem; color: var(--ink-dim); font-size: .7rem; }
+.dimline .bar { flex: 1; height: 1px; background: var(--ink-faint); position: relative; }
+.dimline .bar::before, .dimline .bar::after { content: ""; position: absolute; top: -3px; width: 1px; height: 7px; background: var(--ink-faint); }
+.dimline .bar::before { left: 0; } .dimline .bar::after { right: 0; }
+
+.specs { display: flex; flex-wrap: wrap; gap: 0; margin: 1.4rem 0 0; border: 1px solid var(--grid-bold); }
+.specs span { font-size: .72rem; color: var(--ink); padding: .35rem .7rem; border-right: 1px solid var(--grid-bold); }
+.specs span:last-child { border-right: none; }
+.specs span b { color: var(--cyan); font-weight: 600; }
+
+/* ---- SECTION HEAD ---- */
+.sec-head { display: flex; align-items: center; gap: .8rem; padding: 1.3rem 1.6rem .4rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-dim); }
+.sec-head::before { content: "$"; color: var(--cyan); font-weight: 700; }
+
+/* ---- BOM / POST LIST ---- */
+.bom { padding: 0 1.6rem 1.2rem; }
+.bom .row { display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--grid-bold); align-items: baseline; }
+.bom .row:last-child { border-bottom: none; }
+.bom .row:hover .ttl { color: var(--cyan); }
+.bom .date { color: var(--ink); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.bom .ttl { font-weight: 600; font-size: 1rem; letter-spacing: -.01em; }
+.bom a.ttl { color: var(--ink); }
+.bom .row:hover a.ttl { color: var(--cyan); text-decoration: none; }
+.bom .desc { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: .2rem; }
+.bom a.desc:hover { color: var(--cyan); text-decoration: none; }
+.bom .row:hover a.desc { color: var(--ink); }
+.bom .tg { color: var(--cyan); font-size: .7rem; margin-top: .3rem; }
+.bom .tg a { color: var(--cyan); }
+
+/* ---- TAG INDEX (taxonomy list) ---- */
+.taglist { display: flex; flex-wrap: wrap; gap: .6rem; padding: .4rem 1.6rem 1.4rem; }
+.taglist .tag { display: inline-flex; align-items: baseline; gap: .5rem; padding: .35rem .7rem; border: 1px solid var(--grid-bold); color: var(--ink); font-size: .9rem; }
+.taglist .tag:hover { border-color: var(--cyan); color: var(--cyan); text-decoration: none; }
+.taglist .tag .cnt { color: var(--ink-dim); font-size: .72rem; font-variant-numeric: tabular-nums; }
+.taglist .tag:hover .cnt { color: var(--cyan); }
+.taglist .tag--empty { color: var(--ink-dim); }
+
+/* ---- ARTICLE ---- */
+.article { padding: 1.8rem 1.6rem; }
+.article .crumbs { font-size: .74rem; color: var(--ink-dim); margin-bottom: 1.2rem; }
+.article .crumbs .sig { color: var(--cyan); }
+.article .crumbs a { color: var(--ink-dim); }
+.article .crumbs a:hover { color: var(--cyan); }
+.article h2.title { font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; margin-bottom: 1.4rem; }
+
+.toc { border: 1px solid var(--ink); margin-bottom: 1.8rem; }
+.toc .h { background: var(--paper-2); padding: .45rem .8rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-dim); border-bottom: 1px solid var(--grid-bold); }
+.toc .h::before { content: "▼ "; color: var(--cyan); }
+.toc ol { list-style: none; }
+.toc > ol { padding: .4rem 0; }
+.toc li { display: flex; flex-wrap: wrap; gap: .5rem; padding: .22rem .8rem; font-size: .85rem; }
+.toc li .n { color: var(--cyan); flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.toc a { color: var(--ink); }
+.toc a:hover { color: var(--cyan); text-decoration: none; }
+.toc ol ol { list-style: none; width: 100%; margin-left: 1.1rem; }
+
+/* ---- PROSE (markdown body) ---- */
+.prose p { margin-bottom: 1.15rem; }
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { letter-spacing: -.01em; position: relative; }
+.prose h1 { font-size: 1.6rem; margin: 2.4rem 0 .9rem; font-weight: 800; }
+.prose h2 { font-size: 1.35rem; margin: 2.2rem 0 .8rem; }
+.prose h3 { font-size: 1.2rem; margin: 2rem 0 .7rem; }
+.prose h4 { font-size: 1.04rem; margin: 1.6rem 0 .6rem; }
+.prose h5 { font-size: .94rem; margin: 1.4rem 0 .5rem; }
+.prose h6 { font-size: .84rem; margin: 1.2rem 0 .4rem; color: var(--ink-dim); text-transform: uppercase; letter-spacing: .1em; }
+.prose h2 .n, .prose h3 .n { color: var(--cyan); margin-right: .4rem; }
+.prose sub, .prose sup { line-height: 0; }
+.prose abbr { text-decoration: underline dotted; cursor: help; }
+.prose kbd { font-size: .82em; border: 1px solid var(--grid-bold); border-bottom-width: 2px; border-radius: 3px; padding: .02em .35em; background: var(--paper-2); color: var(--ink); }
+.prose mark { background: var(--selection); color: var(--ink); padding: 0 .15em; }
+.prose .footnote-definition { display: flex; gap: .6rem; font-size: .82rem; color: var(--ink-dim); margin-top: .6rem; }
+.prose .footnote-definition p { margin-bottom: .3rem; }
+.prose sup.footnote-reference a { color: var(--cyan); }
+.prose ul, .prose ol { margin: 0 0 1.15rem 1.4rem; }
+.prose li { margin-bottom: .35rem; }
+.prose img { max-width: 100%; height: auto; border: 1px solid var(--grid-bold); }
+.prose hr { border: none; border-top: 1px dashed var(--grid-bold); margin: 2rem 0; }
+.prose table { border-collapse: collapse; margin: 1.2rem 0; font-size: .85rem; max-width: 100%; }
+.prose th, .prose td { border: 1px solid var(--grid-bold); padding: .35rem .7rem; text-align: left; }
+.prose th { background: var(--paper-2); color: var(--ink); }
+
+/* heading anchor links (insert_anchor_links = "right") */
+.prose a.zola-anchor { color: var(--ink-faint); margin-left: .4rem; opacity: 0; font-weight: 400; transition: opacity .15s ease; text-decoration: none; }
+.prose h2:hover a.zola-anchor, .prose h3:hover a.zola-anchor, .prose h4:hover a.zola-anchor { opacity: 1; }
+.prose a.zola-anchor:hover { color: var(--cyan); }
+
+blockquote { border: 1px solid var(--ink); border-left: 4px solid var(--cyan); background: var(--paper-2); padding: .9rem 1.1rem; margin: 1.4rem 0; }
+blockquote p { margin-bottom: 0; }
+blockquote .who { display: block; margin-top: .55rem; color: var(--ink-dim); font-size: .78rem; }
+blockquote .who::before { content: "— "; }
+
+code.inline, .prose p > code, .prose li > code { background: var(--paper-2); border: 1px solid var(--grid-bold); padding: .05rem .3rem; border-radius: 2px; color: var(--cyan); font-size: .88em; }
+
+/* syntax-highlighted code blocks (Zola emits <pre class="...z-code...">) */
+.prose pre { background: var(--paper-2); border: 1px solid var(--grid-bold); border-left: 4px solid var(--cyan); padding: .9rem 1.1rem; overflow-x: auto; margin: 1.4rem 0; font-size: .82rem; line-height: 1.5; }
+.prose pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+.prose pre[data-linenos] { padding-left: 0; }
+.prose pre table td { border: none; padding: 0 .8rem; }
+.prose pre mark { background: var(--selection); color: inherit; }
+
+/* ---- NOTE CALLOUT (shortcode) ---- */
+.note { border: 1px solid var(--grid-bold); border-left: 4px solid var(--cyan); background: var(--paper-2); padding: .8rem 1.1rem; margin: 1.4rem 0; font-size: .9rem; }
+.note .note-h { display: block; color: var(--ink-dim); text-transform: uppercase; letter-spacing: .12em; font-size: .64rem; margin-bottom: .35rem; }
+.note .note-h::before { content: "✎ "; color: var(--cyan); }
+.note p:last-child { margin-bottom: 0; }
+
+/* ---- MERMAID DIAGRAMS (shortcode) ---- */
+.mermaid { margin: 1.4rem 0; text-align: center; }
+.mermaid svg { max-width: 100%; height: auto; }
+
+/* ---- VIDEO EMBED (youtube shortcode) — responsive 16:9 ---- */
+.embed-video { position: relative; aspect-ratio: 16 / 9; margin: 1.4rem 0; border: 1px solid var(--grid-bold); background: var(--paper-2); }
+.embed-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---- FOOTER ---- */
+.foot { border-top: 1.5px solid var(--ink); display: grid; grid-template-columns: 1fr auto; font-size: .88rem; }
+.foot .cell { padding: 1rem 1.2rem; }
+.foot .cell + .cell { border-left: 1px solid var(--grid-bold); }
+.foot .label { color: var(--cyan); text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; display: block; margin-bottom: .3rem; }
+.foot .links { display: flex; gap: 1rem; margin-top: .3rem; flex-wrap: wrap; }
+.foot .links a { color: var(--ink); }
+.foot .links a:hover { color: var(--cyan); }
+
+/* ---- CLUSTER SCHEMATIC (in the console = the replica set) ---- */
+/* The node currently being read from (chosen by render.js) is .active. */
+.cluster { display: block; }
+.cluster .node { stroke: var(--ink-dim); fill: var(--paper); stroke-width: 1.2; transition: stroke-width .12s ease; }
+.cluster .node.active { stroke: var(--cyan); fill: var(--cyan); }
+/* the faulty replica, out-voted and read-repaired by a quorum read */
+.cluster .node.repairing { stroke: var(--amber); fill: var(--amber); }
+.cluster .node.failed { stroke: var(--red); fill: var(--red); }
+.cluster .link { stroke: var(--grid-bold); stroke-width: 1; }
+/* the whole cluster block is a click target that switches read mode */
+.read-armed .cluster-cell { cursor: pointer; }
+.read-armed .cluster-cell:hover { background: var(--paper); }
+.read-armed .cluster-cell:hover .node { stroke-width: 1.8; }
+
+/* ---- CONSISTENCY BADGE (article meta) ---- */
+.meta-row { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--grid-bold); margin-bottom: 1.4rem; font-size: .72rem; }
+.meta-row .m { padding: .35rem .7rem; border-right: 1px solid var(--grid-bold); color: var(--ink-dim); }
+.meta-row .m:last-child { border-right: none; }
+.meta-row .m b { color: var(--ink); font-weight: 600; }
+.meta-row .m.tags a { color: var(--cyan); }
+
+/* ---- VECTOR CLOCK (footer) ---- */
+.vclock { color: var(--ink-dim); font-size: .78rem; margin-top: .4rem; }
+.vclock b { color: var(--cyan); font-weight: 600; }
+
+/* ---- READ-MODE TOGGLE (quorum R=2 ⇄ single R=1) ---- */
+/* sits next to the theme flip; turns red when a single read exposes the rot */
+.readmode { background: none; border: 1px solid var(--grid-bold); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; transition: border-color .15s ease, color .15s ease; }
+.console .readmode { flex: none; align-self: center; }
+.readmode:hover { border-color: var(--cyan); color: var(--cyan); }
+.readmode.single { border-color: var(--red); color: var(--red); }
+
+/* typoglycemia artifacts from a single read on a corrupted replica:
+   still readable (first/last letter intact), but marked as corrupted */
+.rot { text-decoration: underline dotted var(--red); text-decoration-thickness: 3px; text-underline-offset: 3px; }
+
+/* ---- SEARCH (optional, lives in the nav) ---- */
+.nav-search { position: relative; }
+.nav-search input { background: var(--paper-2); border: 1px solid var(--grid-bold); color: var(--ink); font-family: inherit; font-size: .74rem; padding: .2rem .5rem; width: 8.5rem; transition: width .15s ease, border-color .15s ease; }
+.nav-search input::placeholder { color: var(--ink-dim); }
+.nav-search input:focus { outline: none; border-color: var(--cyan); width: 12rem; }
+.search-results { position: absolute; top: calc(100% + .35rem); right: 0; width: min(22rem, 78vw); max-height: 60vh; overflow-y: auto; background: var(--paper); border: 1px solid var(--ink); z-index: 20; }
+.search-results:empty { display: none; }
+.search-results .sr { padding: .45rem .7rem; border-bottom: 1px dotted var(--grid-bold); font-size: .82rem; }
+.search-results .sr:last-child { border-bottom: none; }
+.search-results .sr a { color: var(--ink); font-weight: 600; }
+.search-results .sr a:hover { color: var(--cyan); text-decoration: none; }
+.search-results .sr .ex { color: var(--ink-dim); font-size: .72rem; margin-top: .15rem; }
+
+@media (max-width: 640px) {
+  .topnav { flex-wrap: wrap; gap: .5rem .9rem; }
+  /* Console: stop the read-log being crushed into a thin column beside the
+     toggle + cluster. Give the log the full first row; the read-mode button
+     and cluster schematic wrap onto a second row below it. */
+  .console { flex-wrap: wrap; gap: .7rem 1rem; justify-content: space-between; align-items: center; }
+  .console .log { flex-basis: 100%; }
+  .console .cluster-cell { border-left: none; padding: 0; }
+  /* Keep the nav reachable on phones: wrap the commands onto their own row
+     instead of hiding them entirely. */
+  .topnav nav { order: 3; width: 100%; margin-left: 0; flex-wrap: wrap; gap: .5rem .9rem; font-size: .78rem; }
+  .bom .row { grid-template-columns: 1fr; gap: .25rem; }
+  .hero-head { flex-direction: column-reverse; align-items: center; gap: 1.1rem; text-align: center; }
+  .hero-avatar { width: 96px; height: 96px; }
+  .article, .hero, .bom { padding-left: 1.1rem; padding-right: 1.1rem; }
+  /* Wide markdown tables scroll instead of breaking the layout. */
+  .prose table { display: block; overflow-x: auto; }
+}

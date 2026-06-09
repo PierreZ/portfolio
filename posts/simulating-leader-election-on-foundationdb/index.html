@@ -1,296 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulating Leader Election on top of FoundationDB | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Simulating Leader Election on top of FoundationDB">
-<meta name="description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Simulating Leader Election on top of FoundationDB" />
-<meta name="twitter:description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop." />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">
+  <meta property="og:title" content="Simulating Leader Election on top of FoundationDB">
+  <meta property="og:description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Simulating Leader Election on top of FoundationDB">
+  <meta name="twitter:description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2026-02-05T00:00:00+00:00">
+  <meta property="article:tag" content="foundationdb">
+  <meta property="article:tag" content="rust">
+  <meta property="article:tag" content="simulation">
+  <meta property="article:tag" content="distributed-systems">
+  <meta property="article:tag" content="consensus">
+  <meta property="article:tag" content="leader-election"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Simulating Leader Election on top of FoundationDB">
-<meta property="og:description" content="Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop."> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2026-02-05" />
-
-
-
-<meta property="article:tag" content="foundationdb" />
-
-<meta property="article:tag" content="rust" />
-
-<meta property="article:tag" content="simulation" />
-
-<meta property="article:tag" content="distributed-systems" />
-
-<meta property="article:tag" content="consensus" />
-
-<meta property="article:tag" content="leader-election" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Simulating Leader Election on top of FoundationDB</h1>
-      <p>
-        <i>
-          <time datetime="2026-02-05T00:00:00+00:00" pubdate>05 Feb, 2026</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-algorithm">The Algorithm</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-simulation-workload">The Simulation Workload</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#how-atomic-logging-works">How Atomic Logging Works</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-invariants">The Invariants</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#what-s-next">What&#x27;s Next</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;simulating-leader-election-on-foundationdb">./read --quorum posts&#x2F;simulating-leader-election-on-foundationdb</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / simulating-leader-election-on-foundationdb
+  </div>
+
+  <h2 class="title">Simulating Leader Election on top of FoundationDB</h2>
+  <div class="meta-row"><span class="m"><b>2026-02-05</b></span>
+    <span class="m">read: <b>~8 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/leader-election/">#leader-election</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-algorithm">The Algorithm</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-simulation-workload">The Simulation Workload</a>
+<ol>
+  <li>
+    <span class="n">2.1</span><a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#how-atomic-logging-works">How Atomic Logging Works</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#the-invariants">The Invariants</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/#what-s-next">What&#x27;s Next</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <p>People are right to fear LLM-generated code. The models hallucinate APIs, miss edge cases, and produce code that looks correct but fails under pressure. For distributed systems, where bugs hide behind race conditions and network partitions, the stakes are even higher. A subtle leader election bug can cause split-brain, data corruption, or cascading failures across your cluster.</p>
-<p>But what if you could give an LLM <a href="/posts/llms-for-engineering/#feedback-loops">the right feedback loop</a>? Not just "write me leader election" but "write me leader election, and here's how I'll prove it correct." That feedback loop is simulation. I decided to test this idea by building a leader election recipe for <a href="https://github.com/foundationdb-rs/foundationdb-rs">foundationdb-rs</a>, with invariants generated by Claude Code.</p>
+<p>But what if you could give an LLM <a href="/posts/llms-for-engineering/#feedback-loops">the right feedback loop</a>? Not just "write me leader election" but "write me leader election, and here's how I'll prove it correct." That feedback loop is simulation. I decided to test this idea by building a leader election recipe for <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs">foundationdb-rs</a>, with invariants generated by Claude Code.</p>
 <h2 id="the-algorithm"><a class="zola-anchor" href="#the-algorithm" aria-label="Anchor link for: the-algorithm">🔗</a>The Algorithm</h2>
-<p>The recipe uses a ballot-based approach, similar to Raft's term concept but simpler. The algorithm is based on <a href="https://inria.hal.science/hal-01775025v1/document">"Leader Election Using NewSQL Database Systems"</a> (Ismail et al., DAIS 2015), which uses a database as distributed shared memory. Our implementation differs by leveraging FDB's <a href="/posts/fdb-transaction-model-for-layer-engineers/">strictly serializable transactions</a> and versionstamps instead of timestamps. Leaders hold time-bounded leases. Ballots are monotonically increasing fencing tokens that prevent stale leaders from corrupting state. FDB's serializable transactions handle mutual exclusion without explicit locking.</p>
+<p>The recipe uses a ballot-based approach, similar to Raft's term concept but simpler. The algorithm is based on <a rel="external" href="https://inria.hal.science/hal-01775025v1/document">"Leader Election Using NewSQL Database Systems"</a> (Ismail et al., DAIS 2015), which uses a database as distributed shared memory. Our implementation differs by leveraging FDB's <a href="/posts/fdb-transaction-model-for-layer-engineers/">strictly serializable transactions</a> and versionstamps instead of timestamps. Leaders hold time-bounded leases. Ballots are monotonically increasing fencing tokens that prevent stale leaders from corrupting state. FDB's serializable transactions handle mutual exclusion without explicit locking.</p>
 <p>The key insight is storing the leader state at a <strong>single key</strong>, making all operations O(1) instead of O(N) candidate scanning. Most leader election implementations require scanning all candidates to determine who's in charge. With N candidates, that's N reads per query. Our approach stores the current leader explicitly, so checking who's leader is a single read. Claiming leadership is a single write with a conflict check. No quorum is needed because FDB already provides the coordination guarantees we need through its serializable transactions.</p>
-<div style="text-align: center;">
-    <pre class="mermaid">
-        sequenceDiagram
+<div class="mermaid">
+sequenceDiagram
     participant A as Process A
     participant FDB as FoundationDB
     participant B as Process B
@@ -308,11 +166,10 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     Note over A: Becomes Leader
     Note over B: Retries, sees ballot=6, backs off
-    </pre>
 </div>
 <p>The diagram shows what happens when two processes try to claim leadership simultaneously. Both read the same expired leader state. Both try to write ballot=6. FDB's serializable transactions guarantee only one succeeds. The loser gets a conflict error, retries, sees ballot=6 with an active lease, and backs off. No split-brain possible. This is the fundamental safety property that the entire algorithm rests on.</p>
 <p>When a process wants to become leader, it first registers as a candidate. FDB assigns a versionstamp at commit time using the <code>SetVersionstampedValue</code> atomic operation. This versionstamp is assigned by FDB itself when the transaction commits, providing a globally-ordered identity that no other process can have. The versionstamp never changes throughout the process's lifetime, even as the process sends heartbeats and refreshes its registration. This immutability is important: it means the process's identity is stable and can be used reliably in log replay during verification.</p>
-<p>Then the process enters a loop: send heartbeats to prove liveness, try to claim leadership if the current lease expired, and optionally resign if graceful handoff is needed. Each leadership claim increments the ballot number. The new leader stores its versionstamp in the leader state, so followers can verify they're talking to the actual leader. The full implementation lives in the <a href="https://github.com/foundationdb-rs/foundationdb-rs/tree/main/foundationdb/src/recipes/leader_election">foundationdb-rs recipes module</a>.</p>
+<p>Then the process enters a loop: send heartbeats to prove liveness, try to claim leadership if the current lease expired, and optionally resign if graceful handoff is needed. Each leadership claim increments the ballot number. The new leader stores its versionstamp in the leader state, so followers can verify they're talking to the actual leader. The full implementation lives in the <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/tree/main/foundationdb/src/recipes/leader_election">foundationdb-rs recipes module</a>.</p>
 <h2 id="the-simulation-workload"><a class="zola-anchor" href="#the-simulation-workload" aria-label="Anchor link for: the-simulation-workload">🔗</a>The Simulation Workload</h2>
 <p>Simulation on top of FoundationDB may feel redundant. FDB itself has been validated through <a href="/posts/diving-into-foundationdb-simulation/">a trillion CPU-hours of simulation</a>. But FDB's resiliency doesn't mean your code is resilient. Your layer sits on top of FDB. Your transaction logic, your conflict handling, your retry behavior. How does your code respond when FDB is unhealthy?</p>
 <p>Simulation introduces chaos to answer that question. Network partitions, process crashes, clock skew up to ±1 second. Same seed, same execution, same bugs. Deterministic replay.</p>
@@ -322,16 +179,15 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <tr><td><strong>Check</strong></td><td>Client 0</td><td>Read logs, snapshot state, run 13 invariants</td></tr>
 </tbody></table>
 <p>FDB's simulator runs built-in chaos workloads alongside ours: <strong>RandomClogging</strong> injects network partitions, <strong>Attrition</strong> kills and reboots processes. Our workload adds clock skew simulation up to ±1 second.</p>
-<p>Each operation logs its intent atomically in the same transaction, using the pattern from FDB's own <a href="https://github.com/apple/foundationdb/blob/main/fdbserver/workloads/AtomicOps.actor.cpp">AtomicOps workload</a>. The <code>SetVersionstampedKey</code> <a href="/posts/fdb-transaction-model-for-layer-engineers/#atomic-operations-writing-without-reading">atomic operation</a> writes both the leader election mutation and its log entry in a single transaction. If the transaction commits, both succeed. If it aborts, neither does. This gives us a proper write-ahead log without the complexity of two-phase commit. The log key uses a versionstamp prefix for true FDB commit ordering. No clock skew ambiguity.</p>
+<p>Each operation logs its intent atomically in the same transaction, using the pattern from FDB's own <a rel="external" href="https://github.com/apple/foundationdb/blob/main/fdbserver/workloads/AtomicOps.actor.cpp">AtomicOps workload</a>. The <code>SetVersionstampedKey</code> <a href="/posts/fdb-transaction-model-for-layer-engineers/#atomic-operations-writing-without-reading">atomic operation</a> writes both the leader election mutation and its log entry in a single transaction. If the transaction commits, both succeed. If it aborts, neither does. This gives us a proper write-ahead log without the complexity of two-phase commit. The log key uses a versionstamp prefix for true FDB commit ordering. No clock skew ambiguity.</p>
 <h3 id="how-atomic-logging-works"><a class="zola-anchor" href="#how-atomic-logging-works" aria-label="Anchor link for: how-atomic-logging-works">🔗</a>How Atomic Logging Works</h3>
 <p>Each operation writes a log entry in the same transaction as the operation itself. The log key uses a versionstamp prefix, so entries sort by true FDB commit order, not by wall clock (which can drift ±1 second under simulation).</p>
-<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Log Key Structure:
-</span><span>┌─────────────────────┬───────────┬────────┐
-</span><span>│ versionstamp (10B)  │ client_id │ op_num │
-</span><span>└─────────────────────┴───────────┴────────┘
-</span><span>         ↑
-</span><span>   Assigned by FDB at commit time
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>Log Key Structure:</span></span>
+<span class="giallo-l"><span>┌─────────────────────┬───────────┬────────┐</span></span>
+<span class="giallo-l"><span>│ versionstamp (10B)  │ client_id │ op_num │</span></span>
+<span class="giallo-l"><span>└─────────────────────┴───────────┴────────┘</span></span>
+<span class="giallo-l"><span>         ↑</span></span>
+<span class="giallo-l"><span>   Assigned by FDB at commit time</span></span></code></pre>
 <p>Here's what a typical log might look like after chaos:</p>
 <table><thead><tr><th>Versionstamp</th><th>Client</th><th>Op</th><th>Result</th></tr></thead><tbody>
 <tr><td>0x0001...</td><td>0</td><td>Register</td><td>✓</td></tr>
@@ -347,7 +203,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>During <strong>check</strong>, client 0 reads all logs and database state in a single snapshot, then runs the invariants. Same seed, same execution, same bugs. Deterministic replay.</p>
 <h2 id="the-invariants"><a class="zola-anchor" href="#the-invariants" aria-label="Anchor link for: the-invariants">🔗</a>The Invariants</h2>
 <p>Here's where Claude Code enters the story. I asked it to generate invariants for leader election validation. I didn't give it a detailed specification. I pointed it at my <a href="/posts/writing-rust-fdb-workloads-that-find-bugs/">previous post about designing workloads that find bugs</a> and said "apply these patterns to leader election."</p>
-<p>It generated <a href="https://github.com/foundationdb-rs/foundationdb-rs/blob/main/foundationdb-recipes-simulation/README.md">13 invariants</a>. Here are the seven most important ones:</p>
+<p>It generated <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/blob/main/foundationdb-recipes-simulation/README.md">13 invariants</a>. Here are the seven most important ones:</p>
 <table><thead><tr><th>Invariant</th><th>What</th><th>Why</th><th>How</th></tr></thead><tbody>
 <tr><td><strong>DualPathValidation</strong></td><td>Expected state from log replay must match actual FDB snapshot</td><td>The keystone check. If logs say process A is leader with ballot 7, but FDB shows process B with ballot 6, something corrupted state</td><td>Replay all logged operations in versionstamp order to compute expected leader/ballot, then compare with actual database state</td></tr>
 <tr><td><strong>FencingTokenMonotonicity</strong></td><td>Each successful claim must have a strictly higher ballot than the previous</td><td>When a network partition heals, an old leader might try to act with a stale ballot. This catches that write</td><td>For each claim in the log, verify ballot &gt; previous_ballot from the same transaction</td></tr>
@@ -361,37 +217,37 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <p>The leader election recipe has just been merged into foundationdb-rs as experimental. I haven't run it in production yet. The entire development was simulation-driven: write code, run simulation, fix what breaks, repeat. The simulation runs in CI on every PR.</p>
 <p>Simulation gives us guarantees that the code behaves correctly under the right rules, even when FDB is tortured. Network partitions, clock skew, process crashes. The invariants verify that safety properties hold through all of it. Not a proof of correctness, but confidence earned through chaos.</p>
 <p>The invariants that Claude Code generated encode patterns from prior simulation work: dual-path validation from AtomicOps, fencing tokens from the literature, lease checks tied to clock skew. What the LLM provided was speed: weeks of invariant development compressed into hours of review. The LLM proposes, simulation disposes.</p>
-<p>If you have ideas for new tortures or invariants, the <a href="https://github.com/foundationdb-rs/foundationdb-rs/tree/main/foundationdb-recipes-simulation">simulation code</a> is open. Merge requests welcome.</p>
+<p>If you have ideas for new tortures or invariants, the <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/tree/main/foundationdb-recipes-simulation">simulation code</a> is open. Merge requests welcome.</p>
 <hr />
-<p>Feel free to reach out with questions or to share your experiences with leader election and simulation testing. You can find me on <a href="https://twitter.com/PierreZ">Twitter</a>, <a href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a href="https://pierrezemb.fr">website</a>.</p>
+<p>Feel free to reach out with questions or to share your experiences with leader election and simulation testing. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+</article>
 
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
-          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
-          <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a>
-          <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a>
-          <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a>
-          <a href="https://pierrezemb.fr/tags/leader-election/">#leader-election</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

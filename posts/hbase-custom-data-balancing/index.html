@@ -1,291 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contributing to Apache HBase: custom data balancing | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Contributing to Apache HBase: custom data balancing">
-<meta name="description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Contributing to Apache HBase: custom data balancing" />
-<meta name="twitter:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring." />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://www.ovh.com/blog/contributing-to-apache-hbase-custom-data-balancing/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.ovh.com/blog/contributing-to-apache-hbase-custom-data-balancing/">
+  <meta property="og:title" content="Contributing to Apache HBase: custom data balancing">
+  <meta property="og:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Contributing to Apache HBase: custom data balancing">
+  <meta name="twitter:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2020-02-14T10:24:27+01:00">
+  <meta property="article:tag" content="database">
+  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="hbase">
+  <meta property="article:tag" content="performance">
+  <meta property="article:tag" content="opensource"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Contributing to Apache HBase: custom data balancing">
-<meta property="og:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring."> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2020-02-14T10:24:27+01:00" />
-
-
-
-<meta property="article:tag" content="database" />
-
-<meta property="article:tag" content="distributed" />
-
-<meta property="article:tag" content="hbase" />
-
-<meta property="article:tag" content="performance" />
-
-<meta property="article:tag" content="opensource" />
-
-
-
-
-<link rel="canonical" href="https:&#x2F;&#x2F;www.ovh.com&#x2F;blog&#x2F;contributing-to-apache-hbase-custom-data-balancing&#x2F;" />
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Contributing to Apache HBase: custom data balancing</h1>
-      <p>
-        <i>
-          <time datetime="2020-02-14T10:24:27+01:00" pubdate>14 Feb, 2020</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#the-context">The context</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#how-does-balancing-work-in-apache-hbase">How does balancing work in Apache HBase?</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#what-was-not-working-for-us">What was not working for us?</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#our-contributions">Our contributions</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#how-does-it-works">How does it works?</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#where-to-next">Where to next?</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;hbase-custom-data-balancing">./read --quorum posts&#x2F;hbase-custom-data-balancing</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / hbase-custom-data-balancing
+  </div>
+
+  <h2 class="title">Contributing to Apache HBase: custom data balancing</h2>
+  <div class="meta-row"><span class="m"><b>2020-02-14</b></span>
+    <span class="m">read: <b>~7 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#the-context">The context</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#how-does-balancing-work-in-apache-hbase">How does balancing work in Apache HBase?</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#what-was-not-working-for-us">What was not working for us?</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#our-contributions">Our contributions</a>
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#how-does-it-works">How does it works?</a>
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/#where-to-next">Where to next?</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
     <blockquote>
-<p>This is a repost from <a href="https://www.ovh.com/blog/contributing-to-apache-hbase-custom-data-balancing/" title="Permalink to Contributing to Apache HBase: custom data balancing">OVHcloud's official blogpost.</a>, please read it there to support my company. Thanks <a href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
+<p>This is a repost from <a rel="external" title="Permalink to Contributing to Apache HBase: custom data balancing" href="https://www.ovh.com/blog/contributing-to-apache-hbase-custom-data-balancing/">OVHcloud's official blogpost.</a>, please read it there to support my company. Thanks <a rel="external" href="https://twitter.com/LostInBrittany/">Horacio Gonzalez</a> for the awesome drawings!</p>
 </blockquote>
 <p>In today's blogpost, we're going to take a look at our upstream
 contribution to Apache HBase's stochastic load balancer, based on our
@@ -298,8 +155,8 @@ experience of running HBase clusters to support OVHcloud's monitoring.</p>
 <li>our internal teams monitor their own servers and applications?</li>
 </ul>
 <p><strong>All internal teams are constantly gathering telemetry and monitoring data</strong> and sending them to a <strong>dedicated team,</strong> who are responsible for <strong>handling all the metrics and logs generated by OVHcloud's infrastructure</strong>: the Observability team.</p>
-<p>We tried a lot of different <strong>Time Series databases</strong>, and eventually chose <a href="https://warp10.io/">Warp10</a> to handle our workloads. <strong>Warp10</strong> can be integrated with the various <strong>big-data solutions</strong> provided by the <a href="https://www.apache.org/">Apache Foundation.</a> In our case, we use <a href="http://hbase.apache.org/">Apache HBase</a> as the long-term storage datastore for our metrics.</p>
-<p><a href="http://hbase.apache.org/">Apache HBase</a>, a datastore built on top of <a href="http://hadoop.apache.org/">Apache Hadoop</a>, provides <strong>an elastic, distributed, key-ordered map.</strong> As such, one of the key features of Apache HBase for us is the ability to <strong>scan</strong>, i.e. retrieve a range of keys. Thanks to this feature, we can fetch <strong>thousands of datapoints in an optimised way</strong>.</p>
+<p>We tried a lot of different <strong>Time Series databases</strong>, and eventually chose <a rel="external" href="https://warp10.io/">Warp10</a> to handle our workloads. <strong>Warp10</strong> can be integrated with the various <strong>big-data solutions</strong> provided by the <a rel="external" href="https://www.apache.org/">Apache Foundation.</a> In our case, we use <a rel="external" href="http://hbase.apache.org/">Apache HBase</a> as the long-term storage datastore for our metrics.</p>
+<p><a rel="external" href="http://hbase.apache.org/">Apache HBase</a>, a datastore built on top of <a rel="external" href="http://hadoop.apache.org/">Apache Hadoop</a>, provides <strong>an elastic, distributed, key-ordered map.</strong> As such, one of the key features of Apache HBase for us is the ability to <strong>scan</strong>, i.e. retrieve a range of keys. Thanks to this feature, we can fetch <strong>thousands of datapoints in an optimised way</strong>.</p>
 <p>We have our own dedicated clusters, the biggest of which has more than 270 nodes to spread our workloads:</p>
 <ul>
 <li>between 1.6 and 2 million writes per second, 24/7</li>
@@ -310,7 +167,7 @@ experience of running HBase clusters to support OVHcloud's monitoring.</p>
 <h2 id="how-does-balancing-work-in-apache-hbase"><a class="zola-anchor" href="#how-does-balancing-work-in-apache-hbase" aria-label="Anchor link for: how-does-balancing-work-in-apache-hbase">🔗</a>How does balancing work in Apache HBase?</h2>
 <p>Before diving into the balancer, let's take a look at how it works. In Apache HBase, data is split into shards called <code>Regions</code>, and distributed through <code>RegionServers</code>. The number of regions will increase as the data is coming in, and regions will be split as a result. This is where the <code>Balancer</code> comes in. It will <strong>move regions</strong> to avoid hotspotting a single <code>RegionServer</code> and effectively distribute the load.</p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-2.jpeg" alt="hbase image" /></p>
-<p>The actual implementation, called <a href="https://github.com/apache/hbase/blob/master/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java">StochasticBalancer</a>, uses <strong>a cost-based approach:</strong></p>
+<p>The actual implementation, called <a rel="external" href="https://github.com/apache/hbase/blob/master/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java">StochasticBalancer</a>, uses <strong>a cost-based approach:</strong></p>
 <ol>
 <li>It first computes the <strong>overall cost</strong> of the cluster, by looping through <code>cost functions</code>. Every cost function <strong>returns a number between 0 and 1 inclusive</strong>, where 0 is the lowest cost-best solution, and 1 is the highest possible cost and worst solution. Apache Hbase is coming with several cost functions, which are measuring things like region load, table load, data locality, number of regions per RegionServers... The computed costs are <strong>scaled by their respective coefficients, defined in the configuration</strong>.</li>
 <li>Now that the initial cost is computed, we can try to <code>Mutate</code> our cluster. For this, the Balancer creates a random <code>nextAction</code>, which could be something like <strong>swapping two regions</strong>, or <strong>moving one region to another RegionServer</strong>. The action is <strong>applied</strong> <strong>virtually</strong> , and then the <strong>new cost is calculated</strong>. If the new cost is lower than our previous one, the action is stored. If not, it is skipped. This operation is repeated <code>thousands of times</code>, hence the <code>Stochastic</code>.</li>
@@ -328,7 +185,7 @@ experience of running HBase clusters to support OVHcloud's monitoring.</p>
 In our earlier example, our cluster grew from 80 to ~250 machines in
 four years. Throughout that time, we bought new dedicated server
 references, and even tested some special internal references.</p>
-<p>We ended-up with differents groups of hardware: <strong>some servers can handle only 180 regions, whereas the biggest can handle more than 900</strong>. Because of this disparity, we had to disable the Load Balancer to avoid the <a href="https://github.com/apache/hbase/blob/master/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java#L1194">RegionCountSkewCostFunction</a>, which would try to bring all RegionServers to the same number of regions.</p>
+<p>We ended-up with differents groups of hardware: <strong>some servers can handle only 180 regions, whereas the biggest can handle more than 900</strong>. Because of this disparity, we had to disable the Load Balancer to avoid the <a rel="external" href="https://github.com/apache/hbase/blob/master/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java#L1194">RegionCountSkewCostFunction</a>, which would try to bring all RegionServers to the same number of regions.</p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-3.jpeg" alt="hbase image" /></p>
 <p>Two years ago we developed some internal tools, which are responsible
 for load balancing regions across RegionServers. The tooling worked
@@ -339,13 +196,12 @@ and give it back to the community. When we talked around, we saw that
 we weren't the only one concerned by the heterogenous cluster problem.
 We decided to rewrite our tooling to make it more general, and to <strong>contribute</strong> it <strong>directly upstream</strong> to the HBase project <strong>.</strong></p>
 <h2 id="our-contributions"><a class="zola-anchor" href="#our-contributions" aria-label="Anchor link for: our-contributions">🔗</a>Our contributions</h2>
-<p>The first contribution was pretty simple, the cost function list was a <a href="https://github.com/apache/hbase/blob/8cb531f207b9f9f51ab1509655ae59701b66ac37/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java#L199-L213">constant</a>. We <a href="https://github.com/apache/hbase/commit/836f26976e1ad8b35d778c563067ed0614c026e9">added the possibility to load custom cost functions</a>.</p>
-<p>The second contribution was about <a href="https://github.com/apache/hbase/commit/42d535a57a75b58f585b48df9af9c966e6c7e46a">adding an optional costFunction to balance regions according to a capacity rule</a>.</p>
+<p>The first contribution was pretty simple, the cost function list was a <a rel="external" href="https://github.com/apache/hbase/blob/8cb531f207b9f9f51ab1509655ae59701b66ac37/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java#L199-L213">constant</a>. We <a rel="external" href="https://github.com/apache/hbase/commit/836f26976e1ad8b35d778c563067ed0614c026e9">added the possibility to load custom cost functions</a>.</p>
+<p>The second contribution was about <a rel="external" href="https://github.com/apache/hbase/commit/42d535a57a75b58f585b48df9af9c966e6c7e46a">adding an optional costFunction to balance regions according to a capacity rule</a>.</p>
 <h2 id="how-does-it-works"><a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a>How does it works?</h2>
 <p>The balancer will load a file containing lines of rules. <strong>A rule is composed of a regexp for hostname, and a limit.</strong> For example, we could have:</p>
-<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>rs[0-9] 200
-</span><span>rs1[0-9] 50
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>rs[0-9] 200</span></span>
+<span class="giallo-l"><span>rs1[0-9] 50</span></span></code></pre>
 <p>RegionServers with <strong>hostnames matching the first rules will have a limit of 200</strong>, and <strong>the others 50</strong>. If there's no match, a default is set.</p>
 <p>Thanks to these rule, we have two key pieces of information:</p>
 <ul>
@@ -359,9 +215,8 @@ We decided to rewrite our tooling to make it more general, and to <strong>contri
 <li>10 RS, named <code>rs10</code> to <code>rs19</code>, loaded with 60 regions each, which can each handle 50 regions.</li>
 </ul>
 <p>So, based on the following rules:</p>
-<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>rs[0-9] 200
-</span><span>rs1[0-9] 50
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>rs[0-9] 200</span></span>
+<span class="giallo-l"><span>rs1[0-9] 50</span></span></code></pre>
 <p>... we can see that the <strong>second group is overloaded</strong>, whereas the first group has plenty of space.</p>
 <p>We know that we can handle a maximum of <strong>2,500 regions</strong> (200×10 + 50×10), and we have currently <strong>1,200 regions</strong> (60×20). As such, the <code>HeterogeneousRegionCountCostFunction</code> will understand that the cluster is <strong>full at 48.0%</strong> (1200/2500). Based on this information, we will then <strong>try to put all the RegionServers at ~48% of the load, according to the rules.</strong></p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-4.jpeg" alt="hbase image" /></p>
@@ -371,32 +226,33 @@ We decided to rewrite our tooling to make it more general, and to <strong>contri
 source is the opportunity ability to contribute back, and build stronger
 software. We <strong>had an opinion</strong> about how a particular issue should addressed, but <strong>the discussions with the community helped us to refine it</strong>. We spoke with e <strong>ngineers from other companies, who were struggling with Apache HBase's cloud deployments, just as we were</strong>, and thanks to those exchanges, <strong>our contribution became more and more relevant.</strong></p>
 
+  </div>
+</article>
+
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/database/">#database</a>
-          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
-          <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a>
-          <a href="https://pierrezemb.fr/tags/performance/">#performance</a>
-          <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>

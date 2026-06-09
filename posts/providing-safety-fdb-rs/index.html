@@ -1,290 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="blueprint">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate | Pierre Zemb&#x27;s Blog</title>
-  <meta name="title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
-<meta name="description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
-<meta name="author" content="Pierre Zemb">
+  <meta name="description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- Twitter Card tags -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@pierrez" />
-<meta name="twitter:creator" content="@pierrez" />
-<meta name="twitter:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate" />
-<meta name="twitter:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate" />
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">
+  <meta property="og:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
+  <meta property="og:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
+  <meta name="twitter:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2025-02-11T00:00:00+01:00">
+  <meta property="article:tag" content="foundationdb">
+  <meta property="article:tag" content="rust">
+  <meta property="article:tag" content="testing">
+  <meta property="article:tag" content="database">
+  <meta property="article:tag" content="distributed"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
 
-<meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg" />
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
+  
 
-<!-- OpenGraph tags -->
-<meta property="og:type" content="article" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
-<meta property="og:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
-<meta property="og:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate"> 
-<meta property="og:url" content="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">
-
-<meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg" />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-
-
-<meta property="article:published_time" content="2025-02-11T00:00:00+01:00" />
-
-
-
-<meta property="article:tag" content="foundationdb" />
-
-<meta property="article:tag" content="rust" />
-
-<meta property="article:tag" content="testing" />
-
-<meta property="article:tag" content="database" />
-
-<meta property="article:tag" content="distributed" />
-
-
-
-<meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://pierrezemb.fr/rss.xml">
-  <link rel="alternate" type="application/atom+xml" title="RSS" href="https://pierrezemb.fr/atom.xml">
-  <style>
-    :root {
-    --width: 800px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  nav span.active {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  pre code {
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 0.875rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--code-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    padding: 1px 15px;
-    background-color: var(--code-background-color);
-    color: var(--code-color);
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-  /* blog post list */
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-  .tags {
-    font-size: smaller;
-  }
-
-  </style><link rel="stylesheet" href="/custom.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
-
+  <script>
+  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved === "cyanotype";
+      var theme = dark ? "cyanotype" : "blueprint";
+      document.documentElement.setAttribute("data-theme", theme);
+      var l = document.getElementById("syntax-light");
+      var d = document.getElementById("syntax-dark");
+      if (l) l.disabled = dark;
+      if (d) d.disabled = !dark;
+    } catch (e) {}
+  })();
+  </script>
 </head>
-<body>
-  <header>
-  <a href="https://pierrezemb.fr/" class="title">
-    <h1>Pierre Zemb&#x27;s Blog</h1>
-  </a>
-  <nav aria-label="site">
+<body><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags">Tags</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-</header>
-<h1>Ensuring Safety in FoundationDB&#x27;s Rust Crate</h1>
-      <p>
-        <i>
-          <time datetime="2025-02-11T00:00:00+01:00" pubdate>11 Feb, 2025</time>
-        </i>
-      </p>
-    <details open>
-      <summary>Table of contents</summary>
-    <ul>
-        <li>
-          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#crate-overview">Crate Overview</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#libfdb-safety">libfdb Safety</a>
-        <ul>
-            <li>
-              <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#classic-testing-suite">Classic testing suite</a>
-            </li>
-            <li>
-              <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#the-bindingtester">The BindingTester</a>
-            </li>
-        </ul>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#user-safety">User Safety</a>
-        </li>
-        <li>
-          <a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#closing-words">Closing words</a>
-        </li>
-    </ul>
-    </details>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;providing-safety-fdb-rs">./read --quorum posts&#x2F;providing-safety-fdb-rs</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
   <main>
-    <p>As we approach 5 million downloads of the <a href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.</p>
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / providing-safety-fdb-rs
+  </div>
+
+  <h2 class="title">Ensuring Safety in FoundationDB&#x27;s Rust Crate</h2>
+  <div class="meta-row"><span class="m"><b>2025-02-11</b></span>
+    <span class="m">read: <b>~4 min</b></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#crate-overview">Crate Overview</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#libfdb-safety">libfdb Safety</a>
+<ol>
+  <li>
+    <span class="n">2.1</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#classic-testing-suite">Classic testing suite</a>
+  </li>
+  <li>
+    <span class="n">2.2</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#the-bindingtester">The BindingTester</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#user-safety">User Safety</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/#closing-words">Closing words</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
+    <p>As we approach 5 million downloads of the <a rel="external" href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.</p>
 <h2 id="crate-overview"><a class="zola-anchor" href="#crate-overview" aria-label="Anchor link for: crate-overview">🔗</a>Crate Overview</h2>
 <p>The Rust crate, <code>foundationdb-rs</code>, provides bindings to interact with FoundationDB's C API (<code>libfdb</code>). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:</p>
 <ul>
@@ -294,7 +154,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 </ul>
 <p>Let's dig into each of these areas.</p>
 <h2 id="libfdb-safety"><a class="zola-anchor" href="#libfdb-safety" aria-label="Anchor link for: libfdb-safety">🔗</a>libfdb Safety</h2>
-<p>This is the simplest part. <code>libfdb</code>'s safety is guaranteed by FoundationDB's <a href="https://apple.github.io/foundationdb/testing.html">simulation framework</a>. Therefore, we can consider it safe.</p>
+<p>This is the simplest part. <code>libfdb</code>'s safety is guaranteed by FoundationDB's <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation framework</a>. Therefore, we can consider it safe.</p>
 <h3 id="classic-testing-suite"><a class="zola-anchor" href="#classic-testing-suite" aria-label="Anchor link for: classic-testing-suite">🔗</a>Classic testing suite</h3>
 <p>Since we are using a C library, we need to use FFI (Foreign Function Interface) and unsafe code blocks. With around 130 unsafe blocks, we must be extra careful when calling C code, ensuring all preconditions are met. Naturally, we conduct extensive testing, but most importantly, we run tests in high-variety environments:</p>
 <ul>
@@ -302,37 +162,36 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <li>On multiple FoundationDB versions (from FDB 6.1 to 7.3)</li>
 <li>On multiple Rust compiler versions (Minimum Supported Rust Version or MSRV, stable, beta, nightly)</li>
 </ul>
-<p>The most useful tests are run on the nightly Rust compiler, as we can catch <a href="https://github.com/foundationdb-rs/foundationdb-rs/issues/90">new behaviors in the Rust compiler early</a>.</p>
+<p>The most useful tests are run on the nightly Rust compiler, as we can catch <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/issues/90">new behaviors in the Rust compiler early</a>.</p>
 <p>While these testing practices provide significant coverage, the most powerful tool we utilize comes from FoundationDB’s maintainers: the <code>BindingTester</code>.</p>
 <h3 id="the-bindingtester"><a class="zola-anchor" href="#the-bindingtester" aria-label="Anchor link for: the-bindingtester">🔗</a>The BindingTester</h3>
-<p>FoundationDB is renowned for its <a href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
-<p>The BindingTester uses <a href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
+<p>FoundationDB is renowned for its <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
+<p>The BindingTester uses <a rel="external" href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
 <p>It looks like this:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">./bindings/bindingtester/bindingtester.py --num-ops</span><span> 1000</span><span style="color:#bf616a;"> --api-version</span><span> 730</span><span style="color:#bf616a;"> --test-name</span><span> api</span><span style="color:#bf616a;"> --compare</span><span> python rust
-</span><span>
-</span><span style="color:#bf616a;">Creating</span><span> test at API version 730
-</span><span style="color:#bf616a;">Generating</span><span> api test at seed 3208032894 with 1000 op(s) </span><span style="color:#bf616a;">and</span><span> 1 concurrent tester(s)</span><span style="color:#bf616a;">...
-</span><span>
-</span><span style="color:#65737e;"># Inserting Rust tests
-</span><span style="color:#bf616a;">Inserting</span><span> test into database...
-</span><span style="color:#bf616a;">Running</span><span> tester &#39;</span><span style="color:#a3be8c;">/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730</span><span>&#39;...
-</span><span>
-</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span>
-</span><span style="color:#65737e;"># Inserting Python tests
-</span><span style="color:#bf616a;">Inserting</span><span> test into database...
-</span><span style="color:#bf616a;">Running</span><span> tester &#39;</span><span style="color:#a3be8c;">python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730</span><span>&#39;...
-</span><span>
-</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span style="color:#bf616a;">Reading</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span>
-</span><span style="color:#65737e;"># Comparing the results
-</span><span style="color:#bf616a;">Comparing</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;workspace&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span style="color:#bf616a;">Comparing</span><span> results from &#39;</span><span style="color:#a3be8c;">(</span><span>&#39;tester_output&#39;</span><span style="color:#a3be8c;">, </span><span>&#39;stack&#39;</span><span style="color:#a3be8c;">)</span><span>&#39;...
-</span><span style="color:#bf616a;">Test</span><span> with seed 3208032894 and concurrency 1 had 0 incorrect result(s) </span><span style="color:#bf616a;">and</span><span> 0 error(s) </span><span style="color:#bf616a;">at</span><span> API version 730
-</span><span style="color:#bf616a;">Completed</span><span> api test with random seed 3208032894 and 1000 operations
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">./bindings/bindingtester/bindingtester.py</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-num-ops</span><span class="z-constant z-numeric"> 1000</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-api-version</span><span class="z-constant z-numeric"> 730</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-test-name</span><span class="z-string"> api</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-compare</span><span class="z-string"> python</span><span class="z-string"> rust</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Creating</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant z-numeric"> 730</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Generating</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> with</span><span class="z-constant z-numeric"> 1000</span><span class="z-string"> op</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 1</span><span class="z-string"> concurrent</span><span class="z-string"> tester</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string">...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Inserting Rust tests</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Running</span><span class="z-string"> tester</span><span class="z-string"> &#39;</span><span class="z-string">/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Inserting Python tests</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Running</span><span class="z-string"> tester</span><span class="z-string"> &#39;</span><span class="z-string">python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Comparing the results</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Test</span><span class="z-string"> with</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> and</span><span class="z-string"> concurrency</span><span class="z-constant z-numeric"> 1</span><span class="z-string"> had</span><span class="z-constant z-numeric"> 0</span><span class="z-string"> incorrect</span><span class="z-string"> result</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 0</span><span class="z-string"> error</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant z-numeric"> 730</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Completed</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> with</span><span class="z-string"> random</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 1000</span><span class="z-string"> operations</span></span></code></pre>
 <p>The great advantage of this method is that the tests are seeded, meaning the operations are:</p>
 <ul>
 <li>randomly selected to cover all binding usages,</li>
@@ -343,78 +202,77 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h2 id="user-safety"><a class="zola-anchor" href="#user-safety" aria-label="Anchor link for: user-safety">🔗</a>User Safety</h2>
 <p>Thanks to <code>libfdb</code> and the <code>BindingTester</code>, we can ensure that the library is quite safe. But what about the user's code? How can we help users ensure their code can handle all of FoundationDB's caveats, such as <a href="/posts/automatic-txn-fdb-730/#transactions-with-unknown-results">commit_unknown_result</a>? We added a great feature: the ability to include Rust code <strong>within FDB's simulation framework</strong>.</p>
 <p>We can implement an Rust workload with the following Trait:</p>
-<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub trait </span><span>RustWorkload {
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">description</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; String;
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">setup</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">start</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">check</span><span>(&amp;</span><span style="color:#b48ead;">&#39;static mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">db</span><span>: SimDatabase, </span><span style="color:#bf616a;">done</span><span>: Promise);
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get_metrics</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; Vec&lt;Metric&gt;;
-</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get_check_timeout</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; </span><span style="color:#b48ead;">f64</span><span>;
-</span><span>}
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage"> trait</span><span class="z-entity z-name z-type"> RustWorkload</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> description</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> String</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> setup</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> start</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> check</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> get_metrics</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Vec</span><span>&lt;</span><span class="z-entity z-name z-type">Metric</span><span>&gt;</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> get_check_timeout</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> f64</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
 <p>Which can be runned inside the simulation while injecting some faults:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">fdbserver -r</span><span> simulation</span><span style="color:#bf616a;"> -f</span><span> /root/atomic.toml</span><span style="color:#bf616a;"> -b</span><span> on</span><span style="color:#bf616a;"> --trace-format</span><span> json
-</span><span>
-</span><span style="color:#65737e;"># Choosing a random seed
-</span><span style="color:#bf616a;">Random</span><span> seed is 394378360...
-</span><span>
-</span><span style="color:#65737e;"># Then, everything is derived from the seed, including:
-</span><span style="color:#65737e;"># * cluster topology,
-</span><span style="color:#65737e;"># * cluster configuration,
-</span><span style="color:#65737e;"># * timing to inject faults,
-</span><span style="color:#65737e;"># * operations to run
-</span><span style="color:#65737e;"># * ...
-</span><span style="color:#bf616a;">Datacenter</span><span> 0: 3/12 machines, 1/1 coordinators
-</span><span style="color:#bf616a;">Datacenter</span><span> 1: 3/12 machines, 0/1 coordinators
-</span><span style="color:#bf616a;">Datacenter</span><span> 2: 3/12 machines, 0/1 coordinators
-</span><span style="color:#bf616a;">Datacenter</span><span> 3: 3/12 machines, 0/1 coordinators
-</span><span>
-</span><span style="color:#65737e;"># Starting the Atomic workload
-</span><span style="color:#bf616a;">Run</span><span> test:AtomicWorkload start
-</span><span>
-</span><span style="color:#bf616a;">AtomicWorkload</span><span> complete
-</span><span style="color:#bf616a;">checking</span><span> test (AtomicWorkload)</span><span style="color:#bf616a;">...
-</span><span>
-</span><span style="color:#bf616a;">5</span><span> test clients passed; </span><span style="color:#bf616a;">0</span><span> test clients failed
-</span><span style="color:#bf616a;">Run</span><span> test:AtomicWorkload Done.
-</span><span>
-</span><span style="color:#bf616a;">1</span><span> tests passed; </span><span style="color:#bf616a;">0</span><span> tests failed.
-</span><span>
-</span><span style="color:#bf616a;">Unseed:</span><span> 66324
-</span><span style="color:#bf616a;">Elapsed:</span><span> 405.055622 simsec, 30.342000 real seconds
-</span></code></pre>
-<p>This has been a <strong>major keypoint</strong> for us to develop and operate <a href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">fdbserver</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">r</span><span class="z-string"> simulation</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">f</span><span class="z-string"> /root/atomic.toml</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">b</span><span class="z-string"> on</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-trace-format</span><span class="z-string"> json</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Choosing a random seed</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Random</span><span class="z-string"> seed</span><span class="z-string"> is</span><span class="z-string"> 394378360...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Then, everything is derived from the seed, including:</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * cluster topology,</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * cluster configuration,</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * timing to inject faults,</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * operations to run</span></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * ...</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 0:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 1/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 1:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 2:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 3:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Starting the Atomic workload</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> start</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">AtomicWorkload</span><span class="z-string"> complete</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">checking</span><span class="z-string"> test</span><span> (AtomicWorkload</span><span>)...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">5</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name z-function"> 0</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> failed</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> Done.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">1</span><span class="z-string"> tests</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name z-function"> 0</span><span class="z-string"> tests</span><span class="z-string"> failed.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Unseed:</span><span class="z-constant z-numeric"> 66324</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">Elapsed:</span><span class="z-constant z-numeric"> 405.055622</span><span class="z-string"> simsec,</span><span class="z-constant z-numeric"> 30.342000</span><span class="z-string"> real</span><span class="z-string"> seconds</span></span></code></pre>
+<p>This has been a <strong>major keypoint</strong> for us to develop and operate <a rel="external" href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
 <h2 id="closing-words"><a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a>Closing words</h2>
 <p>As with any open-source project, there is always more to accomplish, but I am quite satisfied with the current level of safety provided by the crate. I would like to express my gratitude to the FoundationDB community for developing the BindingTester, and former contributors to the crate.</p>
 <p>I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.</p>
 <p>There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the <a href="/tags/simulation/">simulation tags</a>.</p>
 
+  </div>
+</article>
+
   </main>
-  <p>
-        Tags:
-          <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a>
-          <a href="https://pierrezemb.fr/tags/rust/">#rust</a>
-          <a href="https://pierrezemb.fr/tags/testing/">#testing</a>
-          <a href="https://pierrezemb.fr/tags/database/">#database</a>
-          <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a>
-  </p>
-<footer>
-    <p>© 2025 Pierre Zemb</p>
-    <div class="social-links">
-        <a href="https://github.com/PierreZ" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
-        <a href="https://x.com/PierreZ" target="_blank" rel="noopener noreferrer" title="Twitter" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-        <a href="https://bsky.app/profile/pierrezemb.fr" target="_blank" rel="noopener noreferrer" title="Bluesky" class="social-icon"><i class="fa-brands fa-bluesky"></i></i></a>
-        <a href="/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" class="social-icon"><i class="fa-solid fa-rss"></i></a>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-06-09
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
-</footer>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-    });
-</script>
-<script>
-    feather.replace();
-</script></body>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
+<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer></script>
+
+
+</body>
 </html>
