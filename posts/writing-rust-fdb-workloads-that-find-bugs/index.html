@@ -112,7 +112,7 @@
 
   <h2 class="title">Designing Rust FDB Workloads That Actually Find Bugs</h2>
   <div class="meta-row"><span class="m"><b>2025-12-09</b></span>
-    <span class="m">read: <b>~11 min</b></span>
+    <span class="m">read: <b>~13 min</b></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
   <nav class="toc">
@@ -129,19 +129,22 @@
     <span class="n">3</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#designing-your-operation-alphabet">Designing Your Operation Alphabet</a>
   </li>
   <li>
-    <span class="n">4</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#designing-invariants">Designing Invariants</a>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#swarm-testing">Swarm Testing</a>
   </li>
   <li>
-    <span class="n">5</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#the-determinism-rules">The Determinism Rules</a>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#designing-invariants">Designing Invariants</a>
   </li>
   <li>
-    <span class="n">6</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#architecture-the-three-crate-pattern">Architecture: The Three-Crate Pattern</a>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#the-determinism-rules">The Determinism Rules</a>
   </li>
   <li>
-    <span class="n">7</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#common-pitfalls">Common Pitfalls</a>
+    <span class="n">7</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#architecture-the-three-crate-pattern">Architecture: The Three-Crate Pattern</a>
   </li>
   <li>
-    <span class="n">8</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#the-real-value">The Real Value</a>
+    <span class="n">8</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#common-pitfalls">Common Pitfalls</a>
+  </li>
+  <li>
+    <span class="n">9</span><a href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/#the-real-value">The Real Value</a>
   </li>
 </ol>
 
@@ -164,6 +167,8 @@
 <p><strong>Normal operations</strong> with realistic weights. In production, maybe 80% of your traffic is reads, 15% is simple writes, 5% is complex updates. Your workload should reflect this, because bugs often hide in the interactions between operation types. A workload that runs 50% reads and 50% writes tests different code paths than one that runs 95% reads and 5% writes. Both might be valid, but they'll find different bugs.</p>
 <p><strong>Adversarial inputs</strong> that customers will inevitably send. Empty strings. Maximum-length values. Null bytes in the middle of strings. Unicode edge cases. Boundary integers (0, -1, MAX_INT). Customers never respect your API specs, so model the chaos they create.</p>
 <p><strong>Nemesis operations</strong> that break things on purpose. Delete random data mid-test. Clear ranges that "shouldn't" be cleared. Crash batch jobs mid-execution to test recovery. Run compaction every operation instead of daily. Create conflict storms where multiple clients hammer the same key. Approach the 10MB transaction limit. These operations stress your error handling and recovery paths. The rare operations are where bugs hide. That batch job running once a day in production? In simulation, you'll hit its partial-failure edge case in minutes, but only if your operation alphabet includes it.</p>
+<h2 id="swarm-testing"><a class="zola-anchor" href="#swarm-testing" aria-label="Anchor link for: swarm-testing">🔗</a>Swarm Testing</h2>
+<p>Your alphabet can include every interesting operation and still bury the bug, because enabling all of them in every run is its own failure mode. This is the insight behind <a rel="external" href="https://users.cs.utah.edu/~regehr/papers/swarm12.pdf">swarm testing</a>, from Alex Groce, John Regehr, and colleagues at ISSTA 2012. Instead of running each seed with the full operation set at fixed weights, you enable a random subset of operations and disable the rest, then run thousands of seeds so you cover thousands of different subsets. In a week of testing, that found 42% more distinct ways to crash a collection of C compilers than the heavily hand-tuned default tester did. The clearest walk through why it works, with a production story behind it, is <a rel="external" href="https://www.youtube.com/watch?v=wzfC7Q-xNik">Will Wilson's talk on swarm testing</a>, so go watch that. For a Rust workload, drive the subset choice from <code>context.rnd()</code> so each seed enables a different slice of your alphabet and stays reproducible.</p>
 <h2 id="designing-invariants"><a class="zola-anchor" href="#designing-invariants" aria-label="Anchor link for: designing-invariants">🔗</a>Designing Invariants</h2>
 <p>After simulation runs thousands of operations with injected faults, network partitions, and machine crashes, how do you know your data is still correct? Unlike FDB's internal testing, Rust workloads can't inject assertions at arbitrary code points. You verify correctness in the <code>check()</code> phase, after the chaos ends. The key question: <strong>"After all this, how do I PROVE my data is still correct?"</strong></p>
 <p><strong>One critical tip: validate during <code>start()</code>, not just in <code>check()</code>.</strong> Don't wait until the end to discover corruption. After each operation (or batch of operations), read back the data and verify it matches expectations. If you're maintaining a counter, read it and check the bounds. If you're building an index, query it immediately after insertion. Early validation catches bugs closer to their source, making debugging far easier. The <code>check()</code> phase is your final safety net, but continuous validation during execution is where you'll catch most issues.</p>
@@ -173,6 +178,8 @@
 <p><strong>Conservation Laws</strong> track quantities that must stay constant. Inventory transfers between warehouses shouldn't change total inventory. Money transfers between accounts shouldn't create or destroy money. Sum everything up and verify the conservation law holds. This pattern is elegant because it doesn't require tracking individual operations, just the aggregate property.</p>
 <p><strong>Structural Integrity</strong> verifies data structures remain valid. If you maintain a secondary index, verify every index entry points to an existing record and every record appears in the index exactly once. If you maintain a linked list in FDB, traverse it and confirm every node is reachable. The cycle validation pattern (creating a circular list where nodes point to each other) is a classic technique from <a rel="external" href="https://github.com/apple/foundationdb/blob/231f762/fdbserver/workloads/Cycle.actor.cpp">FDB's own Cycle workload</a>. After chaos, traverse the cycle and verify you visit exactly N nodes.</p>
 <p><strong>Operation Logging</strong> solves two problems at once: <code>maybe_committed</code> uncertainty and multi-client coordination. The trick from <a rel="external" href="https://github.com/apple/foundationdb/blob/231f762/fdbserver/workloads/AtomicOps.actor.cpp">FDB's own AtomicOps workload</a>: <strong>log the intent alongside the operation in the same transaction</strong>. Write both your operation AND a log entry recording what you intended. Since they're in the same transaction, they either both commit or neither does. No uncertainty. For multi-client workloads, each client logs under its own prefix (e.g., <code>log/{client_id}/</code>). In <code>check()</code>, client 0 reads all logs from all clients, replays them to compute expected state, and compares against actual state. If they diverge, something went wrong, and you'll know exactly which operations succeeded. See the <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/blob/4ed057a/foundationdb-simulation/examples/atomic/lib.rs">Rust atomic workload example</a> for a complete implementation.</p>
+<p>These four patterns are easiest to see in one small workload. Picture a hash chain, a single piece of state holding <code>H</code>, the running digest of every block, and <code>N</code>, the number of blocks folded in so far. It starts empty at <code>H=0x0000, N=0</code>, and each <code>Append Block: b</code> operation folds the block into the digest with <code>H = hash(H, b)</code>, increments <code>N</code>, and emits an <code>AppendBlock&lt;N, H&gt;</code> event recording the new state.</p>
+<p>The chain is a structural invariant in the same spirit as the Cycle workload above, because every block depends on the digest before it, so the whole structure has to reconstruct exactly. The emitted <code>AppendBlock&lt;N, H&gt;</code> events are the operation log, and in <code>check()</code> you replay them in order, recompute <code>H</code> and <code>N</code> from scratch, and compare against what FDB holds after all the chaos. That is also the conservation law, <code>N</code> has to equal the number of <code>AppendBlock</code> events and the recomputed digest has to equal the stored one, so nothing was lost, duplicated, or reordered. When they diverge, the first mismatching <code>N</code> points at the exact append that broke.</p>
 <h2 id="the-determinism-rules"><a class="zola-anchor" href="#the-determinism-rules" aria-label="Anchor link for: the-determinism-rules">🔗</a>The Determinism Rules</h2>
 <p>FDB's simulation is deterministic. Same seed, same execution path, same bugs. This is the superpower that lets you reproduce failures. But determinism is fragile. Break it, and you lose reproducibility. Five rules to remember:</p>
 <ol>
@@ -210,7 +217,7 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-06-09
+    © 2026 Pierre Zemb · last rev. 2026-06-24
   </div>
   <div class="cell">
     <span class="label">contact</span>
