@@ -139,7 +139,10 @@ pre, code, kbd { font-family: var(--font-mono); }
 
 /* ---- BOM / POST LIST ---- */
 .bom { padding: 0 1.6rem 1.2rem; }
-.bom .row { display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--grid-bold); align-items: baseline; }
+.bom .row { position: relative; display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--grid-bold); align-items: baseline; cursor: pointer; }
+/* Stretched link: the title's anchor covers the whole row, so the date,
+   description and empty space are all one click target. */
+.bom a.ttl::after { content: ""; position: absolute; inset: 0; }
 .bom .row:last-child { border-bottom: none; }
 .bom .row:hover .ttl { color: var(--cyan); }
 .bom .date { color: var(--ink); font-size: .82rem; font-variant-numeric: tabular-nums; }
@@ -150,7 +153,7 @@ pre, code, kbd { font-family: var(--font-mono); }
 .bom a.desc:hover { color: var(--cyan); text-decoration: none; }
 .bom .row:hover a.desc { color: var(--ink); }
 .bom .tg { color: var(--cyan); font-size: .7rem; margin-top: .3rem; }
-.bom .tg a { color: var(--cyan); }
+.bom .tg a { color: var(--cyan); position: relative; z-index: 1; }
 
 /* ---- TAG INDEX (taxonomy list) ---- */
 .taglist { display: flex; flex-wrap: wrap; gap: .6rem; padding: .4rem 1.6rem 1.4rem; }
