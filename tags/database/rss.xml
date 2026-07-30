@@ -7,7 +7,95 @@
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/database/rss.xml" rel="self" type="application/rss+xml"/>
-      <lastBuildDate>Fri, 30 Jan 2026 00:00:00 +0000</lastBuildDate>
+      <lastBuildDate>Thu, 30 Jul 2026 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>Why Apache Avro Needs Two Schemas</title>
+          <pubDate>Thu, 30 Jul 2026 00:00:00 +0000</pubDate>
+          <author>Pierre Zemb</author>
+          <link>https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/</link>
+          <guid>https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/</guid>
+          <description xml:base="https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/">&lt;p&gt;We have been using &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;avro.apache.org&#x2F;&quot;&gt;Apache Avro&lt;&#x2F;a&gt; for years as one of the binary encodings for &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;materia&#x2F;&quot;&gt;Materia&lt;&#x2F;a&gt;&#x27;s records stored in FoundationDB. A few weeks ago, while writing the code that adds a new type of header for a new component, I made a mistake. I serialized the records, stored the bytes, and moved on. Only later did I realize I had forgotten something essential: I wasn&#x27;t preserving the writer schema.&lt;&#x2F;p&gt;
+&lt;p&gt;At first, it didn&#x27;t seem like a problem. My application already knew the latest schema, so surely it could decode the data. Unfortunately, that&#x27;s not how Avro works, and more importantly, that&#x27;s not how long-lived data should work.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;avro-bytes-don-t-know-what-they-are&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#avro-bytes-don-t-know-what-they-are&quot; aria-label=&quot;Anchor link for: avro-bytes-don-t-know-what-they-are&quot;&gt;🔗&lt;&#x2F;a&gt;Avro bytes don&#x27;t know what they are&lt;&#x2F;h2&gt;
+&lt;p&gt;Avro&#x27;s binary encoding is deliberately compact. &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;avro.apache.org&#x2F;docs&#x2F;1.12.0&#x2F;specification&#x2F;&quot;&gt;The specification&lt;&#x2F;a&gt; states that binary encoded data &quot;does not include field names, self-contained information about the types of individual bytes, nor field or record separators&quot;. A record is just its field values concatenated in the order the schema declares them, an int is a zig-zag varint, a string is a length followed by UTF-8 bytes. A decoder discovers none of this from the payload, it walks the schema and consumes bytes in exactly the order the writer produced them. Without the writer schema, those bytes are just bytes.&lt;&#x2F;p&gt;
+&lt;p&gt;This is why Avro always assumes the writer schema is available somehow. &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;avro.apache.org&#x2F;docs&#x2F;1.12.0&#x2F;specification&#x2F;#object-container-files&quot;&gt;&lt;strong&gt;Object Container Files&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; embed it in the file header. &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;avro.apache.org&#x2F;docs&#x2F;1.12.0&#x2F;specification&#x2F;#single-object-encoding&quot;&gt;&lt;strong&gt;Single Object Encoding&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; prefixes the payload with a fingerprint of the writer schema, which is only a lookup key: you still need a schema store to turn it back into a schema. If you use raw binary Avro, like I was doing inside FoundationDB, you have to provide it yourself.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-do-we-need-two-schemas&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-do-we-need-two-schemas&quot; aria-label=&quot;Anchor link for: why-do-we-need-two-schemas&quot;&gt;🔗&lt;&#x2F;a&gt;Why do we need two schemas?&lt;&#x2F;h2&gt;
+&lt;p&gt;This is probably the question I answer most often.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Why does Avro need both a writer schema and a reader schema?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Because they solve different problems. The &lt;strong&gt;writer schema&lt;&#x2F;strong&gt; describes the data that actually exists on disk. The &lt;strong&gt;reader schema&lt;&#x2F;strong&gt; describes the structure expected by the software reading that data today. Schema evolution is the process of reconciling those two versions, and without the writer schema there is nothing to reconcile against.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-can-you-actually-change&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-can-you-actually-change&quot; aria-label=&quot;Anchor link for: what-can-you-actually-change&quot;&gt;🔗&lt;&#x2F;a&gt;What can you actually change?&lt;&#x2F;h2&gt;
+&lt;p&gt;When the two schemas differ, Avro resolves them field by field, matching fields by name. The &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;avro.apache.org&#x2F;docs&#x2F;1.12.0&#x2F;specification&#x2F;#schema-resolution&quot;&gt;schema resolution rules&lt;&#x2F;a&gt; permit more than people expect:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add a field&lt;&#x2F;strong&gt;: declare it with a default value, and the reader fills it in when decoding records written before the field existed.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Remove a field&lt;&#x2F;strong&gt;: the reader skips writer fields it doesn&#x27;t declare. The trap is the other direction: an old reader falls back to its own default, so the default must already be deployed before you remove the field.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Rename a field&lt;&#x2F;strong&gt;: declare the old name as an &lt;strong&gt;alias&lt;&#x2F;strong&gt; in the reader schema. Aliases only work forward: a reader deployed before the rename fails on the missing field, or worse, if the field has a default, silently reads the default instead of the written value.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Reorder fields&lt;&#x2F;strong&gt;: free, since resolution matches by name, not position.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Widen types&lt;&#x2F;strong&gt;: int promotes to long, float, or double, long to float or double, float to double, and string and bytes are interchangeable. Promotion is one-way too: once records are written as long, an int reader cannot decode them.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The rule that falls out of this is to give every field a default from day one, because a default turns a missing field into a value instead of a decode error. For nullable fields that means &lt;code&gt;[&quot;null&quot;, &quot;string&quot;]&lt;&#x2F;code&gt; with &lt;code&gt;default: null&lt;&#x2F;code&gt;, since implementations like the Java one validate the default against the union&#x27;s first branch.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-readers-come-first&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-readers-come-first&quot; aria-label=&quot;Anchor link for: why-readers-come-first&quot;&gt;🔗&lt;&#x2F;a&gt;Why readers come first&lt;&#x2F;h2&gt;
+&lt;p&gt;Those resolution rules are what make rolling upgrades work, as long as you deploy them in the right order. Imagine a service running two instances behind a load balancer, App A and App B. To keep the example simple, both read and write Avro-encoded values stored in Redis, both start at version 1, and the only schemas an instance knows are the ones compiled into its binary, there is no registry to fetch unknown ones from.&lt;&#x2F;p&gt;
+&lt;p&gt;Now you deploy version 2. If App A, upgraded first, immediately starts writing schema V2, App B is stuck: it has never seen V2, so it doesn&#x27;t hold the writer schema those records were encoded with. How compatible the change was doesn&#x27;t matter, you cannot reconcile against a schema you don&#x27;t know. As soon as App B reads a newly written record, the deployment is broken.&lt;&#x2F;p&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant A as App A (upgraded, writes V2)
+    participant R as Redis
+    participant B as App B (still V1)
+
+    A-&amp;gt;&amp;gt;R: put(record), encoded with V2 writer schema
+    B-&amp;gt;&amp;gt;R: get(record)
+    R--&amp;gt;&amp;gt;B: V2 bytes
+    Note over B: decode fails: B has never seen V2,&amp;lt;br&amp;#x2F;&amp;gt;there is no writer schema to resolve against
+&lt;&#x2F;div&gt;
+&lt;p&gt;Instead, App A starts with:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reader schema: V2&lt;&#x2F;li&gt;
+&lt;li&gt;Writer schema: V1&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant A as App A (upgraded: reads V2, writes V1)
+    participant R as Redis
+    participant B as App B (still V1)
+
+    A-&amp;gt;&amp;gt;R: put(record), encoded with V1 writer schema
+    B-&amp;gt;&amp;gt;R: get(record)
+    R--&amp;gt;&amp;gt;B: V1 bytes, decodes fine
+    Note over A,B: once every instance understands V2, switch writers to V2
+&lt;&#x2F;div&gt;
+&lt;p&gt;App A understands both versions but keeps writing V1 until App B is upgraded too, then you switch the writer schema to V2. I prefer making that switch an explicit operational step through an API call rather than a deploy side effect. Readers stay ahead of writers, and a normal rolling upgrade is enough.&lt;&#x2F;p&gt;
+&lt;p&gt;It gets worse when several programs share the same data. In Materia, one FoundationDB cluster hosts multiple layers, each on its own deployment schedule, so an internal encoding bump has to be synchronized across every layer that reads those records before the writer schema can move forward.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;keeping-old-schemas-is-a-feature&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#keeping-old-schemas-is-a-feature&quot; aria-label=&quot;Anchor link for: keeping-old-schemas-is-a-feature&quot;&gt;🔗&lt;&#x2F;a&gt;Keeping old schemas is a feature&lt;&#x2F;h2&gt;
+&lt;p&gt;One criticism I occasionally hear is that Avro forces you to keep historical schemas around forever. That&#x27;s true, and I think it&#x27;s one of its best properties. Every schema version becomes part of your compatibility contract: when you introduce V5, you should be able to verify that records written by V0, V1, V2, V3, and V4 are still readable. Those old schemas stop being dead code and become regression tests. Instead of hoping schema evolution still works, you can prove it.&lt;&#x2F;p&gt;
+&lt;p&gt;In the layers we build on top of Materia, that contract is explicit. Every record type declares its full schema lineage, each version tagged with the &lt;strong&gt;generation&lt;&#x2F;strong&gt; it starts writing from, and the store remembers the generation it was last reconciled to. That stamp pins the writer schema: a generation-2 binary opening a store stamped at generation 1 keeps writing V1 records, exactly as the older binaries do, and bumping the stamp is an explicit reconcile step, not a side effect of deploying a new binary.&lt;&#x2F;p&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant App as App (generation 2 binary)
+    participant Store
+
+    App-&amp;gt;&amp;gt;Store: put(record), encoded with V1 writer schema (stamp is 1)
+    Note over App,Store: every instance now understands generation 2
+    App-&amp;gt;&amp;gt;Store: reconcile_to(Generation(2))
+    Store--&amp;gt;&amp;gt;App: stamp bumped to generation 2
+    App-&amp;gt;&amp;gt;Store: put(record), encoded with V2 writer schema
+&lt;&#x2F;div&gt;
+&lt;p&gt;This is the readers-first deployment from earlier, enforced by the store instead of by discipline.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-about-protobuf&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-protobuf&quot; aria-label=&quot;Anchor link for: what-about-protobuf&quot;&gt;🔗&lt;&#x2F;a&gt;What about Protobuf?&lt;&#x2F;h2&gt;
+&lt;p&gt;Avro&#x27;s decode path is defined over two schemas and cannot run without both, while a Protobuf decoder only ever consults one. Each Protobuf field is prefixed with a tag packing the field number and a wire type, so a decoder can skip fields it doesn&#x27;t recognize even without a descriptor, it just cannot interpret them. That makes Protobuf feel schema-optional and moves evolution into rules on the schema source: never reuse a field number, only make wire-compatible changes. The price is tag bytes on every field, and that nothing forces you to record which schema wrote a given byte. Avro forces exactly that, so the compatibility question is always answerable against the data you have.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;ve walked the Protobuf-on-FDB path myself: in September 2020 I shipped &lt;a href=&quot;&#x2F;posts&#x2F;announcing-record-store&#x2F;&quot;&gt;Record-Store&lt;&#x2F;a&gt;, an experimental layer exposing the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-record-layer&quot;&gt;FDB Record Layer&lt;&#x2F;a&gt; over gRPC, with Protobuf definitions as the schema. The Record Layer stores its file descriptors inside FDB and built meta-data evolution by hand. The point fixes shipped in February 2019 (&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-record-layer&#x2F;issues&#x2F;3&quot;&gt;descriptor mismatches&lt;&#x2F;a&gt;, an &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-record-layer&#x2F;issues&#x2F;85&quot;&gt;evolution validator&lt;&#x2F;a&gt;), but the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-record-layer&#x2F;issues&#x2F;283&quot;&gt;meta-data evolution super-issue&lt;&#x2F;a&gt; opened in January 2019 is still open seven years later, and so is &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FoundationDB&#x2F;fdb-record-layer&#x2F;issues&#x2F;965&quot;&gt;the stale meta-data problem during rolling upgrades&lt;&#x2F;a&gt;, the exact readers-first scenario above. That&#x27;s a big part of why Materia uses Avro as its main encoding: I wanted the flexibility of the two-schema model.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-mistake&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-mistake&quot; aria-label=&quot;Anchor link for: the-mistake&quot;&gt;🔗&lt;&#x2F;a&gt;The mistake&lt;&#x2F;h2&gt;
+&lt;p&gt;Looking back, my mistake had nothing to do with FoundationDB, and it wasn&#x27;t even really an Avro mistake. &lt;strong&gt;Data outlives software&lt;&#x2F;strong&gt;: the application that writes a record today will eventually disappear, the bytes won&#x27;t. I think this is the main reason writing Materia is so complicated. We have to enforce correctness, always be able to read something back, and stay backward compatible with records written by the very first Materia services. A mistake in a distributed multi-tenant service gets fixed with background work and per-tenant migration workflows, and mine left dedicated code in the codebase whose only job is to detect the records written without a fingerprint. Avro&#x27;s reader and writer schema model exists because tomorrow&#x27;s software shouldn&#x27;t have to guess how yesterday&#x27;s data was written.&lt;&#x2F;p&gt;
+&lt;p&gt;How does your system decode the records it wrote five years ago?&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with schema evolution. You can find me on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</description>
+          <category domain="tag">avro</category>
+          <category domain="tag">database</category>
+          <category domain="tag">foundationdb</category>
+          <category domain="tag">software-engineering</category>
+      </item>
       <item>
           <title>FoundationDB&#x27;s Transaction Model for Layer Engineers</title>
           <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>

@@ -213,6 +213,10 @@
         <lastmod>2025-06-03T00:30:00+02:00</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/</loc>
+        <lastmod>2026-07-30</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/</loc>
         <lastmod>2026-03-26</lastmod>
     </url>
@@ -234,6 +238,9 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/async/</loc>
+    </url>
+    <url>
+        <loc>https://pierrezemb.fr/tags/avro/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/caching/</loc>
