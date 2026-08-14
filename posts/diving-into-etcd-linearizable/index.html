@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Diving into ETCD&#x27;s linearizable reads | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="A code-level dive into how etcd achieves linearizable reads with the ReadIndex protocol on top of Raft, including how it enables safe follower reads.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,17 +30,17 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">
   <meta property="og:title" content="Diving into ETCD&#x27;s linearizable reads">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="A code-level dive into how etcd achieves linearizable reads with the ReadIndex protocol on top of Raft, including how it enables safe follower reads.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Diving into ETCD&#x27;s linearizable reads">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="A code-level dive into how etcd achieves linearizable reads with the ReadIndex protocol on top of Raft, including how it enables safe follower reads.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2020-09-18T05:24:27+01:00">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="etcd">
   <meta property="article:tag" content="raft">
   <meta property="article:tag" content="consensus">
@@ -49,24 +59,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/diving-into-etcd-linearizable.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -85,7 +94,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;diving-into-etcd-linearizable">./read --quorum posts&#x2F;diving-into-etcd-linearizable</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -104,7 +113,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / diving-into-etcd-linearizable
@@ -113,7 +122,8 @@
   <h2 class="title">Diving into ETCD&#x27;s linearizable reads</h2>
   <div class="meta-row"><span class="m"><b>2020-09-18</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/diving-into-etcd-linearizable.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -145,18 +155,18 @@
     <p><img src="/images/diving-into-etcd-linearizable/etcd.png" alt="etcd image" /></p>
 <p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of the project's basecode. In this episode, we will digg into the implementation behind ETCD's Linearizable reads.</p>
 <hr />
-<h2 id="what-is-etcd"><a class="zola-anchor" href="#what-is-etcd" aria-label="Anchor link for: what-is-etcd">🔗</a>What is ETCD?</h2>
+<h2 id="what-is-etcd">What is ETCD?<a class="zola-anchor" href="#what-is-etcd" aria-label="Anchor link for: what-is-etcd">🔗</a></h2>
 <p>From <a rel="external" href="https://etcd.io/">the official website</a>:</p>
 <blockquote>
 <p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
 </blockquote>
 <p>ETCD is well-known to be Kubernetes's datastore, and a CNCF incubating project.</p>
-<h2 id="linea-what"><a class="zola-anchor" href="#linea-what" aria-label="Anchor link for: linea-what">🔗</a>Linea-what?</h2>
+<h2 id="linea-what">Linea-what?<a class="zola-anchor" href="#linea-what" aria-label="Anchor link for: linea-what">🔗</a></h2>
 <p><a rel="external" href="https://jepsen.io/consistency/models/linearizable">Let's quote Kyle Kingsbury, a.k.a "Aphyr"</a>, for this one:</p>
 <blockquote>
 <p>Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.</p>
 </blockquote>
-<h2 id="why"><a class="zola-anchor" href="#why" aria-label="Anchor link for: why">🔗</a>Why?</h2>
+<h2 id="why">Why?<a class="zola-anchor" href="#why" aria-label="Anchor link for: why">🔗</a></h2>
 <p>ETCD is using <a rel="external" href="https://raft.github.io/">Raft</a>, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here's an example:</p>
 <ol>
 <li><code>node1</code> is <code>leader</code> and heartbeating properly to <code>node2</code> and <code>node3</code>,</li>
@@ -169,7 +179,7 @@
 </ul>
 <p>This situation is violating Linearizable reads, as reads going through <code>node1</code> will not see the last updates from the current leader.</p>
 <p>How can we solve this? One way is to use <code>ReadIndex</code>!</p>
-<h2 id="readindex"><a class="zola-anchor" href="#readindex" aria-label="Anchor link for: readindex">🔗</a>ReadIndex</h2>
+<h2 id="readindex">ReadIndex<a class="zola-anchor" href="#readindex" aria-label="Anchor link for: readindex">🔗</a></h2>
 <p>The basic idea behind this is to confirm that the <strong>leader is true leader or not</strong> by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let's dive into the implementation!</p>
 <p>All codes are from the current latest release <a rel="external" href="https://github.com/etcd-io/etcd/releases/tag/v3.4.13">v3.4.13</a>.</p>
 <p><a rel="external" href="https://github.com/etcd-io/etcd/blob/v3.4.13/etcdserver/v3_server.go#L114-L120">Let's take a Range operation</a>:</p>
@@ -295,7 +305,7 @@
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> unblock all l-reads requested at indices before rs.Index</span></span>
 <span class="giallo-l"><span class="z-variable z-other">  nr</span><span>.</span><span class="z-entity z-name z-function">notify</span><span>(</span><span class="z-constant z-language">nil</span><span>)</span></span></code></pre>
 <p>The first part is a safety measure to makes sure the applied index is lower that the index stored in <code>ReadState</code>. And then finally we are unlocking all pending reads 🤩</p>
-<h2 id="one-more-thing-follower-read"><a class="zola-anchor" href="#one-more-thing-follower-read" aria-label="Anchor link for: one-more-thing-follower-read">🔗</a>One more thing: Follower read</h2>
+<h2 id="one-more-thing-follower-read">One more thing: Follower read<a class="zola-anchor" href="#one-more-thing-follower-read" aria-label="Anchor link for: one-more-thing-follower-read">🔗</a></h2>
 <p>We went through <code>stepLeader</code> a lot, be there is something interesting in <a rel="external" href="https://github.com/etcd-io/etcd/blob/v4.3.13/raft/raft.go#L1320"><code>stepFollower</code></a>:</p>
 <pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-keyword"> case</span><span class="z-variable z-other"> pb</span><span>.</span><span class="z-variable z-other">MsgReadIndex</span><span>:</span></span>
 <span class="giallo-l"><span class="z-keyword">  if</span><span class="z-variable z-other"> r</span><span>.</span><span class="z-variable z-other">lead</span><span class="z-keyword"> ==</span><span class="z-variable z-other"> None</span><span> {</span></span>
@@ -305,7 +315,7 @@
 <span class="giallo-l"><span class="z-variable z-other">  m</span><span>.</span><span class="z-variable z-other">To</span><span class="z-keyword"> =</span><span class="z-variable z-other"> r</span><span>.</span><span class="z-variable z-other">lead</span></span>
 <span class="giallo-l"><span class="z-variable z-other">  r</span><span>.</span><span class="z-entity z-name z-function">send</span><span>(</span><span class="z-variable z-other">m</span><span>)</span></span></code></pre>
 <p>This means that a follower can send a <code>MsgReadIndex</code> message to perform the same kind of checks than a leader. This small features is in fact enabling <strong>follower-reads</strong> on ETCD 🤩 That is why you can see <code>Range</code> requests from a <code>follower</code>.</p>
-<h2 id="operational-tips"><a class="zola-anchor" href="#operational-tips" aria-label="Anchor link for: operational-tips">🔗</a>operational tips</h2>
+<h2 id="operational-tips">operational tips<a class="zola-anchor" href="#operational-tips" aria-label="Anchor link for: operational-tips">🔗</a></h2>
 <ul>
 <li>If you are running etcd &lt;= 3.4, make sure <strong>logger=zap</strong> is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:</li>
 </ul>
@@ -335,6 +345,10 @@
 <p><strong>Thank you</strong> for reading my post! feel free to react to this article, I'm also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/notes-about-raft/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Notes about Raft&#x27;s paper</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/announcing-record-store/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Announcing Record-Store, a new (experimental) place for your data</span></a>
+  </nav>
 </article>
 
   </main>
@@ -342,11 +356,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -357,9 +371,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

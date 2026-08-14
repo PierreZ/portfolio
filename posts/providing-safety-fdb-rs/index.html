@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Ensuring Safety in FoundationDB&#x27;s Rust Crate | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
   <meta property="og:description" content="Strategies and techniques for enhancing safety in the FoundationDB Rust crate">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Ensuring Safety in FoundationDB&#x27;s Rust Crate">
@@ -34,7 +44,7 @@
   <meta property="article:tag" content="rust">
   <meta property="article:tag" content="testing">
   <meta property="article:tag" content="database">
-  <meta property="article:tag" content="distributed"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <meta property="article:tag" content="distributed-systems"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init()
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/providing-safety-fdb-rs.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;providing-safety-fdb-rs">./read --quorum posts&#x2F;providing-safety-fdb-rs</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / providing-safety-fdb-rs
@@ -112,7 +121,8 @@
   <h2 class="title">Ensuring Safety in FoundationDB&#x27;s Rust Crate</h2>
   <div class="meta-row"><span class="m"><b>2025-02-11</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/providing-safety-fdb-rs.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -145,7 +155,7 @@
 
   <div class="prose">
     <p>As we approach 5 million downloads of the <a rel="external" href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.</p>
-<h2 id="crate-overview"><a class="zola-anchor" href="#crate-overview" aria-label="Anchor link for: crate-overview">🔗</a>Crate Overview</h2>
+<h2 id="crate-overview">Crate Overview<a class="zola-anchor" href="#crate-overview" aria-label="Anchor link for: crate-overview">🔗</a></h2>
 <p>The Rust crate, <code>foundationdb-rs</code>, provides bindings to interact with FoundationDB's C API (<code>libfdb</code>). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:</p>
 <ul>
 <li>The underlying client, <code>libfdb</code>,</li>
@@ -153,9 +163,9 @@
 <li>The code that uses the crate.</li>
 </ul>
 <p>Let's dig into each of these areas.</p>
-<h2 id="libfdb-safety"><a class="zola-anchor" href="#libfdb-safety" aria-label="Anchor link for: libfdb-safety">🔗</a>libfdb Safety</h2>
+<h2 id="libfdb-safety">libfdb Safety<a class="zola-anchor" href="#libfdb-safety" aria-label="Anchor link for: libfdb-safety">🔗</a></h2>
 <p>This is the simplest part. <code>libfdb</code>'s safety is guaranteed by FoundationDB's <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation framework</a>. Therefore, we can consider it safe.</p>
-<h3 id="classic-testing-suite"><a class="zola-anchor" href="#classic-testing-suite" aria-label="Anchor link for: classic-testing-suite">🔗</a>Classic testing suite</h3>
+<h3 id="classic-testing-suite">Classic testing suite<a class="zola-anchor" href="#classic-testing-suite" aria-label="Anchor link for: classic-testing-suite">🔗</a></h3>
 <p>Since we are using a C library, we need to use FFI (Foreign Function Interface) and unsafe code blocks. With around 130 unsafe blocks, we must be extra careful when calling C code, ensuring all preconditions are met. Naturally, we conduct extensive testing, but most importantly, we run tests in high-variety environments:</p>
 <ul>
 <li>On multiple operating systems (Ubuntu, macOS)</li>
@@ -164,7 +174,7 @@
 </ul>
 <p>The most useful tests are run on the nightly Rust compiler, as we can catch <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/issues/90">new behaviors in the Rust compiler early</a>.</p>
 <p>While these testing practices provide significant coverage, the most powerful tool we utilize comes from FoundationDB’s maintainers: the <code>BindingTester</code>.</p>
-<h3 id="the-bindingtester"><a class="zola-anchor" href="#the-bindingtester" aria-label="Anchor link for: the-bindingtester">🔗</a>The BindingTester</h3>
+<h3 id="the-bindingtester">The BindingTester<a class="zola-anchor" href="#the-bindingtester" aria-label="Anchor link for: the-bindingtester">🔗</a></h3>
 <p>FoundationDB is renowned for its <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
 <p>The BindingTester uses <a rel="external" href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
 <p>It looks like this:</p>
@@ -199,7 +209,7 @@
 </ul>
 <p>Combined with code coverage, this gives us a good idea of what has been tested (though code coverage may vary).</p>
 <p>We run the <code>BindingTester</code> <strong>every hour</strong> on our GitHub actions, amounting to <strong>around 219 days of continuous testing each month</strong> (316,335 minutes of correctness last month according to Github).</p>
-<h2 id="user-safety"><a class="zola-anchor" href="#user-safety" aria-label="Anchor link for: user-safety">🔗</a>User Safety</h2>
+<h2 id="user-safety">User Safety<a class="zola-anchor" href="#user-safety" aria-label="Anchor link for: user-safety">🔗</a></h2>
 <p>Thanks to <code>libfdb</code> and the <code>BindingTester</code>, we can ensure that the library is quite safe. But what about the user's code? How can we help users ensure their code can handle all of FoundationDB's caveats, such as <a href="/posts/automatic-txn-fdb-730/#transactions-with-unknown-results">commit_unknown_result</a>? We added a great feature: the ability to include Rust code <strong>within FDB's simulation framework</strong>.</p>
 <p>We can implement an Rust workload with the following Trait:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage"> trait</span><span class="z-entity z-name z-type"> RustWorkload</span><span> {</span></span>
@@ -241,12 +251,16 @@
 <span class="giallo-l"><span class="z-entity z-name z-function">Unseed:</span><span class="z-constant z-numeric"> 66324</span></span>
 <span class="giallo-l"><span class="z-entity z-name z-function">Elapsed:</span><span class="z-constant z-numeric"> 405.055622</span><span class="z-string"> simsec,</span><span class="z-constant z-numeric"> 30.342000</span><span class="z-string"> real</span><span class="z-string"> seconds</span></span></code></pre>
 <p>This has been a <strong>major keypoint</strong> for us to develop and operate <a rel="external" href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
-<h2 id="closing-words"><a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a>Closing words</h2>
+<h2 id="closing-words">Closing words<a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a></h2>
 <p>As with any open-source project, there is always more to accomplish, but I am quite satisfied with the current level of safety provided by the crate. I would like to express my gratitude to the FoundationDB community for developing the BindingTester, and former contributors to the crate.</p>
 <p>I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.</p>
 <p>There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the <a href="/tags/simulation/">simulation tags</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/back-engineering/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Back in engineering!</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/fdb-data-distributor/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Debugging FoundationDB&#x27;s Data Distributor</span></a>
+  </nav>
 </article>
 
   </main>
@@ -254,11 +268,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -269,9 +283,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

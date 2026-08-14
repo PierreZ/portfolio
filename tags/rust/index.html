@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>#rust | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Posts tagged #rust.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -20,13 +30,13 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pierrezemb.fr/tags/rust/">
   <meta property="og:title" content="#rust">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="#rust">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -44,22 +54,19 @@
   
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -78,7 +85,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags&#x2F;rust">./read --quorum tags&#x2F;rust</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 10 documents · committed</span><span class="cursor"></span></div>
   </div>
@@ -97,97 +104,87 @@
 </div>
 
 
-  <main>
+  <main id="main">
     
 <div class="sec-head">ls ./tags/rust</div>
 <div class="bom">
   
   <div class="row">
-    <div class="date">2026-06-09</div>
+    <div class="date">2026-06-09<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">Designing Fakes That Prove Correctness</a><a class="desc" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">You fake the handful of methods your code actually calls, prove the fake stays honest, and then make it fail the way production does.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-03-23</div>
+    <div class="date">2026-03-23<span class="rt">~13 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">Diving Into Coverage-Guided Fuzzing</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">How a 600-line Rust fuzzer discovers a 3-byte crash sequence in 9,000 iterations instead of 16 million</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/fuzzing/">#fuzzing</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-02-25</div>
+    <div class="date">2026-02-25<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/datafusion-index-provider/">Building Index-Backed Query Plans in DataFusion</a><a class="desc" href="https://pierrezemb.fr/posts/datafusion-index-provider/">What I learned about manually constructing physical query plans for secondary index queries, and the library that came out of it.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a> <a href="https://pierrezemb.fr/tags/databases/">#databases</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-02-05</div>
+    <div class="date">2026-02-05<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Simulating Leader Election on top of FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/leader-election/">#leader-election</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-01-15</div>
+    <div class="date">2026-01-15<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/llms-for-engineering/">What I Tell Colleagues About Using LLMs for Engineering</a><a class="desc" href="https://pierrezemb.fr/posts/llms-for-engineering/">LLMs amplify expertise, they don&#x27;t replace it. Here&#x27;s what works: planning, context, feedback loops, and building systems that let AI discover bugs.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-12-09</div>
+    <div class="date">2025-12-09<span class="rt">~13 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/">Designing Rust FDB Workloads That Actually Find Bugs</a><a class="desc" href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/">Patterns and principles for writing Rust simulation workloads that catch bugs before production does.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-10-02</div>
+    <div class="date">2025-10-02<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">From Arc to Box: One Deref Bound to Rule Them All</a><a class="desc" href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/programming/">#programming</a> <a href="https://pierrezemb.fr/tags/metaprogramming/">#metaprogramming</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-06-04</div>
+    <div class="date">2025-06-04<span class="rt">~6 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Thank You, DataFusion: Queries in Rust, Without the Pain</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a> <a href="https://pierrezemb.fr/tags/databases/">#databases</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Thank You, DataFusion: Queries in Rust, Without the Pain</a><a class="desc" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Why Apache DataFusion, a composable Rust-native SQL engine rather than a rigid framework, finally let me plug real queries into our FoundationDB-based system after years of watching from the sidelines.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-05-18</div>
+    <div class="date">2025-05-18<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/tokio-hidden-gems/">Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</a><a class="desc" href="https://pierrezemb.fr/posts/tokio-hidden-gems/">Discover lesser-known Tokio features like current-thread runtimes for !Send futures, seeded runtimes for deterministic tests, and paused time for precise temporal control in your Rust applications.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/tokio/">#tokio</a> <a href="https://pierrezemb.fr/tags/async/">#async</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/concurrency/">#concurrency</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-02-11</div>
+    <div class="date">2025-02-11<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">Ensuring Safety in FoundationDB&#x27;s Rust Crate</a><a class="desc" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">Strategies and techniques for enhancing safety in the FoundationDB Rust crate</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
     </div>
   </div>
 
@@ -198,11 +195,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -213,9 +210,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

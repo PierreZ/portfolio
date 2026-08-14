@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Hbase Data Model | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="An overview of HBase&#x27;s data model, row keys, column families and qualifiers, and why key design determines whether you get good performance or a hotspotted region.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,18 +30,18 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/hbase-data-model/">
   <meta property="og:title" content="Hbase Data Model">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="An overview of HBase&#x27;s data model, row keys, column families and qualifiers, and why key design determines whether you get good performance or a hotspotted region.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Hbase Data Model">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="An overview of HBase&#x27;s data model, row keys, column families and qualifiers, and why key design determines whether you get good performance or a hotspotted region.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2019-01-27T20:24:27+01:00">
   <meta property="article:tag" content="database">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="hbase">
   <meta property="article:tag" content="storage">
   <meta property="article:tag" content="design"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/hbase-data-model.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;hbase-data-model">./read --quorum posts&#x2F;hbase-data-model</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / hbase-data-model
@@ -112,7 +121,8 @@
   <h2 class="title">Hbase Data Model</h2>
   <div class="meta-row"><span class="m"><b>2019-01-27</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/hbase-data-model.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -135,13 +145,13 @@
   </nav>
 
   <div class="prose">
-    <h2 id="hbase"><a class="zola-anchor" href="#hbase" aria-label="Anchor link for: hbase">🔗</a>HBase?</h2>
+    <h2 id="hbase">HBase?<a class="zola-anchor" href="#hbase" aria-label="Anchor link for: hbase">🔗</a></h2>
 <p><img src="/images/hbase-data-model/hbase.jpg" alt="hbase image" /></p>
 <blockquote>
 <p><a rel="external" href="https://hbase.apache.org/">Apache HBase™</a> is a type of "NoSQL" database. "NoSQL" is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
 </blockquote>
 <p>-- <a rel="external" href="https://hbase.apache.org/book.html#arch.overview.nosql">Hbase architecture overview</a></p>
-<h2 id="hbase-data-model"><a class="zola-anchor" href="#hbase-data-model" aria-label="Anchor link for: hbase-data-model">🔗</a>Hbase data model</h2>
+<h2 id="hbase-data-model">Hbase data model<a class="zola-anchor" href="#hbase-data-model" aria-label="Anchor link for: hbase-data-model">🔗</a></h2>
 <p>The data model is simple: it's like a multi-dimensional map:</p>
 <ul>
 <li>Elements are stored as <strong>rows</strong> in a <strong>table</strong>.</li>
@@ -168,7 +178,7 @@
 <span class="giallo-l"><span>      }</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>  }</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h2 id="key-design"><a class="zola-anchor" href="#key-design" aria-label="Anchor link for: key-design">🔗</a>Key design</h2>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="key-design">Key design<a class="zola-anchor" href="#key-design" aria-label="Anchor link for: key-design">🔗</a></h2>
 <p>Hbase is most efficient at queries when we're getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be "near".</p>
 <p>As such, the <strong>key design</strong> is really important:</p>
 <ul>
@@ -181,7 +191,7 @@
 </blockquote>
 <p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
 <p>If you are curious about Hbase schema, you should have a look on <a rel="external" href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
-<h2 id="be-warned"><a class="zola-anchor" href="#be-warned" aria-label="Anchor link for: be-warned">🔗</a>Be warned</h2>
+<h2 id="be-warned">Be warned<a class="zola-anchor" href="#be-warned" aria-label="Anchor link for: be-warned">🔗</a></h2>
 <p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here's some warnings extracted from the well-written documentation:</p>
 <blockquote>
 <p>HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
@@ -195,6 +205,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/acid-transactions/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">What are ACID transactions?</span></a>
+  </nav>
 </article>
 
   </main>
@@ -202,11 +216,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -217,9 +231,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

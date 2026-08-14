@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Why Fakes Beat Mocks and Testcontainers | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Why Fakes Beat Mocks and Testcontainers">
   <meta property="og:description" content="Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Why Fakes Beat Mocks and Testcontainers">
@@ -46,24 +56,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -82,7 +91,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;why-fakes-beat-mocks-and-testcontainers">./read --quorum posts&#x2F;why-fakes-beat-mocks-and-testcontainers</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -101,7 +110,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / why-fakes-beat-mocks-and-testcontainers
@@ -110,6 +119,7 @@
   <h2 class="title">Why Fakes Beat Mocks and Testcontainers</h2>
   <div class="meta-row"><span class="m"><b>2026-03-26</b></span>
     <span class="m">read: <b>~8 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
   <nav class="toc">
@@ -141,7 +151,7 @@
   <div class="prose">
     <p>Your CI pipeline spins up Kafka, Postgres, and Redis in Docker containers. It takes 4 minutes to start. Every test passes. And none of them can simulate the one failure mode that will page you at 3 AM.</p>
 <p>The problem is not speed or convenience. The problem is that Testcontainers give you a binary outcome: the whole service is up, or it is down. But production failures are <strong>partial</strong>. A Kafka broker loses partition 3 while partitions 1, 2, and 4 stay healthy. A Postgres replica falls behind by 30 seconds while the primary is fine. A Redis cluster has one shard OOM while five others serve normally. These are the failures where the real bugs hide, and Testcontainers simply cannot produce them.</p>
-<h2 id="mocks-testcontainers-and-fakes"><a class="zola-anchor" href="#mocks-testcontainers-and-fakes" aria-label="Anchor link for: mocks-testcontainers-and-fakes">🔗</a>Mocks, Testcontainers, and fakes</h2>
+<h2 id="mocks-testcontainers-and-fakes">Mocks, Testcontainers, and fakes<a class="zola-anchor" href="#mocks-testcontainers-and-fakes" aria-label="Anchor link for: mocks-testcontainers-and-fakes">🔗</a></h2>
 <p>Mocks and Testcontainers are the two tools most developers reach for. Both have fundamental limitations. There is a third option that is surprisingly underused: <strong>fakes</strong>.</p>
 <table><thead><tr><th></th><th>Mocks</th><th>Testcontainers</th><th>Fakes</th></tr></thead><tbody>
 <tr><td><strong>State</strong></td><td>None — scripted returns</td><td>Full — real database</td><td>Realistic — in-memory</td></tr>
@@ -151,7 +161,7 @@
 <tr><td><strong>Deterministic</strong></td><td>Yes</td><td>No</td><td>Yes</td></tr>
 </tbody></table>
 <p>A fake is a real implementation of a dependency's interface that runs in-memory, maintains realistic state, and can inject failures at arbitrary granularity. Not a compromise between mocks and real dependencies, but something <strong>more powerful</strong> than both.</p>
-<h2 id="what-is-wrong-with-mocks"><a class="zola-anchor" href="#what-is-wrong-with-mocks" aria-label="Anchor link for: what-is-wrong-with-mocks">🔗</a>What is wrong with mocks</h2>
+<h2 id="what-is-wrong-with-mocks">What is wrong with mocks<a class="zola-anchor" href="#what-is-wrong-with-mocks" aria-label="Anchor link for: what-is-wrong-with-mocks">🔗</a></h2>
 <p>The first problem is that mock expectations couple your tests to implementation details. Oxide Computer's <a rel="external" href="https://github.com/oxidecomputer/omicron/blob/main/illumos-utils/src/fakes/README.adoc">README on fakes</a> captures it:</p>
 <blockquote>
 <p>"If you're calling a mocked API which accesses the host OS several call stacks down, your test must have an expect call for that API, or it will fail."</p>
@@ -168,7 +178,7 @@
 </blockquote>
 <p>A fake avoids this entirely because it is just another implementation of the same interface. It exercises the same production wiring, the same error handling. The only thing that changes is what sits behind the interface.</p>
 <p>But if mocks are the wrong tool, what replaces them?</p>
-<h2 id="the-pattern"><a class="zola-anchor" href="#the-pattern" aria-label="Anchor link for: the-pattern">🔗</a>The pattern</h2>
+<h2 id="the-pattern">The pattern<a class="zola-anchor" href="#the-pattern" aria-label="Anchor link for: the-pattern">🔗</a></h2>
 <p>The idea is simple enough to fit in a single paragraph: define an interface for the external dependency, implement it once for real usage (the version that calls the OS, the network, the disk), implement it again as a fake (in-memory, stateful, with injectable failure modes), and inject via interface reference so you can swap between real and fake at runtime. Tests compose multiple fake implementations into a complete test environment. That is the entire pattern.</p>
 <p>Two principles help you choose where to draw the boundary.</p>
 <p><strong>Code ownership.</strong> Fake where your code meets code you do not own. If you fake at the JDBC level, you are simulating PostgreSQL's behavior: connection pooling, transaction isolation, error codes. That is code you do not own. When PostgreSQL changes behavior between major versions, your fake silently diverges from reality. If you fake at <code>UserRepository</code>, you are simulating a contract you defined. Three methods, a <code>HashMap</code>. You can keep it correct because you wrote the spec.</p>
@@ -210,11 +220,11 @@
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Same trait. One talks to Postgres. One lives in memory. Your system cannot tell the difference. The fake maintains real state, supports real queries against that state, and runs in microseconds with zero infrastructure.</p>
 <p>So the pattern is straightforward. But why is it better than just running the real dependency in a container?</p>
-<h2 id="the-failures-containers-miss"><a class="zola-anchor" href="#the-failures-containers-miss" aria-label="Anchor link for: the-failures-containers-miss">🔗</a>The failures containers miss</h2>
+<h2 id="the-failures-containers-miss">The failures containers miss<a class="zola-anchor" href="#the-failures-containers-miss" aria-label="Anchor link for: the-failures-containers-miss">🔗</a></h2>
 <p>Testcontainers running real Kafka give you binary: up or down. A <code>FakeMessageBroker</code> can return <code>Ok</code> for partition 1 and <code>Err(PartitionUnavailable)</code> for partition 3 in the same call. A real PostgreSQL container serves consistent reads. A <code>FakeStore</code> can return stale data on 50% of reads, simulating replica lag your application must handle. A real Redis container never evicts keys mid-test. A <code>FakeCache</code> can expire entries between a write and the immediately following read. A real system clock never goes backward. A <code>FakeClock</code> can jump forward, rewind, or freeze, exposing every time-dependent assumption in your code.</p>
 <p>These are not exotic edge cases. They are Tuesday in production. And containers cannot produce any of them because containers faithfully implement the dependency's happy path. A fake controls the failure surface at arbitrary granularity: which operation fails, when it fails, and how it fails.</p>
 <p>A fake that covers 80% of a dependency's behavior with determinism and fault injection is strictly better than Testcontainers covering 100% with none of those properties. The 20% you do not model belongs in a separate integration test against the real dependency, run less frequently.</p>
-<h2 id="be-worse-than-production"><a class="zola-anchor" href="#be-worse-than-production" aria-label="Anchor link for: be-worse-than-production">🔗</a>Be worse than production</h2>
+<h2 id="be-worse-than-production">Be worse than production<a class="zola-anchor" href="#be-worse-than-production" aria-label="Anchor link for: be-worse-than-production">🔗</a></h2>
 <p>A fake that faithfully reproduces production behavior is useful, but a fake that is <strong>worse</strong> than production is powerful. Consider MariaDB Galera Cluster: the documentation claims transaction isolation "between Serializable and Repeatable Read." <a rel="external" href="https://jepsen.io/analyses/mariadb-galera-cluster-12.1.2">Jepsen tested a healthy cluster with zero injected faults</a> and found lost committed transactions, lost updates, and stale reads. The actual isolation appeared <strong>weaker than Read Uncommitted</strong>.</p>
 <p>Most code handles loud failures: errors, timeouts, connection resets. The dangerous failures are <strong>silent</strong>. A write that reports success but vanishes. A read that returns stale data. An operation that simply never comes back. No error to catch. Your code thinks everything is fine.</p>
 <p>Take the <code>FakeUserRepository</code> from earlier and make it lie:</p>
@@ -251,13 +261,17 @@
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>This fake does not just return errors. It silently drops writes, returns stale data, and sometimes never responds at all. Every one of these failure modes exists in production. If your code detects and handles them, it survives the real thing.</p>
 <p>So fakes are more powerful than Testcontainers, and cranking up their hostility makes them even more effective. But is this a fringe idea?</p>
-<h2 id="you-are-not-alone"><a class="zola-anchor" href="#you-are-not-alone" aria-label="Anchor link for: you-are-not-alone">🔗</a>You are not alone</h2>
+<h2 id="you-are-not-alone">You are not alone<a class="zola-anchor" href="#you-are-not-alone" aria-label="Anchor link for: you-are-not-alone">🔗</a></h2>
 <p>This is not a niche technique. AWS has used interface-swapped simulation for <a rel="external" href="https://www.usenix.org/conference/nsdi20/presentation/brooker">15+ years</a> to test distributed consensus, with typical correctness tests executing in under 100 milliseconds. Google's <a rel="external" href="https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/">Fauxmaster</a> runs real scheduler code against simulated workers replaying production data. Microsoft's <a rel="external" href="https://www.microsoft.com/en-us/research/publication/crystalnet-faithfully-emulating-large-production-networks/">CrystalNet</a> found <strong>50+ bugs</strong> using virtualized network hardware, catching <strong>69%</strong> of Azure network outage categories. <a rel="external" href="https://github.com/oxidecomputer/omicron">Oxide Computer</a> uses trait-based fakes across 500,000+ lines of Rust with a mock framework in exactly one place. The pattern scales from startups to hyperscalers.</p>
 <p>Start with one fake. Replace one mock with a stateful, injectable implementation of the same trait. Every fake you write is a step toward <a href="/posts/simulation-driven-development/">simulation</a>.</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your experiences with fakes and simulation. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Diving Into Coverage-Guided Fuzzing</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/bugbash-2026/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">BugBash 2026, or how the correctness decade has started</span></a>
+  </nav>
 </article>
 
   </main>
@@ -265,11 +279,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -280,9 +294,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

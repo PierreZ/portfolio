@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Best resources to learn about data and distributed systems | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#x27;s the best resources I used to learn distributed systems">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Best resources to learn about data and distributed systems">
   <meta property="og:description" content="Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#x27;s the best resources I used to learn distributed systems">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Best resources to learn about data and distributed systems">
@@ -31,7 +41,7 @@
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2022-01-17T01:37:27+01:00">
   <meta property="article:tag" content="learning">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="education">
   <meta property="article:tag" content="database"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2022/distsys-resources.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;distsys-resources">./read --quorum posts&#x2F;distsys-resources</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / distsys-resources
@@ -111,7 +120,8 @@
   <h2 class="title">Best resources to learn about data and distributed systems</h2>
   <div class="meta-row"><span class="m"><b>2022-01-17</b></span>
     <span class="m">read: <b>~11 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/education/">#education</a> <a href="https://pierrezemb.fr/tags/database/">#database</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2022/distsys-resources.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/education/">#education</a> <a href="https://pierrezemb.fr/tags/database/">#database</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -212,8 +222,8 @@
 <p>A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable.</p>
 <p>-Lamport, 1987</p>
 </blockquote>
-<h2 id="reading-books"><a class="zola-anchor" href="#reading-books" aria-label="Anchor link for: reading-books">🔗</a>Reading 📚</h2>
-<h3 id="designing-data-intensive-applications"><a class="zola-anchor" href="#designing-data-intensive-applications" aria-label="Anchor link for: designing-data-intensive-applications">🔗</a>Designing Data-Intensive Applications</h3>
+<h2 id="reading-books">Reading 📚<a class="zola-anchor" href="#reading-books" aria-label="Anchor link for: reading-books">🔗</a></h2>
+<h3 id="designing-data-intensive-applications">Designing Data-Intensive Applications<a class="zola-anchor" href="#designing-data-intensive-applications" aria-label="Anchor link for: designing-data-intensive-applications">🔗</a></h3>
 <p>Let's start by one of my favorite book, <a rel="external" href="https://dataintensive.net/">Designing Data-Intensive Applications</a>, written by <a rel="external" href="https://martin.kleppmann.com/">Martin Kleppmann</a>. This is by far the most practical book you will ever find about distributed systems. It covers:</p>
 <ul>
 <li>Data models, query languages and encoding,</li>
@@ -226,38 +236,38 @@
 <p>As software engineers, we need to build applications that are reliable, scalable and maintainable in the long run. We need to understand the range of available tools and their trade-offs. For that, we have to dig deeper than buzzwords.</p>
 <p>This book will help you navigate the diverse and fast-changing landscape of technologies for storing and processing data. We compare a broad variety of tools and approaches, so that you can see the strengths and weaknesses of each, and decide what’s best for your application.</p>
 </blockquote>
-<h3 id="database-internals"><a class="zola-anchor" href="#database-internals" aria-label="Anchor link for: database-internals">🔗</a>Database Internals</h3>
+<h3 id="database-internals">Database Internals<a class="zola-anchor" href="#database-internals" aria-label="Anchor link for: database-internals">🔗</a></h3>
 <p><a rel="external" href="https://www.databass.dev/">Database Internals</a>, written by <a rel="external" href="https://twitter.com/ifesdjeen">Alex Petrov</a>, is a fantastic book for anyone wondering how a database works. I recommend reading it after <code>Designing Data-Intensive Applications</code>, as the author dives in more details compared to Martin's book.</p>
 <blockquote>
 <p>Have you ever wanted to learn more about Databases but did not know where to start? This is a book just for you.</p>
 <p>We can treat databases and other infrastructure components as black boxes, but it doesn’t have to be that way. Sometimes we have to take a closer look at what’s going on because of performance issues. Sometimes databases misbehave, and we need to find out what exactly is going on. Some of us want to work in infrastructure and develop databases. This book’s main intention is to introduce you to the cornerstone concepts and help you understand how databases work.</p>
 <p>The book consists of two parts: Storage Engines and Distributed Systems since that’s where most of the differences between the vast majority of databases is coming from.</p>
 </blockquote>
-<h3 id="distributed-systems"><a class="zola-anchor" href="#distributed-systems" aria-label="Anchor link for: distributed-systems">🔗</a>Distributed Systems</h3>
+<h3 id="distributed-systems">Distributed Systems<a class="zola-anchor" href="#distributed-systems" aria-label="Anchor link for: distributed-systems">🔗</a></h3>
 <p><a rel="external" href="https://www.distributed-systems.net/index.php/me/">Maarten van Steen</a> wrote a book called <a rel="external" href="https://www.distributed-systems.net/">Distributed Systems 3rd edition</a>. It is a nice book which you can get a digital copy of this book for free.</p>
 <blockquote>
 <p>Distributed systems are like 3D brain teasers: easy to disassemble; hard to put together.</p>
 </blockquote>
-<h3 id="understanding-distributed-systems"><a class="zola-anchor" href="#understanding-distributed-systems" aria-label="Anchor link for: understanding-distributed-systems">🔗</a>Understanding Distributed Systems</h3>
+<h3 id="understanding-distributed-systems">Understanding Distributed Systems<a class="zola-anchor" href="#understanding-distributed-systems" aria-label="Anchor link for: understanding-distributed-systems">🔗</a></h3>
 <p>If you are not a backend engineer but still curious about distributed systems, I highly recommend <a rel="external" href="https://understandingdistributed.systems/">Understanding Distributed Systems</a>. <a rel="external" href="https://robertovitillo.com/">Roberto Vitillo</a> is doing an insane job to vulgarize the subject.</p>
 <blockquote>
 <p>Want to learn how to build scalable and fault-tolerant cloud applications?</p>
 <p>This book will teach you the core principles of distributed systems so that you don’t have to spend countless hours trying to understand how everything fits together.</p>
 </blockquote>
-<h3 id="the-internals-of-postgresql"><a class="zola-anchor" href="#the-internals-of-postgresql" aria-label="Anchor link for: the-internals-of-postgresql">🔗</a>The Internals of PostgreSQL</h3>
+<h3 id="the-internals-of-postgresql">The Internals of PostgreSQL<a class="zola-anchor" href="#the-internals-of-postgresql" aria-label="Anchor link for: the-internals-of-postgresql">🔗</a></h3>
 <p>PostgreSQL is getting a lot of love and traction these years, and <a rel="external" href="https://www.interdb.jp/">Hironobu Suzuki</a> wrote a terrific book the about the <a rel="external" href="https://www.interdb.jp/pg/index.html">The Internals of PostgreSQL</a>.</p>
 <blockquote>
 <p>PostgreSQL is a well-designed open-source multi-purpose relational database system which is widely used throughout the world. It is one huge system with the integrated subsystems, each of which has a particular complex feature and works with each other cooperatively. Although understanding of the internal mechanism is crucial for both administration and integration using PostgreSQL, its hugeness and complexity prevent it. The main purposes of this document are to explain how each subsystem works, and to provide the whole picture of PostgreSQL.</p>
 </blockquote>
-<h3 id="jepsen-blog"><a class="zola-anchor" href="#jepsen-blog" aria-label="Anchor link for: jepsen-blog">🔗</a>Jepsen blog</h3>
+<h3 id="jepsen-blog">Jepsen blog<a class="zola-anchor" href="#jepsen-blog" aria-label="Anchor link for: jepsen-blog">🔗</a></h3>
 <p>We are often using databases as a source of truth, but they are also pieces of software with bugs in it. Kyle Kingsbury is the most famous database-breaker with <a rel="external" href="http://jepsen.io/">Jepsen</a>:</p>
 <blockquote>
 <p>Jepsen is an effort to improve the safety of distributed databases, queues, consensus systems, etc. We maintain an open source software library for systems testing, as well as blog posts and conference talks exploring particular systems’ failure modes. In each analysis we explore whether the system lives up to its documentation’s claims, file new bugs, and suggest recommendations for operators.</p>
 </blockquote>
 <p>You will find analysis on many databases, such as CockroachDB, etcd, Kafka, MongoDB, and so on.</p>
-<h3 id="aphyr-distsys-class-notes"><a class="zola-anchor" href="#aphyr-distsys-class-notes" aria-label="Anchor link for: aphyr-distsys-class-notes">🔗</a>Aphyr distsys class notes</h3>
+<h3 id="aphyr-distsys-class-notes">Aphyr distsys class notes<a class="zola-anchor" href="#aphyr-distsys-class-notes" aria-label="Anchor link for: aphyr-distsys-class-notes">🔗</a></h3>
 <p>Following Jepsen, here's a great bonus: Kyle is also teaching distributed systems, and his notes are <a rel="external" href="https://github.com/aphyr/distsys-class#an-introduction-to-distributed-systems">available</a>.</p>
-<h3 id="distributed-systems-for-fun-and-profit"><a class="zola-anchor" href="#distributed-systems-for-fun-and-profit" aria-label="Anchor link for: distributed-systems-for-fun-and-profit">🔗</a>Distributed systems for fun and profit</h3>
+<h3 id="distributed-systems-for-fun-and-profit">Distributed systems for fun and profit<a class="zola-anchor" href="#distributed-systems-for-fun-and-profit" aria-label="Anchor link for: distributed-systems-for-fun-and-profit">🔗</a></h3>
 <p>Despite being free, <a rel="external" href="http://book.mixu.net/distsys/">Distributed systems for fun and profit</a> is an awesome book. The author, <a rel="external" href="http://mixu.net/">Mikito Takada</a> has done a terrific work to vulgarize distributed systems.</p>
 <blockquote>
 <p>I wanted a text that would bring together the ideas behind many of the more recent distributed systems - systems such as Amazon's Dynamo, Google's BigTable and MapReduce, Apache's Hadoop and so on.</p>
@@ -265,7 +275,7 @@
 <blockquote>
 <p>In this text I've tried to provide a more accessible introduction to distributed systems. To me, that means two things: introducing the key concepts that you will need in order to have a good time reading more serious texts, and providing a narrative that covers things in enough detail that you get a gist of what's going on without getting stuck on details.</p>
 </blockquote>
-<h3 id="translucent-databases"><a class="zola-anchor" href="#translucent-databases" aria-label="Anchor link for: translucent-databases">🔗</a>Translucent Databases</h3>
+<h3 id="translucent-databases">Translucent Databases<a class="zola-anchor" href="#translucent-databases" aria-label="Anchor link for: translucent-databases">🔗</a></h3>
 <p>I really like the pitch of the book:</p>
 <blockquote>
 <p>Do you have personal information in your database?</p>
@@ -277,7 +287,7 @@
 <p>This new book, Translucent Databases, describes a different attitude toward protecting the information.</p>
 </blockquote>
 <p><a rel="external" href="http://wayner.org/node/46">Translucent Databases</a> is a short book, focus on how to store sensitive data. You will find several dozen examples of interesting case studies on how to efficiently and privately store sensitive data. A must-have.</p>
-<h3 id="the-art-of-postgresql"><a class="zola-anchor" href="#the-art-of-postgresql" aria-label="Anchor link for: the-art-of-postgresql">🔗</a>The Art of PostgreSQL</h3>
+<h3 id="the-art-of-postgresql">The Art of PostgreSQL<a class="zola-anchor" href="#the-art-of-postgresql" aria-label="Anchor link for: the-art-of-postgresql">🔗</a></h3>
 <p><a rel="external" href="https://theartofpostgresql.com/">The Art of PostgreSQL</a> is all about showing the power of both SQL and PostgreSQL. It explains the how's and why's of using Postgres's many feature, and how you, as a developers, can take advantages of it. A brilliant book that should be read by every developer.</p>
 <blockquote>
 <p>This book is for developers, covering advanced SQL techniques for data processing. Learn how to get exactly the result set you need in your application’s code!</p>
@@ -285,13 +295,13 @@
 <p>The book covers (de-)normalisation with simple practical examples to dive into this seemingly complex topic, including Caching and Indexing Strategy.</p>
 <p>Writing efficient SQL is easier than it looks, and begins with database modeling and writing clear code. The book teaches you how to write fast queries!</p>
 </blockquote>
-<h3 id="readings-in-database-systems"><a class="zola-anchor" href="#readings-in-database-systems" aria-label="Anchor link for: readings-in-database-systems">🔗</a>Readings in Database Systems</h3>
+<h3 id="readings-in-database-systems">Readings in Database Systems<a class="zola-anchor" href="#readings-in-database-systems" aria-label="Anchor link for: readings-in-database-systems">🔗</a></h3>
 <p>Another free book, <a rel="external" href="http://www.redbook.io/">Readings in Database Systems</a> is a great read if you are looking for an opinionated and short review on subject like architecture, engines, analytics and so on.</p>
 <blockquote>
 <p>Readings in Database Systems (commonly known as the "Red Book") has offered readers an opinionated take on both classic and cutting-edge research in the field of data management since 1988. Here, we present the Fifth Edition of the Red Book — the first in over ten years.</p>
 </blockquote>
-<h2 id="watching-tv"><a class="zola-anchor" href="#watching-tv" aria-label="Anchor link for: watching-tv">🔗</a>Watching 📺</h2>
-<h3 id="cmu-database-group"><a class="zola-anchor" href="#cmu-database-group" aria-label="Anchor link for: cmu-database-group">🔗</a>CMU Database Group</h3>
+<h2 id="watching-tv">Watching 📺<a class="zola-anchor" href="#watching-tv" aria-label="Anchor link for: watching-tv">🔗</a></h2>
+<h3 id="cmu-database-group">CMU Database Group<a class="zola-anchor" href="#cmu-database-group" aria-label="Anchor link for: cmu-database-group">🔗</a></h3>
 <p>The Database Group at Carnegie Mellon University have been publishing a lot of contents, including:</p>
 <ul>
 <li><a rel="external" href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjZaHA6QcxDfJ0SIWBzQFKEG">Intro to Database Systems lecture</a></li>
@@ -306,12 +316,12 @@
 <li><a rel="external" href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjbeqnfuvp30VrI7VXiFuOXS">Vaccination Database Tech Talks First Dose</a></li>
 <li><a rel="external" href="https://www.youtube.com/playlist?list=PLSE8ODhjZXjbDOFN4U4-Uv95-N8sgzs5D">Vaccination Database Tech Talks Second Dose</a></li>
 </ul>
-<h3 id="distributed-systems-lecture-series"><a class="zola-anchor" href="#distributed-systems-lecture-series" aria-label="Anchor link for: distributed-systems-lecture-series">🔗</a>Distributed Systems lecture series</h3>
+<h3 id="distributed-systems-lecture-series">Distributed Systems lecture series<a class="zola-anchor" href="#distributed-systems-lecture-series" aria-label="Anchor link for: distributed-systems-lecture-series">🔗</a></h3>
 <p><a rel="external" href="https://martin.kleppmann.com/">Martin Kleppmann</a>(<code>Designing Data Intensive applications</code>'s author) published an <a rel="external" href="https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB">8-lecture series on distributed systems</a>:</p>
 <blockquote>
 <p>This video is part of an 8-lecture series on distributed systems, given as part of the undergraduate computer science course at the University of Cambridge.</p>
 </blockquote>
-<h3 id="academic-conferences"><a class="zola-anchor" href="#academic-conferences" aria-label="Anchor link for: academic-conferences">🔗</a>Academic conferences</h3>
+<h3 id="academic-conferences">Academic conferences<a class="zola-anchor" href="#academic-conferences" aria-label="Anchor link for: academic-conferences">🔗</a></h3>
 <p>Keeping track of the academic world is not easy, but thankfully, we can keep track of several academic conferences which are data-related, including:</p>
 <ul>
 <li><a rel="external" href="http://cidrdb.org">CIDR</a></li>
@@ -319,20 +329,20 @@
 <li><a rel="external" href="https://vldb.org">VLDB</a></li>
 <li><a rel="external" href="https://papoc-workshop.github.io/2022/">PaPoC</a></li>
 </ul>
-<h3 id="industrial-conference"><a class="zola-anchor" href="#industrial-conference" aria-label="Anchor link for: industrial-conference">🔗</a>Industrial conference</h3>
+<h3 id="industrial-conference">Industrial conference<a class="zola-anchor" href="#industrial-conference" aria-label="Anchor link for: industrial-conference">🔗</a></h3>
 <p>There is not much database-focused conferences, but you will be interested to see talks from:</p>
 <ul>
 <li><a rel="external" href="https://hydraconf.com/">HydraConf</a></li>
 <li><a rel="external" href="https://www.hytradboi.com/">HYTRADBOI</a></li>
 </ul>
-<h3 id="distsys-reading-group-sessions"><a class="zola-anchor" href="#distsys-reading-group-sessions" aria-label="Anchor link for: distsys-reading-group-sessions">🔗</a>DistSys Reading Group sessions</h3>
+<h3 id="distsys-reading-group-sessions">DistSys Reading Group sessions<a class="zola-anchor" href="#distsys-reading-group-sessions" aria-label="Anchor link for: distsys-reading-group-sessions">🔗</a></h3>
 <p>If you are looking for explanations about a distributed systems paper, you may be interested in the <a rel="external" href="http://charap.co/category/reading-group/">DistSys Reading Group</a>:</p>
 <blockquote>
 <p>Every week we present and discuss one distributed systems paper. We try to focus on relatively new papers, although we occasionally break this rule for some important older publications. The main objective of this group is to share knowledge through the discussion. Our participants come from academia and industry and often carry a unique perspective and expertise on the subject matter.</p>
 </blockquote>
 <p>Every session can be found on their <a rel="external" href="https://www.youtube.com/channel/UCMKIroHVXvMQRIBhENE6RhQ">YouTube channel</a>.</p>
-<h2 id="coding-adult-computer"><a class="zola-anchor" href="#coding-adult-computer" aria-label="Anchor link for: coding-adult-computer">🔗</a>Coding 🧑‍💻</h2>
-<h3 id="maelstrom"><a class="zola-anchor" href="#maelstrom" aria-label="Anchor link for: maelstrom">🔗</a>Maelstrom</h3>
+<h2 id="coding-adult-computer">Coding 🧑‍💻<a class="zola-anchor" href="#coding-adult-computer" aria-label="Anchor link for: coding-adult-computer">🔗</a></h2>
+<h3 id="maelstrom">Maelstrom<a class="zola-anchor" href="#maelstrom" aria-label="Anchor link for: maelstrom">🔗</a></h3>
 <p>Ever wonder to develop your own toy distributed systems? Fear no more, you can use <a rel="external" href="https://github.com/jepsen-io/maelstrom">Maelstrom</a> for that!</p>
 <blockquote>
 <p>Maelstrom is a workbench for learning distributed systems by writing your own. It uses the Jepsen testing library to test toy implementations of distributed systems. Maelstrom provides standardized tests for things like "a commutative set" or "a transactional key-value store", and lets you learn by writing implementations which those test suites can exercise. It's used as a part of a distributed systems workshop by Jepsen.</p>
@@ -340,24 +350,28 @@
 <blockquote>
 <p>Maelstrom provides a range of tests for different kinds of distributed systems, built on top of a simple JSON protocol via STDIN and STDOUT. Users write servers in any language. Maelstrom runs those servers, sends them requests, routes messages via a simulated network, and checks that clients observe expected behavior. You want to write Plumtree in Bash? Byzantine Paxos in Intercal? Maelstrom is for you.</p>
 </blockquote>
-<h3 id="pingcap-s-talent-plan"><a class="zola-anchor" href="#pingcap-s-talent-plan" aria-label="Anchor link for: pingcap-s-talent-plan">🔗</a>PingCAP's Talent Plan</h3>
+<h3 id="pingcap-s-talent-plan">PingCAP's Talent Plan<a class="zola-anchor" href="#pingcap-s-talent-plan" aria-label="Anchor link for: pingcap-s-talent-plan">🔗</a></h3>
 <p>PingCAP is the company behind the tidb/tikv stack, a new distributed systems. They developed their own <a rel="external" href="https://github.com/pingcap/talent-plan">open source training program</a>:</p>
 <blockquote>
 <p>Talent Plan is an open source training program initiated by PingCAP. It aims to create or combine some open source learning materials for people interested in open source, distributed systems, Rust, Golang, and other infrastructure knowledge. As such, it provides a series of courses focused on open source collaboration, rust programming, distributed database and systems.</p>
 </blockquote>
 <p>I went through the Raft project in Rust and I learned a lot!</p>
-<h3 id="patterns-of-distributed-systems"><a class="zola-anchor" href="#patterns-of-distributed-systems" aria-label="Anchor link for: patterns-of-distributed-systems">🔗</a>Patterns of Distributed Systems</h3>
+<h3 id="patterns-of-distributed-systems">Patterns of Distributed Systems<a class="zola-anchor" href="#patterns-of-distributed-systems" aria-label="Anchor link for: patterns-of-distributed-systems">🔗</a></h3>
 <p><a rel="external" href="https://twitter.com/unmeshjoshi">Unmesh Joshi</a> is writing an on-going serie called <a rel="external" href="https://martinfowler.com/articles/patterns-of-distributed-systems/">Patterns of Distributed Systems</a>:</p>
 <blockquote>
 <p>Distributed systems provide a particular challenge to program. They often require us to have multiple copies of data, which need to keep synchronized. Yet we cannot rely on processing nodes working reliably, and network delays can easily lead to inconsistencies. Despite this, many organizations rely on a range of core distributed software handling data storage, messaging, system management, and compute capability. These systems face common problems which they solve with similar solutions. This article recognizes and develops these solutions as patterns, with which we can build up an understanding of how to better understand, communicate and teach distributed system design.</p>
 </blockquote>
-<h2 id="reading-lists-eyes"><a class="zola-anchor" href="#reading-lists-eyes" aria-label="Anchor link for: reading-lists-eyes">🔗</a>Reading lists 👀</h2>
-<h3 id="dan-creswell-s-reading-list"><a class="zola-anchor" href="#dan-creswell-s-reading-list" aria-label="Anchor link for: dan-creswell-s-reading-list">🔗</a>Dan Creswell's reading List</h3>
+<h2 id="reading-lists-eyes">Reading lists 👀<a class="zola-anchor" href="#reading-lists-eyes" aria-label="Anchor link for: reading-lists-eyes">🔗</a></h2>
+<h3 id="dan-creswell-s-reading-list">Dan Creswell's reading List<a class="zola-anchor" href="#dan-creswell-s-reading-list" aria-label="Anchor link for: dan-creswell-s-reading-list">🔗</a></h3>
 <p>If you want more contents, <a rel="external" href="https://github.com/dancres">Dan Creswell</a> has a nice <a rel="external" href="https://dancres.github.io/Pages/">Distributed Systems Reading List</a> 🚀</p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, you can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Crafting row keys in FoundationDB</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/academic-conferences/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">The unseen treasures of Infrastructure Engineering: Academic Papers</span></a>
+  </nav>
 </article>
 
   </main>
@@ -365,11 +379,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -380,9 +394,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - filesystem</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/filesystem/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -24,7 +24,7 @@
         <id>https://pierrezemb.fr/posts/colossus-google/</id>
         
         <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="google" schema="https://pierrezemb.fr/tags/" label="google"/>
         <category term="filesystem" schema="https://pierrezemb.fr/tags/" label="filesystem"/>
         <category term="hadoop" schema="https://pierrezemb.fr/tags/" label="hadoop"/>
@@ -34,7 +34,7 @@
 &lt;li&gt;Hadoop has a bad publicity with headlines like &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;techwireasia.com&#x2F;2019&#x2F;07&#x2F;what-does-the-death-of-hadoop-mean-for-big-data&#x2F;&quot;&gt;&#x27;What does the death of Hadoop mean for big data?&#x27;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Hadoop, as a distributed-system, &lt;strong&gt;is hard to operate, but can be essential for some type of workload&lt;&#x2F;strong&gt;. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;hadoop-s-story&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hadoop-s-story&quot; aria-label=&quot;Anchor link for: hadoop-s-story&quot;&gt;🔗&lt;&#x2F;a&gt;Hadoop&#x27;s story&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;hadoop-s-story&quot;&gt;Hadoop&#x27;s story&lt;a class=&quot;zola-anchor&quot; href=&quot;#hadoop-s-story&quot; aria-label=&quot;Anchor link for: hadoop-s-story&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Hadoop is based on a Google&#x27;s paper called &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;research.google.com&#x2F;en&#x2F;&#x2F;archive&#x2F;gfs-sosp2003.pdf&quot;&gt;The Google File System&lt;&#x2F;a&gt; published in 2003. There are some key-elements on this paper:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;It was designed to be deployed with &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;ai.google&#x2F;research&#x2F;pubs&#x2F;pub43438&quot;&gt;Borg&lt;&#x2F;a&gt;,&lt;&#x2F;li&gt;
@@ -48,7 +48,7 @@
 &lt;li&gt;Datas are stored within chunkservers,&lt;&#x2F;li&gt;
 &lt;li&gt;There is no YARN or Map&#x2F;Reduce or any kind of compute capabilities.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;is-hadoop-still-revelant&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-hadoop-still-revelant&quot; aria-label=&quot;Anchor link for: is-hadoop-still-revelant&quot;&gt;🔗&lt;&#x2F;a&gt;Is Hadoop still revelant?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;is-hadoop-still-revelant&quot;&gt;Is Hadoop still revelant?&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-hadoop-still-revelant&quot; aria-label=&quot;Anchor link for: is-hadoop-still-revelant&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Google with GFS and the rest of the world with Hadoop hit some issues:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;One (Metadata) machine is not large enough for large FS,&lt;&#x2F;li&gt;
@@ -75,7 +75,7 @@
 &lt;li&gt;Should I be moving that persistent volume over my slow network?&lt;&#x2F;li&gt;
 &lt;li&gt;What is happening when &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dgraph-io&#x2F;dgraph&#x2F;issues&#x2F;2698&quot;&gt;Kubernetes killed an alpha pod in the middle of retrieving snapshot&lt;&#x2F;a&gt;?&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;well-let-s-put-hadoop-in-kubernetes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#well-let-s-put-hadoop-in-kubernetes&quot; aria-label=&quot;Anchor link for: well-let-s-put-hadoop-in-kubernetes&quot;&gt;🔗&lt;&#x2F;a&gt;Well, let&#x27;s put Hadoop in Kubernetes&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;well-let-s-put-hadoop-in-kubernetes&quot;&gt;Well, let&#x27;s put Hadoop in Kubernetes&lt;a class=&quot;zola-anchor&quot; href=&quot;#well-let-s-put-hadoop-in-kubernetes&quot; aria-label=&quot;Anchor link for: well-let-s-put-hadoop-in-kubernetes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;helm&#x2F;charts&#x2F;tree&#x2F;master&#x2F;stable&#x2F;hadoop&quot;&gt;Helm chart for Hadoop is limited to YARN and Map&#x2F;Reduce and &quot;Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift.&quot;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -88,8 +88,8 @@
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;how-gfs-evolved-within-google&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-gfs-evolved-within-google&quot; aria-label=&quot;Anchor link for: how-gfs-evolved-within-google&quot;&gt;🔗&lt;&#x2F;a&gt;How GFS evolved within Google&lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;technical-overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#technical-overview&quot; aria-label=&quot;Anchor link for: technical-overview&quot;&gt;🔗&lt;&#x2F;a&gt;Technical overview&lt;&#x2F;h3&gt;
+&lt;h2 id=&quot;how-gfs-evolved-within-google&quot;&gt;How GFS evolved within Google&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-gfs-evolved-within-google&quot; aria-label=&quot;Anchor link for: how-gfs-evolved-within-google&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;technical-overview&quot;&gt;Technical overview&lt;a class=&quot;zola-anchor&quot; href=&quot;#technical-overview&quot; aria-label=&quot;Anchor link for: technical-overview&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;As GFS&#x27;s paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed &lt;code&gt;Colossus&lt;&#x2F;code&gt;. There is no papers, and not a lot informations available, here&#x27;s what can be found online:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -165,12 +165,12 @@
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;deployments&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployments&quot; aria-label=&quot;Anchor link for: deployments&quot;&gt;🔗&lt;&#x2F;a&gt;Deployments&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;deployments&quot;&gt;Deployments&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployments&quot; aria-label=&quot;Anchor link for: deployments&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;!-- I think the team that&#x27;s pushing the forefront of something k8s-like for persistency&#x2F;durability is... the Colossus&#x2F;D team at Google, who have been running storage servers managed by Borg for almost a decade now :) Problem is, it&#x27;s not k8s. But could tell us what that roadmap is.  --&gt;
 &lt;p&gt;How everything is deployed? Using Borg!&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;migration&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#migration&quot; aria-label=&quot;Anchor link for: migration&quot;&gt;🔗&lt;&#x2F;a&gt;Migration&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;migration&quot;&gt;Migration&lt;a class=&quot;zola-anchor&quot; href=&quot;#migration&quot; aria-label=&quot;Anchor link for: migration&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;The migration process is described in the now free &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;static.googleusercontent.com&#x2F;media&#x2F;sre.google&#x2F;en&#x2F;&#x2F;static&#x2F;pdf&#x2F;case-studies-infrastructure-change-management.pdf&quot;&gt;Case Studies in Infrastructure Change Management&lt;&#x2F;a&gt; book.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot; aria-label=&quot;Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;🔗&lt;&#x2F;a&gt;Is there an open-source effort to create a Colossus-like DFS?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;Is there an open-source effort to create a Colossus-like DFS?&lt;a class=&quot;zola-anchor&quot; href=&quot;#is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot; aria-label=&quot;Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;I did not found any point towards a open-source version of Colossus, beside some work made for &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;baidu&#x2F;bfs&quot;&gt;The Baidu File System&lt;&#x2F;a&gt; in which the Nameserver is implemented as a raft group.&lt;&#x2F;p&gt;
 &lt;p&gt;There is &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.slideshare.net&#x2F;HadoopSummit&#x2F;scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes&quot;&gt;some work to add colossus&#x27;s features in Hadoop&lt;&#x2F;a&gt; but based on the bad publicity Hadoop has now, I don&#x27;t think there will be a lot of money to power those efforts.&lt;&#x2F;p&gt;
 &lt;p&gt;I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:&lt;&#x2F;p&gt;

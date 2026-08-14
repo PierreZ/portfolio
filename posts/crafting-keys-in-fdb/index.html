@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Crafting row keys in FoundationDB | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="An overview of all the helpers to generate row keys with FoundationDB">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Crafting row keys in FoundationDB">
   <meta property="og:description" content="An overview of all the helpers to generate row keys with FoundationDB">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Crafting row keys in FoundationDB">
@@ -33,7 +43,7 @@
   <meta property="article:tag" content="database">
   <meta property="article:tag" content="storage">
   <meta property="article:tag" content="foundationdb">
-  <meta property="article:tag" content="distributed"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <meta property="article:tag" content="distributed-systems"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init()
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2021/crafting-keys-in-fdb.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;crafting-keys-in-fdb">./read --quorum posts&#x2F;crafting-keys-in-fdb</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / crafting-keys-in-fdb
@@ -111,7 +120,8 @@
   <h2 class="title">Crafting row keys in FoundationDB</h2>
   <div class="meta-row"><span class="m"><b>2021-02-21</b></span>
     <span class="m">read: <b>~5 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2021/crafting-keys-in-fdb.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -145,7 +155,7 @@
   <div class="prose">
     <p><img src="/images/notes-about-foundationdb/fdb-white.jpg" alt="fdb image" /></p>
 <p>As I'm working <a rel="external" href="https://github.com/Clikengo/foundationdb-rs/issues/27">on my latest contribution around FoundationDB and Rust</a>, I had the chance to dig a bit into how FoundationDB's bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎</p>
-<h2 id="row-key"><a class="zola-anchor" href="#row-key" aria-label="Anchor link for: row-key">🔗</a>Row key?</h2>
+<h2 id="row-key">Row key?<a class="zola-anchor" href="#row-key" aria-label="Anchor link for: row-key">🔗</a></h2>
 <p>When you are using a key/value store, the design of the <code>row key</code> is extremely important, as this will define how well:</p>
 <ul>
 <li>your scans will be optimized,</li>
@@ -157,7 +167,7 @@
 <li><a rel="external" href="https://cloud.google.com/bigtable/docs/schema-design">"Designing your schema" BigTable documentation</a></li>
 <li><a rel="external" href="https://hbase.apache.org/book.html#rowkey.design">"Rowkey Design" HBase documentation</a></li>
 </ul>
-<h2 id="hand-crafting-row-keys"><a class="zola-anchor" href="#hand-crafting-row-keys" aria-label="Anchor link for: hand-crafting-row-keys">🔗</a>Hand-crafting row keys</h2>
+<h2 id="hand-crafting-row-keys">Hand-crafting row keys<a class="zola-anchor" href="#hand-crafting-row-keys" aria-label="Anchor link for: hand-crafting-row-keys">🔗</a></h2>
 <p>Most of the time, you will need to craft the <code>row key</code> "by hand", like this for <a rel="external" href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase's app</a>:</p>
 <pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Prefix + classId + labelsId + timestamp</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> 128 bits</span></span>
@@ -181,8 +191,8 @@
 <p>If we are replacing some characters, we are not really far from:</p>
 <pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> (Prefix, classId, labelsId, timestamp)</span></span></code></pre>
 <p>Which looks like a <code>Tuple</code>(a collection of values of different types) and this is what FoundationDB is using as an abstraction to create keys 😍</p>
-<h2 id="fdb-s-abstractions-and-helpers"><a class="zola-anchor" href="#fdb-s-abstractions-and-helpers" aria-label="Anchor link for: fdb-s-abstractions-and-helpers">🔗</a>FDB's abstractions and helpers</h2>
-<h3 id="tuple"><a class="zola-anchor" href="#tuple" aria-label="Anchor link for: tuple">🔗</a>Tuple</h3>
+<h2 id="fdb-s-abstractions-and-helpers">FDB's abstractions and helpers<a class="zola-anchor" href="#fdb-s-abstractions-and-helpers" aria-label="Anchor link for: fdb-s-abstractions-and-helpers">🔗</a></h2>
+<h3 id="tuple">Tuple<a class="zola-anchor" href="#tuple" aria-label="Anchor link for: tuple">🔗</a></h3>
 <p>Instead of crafting bytes by hand, we are <code>packing</code> a Tuple:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> create a Tuple&lt;String, i64&gt; with (&quot;tenant-42&quot;, 1)</span></span>
 <span class="giallo-l"><span class="z-storage">let</span><span class="z-variable z-other"> tuple</span><span class="z-keyword"> =</span><span> (</span><span class="z-entity z-name z-type">String</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">tenant-42</span><span class="z-string">&quot;</span><span>)</span><span>,</span><span class="z-constant z-numeric"> 1</span><span>)</span><span>;</span></span>
@@ -214,7 +224,7 @@
 <span class="giallo-l"><span class="z-entity z-name z-function">println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">user=&#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;, magic_number=</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant z-numeric">0</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant z-numeric">1</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> user=&#39;tenant-42&#39;, magic_number=42</span></span></code></pre>
 <p>Now that we saw <code>Tuples</code>, let's dig in the next abstraction: <code>subspaces</code></p>
-<h3 id="subspace"><a class="zola-anchor" href="#subspace" aria-label="Anchor link for: subspace">🔗</a>Subspace</h3>
+<h3 id="subspace">Subspace<a class="zola-anchor" href="#subspace" aria-label="Anchor link for: subspace">🔗</a></h3>
 <p>When you are working with key-values store, we are often playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>/users/tenant-1/...</span></span>
 <span class="giallo-l"><span>/users/tenant-2/...</span></span>
@@ -272,7 +282,7 @@
 <span class="giallo-l"><span>    0xFF, // biggest possible byte</span></span>
 <span class="giallo-l"><span>]</span></span></code></pre>
 <p>Which make sens, if we take <code>("tenant-1", 42)</code> as a prefix, then the range for this subspace will be between <code>("tenant-1", 42, 0x00)</code> and <code>("tenant-1", 42, 0xFF)</code></p>
-<h3 id="directory"><a class="zola-anchor" href="#directory" aria-label="Anchor link for: directory">🔗</a>Directory</h3>
+<h3 id="directory">Directory<a class="zola-anchor" href="#directory" aria-label="Anchor link for: directory">🔗</a></h3>
 <p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I'm working on, which is the <code>Directory</code>. Let's have a look at the relevant <a rel="external" href="https://apple.github.io/foundationdb/developer-guide.html#directories">documentation</a>:</p>
 <blockquote>
 <p>FoundationDB provides directories (available in each language binding) as a tool for managing related subspaces.</p>
@@ -320,6 +330,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/notes-about-etcd/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Notes about ETCD</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/distsys-resources/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Best resources to learn about data and distributed systems</span></a>
+  </nav>
 </article>
 
   </main>
@@ -327,11 +341,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -342,9 +356,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

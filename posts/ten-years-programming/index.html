@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>10 years of programming and counting 🚀 | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="A retrospective of the last 10 years">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="10 years of programming and counting 🚀">
   <meta property="og:description" content="A retrospective of the last 10 years">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="10 years of programming and counting 🚀">
@@ -44,24 +54,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/ten-years-programming.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -80,7 +89,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;ten-years-programming">./read --quorum posts&#x2F;ten-years-programming</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -99,7 +108,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / ten-years-programming
@@ -108,6 +117,7 @@
   <h2 class="title">10 years of programming and counting 🚀</h2>
   <div class="meta-row"><span class="m"><b>2020-09-30</b></span>
     <span class="m">read: <b>~9 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/ten-years-programming.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/personal/">#personal</a></span>
   </div>
   <nav class="toc">
@@ -141,18 +151,18 @@
 
   <div class="prose">
     <p>I’ve just realized that I’ve spent the last decade programming 🤯 While 2020 feels like a strange year, I thought it would be nice to write down a retrospective of the last 10 years 🗓</p>
-<h2 id="learning-to-program-man-computer"><a class="zola-anchor" href="#learning-to-program-man-computer" aria-label="Anchor link for: learning-to-program-man-computer">🔗</a>Learning to program 👨🏻‍💻</h2>
+<h2 id="learning-to-program-man-computer">Learning to program 👨🏻‍💻<a class="zola-anchor" href="#learning-to-program-man-computer" aria-label="Anchor link for: learning-to-program-man-computer">🔗</a></h2>
 <p>I wrote my first <em>Hello, world</em> program somewhere around September 2010, when I started my engineering school to do some electronics, but that C language got me. I spent 6 months struggling to understand pointers and memory. I remember spending nights trying to find a memory leak with valgrind. Of course there were multiples mistakes, but it felt good to dig that far.</p>
 <p>I also discovered Linux around that time, and spent many nights playing with Linux commands. I started my journey to Linux with Centos and then Ubuntu 11.04. I think this started the loop I’m (still!) stuck in:
 <code>for {tryNewDistro()}</code>
 I’m pretty sure that if I wanted to go away from distributed systems, I would try to land a job around operating systems. So many things to learn 🤩</p>
 <p>After learning C, we started to learn web-based technologies like HTML/CSS/JS/PHP. I remember struggling to generate a calendar with PHP 🐘 I learned about APIs the week after the project 😅 I remember digging into cookies, and network calls from popular websites to see how they were using it.</p>
-<h2 id="java-and-hadoop-elephant"><a class="zola-anchor" href="#java-and-hadoop-elephant" aria-label="Anchor link for: java-and-hadoop-elephant">🔗</a>Java and Hadoop 🐘</h2>
+<h2 id="java-and-hadoop-elephant">Java and Hadoop 🐘<a class="zola-anchor" href="#java-and-hadoop-elephant" aria-label="Anchor link for: java-and-hadoop-elephant">🔗</a></h2>
 <p>I had the chance to land a part-time internship during the third year (out of five) of my engineering school. I joined the Systems team @ Arkea, a french bank.
 I remember spending a lot of time with my coworkers, learning things from them, from Hadoop to mainframes and Linux. It was my first time grasping the work around “system programming”.</p>
 <p>My first task was around writing an installer for a java app on windows, but my tutor tried to push me further. He saw my interest around some specific layers of their perimeter, such as Hadoop and Kafka. He gave to me a chance to work directly on those. A small API that was could load old monitoring data stored in HDFS and expose them back into the “real-time” visualization tool. I also used Kafka and even deployed a small HBase cluster for testing.</p>
 <p>I can't thank my tutor enough for giving me this chance, and for allowing me to discover what will become my focus: distributed systems.</p>
-<h2 id="let-s-meet-other-people-wave"><a class="zola-anchor" href="#let-s-meet-other-people-wave" aria-label="Anchor link for: let-s-meet-other-people-wave">🔗</a>Let’s meet other people 👋</h2>
+<h2 id="let-s-meet-other-people-wave">Let’s meet other people 👋<a class="zola-anchor" href="#let-s-meet-other-people-wave" aria-label="Anchor link for: let-s-meet-other-people-wave">🔗</a></h2>
 <p>Around the same time, I discovered tech meetups and conferences. At that time, Google I/O was a major event with people jumping from a plane and streaming it through Google Glass. I found out there was a group of people watching the live together. And this is how I discovered my local GDG/JUG 🥳 I learned so many things by watching local talks, even if it was difficult to grasp everything at first. I remember taking 📝 about what I didn’t understand, to learn about it later.</p>
 <p>I also met amazing persons, that are now friends and/or mentors. I remember feeling humble to be able to learn from them.</p>
 <p>I also discovered more global tech conferences. I asked as a birthday 🎁 to go to Devoxx France and DotScale, in 2014. It was awesome 😎</p>
@@ -166,7 +176,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>Devoxx4kids</li>
 <li>DevFest du bout du monde</li>
 </ul>
-<h2 id="learning-big-data-floppy-disk"><a class="zola-anchor" href="#learning-big-data-floppy-disk" aria-label="Anchor link for: learning-big-data-floppy-disk">🔗</a>Learning big data 💾</h2>
+<h2 id="learning-big-data-floppy-disk">Learning big data 💾<a class="zola-anchor" href="#learning-big-data-floppy-disk" aria-label="Anchor link for: learning-big-data-floppy-disk">🔗</a></h2>
 <p>After my graduation and a(nother) part-time internship at OVH, I started working on something called Metrics Data Platform. It is the platform massively used internally to store, query and alert on timeseries data. We avoid the Borgmon approach (deploying Prometheus’s like database for every team), instead we created a unique platform to ingest all OVHcloud’s datapoints using a big-data approach. Here’s the key point of Metrics:</p>
 <ul>
 <li><strong>multi-tenant</strong>: as we said before, a single metrics cluster is handling all telemetry, from servers to applications and smart data centers from OVHcloud.</li>
@@ -183,11 +193,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <li>We were only 4 to 6 to handle ~800 servers, 3 Hadoop clusters, and thousands of lines of Java/Go/Rust/Ansible codes.</li>
 </ul>
 <p>As always, things were not always magical, and i struggled more time than I can count. I learned that personal struggle is more difficult than technical, as you can always drill-down your tech problems by reading the code. The team was amazing 🚀, and we were helping each other a lot 🤝</p>
-<h2 id="searching-for-planets-telescope-ringed-planet"><a class="zola-anchor" href="#searching-for-planets-telescope-ringed-planet" aria-label="Anchor link for: searching-for-planets-telescope-ringed-planet">🔗</a>Searching for planets 🔭 🪐</h2>
+<h2 id="searching-for-planets-telescope-ringed-planet">Searching for planets 🔭 🪐<a class="zola-anchor" href="#searching-for-planets-telescope-ringed-planet" aria-label="Anchor link for: searching-for-planets-telescope-ringed-planet">🔗</a></h2>
 <p>When I started working on Metrics, we did a lot of internal on boarding. At his core, metrics is usine Warp10, which is coming with his own language to analyze timeseries. This provides heavy query-capabilities, but as it is stack-based, getting started was difficult. I needed a project to dive into timeseries analysis.</p>
 <p>I love astronomy 🔭, but there’s too much ☁️ (not the servers) in my city. I decided to look for astronomical timeseries. Turns out there is a lot, but one use case triggered my interest: exoplanet’s search. Almost everything from NASA is Opendata, so we decided to create <a rel="external" href="https://helloexo.world/">HelloExoWorld</a>.</p>
 <p>We imported the <strong>25TB dataset into a Warp10 instance</strong> and start writing some WarpScript to search for transits. We wrote a <a rel="external" href="https://helloexoworld.github.io/hew-hands-on/">hands-on about it</a>. We also did several labs in french conferences like Devoxx and many others.</p>
-<h2 id="io-timeout-construction"><a class="zola-anchor" href="#io-timeout-construction" aria-label="Anchor link for: io-timeout-construction">🔗</a>IO timeout 🚧</h2>
+<h2 id="io-timeout-construction">IO timeout 🚧<a class="zola-anchor" href="#io-timeout-construction" aria-label="Anchor link for: io-timeout-construction">🔗</a></h2>
 <p>Around 2018, OVHcloud started Managed Kubernetes, a free K8S control-plane. With this product we saw more developers coming to OVHcloud. We started thinking about how we could help them. Running stateful systems is <strong>hard</strong>, so maybe we could offer them some databases or queues in a As-a-Service fashion. We started to design such products from our Metrics experience. We started the IO Vision to offer <code>popular Storage APIs in front of a scalable storage</code>. Does it sound familiar? 😇 I had a lot of fun working on that vision as a Technical Leader.</p>
 <p>We started with queuing with ioStream. We wanted something that was:</p>
 <ul>
@@ -202,7 +212,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>However, the limited success of the beta service and other strategic focuses,</span></span>
 <span class="giallo-l"><span>have resulted in us taking the very difficult decision to close it.</span></span></code></pre>
 <p>I learned a lot of things, both technically and on the product-side, especially considering the fact that it was shutdown.</p>
-<h2 id="today"><a class="zola-anchor" href="#today" aria-label="Anchor link for: today">🔗</a>Today</h2>
+<h2 id="today">Today<a class="zola-anchor" href="#today" aria-label="Anchor link for: today">🔗</a></h2>
 <p>After ioStream’s shutdown, most of the team moved to create a new LBaaS. I helped them wrote an operator to schedule HAProxy’s containers on a Kubernetes cluster. It was a nice introduction to operators.</p>
 <p>Then I decided to join the Managed Kubernetes ☸️ team. This is my current team now, where I’m having a lot of fun working around ETCD.</p>
 <p>I really hope the next 10 years will be as fun as the last 10 years 😇</p>
@@ -210,6 +220,10 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/announcing-record-store/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Announcing Record-Store, a new (experimental) place for your data</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/notes-about-etcd/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Notes about ETCD</span></a>
+  </nav>
 </article>
 
   </main>
@@ -217,11 +231,11 @@ I remember spending a lot of time with my coworkers, learning things from them, 
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -232,9 +246,7 @@ I remember spending a lot of time with my coworkers, learning things from them, 
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

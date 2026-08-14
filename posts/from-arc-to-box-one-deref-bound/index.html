@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>From Arc to Box: One Deref Bound to Rule Them All | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="From Arc to Box: One Deref Bound to Rule Them All">
   <meta property="og:description" content="How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="From Arc to Box: One Deref Bound to Rule Them All">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/from-arc-to-box-one-deref-bound.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;from-arc-to-box-one-deref-bound">./read --quorum posts&#x2F;from-arc-to-box-one-deref-bound</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / from-arc-to-box-one-deref-bound
@@ -111,6 +120,7 @@
   <h2 class="title">From Arc to Box: One Deref Bound to Rule Them All</h2>
   <div class="meta-row"><span class="m"><b>2025-10-02</b></span>
     <span class="m">read: <b>~3 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/from-arc-to-box-one-deref-bound.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/programming/">#programming</a> <a href="https://pierrezemb.fr/tags/metaprogramming/">#metaprogramming</a></span>
   </div>
   <nav class="toc">
@@ -135,7 +145,7 @@
 
   <div class="prose">
     <p>While working on <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs">FoundationDB-rs</a>, I hit a design problem that seemed like it would require complex trait gymnastics. I had two transaction types with identical APIs but different ownership semantics, and I needed functions to accept both. The solution turned out to be embarrassingly simple. It was already implemented.</p>
-<h2 id="the-problem-two-transaction-types-one-api"><a class="zola-anchor" href="#the-problem-two-transaction-types-one-api" aria-label="Anchor link for: the-problem-two-transaction-types-one-api">🔗</a>The Problem: Two Transaction Types, One API</h2>
+<h2 id="the-problem-two-transaction-types-one-api">The Problem: Two Transaction Types, One API<a class="zola-anchor" href="#the-problem-two-transaction-types-one-api" aria-label="Anchor link for: the-problem-two-transaction-types-one-api">🔗</a></h2>
 <p>FoundationDB-rs has two transaction types that do exactly the same thing but with different ownership models:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage"> struct</span><span class="z-entity z-name z-type"> Transaction</span><span> {</span></span>
 <span class="giallo-l"><span class="z-variable z-other">    inner</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> NonNull</span><span>&lt;</span><span class="z-variable z-other">fdb_sys</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">FDBTransaction</span><span>&gt;</span><span>,</span></span>
@@ -147,7 +157,7 @@
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p><strong>Why two types?</strong> FoundationDB requires retry loops for handling conflicts and retriable errors. The <code>Transaction</code> is perfect when you're managing retries manually or doing single-shot operations. The <code>RetryableTransaction</code> wraps it in an <code>Arc</code> so the automatic retry machinery in <code>Database::run()</code> can clone references across async boundaries and exponential backoff delays.</p>
 <p>The challenge: users need to write code that works with both. Real FoundationDB applications mix both patterns depending on the use case.</p>
-<h2 id="the-obvious-solutions-didn-t-work"><a class="zola-anchor" href="#the-obvious-solutions-didn-t-work" aria-label="Anchor link for: the-obvious-solutions-didn-t-work">🔗</a>The Obvious Solutions Didn't Work</h2>
+<h2 id="the-obvious-solutions-didn-t-work">The Obvious Solutions Didn't Work<a class="zola-anchor" href="#the-obvious-solutions-didn-t-work" aria-label="Anchor link for: the-obvious-solutions-didn-t-work">🔗</a></h2>
 <p>My first instinct was creating a trait. But FoundationDB-rs operates directly on raw C pointers (<code>NonNull&lt;fdb_sys::FDBTransaction&gt;</code>) with custom <code>Future</code> implementations that handle FFI complexity and error mapping. Writing a trait with async methods that return these custom futures means associated types, lifetime bounds, and complex error handling. The resulting trait becomes painful to use and understand.</p>
 <p>I considered an enum wrapper:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-storage">enum</span><span class="z-entity z-name z-type"> AnyTransaction</span><span>&lt;</span><span>&#39;</span><span class="z-entity z-name z-type">a</span><span>&gt;</span><span> {</span></span>
@@ -155,7 +165,7 @@
 <span class="giallo-l"><span class="z-entity z-name z-function">    Retryable</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">a</span><span class="z-entity z-name z-type"> RetryableTransaction</span><span>)</span><span>,</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>But this felt wrong. Users would need to match everywhere, and it adds runtime overhead for what should be a compile-time decision. Plus it doesn't feel natural to use.</p>
-<h2 id="the-accidental-solution"><a class="zola-anchor" href="#the-accidental-solution" aria-label="Anchor link for: the-accidental-solution">🔗</a>The Accidental Solution</h2>
+<h2 id="the-accidental-solution">The Accidental Solution<a class="zola-anchor" href="#the-accidental-solution" aria-label="Anchor link for: the-accidental-solution">🔗</a></h2>
 <p>The <code>RetryableTransaction</code> already had this implementation for convenience:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> Deref</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> RetryableTransaction</span><span> {</span></span>
 <span class="giallo-l"><span class="z-storage">    type</span><span class="z-entity z-name z-type"> Target</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> Transaction</span><span>;</span></span>
@@ -185,7 +195,7 @@
 <span class="giallo-l"><span class="z-entity z-name z-type">    Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
 <span class="giallo-l"><span>}</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">?</span><span>;</span></span></code></pre>
 <p>The compiler handles everything through deref coercion. All methods of <code>Transaction</code> remain directly accessible on both types, and there's zero runtime overhead.</p>
-<h2 id="the-pattern-arc-deref-universal-apis"><a class="zola-anchor" href="#the-pattern-arc-deref-universal-apis" aria-label="Anchor link for: the-pattern-arc-deref-universal-apis">🔗</a>The Pattern: Arc<T> + Deref = Universal APIs</h2>
+<h2 id="the-pattern-arc-deref-universal-apis">The Pattern: Arc<T> + Deref = Universal APIs<a class="zola-anchor" href="#the-pattern-arc-deref-universal-apis" aria-label="Anchor link for: the-pattern-arc-deref-universal-apis">🔗</a></h2>
 <p>This pattern works whenever you have a type <code>T</code> and a wrapper containing <code>Arc&lt;T&gt;</code> (or <code>Box&lt;T&gt;</code>, <code>Rc&lt;T&gt;</code>, etc.). As long as the wrapper implements <code>Deref&lt;Target = T&gt;</code>, you can write generic functions that accept both:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Any function with this signature accepts:</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> - &amp;T directly  </span></span>
@@ -203,6 +213,10 @@
 <p>Feel free to reach out with any questions or to share your experiences with Deref patterns in Rust. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">A Practical Guide to Application Metrics: Where to Put Your Instrumentation</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Diving into FoundationDB&#x27;s Simulation Framework</span></a>
+  </nav>
 </article>
 
   </main>
@@ -210,11 +224,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -225,9 +239,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

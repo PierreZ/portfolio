@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>#learning | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Posts tagged #learning.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -20,13 +30,13 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pierrezemb.fr/tags/learning/">
   <meta property="og:title" content="#learning">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="#learning">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -44,22 +54,19 @@
   
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -78,7 +85,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags&#x2F;learning">./read --quorum tags&#x2F;learning</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 2 documents · committed</span><span class="cursor"></span></div>
   </div>
@@ -97,25 +104,23 @@
 </div>
 
 
-  <main>
+  <main id="main">
     
 <div class="sec-head">ls ./tags/learning</div>
 <div class="bom">
   
   <div class="row">
-    <div class="date">2024-01-22</div>
+    <div class="date">2024-01-22<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/academic-conferences/">The unseen treasures of Infrastructure Engineering: Academic Papers</a><a class="desc" href="https://pierrezemb.fr/posts/academic-conferences/">Are you not using academic papers in your favorite RSS app? You should!</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/research/">#research</a> <a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/engineering/">#engineering</a> <a href="https://pierrezemb.fr/tags/papers/">#papers</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2022-01-17</div>
+    <div class="date">2022-01-17<span class="rt">~11 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/distsys-resources/">Best resources to learn about data and distributed systems</a><a class="desc" href="https://pierrezemb.fr/posts/distsys-resources/">Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#x27;s the best resources I used to learn distributed systems</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/education/">#education</a> <a href="https://pierrezemb.fr/tags/database/">#database</a></div>
     </div>
   </div>
 
@@ -126,11 +131,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -141,9 +146,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

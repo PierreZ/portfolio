@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Redwood’s memory tuning in FoundationDB | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Learn how to tune FoundationDB for Redwood storage Engine">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Redwood’s memory tuning in FoundationDB">
   <meta property="og:description" content="Learn how to tune FoundationDB for Redwood storage Engine">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Redwood’s memory tuning in FoundationDB">
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/redwood-memory-tuning.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;redwood-memory-tuning">./read --quorum posts&#x2F;redwood-memory-tuning</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / redwood-memory-tuning
@@ -112,6 +121,7 @@
   <h2 class="title">Redwood’s memory tuning in FoundationDB</h2>
   <div class="meta-row"><span class="m"><b>2024-04-22</b></span>
     <span class="m">read: <b>~3 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/redwood-memory-tuning.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/tuning/">#tuning</a></span>
   </div>
   <nav class="toc">
@@ -136,7 +146,7 @@
 
   <div class="prose">
     <p>While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.</p>
-<h2 id="btree-page-cache"><a class="zola-anchor" href="#btree-page-cache" aria-label="Anchor link for: btree-page-cache">🔗</a>BTree page cache</h2>
+<h2 id="btree-page-cache">BTree page cache<a class="zola-anchor" href="#btree-page-cache" aria-label="Anchor link for: btree-page-cache">🔗</a></h2>
 <p>We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>10.0.3.23:4501 ( 65% cpu; 61% machine; 0.010 Gbps; 93% disk IO; 7.5 GB / 7.4 GB RAM  )</span></span>
 <span class="giallo-l"><span>10.0.3.24:4501 ( 61% cpu; 61% machine; 0.010 Gbps; 87% disk IO; 9.7 GB / 7.4 GB RAM  )</span></span>
@@ -150,25 +160,29 @@
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>&quot;PagerCacheHit&quot;: &quot;51968&quot;,</span></span>
 <span class="giallo-l"><span>&quot;PagerCacheMiss&quot;: &quot;432&quot;,</span></span></code></pre>
 <p> </p>
-<h2 id="byte-sample-memory-usage"><a class="zola-anchor" href="#byte-sample-memory-usage" aria-label="Anchor link for: byte-sample-memory-usage">🔗</a>Byte Sample memory usage</h2>
+<h2 id="byte-sample-memory-usage">Byte Sample memory usage<a class="zola-anchor" href="#byte-sample-memory-usage" aria-label="Anchor link for: byte-sample-memory-usage">🔗</a></h2>
 <p>But our problems are still unresolved, as we are still seeing some OOM 😭 Because this cluster is storing time-series data, each StorageServers is holding around 1TiB of data. As we were holding more and more data, we saw more and more OOM errors on our <code>fdbmonitor</code> logs. Something was growing linearly with our usage and needed tuning. This time, we had help from <a rel="external" href="https://forums.foundationdb.org/u/SteavedHams/summary">Steve Atherton</a> which pointed us towards the direction of the <a rel="external" href="https://forums.foundationdb.org/t/foundationdb-7-1-24-the-memory-usage-after-clean-startup-of-fdbserver-process-is-too-high/3863/8?u=pierrez">Byte Sample</a>:</p>
 <blockquote>
 <p>There is a data structure that storage servers have called the Byte Sample which stores a deterministic random sample of keys. This data is persisted on disk in the storage engine and is loaded immediately upon storage server startup. Unfortunately, its size is not tracked or reported, but grows linearly with KV size and I suspect yours is somewhere around 4GB-6GB based on the memory usage I’ve seen for smaller storage KV sizes.</p>
 </blockquote>
 <p>So, we need to add around 4GB more in the memory, but there is no config for that parameter. It needs to be embedded in the global <code>memory</code> parameter. Let’s compute the right value!</p>
-<h2 id="the-global-memory-formula"><a class="zola-anchor" href="#the-global-memory-formula" aria-label="Anchor link for: the-global-memory-formula">🔗</a>The global memory formula</h2>
+<h2 id="the-global-memory-formula">The global memory formula<a class="zola-anchor" href="#the-global-memory-formula" aria-label="Anchor link for: the-global-memory-formula">🔗</a></h2>
 <p>By testing things on our clusters, we ended up with this formula:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span># Default is 2</span></span>
 <span class="giallo-l"><span>cache_memory = (1-2% of kvstore_used_bytes)GiB</span></span>
 <span class="giallo-l"><span># Default is 8</span></span>
 <span class="giallo-l"><span>memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB</span></span></code></pre>
 <p>Which fixed all our memory issues with FoundationDB 🎉 And to be fair, this is the only things we needed to tune on our clusters, which is quite impressive 👀</p>
-<h2 id="special-thanks"><a class="zola-anchor" href="#special-thanks" aria-label="Anchor link for: special-thanks">🔗</a>Special thanks</h2>
+<h2 id="special-thanks">Special thanks<a class="zola-anchor" href="#special-thanks" aria-label="Anchor link for: special-thanks">🔗</a></h2>
 <p>I would like to thank Markus, William and Steve from the FoundationDB community for their help 🤝</p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">True idempotent transactions with FoundationDB 7.3</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/back-engineering/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Back in engineering!</span></a>
+  </nav>
 </article>
 
   </main>
@@ -176,11 +190,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -191,9 +205,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

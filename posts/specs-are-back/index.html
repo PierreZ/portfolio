@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Specs Are Back, But We&#x27;re Missing the Tools | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="LLMs revived specifications. Model checkers like Fizzbee work for algorithms. But for APIs and business logic? The tooling doesn&#x27;t exist yet.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Specs Are Back, But We&#x27;re Missing the Tools">
   <meta property="og:description" content="LLMs revived specifications. Model checkers like Fizzbee work for algorithms. But for APIs and business logic? The tooling doesn&#x27;t exist yet.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Specs Are Back, But We&#x27;re Missing the Tools">
@@ -49,24 +59,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/specs-are-back.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -85,7 +94,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;specs-are-back">./read --quorum posts&#x2F;specs-are-back</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -104,7 +113,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / specs-are-back
@@ -113,6 +122,7 @@
   <h2 class="title">Specs Are Back, But We&#x27;re Missing the Tools</h2>
   <div class="meta-row"><span class="m"><b>2025-12-19</b></span>
     <span class="m">read: <b>~6 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/specs-are-back.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/specifications/">#specifications</a> <a href="https://pierrezemb.fr/tags/formal-methods/">#formal-methods</a> <a href="https://pierrezemb.fr/tags/model-checking/">#model-checking</a> <a href="https://pierrezemb.fr/tags/fizzbee/">#fizzbee</a></span>
   </div>
   <nav class="toc">
@@ -142,7 +152,7 @@
     <p>I truly think LLMs are changing how we write software. For me, it's been a massive productivity boost. I can ask Claude to read some piece of code and explain it to me, or make a quick PoC of something, or refactor stuff that would take me hours. I even used it to help me <a rel="external" href="https://github.com/PierreZ/moonpool">backport features from FoundationDB in Rust</a>, and it worked surprisingly well 🤯</p>
 <p><a rel="external" href="https://world.hey.com/joaoqalves/when-software-becomes-fast-food-23147c9b">João Alves made a great point recently</a>: code is becoming like fast food. Cheap, fast, everywhere. You ask an LLM to generate something, it compiles, the tests pass, and you ship it. For critical systems, <a href="/posts/diving-into-foundationdb-simulation/">simulation testing</a> can validate that code actually survives production chaos.</p>
 <p>But here's what I keep running into: we're still using <strong>natural language</strong> to prompt, correct, and guide LLMs. Vague instructions produce vague code. The bottleneck isn't writing code anymore, it's knowing <strong>what</strong> to write in the first place.</p>
-<h2 id="why-specs-died-in-the-first-place"><a class="zola-anchor" href="#why-specs-died-in-the-first-place" aria-label="Anchor link for: why-specs-died-in-the-first-place">🔗</a>Why specs died in the first place</h2>
+<h2 id="why-specs-died-in-the-first-place">Why specs died in the first place<a class="zola-anchor" href="#why-specs-died-in-the-first-place" aria-label="Anchor link for: why-specs-died-in-the-first-place">🔗</a></h2>
 <p>Ask any engineering team "where's the spec for this service?" and you'll probably get one of three answers: blank stares, a link to some 3-year-old Google doc that's completely outdated, or my personal favorite, "the code is the spec."</p>
 <p>I think the problem was simple: <strong>specs had no feedback loop</strong>. Code compiles, tests pass, but specs? They just sit there. Nobody validates them, nobody updates them. Six months later, the spec has become archaeology, and new team members learn to ignore it because they can't trust it anyway.</p>
 <p>What changed is that LLMs can actually <strong>read</strong> specifications now. And suddenly, specs aren't dead documents anymore. They're instructions that can be executed. I've found two modes that actually work:</p>
@@ -150,20 +160,20 @@
 <li><strong>Generation</strong>: you give an LLM a structured spec, and it gives you an implementation</li>
 <li><strong>Validation</strong>: you give an LLM some existing code and a spec, and ask "does this implementation actually respect the specification?"</li>
 </ul>
-<h2 id="spec-kit-and-the-right-prompt-chain"><a class="zola-anchor" href="#spec-kit-and-the-right-prompt-chain" aria-label="Anchor link for: spec-kit-and-the-right-prompt-chain">🔗</a>spec-kit and the right prompt chain</h2>
+<h2 id="spec-kit-and-the-right-prompt-chain">spec-kit and the right prompt chain<a class="zola-anchor" href="#spec-kit-and-the-right-prompt-chain" aria-label="Anchor link for: spec-kit-and-the-right-prompt-chain">🔗</a></h2>
 <p>I tried <a rel="external" href="https://github.com/github/spec-kit">spec-kit</a> a while ago and found it pretty useful. What it does well is guide you through a structured chain of prompts: you start with a Constitution (your project principles), then you write Specifications (requirements with acceptance criteria), then Technical Plans, then Tasks, and finally Implementation.</p>
 <p>It sounds obvious when I write it like that, but it's surprisingly effective. This isn't scattered TODO comments. It's a queryable structure that builds context progressively, and the LLM can use all of it.</p>
 <p>The generated code was actually good, because spec-kit forced me to build the right context first. And here's what surprised me: the LLM kept challenging my vague requirements. Every time I wrote something like "handle edge cases," it would ask "what happens when X? what about Y?" until the spec was actually implementable.</p>
 <p>I think that's the trick. <strong>Context is everything</strong>. Build the right context, and the LLM produces the right code.</p>
-<h2 id="the-limits-of-english"><a class="zola-anchor" href="#the-limits-of-english" aria-label="Anchor link for: the-limits-of-english">🔗</a>The limits of English</h2>
+<h2 id="the-limits-of-english">The limits of English<a class="zola-anchor" href="#the-limits-of-english" aria-label="Anchor link for: the-limits-of-english">🔗</a></h2>
 <p>Here's where I hit a wall though. English-based specs work great for user stories and acceptance criteria, the kind of stuff product managers care about. But for algorithms and system behavior? Natural language gets ambiguous really fast.</p>
 <p>"Handle concurrent access" means different things to different people. "Ensure consistency" is even worse. When you're designing distributed algorithms with subtle timing constraints, you need precision. English just doesn't cut it.</p>
 <p>I needed something more engineering-driven. Not formal verification for academic purposes, but practical precision that the whole team could read and reason about.</p>
-<h2 id="finding-an-engineering-driven-approach"><a class="zola-anchor" href="#finding-an-engineering-driven-approach" aria-label="Anchor link for: finding-an-engineering-driven-approach">🔗</a>Finding an engineering-driven approach</h2>
+<h2 id="finding-an-engineering-driven-approach">Finding an engineering-driven approach<a class="zola-anchor" href="#finding-an-engineering-driven-approach" aria-label="Anchor link for: finding-an-engineering-driven-approach">🔗</a></h2>
 <p>I started looking at formal methods. <a rel="external" href="https://lamport.azurewebsites.net/video/videos.html">TLA+</a> is the classic choice, but the notation felt like another language to maintain. I didn't want to be the only one on the team who could read the specs. I've been there before with other technologies, and it's not a great place to be 😅</p>
 <p>Then <a rel="external" href="https://bsky.app/profile/alexmillerdb.bsky.social/post/3m6ptancmus2o">a friend</a> suggested <a rel="external" href="https://fizzbee.io">Fizzbee</a>. It's based on Starlark, a Python dialect. Model checking without the TLA+ notation. The whole team can contribute.</p>
 <p>Learning new languages with LLMs works well. The trick is to find or generate a spec of the language first, then ask for a tutorial tailored to your specific problem. I asked Claude to write a Starlark reference and a Fizzbee concepts recap. Now we share vocabulary, and the conversations are productive.</p>
-<h2 id="what-we-re-still-missing"><a class="zola-anchor" href="#what-we-re-still-missing" aria-label="Anchor link for: what-we-re-still-missing">🔗</a>What we're still missing</h2>
+<h2 id="what-we-re-still-missing">What we're still missing<a class="zola-anchor" href="#what-we-re-still-missing" aria-label="Anchor link for: what-we-re-still-missing">🔗</a></h2>
 <p>Fizzbee is great for what it does. For algorithms and concurrency, model checking feels like the Rust compiler but for higher-level design. It explores all possible states and finds bugs before any code exists. Here's what an invariant looks like:</p>
 <pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Safety: no duplicate completions</span></span>
 <span class="giallo-l"><span>always</span><span> assertion</span><span> NoDuplicateCompletions</span><span>:</span></span>
@@ -179,6 +189,10 @@
 <p>Feel free to reach out to share your thoughts on spec tooling. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Designing Rust FDB Workloads That Actually Find Bugs</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/2025-year-in-review/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">2025: A Year in Review</span></a>
+  </nav>
 </article>
 
   </main>
@@ -186,11 +200,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -201,9 +215,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

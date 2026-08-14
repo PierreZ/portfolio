@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - optimization</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/optimization/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -27,9 +27,9 @@
         <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
         <category term="optimization" schema="https://pierrezemb.fr/tags/" label="optimization"/>
         <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;Key design in Key-value stores&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -41,7 +41,7 @@
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;...&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 99)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;You could scan in reverse mode, but you would lose the order of your first prefix(the &quot;my-key-1&quot;).&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;Reverse Number Scanning&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;Reverse Number Scanning&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;By reversing the numbers using a simple subtraction from the maximum possible value (e.g., &lt;code&gt;Long.MAX_VALUE&lt;&#x2F;code&gt; in Java), we can optimize the scanning process:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;java&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;long&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; reversedNumber&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; Long&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;MAX_VALUE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span&gt; number&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This transforms our data into:&lt;&#x2F;p&gt;

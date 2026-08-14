@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Contributing to Apache HBase: custom data balancing | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Contributing to Apache HBase: custom data balancing">
   <meta property="og:description" content="In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Contributing to Apache HBase: custom data balancing">
@@ -31,7 +41,7 @@
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2020-02-14T10:24:27+01:00">
   <meta property="article:tag" content="database">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="hbase">
   <meta property="article:tag" content="performance">
   <meta property="article:tag" content="opensource"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/hbase-custom-data-balancing.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;hbase-custom-data-balancing">./read --quorum posts&#x2F;hbase-custom-data-balancing</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / hbase-custom-data-balancing
@@ -112,7 +121,8 @@
   <h2 class="title">Contributing to Apache HBase: custom data balancing</h2>
   <div class="meta-row"><span class="m"><b>2020-02-14</b></span>
     <span class="m">read: <b>~7 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/hbase-custom-data-balancing.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -148,7 +158,7 @@
 contribution to Apache HBase's stochastic load balancer, based on our
 experience of running HBase clusters to support OVHcloud's monitoring.</p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-1.jpeg" alt="hbase image" /></p>
-<h2 id="the-context"><a class="zola-anchor" href="#the-context" aria-label="Anchor link for: the-context">🔗</a>The context</h2>
+<h2 id="the-context">The context<a class="zola-anchor" href="#the-context" aria-label="Anchor link for: the-context">🔗</a></h2>
 <p>Have you ever wondered how:</p>
 <ul>
 <li>we generate the graphs for your OVHcloud server or web hosting package?</li>
@@ -164,7 +174,7 @@ experience of running HBase clusters to support OVHcloud's monitoring.</p>
 <li>around 300TB of telemetry, stored within Apache HBase</li>
 </ul>
 <p>As you can probably imagine, storing 300TB of data in 270 nodes comes with some challenges regarding repartition, as <strong>every</strong> <strong>bit is hot data, and should be accessible at any time</strong>. Let's dive in!</p>
-<h2 id="how-does-balancing-work-in-apache-hbase"><a class="zola-anchor" href="#how-does-balancing-work-in-apache-hbase" aria-label="Anchor link for: how-does-balancing-work-in-apache-hbase">🔗</a>How does balancing work in Apache HBase?</h2>
+<h2 id="how-does-balancing-work-in-apache-hbase">How does balancing work in Apache HBase?<a class="zola-anchor" href="#how-does-balancing-work-in-apache-hbase" aria-label="Anchor link for: how-does-balancing-work-in-apache-hbase">🔗</a></h2>
 <p>Before diving into the balancer, let's take a look at how it works. In Apache HBase, data is split into shards called <code>Regions</code>, and distributed through <code>RegionServers</code>. The number of regions will increase as the data is coming in, and regions will be split as a result. This is where the <code>Balancer</code> comes in. It will <strong>move regions</strong> to avoid hotspotting a single <code>RegionServer</code> and effectively distribute the load.</p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-2.jpeg" alt="hbase image" /></p>
 <p>The actual implementation, called <a rel="external" href="https://github.com/apache/hbase/blob/master/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java">StochasticBalancer</a>, uses <strong>a cost-based approach:</strong></p>
@@ -173,7 +183,7 @@ experience of running HBase clusters to support OVHcloud's monitoring.</p>
 <li>Now that the initial cost is computed, we can try to <code>Mutate</code> our cluster. For this, the Balancer creates a random <code>nextAction</code>, which could be something like <strong>swapping two regions</strong>, or <strong>moving one region to another RegionServer</strong>. The action is <strong>applied</strong> <strong>virtually</strong> , and then the <strong>new cost is calculated</strong>. If the new cost is lower than our previous one, the action is stored. If not, it is skipped. This operation is repeated <code>thousands of times</code>, hence the <code>Stochastic</code>.</li>
 <li>At the end, <strong>the list of valid actions is applied to the actual cluster.</strong></li>
 </ol>
-<h2 id="what-was-not-working-for-us"><a class="zola-anchor" href="#what-was-not-working-for-us" aria-label="Anchor link for: what-was-not-working-for-us">🔗</a>What was not working for us?</h2>
+<h2 id="what-was-not-working-for-us">What was not working for us?<a class="zola-anchor" href="#what-was-not-working-for-us" aria-label="Anchor link for: what-was-not-working-for-us">🔗</a></h2>
 <p>We found out that <strong>for our specific use case</strong>, which involved:</p>
 <ul>
 <li>Single table</li>
@@ -195,10 +205,10 @@ our cluster.</p>
 and give it back to the community. When we talked around, we saw that
 we weren't the only one concerned by the heterogenous cluster problem.
 We decided to rewrite our tooling to make it more general, and to <strong>contribute</strong> it <strong>directly upstream</strong> to the HBase project <strong>.</strong></p>
-<h2 id="our-contributions"><a class="zola-anchor" href="#our-contributions" aria-label="Anchor link for: our-contributions">🔗</a>Our contributions</h2>
+<h2 id="our-contributions">Our contributions<a class="zola-anchor" href="#our-contributions" aria-label="Anchor link for: our-contributions">🔗</a></h2>
 <p>The first contribution was pretty simple, the cost function list was a <a rel="external" href="https://github.com/apache/hbase/blob/8cb531f207b9f9f51ab1509655ae59701b66ac37/hbase-server/src/main/java/org/apache/hadoop/hbase/master/balancer/StochasticLoadBalancer.java#L199-L213">constant</a>. We <a rel="external" href="https://github.com/apache/hbase/commit/836f26976e1ad8b35d778c563067ed0614c026e9">added the possibility to load custom cost functions</a>.</p>
 <p>The second contribution was about <a rel="external" href="https://github.com/apache/hbase/commit/42d535a57a75b58f585b48df9af9c966e6c7e46a">adding an optional costFunction to balance regions according to a capacity rule</a>.</p>
-<h2 id="how-does-it-works"><a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a>How does it works?</h2>
+<h2 id="how-does-it-works">How does it works?<a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a></h2>
 <p>The balancer will load a file containing lines of rules. <strong>A rule is composed of a regexp for hostname, and a limit.</strong> For example, we could have:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>rs[0-9] 200</span></span>
 <span class="giallo-l"><span>rs1[0-9] 50</span></span></code></pre>
@@ -220,13 +230,17 @@ We decided to rewrite our tooling to make it more general, and to <strong>contri
 <p>... we can see that the <strong>second group is overloaded</strong>, whereas the first group has plenty of space.</p>
 <p>We know that we can handle a maximum of <strong>2,500 regions</strong> (200×10 + 50×10), and we have currently <strong>1,200 regions</strong> (60×20). As such, the <code>HeterogeneousRegionCountCostFunction</code> will understand that the cluster is <strong>full at 48.0%</strong> (1200/2500). Based on this information, we will then <strong>try to put all the RegionServers at ~48% of the load, according to the rules.</strong></p>
 <p><img src="/images/hbase-custom-data-balancing/hbase-ovh-4.jpeg" alt="hbase image" /></p>
-<h2 id="where-to-next"><a class="zola-anchor" href="#where-to-next" aria-label="Anchor link for: where-to-next">🔗</a>Where to next?</h2>
+<h2 id="where-to-next">Where to next?<a class="zola-anchor" href="#where-to-next" aria-label="Anchor link for: where-to-next">🔗</a></h2>
 <p>Thanks to Apache HBase's contributors, our patches are now <strong>merged</strong> into the master branch. As soon as Apache HBase maintainers publish a new release, we will deploy and use it at scale. This <strong>will allow more automation on our side, and ease operations for the Observability Team.</strong></p>
 <p>Contributing was an awesome journey. What I love most about open
 source is the opportunity ability to contribute back, and build stronger
 software. We <strong>had an opinion</strong> about how a particular issue should addressed, but <strong>the discussions with the community helped us to refine it</strong>. We spoke with e <strong>ngineers from other companies, who were struggling with Apache HBase's cloud deployments, just as we were</strong>, and thanks to those exchanges, <strong>our contribution became more and more relevant.</strong></p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Notes about FoundationDB</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/announcing-kop/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</span></a>
+  </nav>
 </article>
 
   </main>
@@ -234,11 +248,11 @@ software. We <strong>had an opinion</strong> about how a particular issue should
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -249,9 +263,7 @@ software. We <strong>had an opinion</strong> about how a particular issue should
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - raft</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/raft/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -23,7 +23,7 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/"/>
         <id>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</id>
         
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="etcd" schema="https://pierrezemb.fr/tags/" label="etcd"/>
         <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
         <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
@@ -32,18 +32,18 @@
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
-&lt;h2 id=&quot;what-is-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;What is ETCD?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-is-etcd&quot;&gt;What is ETCD?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;From &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;the official website&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;linea-what&quot;&gt;Linea-what?&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &quot;Aphyr&quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;why&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;Why?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;why&quot;&gt;Why?&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;ETCD is using &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;&quot;&gt;Raft&lt;&#x2F;a&gt;, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here&#x27;s an example:&lt;&#x2F;p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; is &lt;code&gt;leader&lt;&#x2F;code&gt; and heartbeating properly to &lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt;,&lt;&#x2F;li&gt;
@@ -56,7 +56,7 @@
 &lt;&#x2F;ul&gt;
 &lt;p&gt;This situation is violating Linearizable reads, as reads going through &lt;code&gt;node1&lt;&#x2F;code&gt; will not see the last updates from the current leader.&lt;&#x2F;p&gt;
 &lt;p&gt;How can we solve this? One way is to use &lt;code&gt;ReadIndex&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;readindex&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;ReadIndex&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;readindex&quot;&gt;ReadIndex&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The basic idea behind this is to confirm that the &lt;strong&gt;leader is true leader or not&lt;&#x2F;strong&gt; by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&#x27;s dive into the implementation!&lt;&#x2F;p&gt;
 &lt;p&gt;All codes are from the current latest release &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;releases&#x2F;tag&#x2F;v3.4.13&quot;&gt;v3.4.13&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L114-L120&quot;&gt;Let&#x27;s take a Range operation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -182,7 +182,7 @@
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; unblock all l-reads requested at indices before rs.Index&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  nr&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;notify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-language&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;The first part is a safety measure to makes sure the applied index is lower that the index stored in &lt;code&gt;ReadState&lt;&#x2F;code&gt;. And then finally we are unlocking all pending reads 🤩&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;One more thing: Follower read&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;One more thing: Follower read&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;We went through &lt;code&gt;stepLeader&lt;&#x2F;code&gt; a lot, be there is something interesting in &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v4.3.13&#x2F;raft&#x2F;raft.go#L1320&quot;&gt;&lt;code&gt;stepFollower&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;go&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt; case&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;lead&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; ==&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; None&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -192,7 +192,7 @@
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;To&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;lead&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This means that a follower can send a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message to perform the same kind of checks than a leader. This small features is in fact enabling &lt;strong&gt;follower-reads&lt;&#x2F;strong&gt; on ETCD 🤩 That is why you can see &lt;code&gt;Range&lt;&#x2F;code&gt; requests from a &lt;code&gt;follower&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;operational-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;operational tips&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;operational-tips&quot;&gt;operational tips&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;ul&gt;
 &lt;li&gt;If you are running etcd &amp;lt;= 3.4, make sure &lt;strong&gt;logger=zap&lt;&#x2F;strong&gt; is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
@@ -239,7 +239,7 @@
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
         <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
         <category term="algorithms" schema="https://pierrezemb.fr/tags/" label="algorithms"/>
@@ -251,14 +251,14 @@
 &lt;blockquote&gt;
 &lt;p&gt;These labs are derived from the &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-raft.html&quot;&gt;lab2:raft&lt;&#x2F;a&gt; and &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-kvraft.html&quot;&gt;lab3:kvraft&lt;&#x2F;a&gt; from the famous &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;index.html&quot;&gt;MIT 6.824&lt;&#x2F;a&gt; course but rewritten in Rust.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;abstract&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;abstract&quot;&gt;Abstract&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;introduction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;Introduction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -274,7 +274,7 @@
 &lt;blockquote&gt;
 &lt;p&gt;We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;replicated-state-machines&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;Replicated state machines&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;replicated-state-machines&quot;&gt;Replicated state machines&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The main idea is to compute identical copies of the same state (i.e &lt;code&gt;x:3, y:9&lt;&#x2F;code&gt;) in case of machines&#x27;s failure. Most of the time, an ordered &lt;code&gt;wal&lt;&#x2F;code&gt; (write-ahead log) is used in the implementation, to hold the mutation (&lt;code&gt;x:4&lt;&#x2F;code&gt;). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.&lt;&#x2F;p&gt;
 &lt;p&gt;Raft creates a true split between:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -283,7 +283,7 @@
 &lt;li&gt;the state machine.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_1.png&quot; alt=&quot;fig1&quot; class=&quot;center&quot;&gt;
-&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;What’s wrong with Paxos?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;What’s wrong with Paxos?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The paper is listing the drawbacks of Paxos:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;difficult to understand, and &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.microsoft.com&#x2F;en-us&#x2F;research&#x2F;uploads&#x2F;prod&#x2F;2016&#x2F;12&#x2F;The-Part-Time-Parliament.pdf&quot;&gt;I can&#x27;t blame them&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -301,7 +301,7 @@
 the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;designing-for-understandability&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;Designing for understandability&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;designing-for-understandability&quot;&gt;Designing for understandability&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Beside all the others goals of Raft:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;a complete and practical foundation for system building,&lt;&#x2F;li&gt;
@@ -318,7 +318,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;The Raft consensus algorithm&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;The Raft consensus algorithm&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Raft is heavily relying on the &lt;code&gt;leader&lt;&#x2F;code&gt; pattern:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.&lt;&#x2F;p&gt;
@@ -332,7 +332,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;Log replication&lt;&#x2F;li&gt;
 &lt;li&gt;Safety&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;raft-basics&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;Raft basics&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;raft-basics&quot;&gt;Raft basics&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Each server can be in one of the three states:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Leader&lt;&#x2F;strong&gt; handle all requests,&lt;&#x2F;li&gt;
@@ -351,7 +351,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;&lt;strong&gt;RequestVote RPCs&lt;&#x2F;strong&gt; are initiated by candidates during elections,&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;strong&gt;Append-Entries RPCs&lt;&#x2F;strong&gt; are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;leader-election&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;leader-election&quot;&gt;Leader election&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;A good vizualization is available &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#election&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;The key-point of the election are the fact that:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -370,7 +370,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;log-replication&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;Log replication&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;log-replication&quot;&gt;Log replication&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;A good vizualization is available &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#replication&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.&lt;&#x2F;p&gt;
@@ -392,8 +392,8 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;Safety&lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;leader-election-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;h2 id=&quot;safety&quot;&gt;Safety&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;leader-election-1&quot;&gt;Leader election&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.&lt;&#x2F;p&gt;
@@ -401,16 +401,16 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;Committing entries from previous terms&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;Committing entries from previous terms&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;Follower and candidate crashes&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;Follower and candidate crashes&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;Cluster membership changes&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;Cluster membership changes&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:&lt;&#x2F;p&gt;
@@ -420,7 +420,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;log-compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Log compaction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;log-compaction&quot;&gt;Log compaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:&lt;&#x2F;p&gt;
 &lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_3.png&quot; alt=&quot;fig3&quot; class=&quot;center&quot;&gt;
 &lt;blockquote&gt;
@@ -430,7 +430,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;client-interaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;Client interaction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;client-interaction&quot;&gt;Client interaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;

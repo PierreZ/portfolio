@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>What I Tell Colleagues About Using LLMs for Engineering | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="LLMs amplify expertise, they don&#x27;t replace it. Here&#x27;s what works: planning, context, feedback loops, and building systems that let AI discover bugs.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="What I Tell Colleagues About Using LLMs for Engineering">
   <meta property="og:description" content="LLMs amplify expertise, they don&#x27;t replace it. Here&#x27;s what works: planning, context, feedback loops, and building systems that let AI discover bugs.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="What I Tell Colleagues About Using LLMs for Engineering">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/llms-for-engineering.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;llms-for-engineering">./read --quorum posts&#x2F;llms-for-engineering</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / llms-for-engineering
@@ -111,6 +120,7 @@
   <h2 class="title">What I Tell Colleagues About Using LLMs for Engineering</h2>
   <div class="meta-row"><span class="m"><b>2026-01-15</b></span>
     <span class="m">read: <b>~9 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/llms-for-engineering.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a></span>
   </div>
   <nav class="toc">
@@ -147,12 +157,12 @@
 <p>The shift matters because <a rel="external" href="https://world.hey.com/joaoqalves/when-software-becomes-fast-food-23147c9b">code is becoming cheap</a>. What used to take hours now takes minutes. But this doesn't diminish the craft.</p>
 <p><a rel="external" href="https://x.com/tobi/status/2010438500609663110">Tobi Lütke</a> got MRI data on a USB stick that required commercial Windows software to view. He asked Claude to build an HTML viewer instead. It looked better than the commercial tool. That's the superpower: not just using software, but <strong>making</strong> software for your exact problem. As <a rel="external" href="https://antirez.com/news/158">antirez wrote</a>, the fire that kept us coding until night was never about typing. It was about building. LLMs let us build more and better. The fun is still there, untouched.</p>
 <p>The first months were honestly frustrating. Code that looked right but broke in subtle ways. APIs that no longer existed. Patterns that didn't match my codebase. It took experimentation to find what actually works. These are the patterns that survived.</p>
-<h2 id="what-becomes-reachable"><a class="zola-anchor" href="#what-becomes-reachable" aria-label="Anchor link for: what-becomes-reachable">🔗</a>What Becomes Reachable</h2>
+<h2 id="what-becomes-reachable">What Becomes Reachable<a class="zola-anchor" href="#what-becomes-reachable" aria-label="Anchor link for: what-becomes-reachable">🔗</a></h2>
 <p>I keep hearing that LLMs unlock velocity. We can ship faster! While that may be true, I think it misses the main benefit. LLMs are about reaching work that would never get done otherwise.</p>
 <p>Every engineering team has a backlog of things that matter but never happen: comprehensive doc tests, database migrations, dependency updates, technical debt. These tasks sit in dream lists because the return on investment is too low given the effort required. LLMs change that equation.</p>
 <p><a rel="external" href="https://github.com/PierreZ/moonpool">moonpool</a> is my concrete example. Backporting FoundationDB's low-level internals to Rust was always a dream project. I had operated distributed systems for years and understood the concepts, but the sheer volume of translation work kept it out of reach. I could throw multiple codebases at Claude for analysis, create recap files summarizing key patterns, and nourish my own implementation plan in hours instead of days. The project exists because LLMs made it reachable.</p>
 <p>This is the shift worth paying attention to: LLMs amplify expertise, they do not replace it. The knowledge of what to build and why remains the bottleneck. The execution barrier just got lower.</p>
-<h2 id="plan-first-always"><a class="zola-anchor" href="#plan-first-always" aria-label="Anchor link for: plan-first-always">🔗</a>Plan First, Always</h2>
+<h2 id="plan-first-always">Plan First, Always<a class="zola-anchor" href="#plan-first-always" aria-label="Anchor link for: plan-first-always">🔗</a></h2>
 <p>Here is the paradox: when code becomes cheap, design becomes more valuable. Not less. You can now afford to spend time on architecture, discuss tradeoffs, commit to an approach before writing a single line of code. <a href="/posts/specs-are-back/">Specs are coming back</a>, and the judgment to write good ones still requires years of building systems.</p>
 <p>Every significant task now starts in Plan Mode with <code>ultrathink</code>. Boris Cherny <a rel="external" href="https://x.com/bcherny/status/2007892431031988385">says thinking is on by default now</a> and the command does not do much anymore, but old habits die hard. The practical goal is breaking work into chunks small enough that the AI can digest the context without hallucinating. This is not about limiting ambition. It is about matching task scope to context window.</p>
 <p>For large tasks, I produce a <strong>spec file</strong> that Claude and I iterate on together. Claude Code has an <code>AskUserQuestion</code> tool that lets Claude ask clarifying questions mid-task. Combined with a spec file, this becomes powerful: Claude asks about edge cases, I refine the requirements, we converge on an approach before writing code. The collaboration happens in the spec, not scattered across conversation turns. As a bonus, the spec survives context compaction and remains the source of truth when Claude summarizes the conversation.</p>
@@ -162,21 +172,21 @@
 </blockquote>
 <p>The result is a spec that matches what I actually need, not what Claude guessed I might want. Fewer iterations, better alignment.</p>
 <p>A plan is only as good as the context it is built on.</p>
-<h2 id="context-is-everything"><a class="zola-anchor" href="#context-is-everything" aria-label="Anchor link for: context-is-everything">🔗</a>Context is Everything</h2>
+<h2 id="context-is-everything">Context is Everything<a class="zola-anchor" href="#context-is-everything" aria-label="Anchor link for: context-is-everything">🔗</a></h2>
 <p>The output quality depends entirely on the context you provide. This sounds obvious, but the implications took me a while to internalize. I now create context files with domain knowledge, code patterns, and project summaries. Writing down the hidden coding style rules that exist only in your head is surprisingly valuable. The conventions you enforce in code review but never documented? Write them down. The LLM will follow them, and so will newcomers on your team. I am currently experimenting with Claude skills to make this context reusable across sessions.</p>
 <p>The difference between <a rel="external" href="https://simonwillison.net/2025/Oct/7/vibe-engineering/">vibe coding and vibe engineering</a>, as Simon Willison puts it, is whether you stay accountable for what the LLM produces. Accountability requires understanding, and understanding requires context.</p>
 <p>Without enough context framing the problem, Claude over-engineers. I have seen it add abstraction layers, configuration options, and patterns I never asked for. The cure is constraints: explicit context about what simplicity looks like in this codebase. The LLM can generate code faster than I ever could, but knowing what context matters is expertise that cannot be delegated.</p>
 <p>Context works when it is accurate. Documentation often is not.</p>
-<h2 id="clone-your-dependencies"><a class="zola-anchor" href="#clone-your-dependencies" aria-label="Anchor link for: clone-your-dependencies">🔗</a>Clone Your Dependencies</h2>
+<h2 id="clone-your-dependencies">Clone Your Dependencies<a class="zola-anchor" href="#clone-your-dependencies" aria-label="Anchor link for: clone-your-dependencies">🔗</a></h2>
 <p>MCP tools exist to fetch documentation, but I find git clone more powerful. I clone the dependencies I care about and <strong>checkout the version I actually use</strong>. Claude browses the real source code, not cached docs or outdated training data. When I ask about an API, the answer comes from the actual implementation in my lock file. This simple habit prevents entire categories of frustrating debugging sessions where the model confidently generates code for an API that no longer exists.</p>
 <p>This also works for <strong>understanding unfamiliar code</strong>. Clone a dependency, check out the version you use, and ask specific questions. The LLM handles breadth, you handle depth.</p>
 <p>Good context helps Claude generate better code. But how does it know when the code is wrong?</p>
-<h2 id="feedback-loops"><a class="zola-anchor" href="#feedback-loops" aria-label="Anchor link for: feedback-loops">🔗</a>Feedback Loops</h2>
+<h2 id="feedback-loops">Feedback Loops<a class="zola-anchor" href="#feedback-loops" aria-label="Anchor link for: feedback-loops">🔗</a></h2>
 <p><a rel="external" href="https://x.com/bcherny/status/2007179832300581177">Boris Cherny</a>, creator of Claude Code, calls this the most important thing: <strong>give Claude a way to verify its work</strong>. If Claude has that feedback loop, it will 2-3x the quality of the final result. The pattern is simple: generate code, get feedback, fix, repeat. The faster and clearer the feedback, the better the results.</p>
 <p>This is why Rust and Claude work so well together. The compiler gives <strong>actionable error messages</strong>. The type system catches bugs before runtime. Clippy suggests improvements. Claude reads the feedback and fixes issues immediately. The compiler output is isolated, textual, actionable. The model does not have to guess what went wrong. Any language or tool that provides clear, structured feedback enables this same cycle.</p>
 <p><strong>TDD</strong> fits perfectly here. Tests are easy for you to read and verify, and they give fast feedback to the LLM. Write the test first, let Claude implement until it passes. You stay in control of the specification while delegating the implementation.</p>
 <p>For software that needs to be correct, the feedback must be exhaustive. I maintain the <a rel="external" href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a>. Over 11 million downloads, used by real companies. The <a href="/posts/providing-safety-fdb-rs/">binding tester</a> generates operation sequences and compares our implementation against the reference. We run the equivalent of <strong>219 days of continuous testing each month</strong> across our CI runners. When Claude contributes code, the binding tester tells it exactly where behavior diverges. This kind of feedback gives confidence to change things in a database driver that you would never touch otherwise.</p>
-<h3 id="simulation-feedback-for-distributed-systems"><a class="zola-anchor" href="#simulation-feedback-for-distributed-systems" aria-label="Anchor link for: simulation-feedback-for-distributed-systems">🔗</a>Simulation: Feedback for Distributed Systems</h3>
+<h3 id="simulation-feedback-for-distributed-systems">Simulation: Feedback for Distributed Systems<a class="zola-anchor" href="#simulation-feedback-for-distributed-systems" aria-label="Anchor link for: simulation-feedback-for-distributed-systems">🔗</a></h3>
 <p>Compiler feedback catches syntax and types. Tests catch logic errors. But what about bugs that hide in timing and network partitions?</p>
 <p>Distributed systems fail in ways that only manifest under specific conditions. <a href="/posts/simulation-driven-development/#the-tale-of-a-bug">A network partition once disrupted a 70-node Hadoop cluster</a> and left it unable to restart due to corrupted state. That incident shaped how I think about testing. This is why I love FoundationDB: <a href="/posts/diving-into-foundationdb-simulation/">after years of on-call, it has never woken me up</a>.</p>
 <p>Distributed systems need feedback loops that inject failures <strong>before</strong> production. This is what <a href="/posts/simulation-driven-development/">deterministic simulation</a> provides. Same seed, same execution, same bugs. When every run is reproducible, the LLM can methodically explore the state space, find a failure, and debug it step by step.</p>
@@ -187,6 +197,10 @@
 <p>Feel free to reach out with any questions or to share your experiences with LLM-assisted development. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/2025-year-in-review/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">2025: A Year in Review</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">FoundationDB&#x27;s Transaction Model for Layer Engineers</span></a>
+  </nav>
 </article>
 
   </main>
@@ -194,11 +208,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -209,9 +223,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

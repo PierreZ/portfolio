@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>#storage | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Posts tagged #storage.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -20,13 +30,13 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pierrezemb.fr/tags/storage/">
   <meta property="og:title" content="#storage">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="#storage">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -44,22 +54,19 @@
   
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -78,7 +85,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags&#x2F;storage">./read --quorum tags&#x2F;storage</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 14 documents · committed</span><span class="cursor"></span></div>
   </div>
@@ -97,133 +104,119 @@
 </div>
 
 
-  <main>
+  <main id="main">
     
 <div class="sec-head">ls ./tags/storage</div>
 <div class="bom">
   
   <div class="row">
-    <div class="date">2025-03-27</div>
+    <div class="date">2025-03-27<span class="rt">~2 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/reverse-number-scanning/">Key design tip: reverse number scanning in ordered key-value stores</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/optimization/">#optimization</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/reverse-number-scanning/">Key design tip: reverse number scanning in ordered key-value stores</a><a class="desc" href="https://pierrezemb.fr/posts/reverse-number-scanning/">A key design trick for ordered key-value stores like HBase, FoundationDB, and RocksDB: reverse a number by subtracting it from its max value so a forward scan finds the highest one first.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-03-07</div>
+    <div class="date">2025-03-07<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/fdb-data-distributor/">Debugging FoundationDB&#x27;s Data Distributor</a><a class="desc" href="https://pierrezemb.fr/posts/fdb-data-distributor/">A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2024-04-22</div>
+    <div class="date">2024-04-22<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/redwood-memory-tuning/">Redwood’s memory tuning in FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/redwood-memory-tuning/">Learn how to tune FoundationDB for Redwood storage Engine</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/tuning/">#tuning</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2024-03-12</div>
+    <div class="date">2024-03-12<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">True idempotent transactions with FoundationDB 7.3</a><a class="desc" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">Learn how to avoid FDB&#x27;s biggest caveats by using a new feature called automatic idempotency in FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2021-02-21</div>
+    <div class="date">2021-02-21<span class="rt">~5 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">Crafting row keys in FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">An overview of all the helpers to generate row keys with FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2021-01-11</div>
+    <div class="date">2021-01-11<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/notes-about-etcd/">Notes about ETCD</a><a class="desc" href="https://pierrezemb.fr/posts/notes-about-etcd/">List of ressources gleaned about ETCD</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-09-23</div>
+    <div class="date">2020-09-23<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/announcing-record-store/">Announcing Record-Store, a new (experimental) place for your data</a><a class="desc" href="https://pierrezemb.fr/posts/announcing-record-store/">Opensourcing Record-Store</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-09-18</div>
+    <div class="date">2020-09-18<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">Diving into ETCD&#x27;s linearizable reads</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">Diving into ETCD&#x27;s linearizable reads</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">A code-level dive into how etcd achieves linearizable reads with the ReadIndex protocol on top of Raft, including how it enables safe follower reads.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-01-30</div>
+    <div class="date">2020-01-30<span class="rt">~14 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/notes-about-foundationdb/">Notes about FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/notes-about-foundationdb/">List of ressources gleaned about FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-11-17</div>
+    <div class="date">2019-11-17<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">Diving into Hbase&#x27;s MemStore</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">Diving into Hbase&#x27;s MemStore</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">A code-level dive into HBase&#x27;s MemStore, from the ConcurrentSkipListMap backing HBase 1.x to the in-memory compactions Accordion introduced in HBase 2.0.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-08-04</div>
+    <div class="date">2019-08-04<span class="rt">~8 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/colossus-google/">What can be gleaned about GFS successor codenamed Colossus?</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/google/">#google</a> <a href="https://pierrezemb.fr/tags/filesystem/">#filesystem</a> <a href="https://pierrezemb.fr/tags/hadoop/">#hadoop</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/colossus-google/">What can be gleaned about GFS successor codenamed Colossus?</a><a class="desc" href="https://pierrezemb.fr/posts/colossus-google/">Piecing together, from scattered public talks and papers, how Google evolved GFS into Colossus, and why a Kubernetes-native distributed file system is still missing.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-05-27</div>
+    <div class="date">2019-05-27<span class="rt">~3 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/ttl-hbase/">Playing with TTL in HBase</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/expiration/">#expiration</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/ttl-hbase/">Playing with TTL in HBase</a><a class="desc" href="https://pierrezemb.fr/posts/ttl-hbase/">A hands-on walkthrough of HBase&#x27;s TTL feature, how cell timestamps and compaction interact to expire data, and how to control it by setting your own version timestamp.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-02-03</div>
+    <div class="date">2019-02-03<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/acid-transactions/">What are ACID transactions?</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/acid-transactions/">What are ACID transactions?</a><a class="desc" href="https://pierrezemb.fr/posts/acid-transactions/">A walkthrough of the ACID properties of database transactions, from the 1983 Haerder and Reuter paper that coined them to isolation levels and PostgreSQL&#x27;s MVCC implementation.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-01-27</div>
+    <div class="date">2019-01-27<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/hbase-data-model/">Hbase Data Model</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/hbase-data-model/">Hbase Data Model</a><a class="desc" href="https://pierrezemb.fr/posts/hbase-data-model/">An overview of HBase&#x27;s data model, row keys, column families and qualifiers, and why key design determines whether you get good performance or a hotspotted region.</a>
     </div>
   </div>
 
@@ -234,11 +227,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -249,9 +242,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

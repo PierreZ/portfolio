@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Why Apache Avro Needs Two Schemas | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Avro payloads cannot be decoded without the writer schema, and that two-schema model is what makes rolling upgrades and schema evolution work.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Why Apache Avro Needs Two Schemas">
   <meta property="og:description" content="Avro payloads cannot be decoded without the writer schema, and that two-schema model is what makes rolling upgrades and schema evolution work.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Why Apache Avro Needs Two Schemas">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/why-apache-avro-needs-two-schemas.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;why-apache-avro-needs-two-schemas">./read --quorum posts&#x2F;why-apache-avro-needs-two-schemas</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / why-apache-avro-needs-two-schemas
@@ -111,6 +120,7 @@
   <h2 class="title">Why Apache Avro Needs Two Schemas</h2>
   <div class="meta-row"><span class="m"><b>2026-07-30</b></span>
     <span class="m">read: <b>~9 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/why-apache-avro-needs-two-schemas.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/avro/">#avro</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a></span>
   </div>
   <nav class="toc">
@@ -145,16 +155,16 @@
   <div class="prose">
     <p>We have been using <a rel="external" href="https://avro.apache.org/">Apache Avro</a> for years as one of the binary encodings for <a rel="external" href="https://www.clever-cloud.com/materia/">Materia</a>'s records stored in FoundationDB. A few weeks ago, while writing the code that adds a new type of header for a new component, I made a mistake. I serialized the records, stored the bytes, and moved on. Only later did I realize I had forgotten something essential: I wasn't preserving the writer schema.</p>
 <p>At first, it didn't seem like a problem. My application already knew the latest schema, so surely it could decode the data. Unfortunately, that's not how Avro works, and more importantly, that's not how long-lived data should work.</p>
-<h2 id="avro-bytes-don-t-know-what-they-are"><a class="zola-anchor" href="#avro-bytes-don-t-know-what-they-are" aria-label="Anchor link for: avro-bytes-don-t-know-what-they-are">🔗</a>Avro bytes don't know what they are</h2>
+<h2 id="avro-bytes-don-t-know-what-they-are">Avro bytes don't know what they are<a class="zola-anchor" href="#avro-bytes-don-t-know-what-they-are" aria-label="Anchor link for: avro-bytes-don-t-know-what-they-are">🔗</a></h2>
 <p>Avro's binary encoding is deliberately compact. <a rel="external" href="https://avro.apache.org/docs/1.12.0/specification/">The specification</a> states that binary encoded data "does not include field names, self-contained information about the types of individual bytes, nor field or record separators". A record is just its field values concatenated in the order the schema declares them, an int is a zig-zag varint, a string is a length followed by UTF-8 bytes. A decoder discovers none of this from the payload, it walks the schema and consumes bytes in exactly the order the writer produced them. Without the writer schema, those bytes are just bytes.</p>
 <p>This is why Avro always assumes the writer schema is available somehow. <a rel="external" href="https://avro.apache.org/docs/1.12.0/specification/#object-container-files"><strong>Object Container Files</strong></a> embed it in the file header. <a rel="external" href="https://avro.apache.org/docs/1.12.0/specification/#single-object-encoding"><strong>Single Object Encoding</strong></a> prefixes the payload with a fingerprint of the writer schema, which is only a lookup key: you still need a schema store to turn it back into a schema. If you use raw binary Avro, like I was doing inside FoundationDB, you have to provide it yourself.</p>
-<h2 id="why-do-we-need-two-schemas"><a class="zola-anchor" href="#why-do-we-need-two-schemas" aria-label="Anchor link for: why-do-we-need-two-schemas">🔗</a>Why do we need two schemas?</h2>
+<h2 id="why-do-we-need-two-schemas">Why do we need two schemas?<a class="zola-anchor" href="#why-do-we-need-two-schemas" aria-label="Anchor link for: why-do-we-need-two-schemas">🔗</a></h2>
 <p>This is probably the question I answer most often.</p>
 <blockquote>
 <p>Why does Avro need both a writer schema and a reader schema?</p>
 </blockquote>
 <p>Because they solve different problems. The <strong>writer schema</strong> describes the data that actually exists on disk. The <strong>reader schema</strong> describes the structure expected by the software reading that data today. Schema evolution is the process of reconciling those two versions, and without the writer schema there is nothing to reconcile against.</p>
-<h2 id="what-can-you-actually-change"><a class="zola-anchor" href="#what-can-you-actually-change" aria-label="Anchor link for: what-can-you-actually-change">🔗</a>What can you actually change?</h2>
+<h2 id="what-can-you-actually-change">What can you actually change?<a class="zola-anchor" href="#what-can-you-actually-change" aria-label="Anchor link for: what-can-you-actually-change">🔗</a></h2>
 <p>When the two schemas differ, Avro resolves them field by field, matching fields by name. The <a rel="external" href="https://avro.apache.org/docs/1.12.0/specification/#schema-resolution">schema resolution rules</a> permit more than people expect:</p>
 <ul>
 <li><strong>Add a field</strong>: declare it with a default value, and the reader fills it in when decoding records written before the field existed.</li>
@@ -164,7 +174,7 @@
 <li><strong>Widen types</strong>: int promotes to long, float, or double, long to float or double, float to double, and string and bytes are interchangeable. Promotion is one-way too: once records are written as long, an int reader cannot decode them.</li>
 </ul>
 <p>The rule that falls out of this is to give every field a default from day one, because a default turns a missing field into a value instead of a decode error. For nullable fields that means <code>["null", "string"]</code> with <code>default: null</code>, since implementations like the Java one validate the default against the union's first branch.</p>
-<h2 id="why-readers-come-first"><a class="zola-anchor" href="#why-readers-come-first" aria-label="Anchor link for: why-readers-come-first">🔗</a>Why readers come first</h2>
+<h2 id="why-readers-come-first">Why readers come first<a class="zola-anchor" href="#why-readers-come-first" aria-label="Anchor link for: why-readers-come-first">🔗</a></h2>
 <p>Those resolution rules are what make rolling upgrades work, as long as you deploy them in the right order. Imagine a service running two instances behind a load balancer, App A and App B. To keep the example simple, both read and write Avro-encoded values stored in Redis, both start at version 1, and the only schemas an instance knows are the ones compiled into its binary, there is no registry to fetch unknown ones from.</p>
 <p>Now you deploy version 2. If App A, upgraded first, immediately starts writing schema V2, App B is stuck: it has never seen V2, so it doesn't hold the writer schema those records were encoded with. How compatible the change was doesn't matter, you cannot reconcile against a schema you don't know. As soon as App B reads a newly written record, the deployment is broken.</p>
 <div class="mermaid">
@@ -196,7 +206,7 @@ sequenceDiagram
 </div>
 <p>App A understands both versions but keeps writing V1 until App B is upgraded too, then you switch the writer schema to V2. I prefer making that switch an explicit operational step through an API call rather than a deploy side effect. Readers stay ahead of writers, and a normal rolling upgrade is enough.</p>
 <p>It gets worse when several programs share the same data. In Materia, one FoundationDB cluster hosts multiple layers, each on its own deployment schedule, so an internal encoding bump has to be synchronized across every layer that reads those records before the writer schema can move forward.</p>
-<h2 id="keeping-old-schemas-is-a-feature"><a class="zola-anchor" href="#keeping-old-schemas-is-a-feature" aria-label="Anchor link for: keeping-old-schemas-is-a-feature">🔗</a>Keeping old schemas is a feature</h2>
+<h2 id="keeping-old-schemas-is-a-feature">Keeping old schemas is a feature<a class="zola-anchor" href="#keeping-old-schemas-is-a-feature" aria-label="Anchor link for: keeping-old-schemas-is-a-feature">🔗</a></h2>
 <p>One criticism I occasionally hear is that Avro forces you to keep historical schemas around forever. That's true, and I think it's one of its best properties. Every schema version becomes part of your compatibility contract: when you introduce V5, you should be able to verify that records written by V0, V1, V2, V3, and V4 are still readable. Those old schemas stop being dead code and become regression tests. Instead of hoping schema evolution still works, you can prove it.</p>
 <p>In the layers we build on top of Materia, that contract is explicit. Every record type declares its full schema lineage, each version tagged with the <strong>generation</strong> it starts writing from, and the store remembers the generation it was last reconciled to. That stamp pins the writer schema: a generation-2 binary opening a store stamped at generation 1 keeps writing V1 records, exactly as the older binaries do, and bumping the stamp is an explicit reconcile step, not a side effect of deploying a new binary.</p>
 <div class="mermaid">
@@ -211,16 +221,20 @@ sequenceDiagram
     App-&gt;&gt;Store: put(record), encoded with V2 writer schema
 </div>
 <p>This is the readers-first deployment from earlier, enforced by the store instead of by discipline.</p>
-<h2 id="what-about-protobuf"><a class="zola-anchor" href="#what-about-protobuf" aria-label="Anchor link for: what-about-protobuf">🔗</a>What about Protobuf?</h2>
+<h2 id="what-about-protobuf">What about Protobuf?<a class="zola-anchor" href="#what-about-protobuf" aria-label="Anchor link for: what-about-protobuf">🔗</a></h2>
 <p>Avro's decode path is defined over two schemas and cannot run without both, while a Protobuf decoder only ever consults one. Each Protobuf field is prefixed with a tag packing the field number and a wire type, so a decoder can skip fields it doesn't recognize even without a descriptor, it just cannot interpret them. That makes Protobuf feel schema-optional and moves evolution into rules on the schema source: never reuse a field number, only make wire-compatible changes. The price is tag bytes on every field, and that nothing forces you to record which schema wrote a given byte. Avro forces exactly that, so the compatibility question is always answerable against the data you have.</p>
 <p>I've walked the Protobuf-on-FDB path myself: in September 2020 I shipped <a href="/posts/announcing-record-store/">Record-Store</a>, an experimental layer exposing the <a rel="external" href="https://github.com/FoundationDB/fdb-record-layer">FDB Record Layer</a> over gRPC, with Protobuf definitions as the schema. The Record Layer stores its file descriptors inside FDB and built meta-data evolution by hand. The point fixes shipped in February 2019 (<a rel="external" href="https://github.com/FoundationDB/fdb-record-layer/issues/3">descriptor mismatches</a>, an <a rel="external" href="https://github.com/FoundationDB/fdb-record-layer/issues/85">evolution validator</a>), but the <a rel="external" href="https://github.com/FoundationDB/fdb-record-layer/issues/283">meta-data evolution super-issue</a> opened in January 2019 is still open seven years later, and so is <a rel="external" href="https://github.com/FoundationDB/fdb-record-layer/issues/965">the stale meta-data problem during rolling upgrades</a>, the exact readers-first scenario above. That's a big part of why Materia uses Avro as its main encoding: I wanted the flexibility of the two-schema model.</p>
-<h2 id="the-mistake"><a class="zola-anchor" href="#the-mistake" aria-label="Anchor link for: the-mistake">🔗</a>The mistake</h2>
+<h2 id="the-mistake">The mistake<a class="zola-anchor" href="#the-mistake" aria-label="Anchor link for: the-mistake">🔗</a></h2>
 <p>Looking back, my mistake had nothing to do with FoundationDB, and it wasn't even really an Avro mistake. <strong>Data outlives software</strong>: the application that writes a record today will eventually disappear, the bytes won't. I think this is the main reason writing Materia is so complicated. We have to enforce correctness, always be able to read something back, and stay backward compatible with records written by the very first Materia services. A mistake in a distributed multi-tenant service gets fixed with background work and per-tenant migration workflows, and mine left dedicated code in the codebase whose only job is to detect the records written without a fingerprint. Avro's reader and writer schema model exists because tomorrow's software shouldn't have to guess how yesterday's data was written.</p>
 <p>How does your system decode the records it wrote five years ago?</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your experiences with schema evolution. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Designing Fakes That Prove Correctness</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</span></a>
+  </nav>
 </article>
 
   </main>
@@ -228,11 +242,11 @@ sequenceDiagram
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -243,9 +257,7 @@ sequenceDiagram
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

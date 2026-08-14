@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Playing with TTL in HBase | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="A hands-on walkthrough of HBase&#x27;s TTL feature, how cell timestamps and compaction interact to expire data, and how to control it by setting your own version timestamp.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,13 +30,13 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/ttl-hbase/">
   <meta property="og:title" content="Playing with TTL in HBase">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="A hands-on walkthrough of HBase&#x27;s TTL feature, how cell timestamps and compaction interact to expire data, and how to control it by setting your own version timestamp.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Playing with TTL in HBase">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="A hands-on walkthrough of HBase&#x27;s TTL feature, how cell timestamps and compaction interact to expire data, and how to control it by setting your own version timestamp.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2019-05-27T22:07:11+02:00">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/ttl-hbase.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;ttl-hbase">./read --quorum posts&#x2F;ttl-hbase</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / ttl-hbase
@@ -111,6 +120,7 @@
   <h2 class="title">Playing with TTL in HBase</h2>
   <div class="meta-row"><span class="m"><b>2019-05-27</b></span>
     <span class="m">read: <b>~3 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/ttl-hbase.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/expiration/">#expiration</a></span>
   </div>
   <nav class="toc">
@@ -132,7 +142,7 @@
    <img src="/images/hbase-data-model/hbase.jpg" alt="HBase Image" class="text-center">
 </header>
 <p>Among all features provided by HBase, there is one that is pretty handy to deal with your data's lifecyle: the fact that every cell version can have <strong>Time to Live</strong> or TTL. Let's dive into the feature!</p>
-<h1 id="time-to-live-ttl"><a class="zola-anchor" href="#time-to-live-ttl" aria-label="Anchor link for: time-to-live-ttl">🔗</a>Time To Live (TTL)</h1>
+<h1 id="time-to-live-ttl">Time To Live (TTL)<a class="zola-anchor" href="#time-to-live-ttl" aria-label="Anchor link for: time-to-live-ttl">🔗</a></h1>
 <p>Let's read the doc first!</p>
 <blockquote>
 <p>ColumnFamilies can set a TTL length in seconds, and <strong>HBase will automatically delete rows once the expiration time is reached</strong>.</p>
@@ -174,7 +184,7 @@ You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hb
 <span class="giallo-l"><span class="z-entity z-name z-function">hbase(main</span><span>):016:</span><span class="z-keyword">0&gt;</span><span> scan </span><span class="z-string">&#39;</span><span class="z-string">test_table</span><span class="z-string">&#39;</span><span>, {</span><span class="z-entity z-name z-function">RAW</span><span> =</span><span class="z-keyword">&gt;</span><span class="z-constant z-language"> true</span><span class="z-string">}</span></span>
 <span class="giallo-l"><span class="z-entity z-name z-function">ROW</span><span class="z-string">                            COLUMN+CELL</span></span>
 <span class="giallo-l"><span class="z-entity z-name z-function">0</span><span class="z-string"> row</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.0060</span><span class="z-string"> seconds</span></span></code></pre><h1 id="how-does-it-works"><a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a>How does it works?</h1>
+<span class="giallo-l"><span class="z-entity z-name z-function">Took</span><span class="z-constant z-numeric"> 0.0060</span><span class="z-string"> seconds</span></span></code></pre><h1 id="how-does-it-works">How does it works?<a class="zola-anchor" href="#how-does-it-works" aria-label="Anchor link for: how-does-it-works">🔗</a></h1>
 <p>As always, the truth is held by the documentation:</p>
 <blockquote>
 <p>A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.</p>
@@ -213,6 +223,10 @@ You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hb
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Handling OVH&#x27;s alerts with Apache Flink</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/colossus-google/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">What can be gleaned about GFS successor codenamed Colossus?</span></a>
+  </nav>
 </article>
 
   </main>
@@ -220,11 +234,11 @@ You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hb
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -235,9 +249,7 @@ You may have heard about <b><a target="_blank" href="https://blogs.apache.org/hb
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

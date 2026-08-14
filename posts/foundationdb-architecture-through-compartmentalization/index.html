@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="blueprint">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
+  <title>Explaining FoundationDB&#x27;s Architecture Through Compartmentalization | Pierre Zemb&#x27;s Blog</title>
+  <meta name="description" content="Compartmentalization explains FoundationDB&#x27;s architecture: find the responsibilities that got coupled together, split them, and scale only the parts that can scale.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  <link rel="canonical" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">
+  <meta property="og:title" content="Explaining FoundationDB&#x27;s Architecture Through Compartmentalization">
+  <meta property="og:description" content="Compartmentalization explains FoundationDB&#x27;s architecture: find the responsibilities that got coupled together, split them, and scale only the parts that can scale.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Explaining FoundationDB&#x27;s Architecture Through Compartmentalization">
+  <meta name="twitter:description" content="Compartmentalization explains FoundationDB&#x27;s architecture: find the responsibilities that got coupled together, split them, and scale only the parts that can scale.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2026-08-13T00:00:00+00:00">
+  <meta property="article:tag" content="distributed-systems">
+  <meta property="article:tag" content="foundationdb">
+  <meta property="article:tag" content="consensus">
+  <meta property="article:tag" content="algorithms"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
+
+  
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">
+
+
+  <script>
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
+  (function () {
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
+  })();
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
+  <div class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav>
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+  <div class="nav-search">
+    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
+</div>
+
+  <div class="console">
+  <div class="log" aria-hidden="true">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;foundationdb-architecture-through-compartmentalization">./read --quorum posts&#x2F;foundationdb-architecture-through-compartmentalization</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
+  <main id="main">
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / foundationdb-architecture-through-compartmentalization
+  </div>
+
+  <h2 class="title">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</h2>
+  <div class="meta-row"><span class="m"><b>2026-08-13</b></span>
+    <span class="m">read: <b>~6 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/algorithms/">#algorithms</a></span>
+  </div>
+  <nav class="toc">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/#the-architecture-i-couldn-t-explain">The architecture I couldn&#x27;t explain</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/#a-different-way-to-look-at-distributed-systems">A different way to look at distributed systems</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/#how-i-read-systems-now">How I read systems now</a>
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/#every-split-has-a-cost">Every split has a cost</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
+    <h2 id="the-architecture-i-couldn-t-explain">The architecture I couldn't explain<a class="zola-anchor" href="#the-architecture-i-couldn-t-explain" aria-label="Anchor link for: the-architecture-i-couldn-t-explain">🔗</a></h2>
+<p>One thing always puzzled me about FoundationDB: compared to many distributed databases, its architecture looks almost excessive: GRV proxies, commit proxies, resolvers, log servers, storage servers, and that's only the data plane. When I say that I operate FDB, people often ask, "Isn't that complicated? There are so many processes and roles." After years of operating FDB for <a rel="external" href="https://www.clever-cloud.com/materia/">Materia</a> at Clever Cloud, I understood what every component did, but I couldn't explain why the system had been split that way. Michael Whittaker's <a rel="external" href="https://mwhittaker.github.io/publications/compartmentalized_paxos.html"><strong>Scaling Replicated State Machines with Compartmentalization</strong></a> (VLDB 2021) finally gave me the vocabulary I was missing.</p>
+<p>Start with his talk, it explains the paper better than I could:</p>
+<div class="embed-video ">
+  <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;LWFml1LFIqc" title="Scaling Replicated State Machines with Compartmentalization" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+<h2 id="a-different-way-to-look-at-distributed-systems">A different way to look at distributed systems<a class="zola-anchor" href="#a-different-way-to-look-at-distributed-systems" aria-label="Anchor link for: a-different-way-to-look-at-distributed-systems">🔗</a></h2>
+<p>When we learn distributed systems, we usually learn to partition data and replicate it. The paper asks a different question: <strong>which responsibilities are accidentally coupled inside the bottleneck?</strong></p>
+<p>It calls the answer <strong>compartmentalization</strong>: separate those responsibilities, then scale each one independently.</p>
+<p>The MultiPaxos leader is its canonical example, since it sequences commands into the log and handles communication for the whole protocol. For f = 1, each command gives the leader one client message, four messages exchanged with a quorum of two acceptors, and two messages to replicas, seven messages in total, so adding acceptors or replicas only gives it more nodes to talk to.</p>
+<div class="mermaid">
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant A as Acceptors
+    participant R as Replicas
+    C-&gt;&gt;L: x
+    L-&gt;&gt;A: replicate x to quorum of 2 acceptors
+    A-&gt;&gt;L: acknowledgements from 2 acceptors
+    L-&gt;&gt;R: x is chosen, sent to 2 replicas
+    R-&gt;&gt;C: result of x
+    Note over L: 7 messages touch leader
+</div>
+<p>There is no fundamental reason those two jobs have to live together. Sequencing is inherently serialized, communication is embarrassingly parallel, so the paper introduces <strong>proxy leaders</strong>: the leader keeps sequencing and hands each command to a proxy leader that runs the rest of the protocol, dropping the leader to two messages per command. I will not paraphrase the whole construction, the talk does it better, so here is just the paper's result: applied across the protocol, compartmentalization raises MultiPaxos throughput by 6x on a write-only workload and 16x on a workload with 90% reads, without adopting a new protocol.</p>
+<div class="mermaid">
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant P as Proxy leader
+    participant A as Acceptors
+    participant R as Replicas
+    C-&gt;&gt;L: x
+    L-&gt;&gt;P: x at position 0
+    P-&gt;&gt;A: replicate x to quorum of 2 acceptors
+    A-&gt;&gt;P: acknowledgements from 2 acceptors
+    P-&gt;&gt;R: x is chosen, sent to 2 replicas
+    R-&gt;&gt;C: result of x
+    Note over L: 2 messages touch leader
+    Note over P: 7 messages touch proxy
+</div>
+<h2 id="how-i-read-systems-now">How I read systems now<a class="zola-anchor" href="#how-i-read-systems-now" aria-label="Anchor link for: how-i-read-systems-now">🔗</a></h2>
+<p>Since reading the paper, I read distributed systems through the same short list of questions.</p>
+<ul>
+<li><strong>How many RPCs does each component touch per request?</strong></li>
+<li><strong>What is this component actually responsible for?</strong></li>
+<li><strong>Which steps are inherently serialized, and which are embarrassingly parallel?</strong></li>
+<li><strong>When I add instances, does the work per node go down, or does fan-out go up?</strong></li>
+<li><strong>Can this work be partitioned across independent groups?</strong></li>
+</ul>
+<p>Looking back at FoundationDB, I stopped seeing dozens of processes and started seeing answers to those questions. The RPC flow makes those splits visible:</p>
+<div class="mermaid">
+sequenceDiagram
+    participant C as Client
+    participant G as GRV proxy
+    participant M as Master (singleton sequencer)
+    participant S as Storage servers
+    participant CP as Commit proxy
+    participant R as Resolvers
+    participant T as TLogs
+    C-&gt;&gt;G: get read version
+    G-&gt;&gt;M: batched request
+    M--&gt;&gt;G: read version
+    G--&gt;&gt;C: read version
+    C-&gt;&gt;S: read keys at version
+    S--&gt;&gt;C: values
+    C-&gt;&gt;CP: commit transaction
+    CP-&gt;&gt;M: batched commit-version request
+    M--&gt;&gt;CP: commit version
+    CP-&gt;&gt;R: conflict ranges
+    R--&gt;&gt;CP: conflict decisions
+    CP-&gt;&gt;T: mutations and commit version
+    T--&gt;&gt;CP: durable
+    CP-&gt;&gt;M: live committed version
+    M--&gt;&gt;CP: acknowledged
+    CP--&gt;&gt;C: commit result
+</div>
+<p>FoundationDB does not minimize the total number of round trips. It keeps the RPC count low at the serialized role. The Master sees batched version requests and live committed version reports, while GRV and commit proxies carry the client traffic. Commit proxies coordinate the fan-out to resolvers and TLogs.</p>
+<p>The remaining work is divided along its own boundaries. Resolvers partition conflict checking by key range, TLogs durably retain mutation streams for storage servers, and storage servers serve reads directly once clients locate the relevant ranges. The scalable responsibilities have their own pools, while the Master remains a singleton. FDB's process count comes from those separate scaling decisions.</p>
+<h2 id="every-split-has-a-cost">Every split has a cost<a class="zola-anchor" href="#every-split-has-a-cost" aria-label="Anchor link for: every-split-has-a-cost">🔗</a></h2>
+<p>Compartmentalization isn't free. The paper's 6x speedup used 6.66x the machines, a command crosses six network delays instead of four, and running more machines shortens the expected time to f failures. Those additional roles also create more RPC paths, upgrade boundaries, and interactions between roles during failures.</p>
+<div class="note">
+  <span class="note-h">note</span>
+  As a side note, reconfiguration is a hard enough problem that Michael Whittaker also wrote <a rel="external" href="https://mwhittaker.github.io/publications/matchmaker_paxos.html"><strong>Matchmaker Paxos</strong></a> about it, another paper I like a lot.
+</div>
+<p>FoundationDB pays that cost when the transaction system's shape changes. GRV proxies, commit proxies, resolvers, and TLogs have configured counts, but changing one does not resize a pool in place. FDB starts a new transaction-system epoch and recruits the roles according to the new configuration. I really like this: from the outside, it looks like tearing the transaction system down and bringing it back up, although old TLogs can remain until storage servers consume their mutations.</p>
+<p><a href="/posts/diving-into-foundationdb-simulation/">FoundationDB's simulation suite</a> exercises shutdown and recovery so often that it almost makes this look easy.</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with compartmentalization. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Why Apache Avro Needs Two Schemas</span></a>
+    <span class="pn-item pn-empty"></span>
+  </nav>
+</article>
+
+  </main>
+
+  <div class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-08-14
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
+
+
+</body>
+</html>

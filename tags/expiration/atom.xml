@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - expiration</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/expiration/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -31,7 +31,7 @@
    &lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;HBase Image&quot; class=&quot;text-center&quot;&gt;
 &lt;&#x2F;header&gt;
 &lt;p&gt;Among all features provided by HBase, there is one that is pretty handy to deal with your data&#x27;s lifecyle: the fact that every cell version can have &lt;strong&gt;Time to Live&lt;&#x2F;strong&gt; or TTL. Let&#x27;s dive into the feature!&lt;&#x2F;p&gt;
-&lt;h1 id=&quot;time-to-live-ttl&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#time-to-live-ttl&quot; aria-label=&quot;Anchor link for: time-to-live-ttl&quot;&gt;🔗&lt;&#x2F;a&gt;Time To Live (TTL)&lt;&#x2F;h1&gt;
+&lt;h1 id=&quot;time-to-live-ttl&quot;&gt;Time To Live (TTL)&lt;a class=&quot;zola-anchor&quot; href=&quot;#time-to-live-ttl&quot; aria-label=&quot;Anchor link for: time-to-live-ttl&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
 &lt;p&gt;Let&#x27;s read the doc first!&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;ColumnFamilies can set a TTL length in seconds, and &lt;strong&gt;HBase will automatically delete rows once the expiration time is reached&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
@@ -73,7 +73,7 @@ You may have heard about &lt;b&gt;&lt;a target=&quot;_blank&quot; href=&quot;htt
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;hbase(main&lt;&#x2F;span&gt;&lt;span&gt;):016:&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;0&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; scan &lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;test_table&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, {&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;RAW&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-language&quot;&gt; true&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;ROW&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;                            COLUMN+CELL&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; row&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;s&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
-&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;Took&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 0.0060&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; seconds&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h1 id=&quot;how-does-it-works&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-it-works&quot; aria-label=&quot;Anchor link for: how-does-it-works&quot;&gt;🔗&lt;&#x2F;a&gt;How does it works?&lt;&#x2F;h1&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;Took&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 0.0060&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; seconds&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h1 id=&quot;how-does-it-works&quot;&gt;How does it works?&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-it-works&quot; aria-label=&quot;Anchor link for: how-does-it-works&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
 &lt;p&gt;As always, the truth is held by the documentation:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;A {row, column, version} tuple exactly specifies a cell in HBase. It’s possible to have an unbounded number of cells where the row and column are the same but the cell address differs only in its version dimension.&lt;&#x2F;p&gt;

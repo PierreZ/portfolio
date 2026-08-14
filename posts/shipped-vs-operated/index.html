@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Shipped vs. Operated, or How Many Bash Scripts Does It Take? | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="The difference between shipped and operated software is the difference between something you can run and forget, and something that demands ongoing, hands-on care. Choosing the former protects your team’s focus and sanity.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Shipped vs. Operated, or How Many Bash Scripts Does It Take?">
   <meta property="og:description" content="The difference between shipped and operated software is the difference between something you can run and forget, and something that demands ongoing, hands-on care. Choosing the former protects your team’s focus and sanity.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Shipped vs. Operated, or How Many Bash Scripts Does It Take?">
@@ -45,24 +55,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/shipped-vs-operated.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -81,7 +90,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;shipped-vs-operated">./read --quorum posts&#x2F;shipped-vs-operated</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -100,7 +109,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / shipped-vs-operated
@@ -109,6 +118,7 @@
   <h2 class="title">Shipped vs. Operated, or How Many Bash Scripts Does It Take?</h2>
   <div class="meta-row"><span class="m"><b>2025-08-18</b></span>
     <span class="m">read: <b>~4 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/shipped-vs-operated.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/operation/">#operation</a></span>
   </div>
   <nav class="toc">
@@ -132,16 +142,16 @@
     <blockquote>
 <p><strong>Summary:</strong> The difference between shipped and operated software is the difference between something you can run and forget, and something that demands ongoing, hands-on care. Choosing the former protects your team’s focus and sanity.</p>
 </blockquote>
-<h2 id="the-shipped-vs-operated-spectrum"><a class="zola-anchor" href="#the-shipped-vs-operated-spectrum" aria-label="Anchor link for: the-shipped-vs-operated-spectrum">🔗</a>The Shipped vs. Operated Spectrum</h2>
+<h2 id="the-shipped-vs-operated-spectrum">The Shipped vs. Operated Spectrum<a class="zola-anchor" href="#the-shipped-vs-operated-spectrum" aria-label="Anchor link for: the-shipped-vs-operated-spectrum">🔗</a></h2>
 <p>Some technologies arrive as complete systems: you deploy them, give them minimal care, and they quietly do their job. Others arrive like complex machines: powerful, but demanding regular attention and maintenance. That’s the difference between <em>shipped</em> and <em>operated</em>.</p>
 <p>The distinction isn’t just about features; it’s about the level of operational effort the system will demand over its lifetime. <strong>Operated</strong> technologies require continuous human care to stay healthy. They age, drift, and accumulate operational quirks. They often have sharp edges you only discover at 2 a.m., and when something goes wrong, you need people who already know the failure modes by heart. Think of a self-managed <strong>HBase</strong> or a ZooKeeper ensemble that you <em>really</em> hope never splits brain.</p>
 <p><strong>Shipped</strong> technologies are built to reduce that constant overhead. They can still fail, but they tend to fail in ways that are predictable, recoverable, and not existential. You can learn them as you go. Your outages will be frustrating, but they won’t demand a dedicated handler on payroll. <strong>FoundationDB</strong> is a good example: it’s not magic, but its operational surface area is small enough to fit in a single human brain.</p>
 <p>For contrast, I’ve also spent years with the other kind: <strong>HBase</strong> clusters spread over 250+ nodes, <strong>Ceph</strong>, <strong>Kafka</strong> and <strong>ZooKeeper</strong> in various configurations, <strong>Pulsar</strong>, <strong>Warp10</strong>, <strong>etcd</strong>, <strong>Kubernetes</strong>, <strong>Flink</strong>, and <strong>RabbitMQ</strong>, each with its own set of operational “adventures.”</p>
-<h2 id="identifying-operated-systems"><a class="zola-anchor" href="#identifying-operated-systems" aria-label="Anchor link for: identifying-operated-systems">🔗</a>Identifying Operated Systems</h2>
+<h2 id="identifying-operated-systems">Identifying Operated Systems<a class="zola-anchor" href="#identifying-operated-systems" aria-label="Anchor link for: identifying-operated-systems">🔗</a></h2>
 <p>Some systems live in both worlds depending on how you use them. <strong>PostgreSQL</strong> in standalone mode is usually shipped: it’s simple to run, predictable, and rarely causes surprises. But under certain conditions, like fighting vacuum performance at scale or running it in HA mode under sustained heavy load, it shifts into operated territory. The difference isn’t in the codebase, but in the demands your use case puts on it.</p>
 <p>A quick way to tell which camp your system belongs to is the <strong>Bash Script Test</strong>: ask how many bash scripts or home-grown tools are required to survive an on-call shift. If the answer includes a collection of automation to clean up data, shuffle it between nodes, or probe the cluster’s health, you’re probably in operated territory. I’ve been there: running <code>hbck</code> and manually moving regions in <strong>HBase</strong>, shuffling partitions around in <strong>Kafka</strong> to balance load, or triggering repairs in <strong>Ceph</strong> after failed scrub errors. Many distributed systems quietly rely on these manual interventions, often run weekly, to stay healthy, and that’s an operational cost you can’t ignore.</p>
 <p>By contrast, we have <strong>no</strong> such scripts for <strong>FoundationDB</strong>, and that’s exactly why it feels shipped.</p>
-<h2 id="the-strategic-cost-of-operations"><a class="zola-anchor" href="#the-strategic-cost-of-operations" aria-label="Anchor link for: the-strategic-cost-of-operations">🔗</a>The Strategic Cost of Operations</h2>
+<h2 id="the-strategic-cost-of-operations">The Strategic Cost of Operations<a class="zola-anchor" href="#the-strategic-cost-of-operations" aria-label="Anchor link for: the-strategic-cost-of-operations">🔗</a></h2>
 <p>Each operated system consumes a slice of your team’s focus. Add too many, and you’ll spend more time keeping the lights on than moving forward. The more you can choose robust, low-maintenance software, the more space you keep for actually building new things.</p>
 <p>I’m not a fan of Kubernetes from an operational perspective. But it does something important for end users: it gives them a standard way to write software that reacts to the state of the infrastructure through <a rel="external" href="https://kubernetes.io/docs/concepts/extend-kubernetes/operator/">Operators</a>. Operators turn that into continuous automation, with a reconciliation loop that keeps drifting systems aligned with the desired state. It’s a way to bake SRE knowledge into code, so even complex systems can be run and handed over without months of hand-holding.</p>
 <p>The stakes are only going to get higher as LLMs become a common tool for software engineers. We’ll inevitably build more advanced and complex systems, but that complexity doesn’t disappear; it gets pushed to the people on call. LLMs are good at fixing failures that are reproducible and deterministic, because they can alter the system freely, but most on-call incidents aren’t like that. The only way to keep operational load sustainable is to change how we design and test: building for robustness from the start, and using techniques like <a href="/posts/simulation-driven-development/">simulation-driven development</a> to expose failure modes before they reach production.</p>
@@ -150,6 +160,10 @@
 <p>Feel free to reach out with any questions or to share your experiences with shipped/operated software. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Two Podcast Episodes on Topics Developers Rarely Talk About</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Testing: prevention vs discovery</span></a>
+  </nav>
 </article>
 
   </main>
@@ -157,11 +171,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -172,9 +186,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

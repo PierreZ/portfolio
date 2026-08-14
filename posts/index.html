@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Posts | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Subscribe to [Atom feed](&#x2F;posts&#x2F;atom.xml)">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Posts">
   <meta property="og:description" content="Subscribe to [Atom feed](&#x2F;posts&#x2F;atom.xml)">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Posts">
@@ -44,22 +54,19 @@
   
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -78,9 +85,9 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts">./read --quorum posts</span></div>
-    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 53 documents · committed</span><span class="cursor"></span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 54 documents · committed</span><span class="cursor"></span></div>
   </div>
   <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
@@ -97,484 +104,456 @@
 </div>
 
 
-  <main>
+  <main id="main">
     
+<div class="taglist featured-tags">
+  <span class="tf-cmd">sort ./tags | head -5</span>
+  <a class="tag" href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems<span class="cnt">34</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/database/">#database<span class="cnt">20</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb<span class="cnt">16</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/storage/">#storage<span class="cnt">14</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/testing/">#testing<span class="cnt">12</span></a>
+</div>
 
 <div class="bom">
+  <div class="yr">ls ./2026/</div>
   
   <div class="row">
-    <div class="date">2026-07-30</div>
+    <div class="date">2026-08-13<span class="rt">~6 min</span></div>
+    <div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</a><a class="desc" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">Compartmentalization explains FoundationDB&#x27;s architecture: find the responsibilities that got coupled together, split them, and scale only the parts that can scale.</a>
+    </div>
+  </div>
+
+  
+  <div class="row">
+    <div class="date">2026-07-30<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/">Why Apache Avro Needs Two Schemas</a><a class="desc" href="https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/">Avro payloads cannot be decoded without the writer schema, and that two-schema model is what makes rolling upgrades and schema evolution work.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/avro/">#avro</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-06-09</div>
+    <div class="date">2026-06-09<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">Designing Fakes That Prove Correctness</a><a class="desc" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/">You fake the handful of methods your code actually calls, prove the fake stays honest, and then make it fail the way production does.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-05-05</div>
+    <div class="date">2026-05-05<span class="rt">~5 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/bugbash-2026/">BugBash 2026, or how the correctness decade has started</a><a class="desc" href="https://pierrezemb.fr/posts/bugbash-2026/">A retrospective on BugBash 2026, and why software engineering looks brighter than ever.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/correctness/">#correctness</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-03-26</div>
+    <div class="date">2026-03-26<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">Why Fakes Beat Mocks and Testcontainers</a><a class="desc" href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">Trait-based fakes test partial failures that mocks and Testcontainers fundamentally cannot simulate. They are also the on-ramp to simulation-driven development.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-03-23</div>
+    <div class="date">2026-03-23<span class="rt">~13 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">Diving Into Coverage-Guided Fuzzing</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/">How a 600-line Rust fuzzer discovers a 3-byte crash sequence in 9,000 iterations instead of 16 million</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/fuzzing/">#fuzzing</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-02-25</div>
+    <div class="date">2026-02-25<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/datafusion-index-provider/">Building Index-Backed Query Plans in DataFusion</a><a class="desc" href="https://pierrezemb.fr/posts/datafusion-index-provider/">What I learned about manually constructing physical query plans for secondary index queries, and the library that came out of it.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a> <a href="https://pierrezemb.fr/tags/databases/">#databases</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-02-05</div>
+    <div class="date">2026-02-05<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Simulating Leader Election on top of FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/leader-election/">#leader-election</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-01-30</div>
+    <div class="date">2026-01-30<span class="rt">~11 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/">FoundationDB&#x27;s Transaction Model for Layer Engineers</a><a class="desc" href="https://pierrezemb.fr/posts/fdb-transaction-model-for-layer-engineers/">How optimistic concurrency control works in FoundationDB, and how to design data structures that stop fighting it</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2026-01-15</div>
+    <div class="date">2026-01-15<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/llms-for-engineering/">What I Tell Colleagues About Using LLMs for Engineering</a><a class="desc" href="https://pierrezemb.fr/posts/llms-for-engineering/">LLMs amplify expertise, they don&#x27;t replace it. Here&#x27;s what works: planning, context, feedback loops, and building systems that let AI discover bugs.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a></div>
     </div>
   </div>
 
+  <div class="yr">ls ./2025/</div>
   
   <div class="row">
-    <div class="date">2025-12-26</div>
+    <div class="date">2025-12-26<span class="rt">~11 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/2025-year-in-review/">2025: A Year in Review</a><a class="desc" href="https://pierrezemb.fr/posts/2025-year-in-review/">Reflections on returning to engineering, discovering simulation as a superpower, learning to work with LLMs, and the compounding value of years of distributed systems work.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/personal/">#personal</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-12-19</div>
+    <div class="date">2025-12-19<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/specs-are-back/">Specs Are Back, But We&#x27;re Missing the Tools</a><a class="desc" href="https://pierrezemb.fr/posts/specs-are-back/">LLMs revived specifications. Model checkers like Fizzbee work for algorithms. But for APIs and business logic? The tooling doesn&#x27;t exist yet.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/specifications/">#specifications</a> <a href="https://pierrezemb.fr/tags/formal-methods/">#formal-methods</a> <a href="https://pierrezemb.fr/tags/model-checking/">#model-checking</a> <a href="https://pierrezemb.fr/tags/fizzbee/">#fizzbee</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-12-09</div>
+    <div class="date">2025-12-09<span class="rt">~13 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/">Designing Rust FDB Workloads That Actually Find Bugs</a><a class="desc" href="https://pierrezemb.fr/posts/writing-rust-fdb-workloads-that-find-bugs/">Patterns and principles for writing Rust simulation workloads that catch bugs before production does.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-11-12</div>
+    <div class="date">2025-11-12<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/">Diving into Kubernetes&#x27; Watch Cache</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-kubernetes-watch-cache/">Understanding how Kubernetes apiserver caches etcd, the 3-second timeout, and K8s 1.34 consistent read feature</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a> <a href="https://pierrezemb.fr/tags/kubernetes/">#kubernetes</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/caching/">#caching</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-10-30</div>
+    <div class="date">2025-10-30<span class="rt">~22 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/">Diving into FoundationDB&#x27;s Simulation Framework</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-foundationdb-simulation/">How FoundationDB achieves legendary reliability through deterministic simulation, interface swapping, and one trillion CPU-hours of testing</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-10-02</div>
+    <div class="date">2025-10-02<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">From Arc to Box: One Deref Bound to Rule Them All</a><a class="desc" href="https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/">How Rust&#x27;s Deref trait solved a complex API design problem in FoundationDB-rs without traits or enums</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/programming/">#programming</a> <a href="https://pierrezemb.fr/tags/metaprogramming/">#metaprogramming</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-09-24</div>
+    <div class="date">2025-09-24<span class="rt">~14 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">A Practical Guide to Application Metrics: Where to Put Your Instrumentation</a><a class="desc" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/">A comprehensive guide on where and how to instrument metrics in your applications, covering everything from API endpoints to background jobs</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/observability/">#observability</a> <a href="https://pierrezemb.fr/tags/metrics/">#metrics</a> <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-09-08</div>
+    <div class="date">2025-09-08<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/">Testing: prevention vs discovery</a><a class="desc" href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/">Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-08-18</div>
+    <div class="date">2025-08-18<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/shipped-vs-operated/">Shipped vs. Operated, or How Many Bash Scripts Does It Take?</a><a class="desc" href="https://pierrezemb.fr/posts/shipped-vs-operated/">The difference between shipped and operated software is the difference between something you can run and forget, and something that demands ongoing, hands-on care. Choosing the former protects your team’s focus and sanity.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/operation/">#operation</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-08-11</div>
+    <div class="date">2025-08-11<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/">Two Podcast Episodes on Topics Developers Rarely Talk About</a><a class="desc" href="https://pierrezemb.fr/posts/debugging-and-correctness-podcasts/">Two podcast episodes—one from Oxide and one from Antithesis—on debugging at the limits and building correctness into systems from day one.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/correctness/">#correctness</a> <a href="https://pierrezemb.fr/tags/podcasts/">#podcasts</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-07-02</div>
+    <div class="date">2025-07-02<span class="rt">~8 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/">Three Years of Nix and NixOS: The Good, the Bad, and the Ugly</a><a class="desc" href="https://pierrezemb.fr/posts/nixos-good-bad-ugly/">A review of Nix&#x2F;NixOS after using it on all my machines for three years. I&#x27;ll cover what works, what doesn&#x27;t, and why it&#x27;s the first OS that&#x27;s stuck with me.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/nixos/">#nixos</a> <a href="https://pierrezemb.fr/tags/nix/">#nix</a> <a href="https://pierrezemb.fr/tags/linux/">#linux</a> <a href="https://pierrezemb.fr/tags/devops/">#devops</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-06-04</div>
+    <div class="date">2025-06-04<span class="rt">~6 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Thank You, DataFusion: Queries in Rust, Without the Pain</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/datafusion/">#datafusion</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/query-engine/">#query-engine</a> <a href="https://pierrezemb.fr/tags/databases/">#databases</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Thank You, DataFusion: Queries in Rust, Without the Pain</a><a class="desc" href="https://pierrezemb.fr/posts/thank-you-datafusion/">Why Apache DataFusion, a composable Rust-native SQL engine rather than a rigid framework, finally let me plug real queries into our FoundationDB-based system after years of watching from the sidelines.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-06-03</div>
+    <div class="date">2025-06-03<span class="rt">~7 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</a><a class="desc" href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">A technical deep-dive into FoundationDB Record Layer continuations, explaining how they enable long-running operations by segmenting work across multiple FDB transactions, effectively bypassing the inherent 5-second and 10MB limits.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/record-layer/">#record-layer</a> <a href="https://pierrezemb.fr/tags/java/">#java</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/continuation/">#continuation</a> <a href="https://pierrezemb.fr/tags/pagination/">#pagination</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-05-18</div>
+    <div class="date">2025-05-18<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/tokio-hidden-gems/">Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</a><a class="desc" href="https://pierrezemb.fr/posts/tokio-hidden-gems/">Discover lesser-known Tokio features like current-thread runtimes for !Send futures, seeded runtimes for deterministic tests, and paused time for precise temporal control in your Rust applications.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/tokio/">#tokio</a> <a href="https://pierrezemb.fr/tags/async/">#async</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/concurrency/">#concurrency</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-04-18</div>
+    <div class="date">2025-04-18<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/simulation-driven-development/">What if we embraced simulation-driven development?</a><a class="desc" href="https://pierrezemb.fr/posts/simulation-driven-development/">How deterministic simulation testing can help us build more reliable distributed systems and bridge the gap between development and production environments.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/reliability/">#reliability</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-04-11</div>
+    <div class="date">2025-04-11<span class="rt">~6 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/learn-about-dst/">So, You Want to Learn More About Deterministic Simulation Testing?</a><a class="desc" href="https://pierrezemb.fr/posts/learn-about-dst/">A curated collection of resources about deterministic simulation testing for distributed systems.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/reliability/">#reliability</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-03-27</div>
+    <div class="date">2025-03-27<span class="rt">~2 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/reverse-number-scanning/">Key design tip: reverse number scanning in ordered key-value stores</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/optimization/">#optimization</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/reverse-number-scanning/">Key design tip: reverse number scanning in ordered key-value stores</a><a class="desc" href="https://pierrezemb.fr/posts/reverse-number-scanning/">A key design trick for ordered key-value stores like HBase, FoundationDB, and RocksDB: reverse a number by subtracting it from its max value so a forward scan finds the highest one first.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-03-07</div>
+    <div class="date">2025-03-07<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/fdb-data-distributor/">Debugging FoundationDB&#x27;s Data Distributor</a><a class="desc" href="https://pierrezemb.fr/posts/fdb-data-distributor/">A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-02-11</div>
+    <div class="date">2025-02-11<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">Ensuring Safety in FoundationDB&#x27;s Rust Crate</a><a class="desc" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">Strategies and techniques for enhancing safety in the FoundationDB Rust crate</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2025-01-15</div>
+    <div class="date">2025-01-15<span class="rt">~2 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/back-engineering/">Back in engineering!</a><a class="desc" href="https://pierrezemb.fr/posts/back-engineering/">I&#x27;m moving back in core engineering</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/personal/">#personal</a></div>
     </div>
   </div>
 
+  <div class="yr">ls ./2024/</div>
   
   <div class="row">
-    <div class="date">2024-04-22</div>
+    <div class="date">2024-04-22<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/redwood-memory-tuning/">Redwood’s memory tuning in FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/redwood-memory-tuning/">Learn how to tune FoundationDB for Redwood storage Engine</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/tuning/">#tuning</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2024-03-12</div>
+    <div class="date">2024-03-12<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">True idempotent transactions with FoundationDB 7.3</a><a class="desc" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">Learn how to avoid FDB&#x27;s biggest caveats by using a new feature called automatic idempotency in FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2024-01-22</div>
+    <div class="date">2024-01-22<span class="rt">~4 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/academic-conferences/">The unseen treasures of Infrastructure Engineering: Academic Papers</a><a class="desc" href="https://pierrezemb.fr/posts/academic-conferences/">Are you not using academic papers in your favorite RSS app? You should!</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/research/">#research</a> <a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/engineering/">#engineering</a> <a href="https://pierrezemb.fr/tags/papers/">#papers</a></div>
     </div>
   </div>
 
+  <div class="yr">ls ./2022/</div>
   
   <div class="row">
-    <div class="date">2022-01-17</div>
+    <div class="date">2022-01-17<span class="rt">~11 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/distsys-resources/">Best resources to learn about data and distributed systems</a><a class="desc" href="https://pierrezemb.fr/posts/distsys-resources/">Learning distributed systems is tough. You need to go through a lot of academic papers, concepts, code review, before being able to have a global pictures. Thankfully, there is a lot of resources out there that can help you. Here&#x27;s the best resources I used to learn distributed systems</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/education/">#education</a> <a href="https://pierrezemb.fr/tags/database/">#database</a></div>
     </div>
   </div>
 
+  <div class="yr">ls ./2021/</div>
   
   <div class="row">
-    <div class="date">2021-02-21</div>
+    <div class="date">2021-02-21<span class="rt">~5 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">Crafting row keys in FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">An overview of all the helpers to generate row keys with FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2021-01-11</div>
+    <div class="date">2021-01-11<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/notes-about-etcd/">Notes about ETCD</a><a class="desc" href="https://pierrezemb.fr/posts/notes-about-etcd/">List of ressources gleaned about ETCD</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></div>
     </div>
   </div>
 
+  <div class="yr">ls ./2020/</div>
   
   <div class="row">
-    <div class="date">2020-09-30</div>
+    <div class="date">2020-09-30<span class="rt">~9 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/ten-years-programming/">10 years of programming and counting 🚀</a><a class="desc" href="https://pierrezemb.fr/posts/ten-years-programming/">A retrospective of the last 10 years</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/personal/">#personal</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-09-23</div>
+    <div class="date">2020-09-23<span class="rt">~3 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/announcing-record-store/">Announcing Record-Store, a new (experimental) place for your data</a><a class="desc" href="https://pierrezemb.fr/posts/announcing-record-store/">Opensourcing Record-Store</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-09-18</div>
+    <div class="date">2020-09-18<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">Diving into ETCD&#x27;s linearizable reads</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">Diving into ETCD&#x27;s linearizable reads</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">A code-level dive into how etcd achieves linearizable reads with the ReadIndex protocol on top of Raft, including how it enables safe follower reads.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-07-30</div>
+    <div class="date">2020-07-30<span class="rt">~10 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/notes-about-raft/">Notes about Raft&#x27;s paper</a><a class="desc" href="https://pierrezemb.fr/posts/notes-about-raft/">List of ressources gleaned about Raft</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/algorithms/">#algorithms</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-03-24</div>
+    <div class="date">2020-03-24<span class="rt">~11 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/announcing-kop/">Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</a><a class="desc" href="https://pierrezemb.fr/posts/announcing-kop/">We are excited to announce that StreamNative and OVHcloud are open-sourcing “Kafka on Pulsar” (KoP).  KoP brings the native Apache Kafka protocol support to Apache Pulsar by introducing a Kafka protocol handler on Pulsar brokers</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/pulsar/">#pulsar</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-02-14</div>
+    <div class="date">2020-02-14<span class="rt">~7 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">Contributing to Apache HBase: custom data balancing</a><a class="desc" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/">In today’s blogpost, we’re going to take a look at our upstream contribution to Apache HBase’s stochastic load balancer, based on our experience of running HBase clusters to support OVHcloud’s monitoring.</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/opensource/">#opensource</a></div>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2020-01-30</div>
+    <div class="date">2020-01-30<span class="rt">~14 min</span></div>
     <div>
       <a class="ttl" href="https://pierrezemb.fr/posts/notes-about-foundationdb/">Notes about FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/notes-about-foundationdb/">List of ressources gleaned about FoundationDB</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></div>
+    </div>
+  </div>
+
+  <div class="yr">ls ./2019/</div>
+  
+  <div class="row">
+    <div class="date">2019-12-08<span class="rt">~6 min</span></div>
+    <div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">Diving into Kafka&#x27;s Protocol</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">A walkthrough of Kafka&#x27;s wire protocol, from the API_VERSIONS handshake through producing and the consumer group coordination protocol, with a sequence diagram for each exchange.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-12-08</div>
+    <div class="date">2019-11-17<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">Diving into Kafka&#x27;s Protocol</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/networking/">#networking</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">Diving into Hbase&#x27;s MemStore</a><a class="desc" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">A code-level dive into HBase&#x27;s MemStore, from the ConcurrentSkipListMap backing HBase 1.x to the in-memory compactions Accordion introduced in HBase 2.0.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-11-17</div>
+    <div class="date">2019-08-04<span class="rt">~8 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/">Diving into Hbase&#x27;s MemStore</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/colossus-google/">What can be gleaned about GFS successor codenamed Colossus?</a><a class="desc" href="https://pierrezemb.fr/posts/colossus-google/">Piecing together, from scattered public talks and papers, how Google evolved GFS into Colossus, and why a Kubernetes-native distributed file system is still missing.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-08-04</div>
+    <div class="date">2019-05-27<span class="rt">~3 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/colossus-google/">What can be gleaned about GFS successor codenamed Colossus?</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/google/">#google</a> <a href="https://pierrezemb.fr/tags/filesystem/">#filesystem</a> <a href="https://pierrezemb.fr/tags/hadoop/">#hadoop</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/ttl-hbase/">Playing with TTL in HBase</a><a class="desc" href="https://pierrezemb.fr/posts/ttl-hbase/">A hands-on walkthrough of HBase&#x27;s TTL feature, how cell timestamps and compaction interact to expire data, and how to control it by setting your own version timestamp.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-05-27</div>
+    <div class="date">2019-02-03<span class="rt">~6 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/ttl-hbase/">Playing with TTL in HBase</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/expiration/">#expiration</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/ovh-alerts-flink/">Handling OVH&#x27;s alerts with Apache Flink</a><a class="desc" href="https://pierrezemb.fr/posts/ovh-alerts-flink/">How OVH built Beacon, an Apache Flink pipeline handling alert deduplication, escalation, and notification on top of its Metrics Data Platform, and what running Flink in production taught us.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-02-03</div>
+    <div class="date">2019-02-03<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/ovh-alerts-flink/">Handling OVH&#x27;s alerts with Apache Flink</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/streaming/">#streaming</a> <a href="https://pierrezemb.fr/tags/flink/">#flink</a> <a href="https://pierrezemb.fr/tags/monitoring/">#monitoring</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/acid-transactions/">What are ACID transactions?</a><a class="desc" href="https://pierrezemb.fr/posts/acid-transactions/">A walkthrough of the ACID properties of database transactions, from the 1983 Haerder and Reuter paper that coined them to isolation levels and PostgreSQL&#x27;s MVCC implementation.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-02-03</div>
+    <div class="date">2019-01-27<span class="rt">~4 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/acid-transactions/">What are ACID transactions?</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/hbase-data-model/">Hbase Data Model</a><a class="desc" href="https://pierrezemb.fr/posts/hbase-data-model/">An overview of HBase&#x27;s data model, row keys, column families and qualifiers, and why key design determines whether you get good performance or a hotspotted region.</a>
+    </div>
+  </div>
+
+  <div class="yr">ls ./2017/</div>
+  
+  <div class="row">
+    <div class="date">2017-10-11<span class="rt">~8 min</span></div>
+    <div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</a><a class="desc" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">A personal project importing NASA&#x27;s Kepler and K2 telescope data into Warp10 and building a TensorFlow model to detect exoplanet transits from the dips in starlight.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2019-01-27</div>
+    <div class="date">2017-10-08<span class="rt">~8 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/hbase-data-model/">Hbase Data Model</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">Engage maximum warp speed in time series analysis with WarpScript</a><a class="desc" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">An introduction to WarpScript, the stack-oriented language behind the Warp10 time series platform we ran at OVH&#x27;s Metrics Data Platform to store and analyze sensor data.</a>
+    </div>
+  </div>
+
+  <div class="yr">ls ./2016/</div>
+  
+  <div class="row">
+    <div class="date">2016-05-13<span class="rt">~7 min</span></div>
+    <div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/">Event-driven architecture 101</a><a class="desc" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/">An introduction to event-driven architecture: queue messaging systems applying the Unix pipe philosophy to microservices, and the simplicity, modularity, and scalability it buys you.</a>
     </div>
   </div>
 
   
   <div class="row">
-    <div class="date">2017-10-11</div>
+    <div class="date">2016-01-04<span class="rt">~7 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/space/">#space</a> <a href="https://pierrezemb.fr/tags/timeseries/">#timeseries</a> <a href="https://pierrezemb.fr/tags/analytics/">#analytics</a> <a href="https://pierrezemb.fr/tags/machinelearning/">#machinelearning</a></div>
-    </div>
-  </div>
-
-  
-  <div class="row">
-    <div class="date">2017-10-08</div>
-    <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/">Engage maximum warp speed in time series analysis with WarpScript</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/timeseries/">#timeseries</a> <a href="https://pierrezemb.fr/tags/analytics/">#analytics</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a></div>
-    </div>
-  </div>
-
-  
-  <div class="row">
-    <div class="date">2016-05-13</div>
-    <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/">Event-driven architecture 101</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/architecture/">#architecture</a> <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></div>
-    </div>
-  </div>
-
-  
-  <div class="row">
-    <div class="date">2016-01-04</div>
-    <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/lets-talk-about-containers/">Let’s talk about containers</a>
-      <div class="tg"><a href="https://pierrezemb.fr/tags/containers/">#containers</a> <a href="https://pierrezemb.fr/tags/docker/">#docker</a> <a href="https://pierrezemb.fr/tags/security/">#security</a> <a href="https://pierrezemb.fr/tags/infrastructure/">#infrastructure</a></div>
+      <a class="ttl" href="https://pierrezemb.fr/posts/lets-talk-about-containers/">Let’s talk about containers</a><a class="desc" href="https://pierrezemb.fr/posts/lets-talk-about-containers/">A look at what containers actually are, from Docker&#x27;s write-once-run-everywhere hype to why a statically compiled Unix process, not a small VM, is the right mental model.</a>
     </div>
   </div>
 
@@ -585,11 +564,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -600,9 +579,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

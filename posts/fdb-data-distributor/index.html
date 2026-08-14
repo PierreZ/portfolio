@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Debugging FoundationDB&#x27;s Data Distributor | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Debugging FoundationDB&#x27;s Data Distributor">
   <meta property="og:description" content="A deep dive into the internals of FoundationDB&#x27;s Data Distributor and how it manages shard placement and team priorities.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Debugging FoundationDB&#x27;s Data Distributor">
@@ -32,7 +42,7 @@
   <meta property="article:published_time" content="2025-03-07T00:00:00+01:00">
   <meta property="article:tag" content="foundationdb">
   <meta property="article:tag" content="debugging">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="database">
   <meta property="article:tag" content="storage"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/fdb-data-distributor.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;fdb-data-distributor">./read --quorum posts&#x2F;fdb-data-distributor</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / fdb-data-distributor
@@ -112,7 +121,8 @@
   <h2 class="title">Debugging FoundationDB&#x27;s Data Distributor</h2>
   <div class="meta-row"><span class="m"><b>2025-03-07</b></span>
     <span class="m">read: <b>~3 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/fdb-data-distributor.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -152,14 +162,14 @@
   <div class="prose">
     <p>FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the <strong>Data Distributor</strong> plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.</p>
 <p>In this post, we dive into the <strong>Data Distributor's</strong> internals, along with practical lessons we learned during a outage.</p>
-<h2 id="what-is-the-data-distributor"><a class="zola-anchor" href="#what-is-the-data-distributor" aria-label="Anchor link for: what-is-the-data-distributor">🔗</a>What is the Data Distributor?</h2>
+<h2 id="what-is-the-data-distributor">What is the Data Distributor?<a class="zola-anchor" href="#what-is-the-data-distributor" aria-label="Anchor link for: what-is-the-data-distributor">🔗</a></h2>
 <p>The <strong>Data Distributor (DD)</strong> is <a rel="external" href="https://apple.github.io/foundationdb/architecture.html">a subsystem</a> responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:</p>
 <ul>
 <li>Balancing load across servers</li>
 <li>Handling failures by redistributing data</li>
 <li>Ensuring optimal data placement for performance reliability</li>
 </ul>
-<h2 id="data-distributor-wording"><a class="zola-anchor" href="#data-distributor-wording" aria-label="Anchor link for: data-distributor-wording">🔗</a>Data Distributor wording</h2>
+<h2 id="data-distributor-wording">Data Distributor wording<a class="zola-anchor" href="#data-distributor-wording" aria-label="Anchor link for: data-distributor-wording">🔗</a></h2>
 <p>The architecture and behavior of the <strong>Data Distributor</strong> are documented in the <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/design/data-distributor-internals.md">official design document</a>, and introduce the following concepts:</p>
 <ul>
 <li><strong>Machine</strong>: A failure domain in FoundationDB, often considered equivalent to a rack.</li>
@@ -168,7 +178,7 @@
 <li><strong>Machine Team</strong>: A collection of <code>k</code> machines, ensuring fault isolation for redundancy.</li>
 </ul>
 <p>The term "machine" in FoundationDB’s documentation <strong>often translates better as "rack"</strong> in many practical cases. Using racks makes the Machine Team's role clearer: it ensures fault isolation by storing copies of data in different racks.</p>
-<h2 id="debug-dd-with-status-json"><a class="zola-anchor" href="#debug-dd-with-status-json" aria-label="Anchor link for: debug-dd-with-status-json">🔗</a>Debug DD with <code>status json</code></h2>
+<h2 id="debug-dd-with-status-json">Debug DD with <code>status json</code><a class="zola-anchor" href="#debug-dd-with-status-json" aria-label="Anchor link for: debug-dd-with-status-json">🔗</a></h2>
 <p>Your first input point should be to have a look at the <code>team_trackers</code> key in the <code>status json</code>. The JSON should contain enough information for basic monitoring:</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span class="z-string">&quot;</span><span class="z-string">team_trackers</span><span class="z-string">&quot;</span><span>: </span><span>[</span></span>
 <span class="giallo-l"><span>  {</span></span>
@@ -178,7 +188,7 @@
 <span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">healthy</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-constant z-language"> true</span><span>,</span></span>
 <span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">name</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">healthy_rebalancing</span><span class="z-string">&quot;</span></span>
 <span class="giallo-l"><span>    }</span></span>
-<span class="giallo-l"><span>  }</span></span></code></pre><h2 id="debug-dd-with-trace-events"><a class="zola-anchor" href="#debug-dd-with-trace-events" aria-label="Anchor link for: debug-dd-with-trace-events">🔗</a>Debug DD with Trace events</h2>
+<span class="giallo-l"><span>  }</span></span></code></pre><h2 id="debug-dd-with-trace-events">Debug DD with Trace events<a class="zola-anchor" href="#debug-dd-with-trace-events" aria-label="Anchor link for: debug-dd-with-trace-events">🔗</a></h2>
 <p>FoundationDB provides a robust tracing system where each process generates detailed events in either XML or JSON formats. To troubleshoot the <strong>Data Distributor</strong>, you first need to locate the process it has been elected to. From there, trace events can be analyzed to understand shard movements, priorities, and failures.</p>
 <p>One particularly important attribute in these events is the <code>Priority</code> field. This field determines the precedence of shard placement or redistribution tasks:</p>
 <pre class="giallo z-code"><code data-lang="cpp"><span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_RECOVER_MOVE</span><span>,</span><span class="z-constant z-numeric"> 110</span><span> )</span><span>;</span></span>
@@ -188,7 +198,7 @@
 <span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_SPLIT_SHARD</span><span>,</span><span class="z-constant z-numeric"> 950</span><span> )</span><span>;</span></span></code></pre>
 <p>A full list of defined priorities can be found in the <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/fdbclient/ServerKnobs.cpp#L155-L173">Knobs file</a>, providing useful insights into how tasks are scheduled.</p>
 <p>EDIT: Yes, <code>SPLIT_SHARD</code> has an higher priority! See <a rel="external" href="https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24">https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24</a>.</p>
-<h3 id="serverteaminfo-event"><a class="zola-anchor" href="#serverteaminfo-event" aria-label="Anchor link for: serverteaminfo-event">🔗</a><code>ServerTeamInfo</code> Event</h3>
+<h3 id="serverteaminfo-event"><code>ServerTeamInfo</code> Event<a class="zola-anchor" href="#serverteaminfo-event" aria-label="Anchor link for: serverteaminfo-event">🔗</a></h3>
 <p>Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The <code>fdbcli</code> command <code>triggerddteaminfolog</code> triggers informative logs by invoking <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/fdbserver/DDTeamCollection.actor.cpp#L3425">printSnapshotTeamsInfo</a>.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">ServerTeamInfo</span><span class="z-string">&quot;</span><span>,</span></span>
@@ -198,13 +208,13 @@
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">MemberIDs</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">5a69... 5fc1... 8718...</span><span class="z-string">&quot;</span><span>,</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">LoadBytes</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">1135157527</span><span class="z-string">&quot;</span><span>,</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">MinAvailableSpaceRatio</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">0.94108</span><span class="z-string">&quot;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="serverteamprioritychange-event"><a class="zola-anchor" href="#serverteamprioritychange-event" aria-label="Anchor link for: serverteamprioritychange-event">🔗</a><code>ServerTeamPriorityChange</code> Event</h3>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="serverteamprioritychange-event"><code>ServerTeamPriorityChange</code> Event<a class="zola-anchor" href="#serverteamprioritychange-event" aria-label="Anchor link for: serverteamprioritychange-event">🔗</a></h3>
 <p>This event is logged when server team priorities change, often indicating server failures or rebalancing actions.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">ServerTeamPriorityChange</span><span class="z-string">&quot;</span><span>,</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Priority</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">950</span><span class="z-string">&quot;</span><span>,</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">TeamID</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">e9b362decbafbd81</span><span class="z-string">&quot;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="relocateshard-event"><a class="zola-anchor" href="#relocateshard-event" aria-label="Anchor link for: relocateshard-event">🔗</a><code>RelocateShard</code> Event</h3>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="relocateshard-event"><code>RelocateShard</code> Event<a class="zola-anchor" href="#relocateshard-event" aria-label="Anchor link for: relocateshard-event">🔗</a></h3>
 <p>This event tracks shard movement between teams to maintain balance.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">RelocateShard</span><span class="z-string">&quot;</span><span>,</span></span>
@@ -212,7 +222,7 @@
 <span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">RelocationID</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">3f1290654949771e</span><span class="z-string">&quot;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Again, the most useful field is the priority, indicating why it is relocated.</p>
-<h3 id="valleyfiller-and-mountainchopper-mechanisms"><a class="zola-anchor" href="#valleyfiller-and-mountainchopper-mechanisms" aria-label="Anchor link for: valleyfiller-and-mountainchopper-mechanisms">🔗</a>"ValleyFiller" and "MountainChopper" Mechanisms</h3>
+<h3 id="valleyfiller-and-mountainchopper-mechanisms">"ValleyFiller" and "MountainChopper" Mechanisms<a class="zola-anchor" href="#valleyfiller-and-mountainchopper-mechanisms" aria-label="Anchor link for: valleyfiller-and-mountainchopper-mechanisms">🔗</a></h3>
 <p>To optimize shard placement, FoundationDB employs two balancing strategies:</p>
 <ul>
 <li><strong>ValleyFiller</strong>: Fills underutilized servers (the <strong>valleys</strong>) with data to balance the load.</li>
@@ -236,6 +246,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Ensuring Safety in FoundationDB&#x27;s Rust Crate</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/reverse-number-scanning/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Key design tip: reverse number scanning in ordered key-value stores</span></a>
+  </nav>
 </article>
 
   </main>
@@ -243,11 +257,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -258,9 +272,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

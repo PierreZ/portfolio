@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>What can be gleaned about GFS successor codenamed Colossus? | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="Piecing together, from scattered public talks and papers, how Google evolved GFS into Colossus, and why a Kubernetes-native distributed file system is still missing.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,18 +30,18 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/colossus-google/">
   <meta property="og:title" content="What can be gleaned about GFS successor codenamed Colossus?">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="Piecing together, from scattered public talks and papers, how Google evolved GFS into Colossus, and why a Kubernetes-native distributed file system is still missing.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="What can be gleaned about GFS successor codenamed Colossus?">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="Piecing together, from scattered public talks and papers, how Google evolved GFS into Colossus, and why a Kubernetes-native distributed file system is still missing.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2019-08-04T15:07:11+02:00">
   <meta property="article:tag" content="storage">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="google">
   <meta property="article:tag" content="filesystem">
   <meta property="article:tag" content="hadoop"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/colossus-google.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;colossus-google">./read --quorum posts&#x2F;colossus-google</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / colossus-google
@@ -112,7 +121,8 @@
   <h2 class="title">What can be gleaned about GFS successor codenamed Colossus?</h2>
   <div class="meta-row"><span class="m"><b>2019-08-04</b></span>
     <span class="m">read: <b>~8 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/google/">#google</a> <a href="https://pierrezemb.fr/tags/filesystem/">#filesystem</a> <a href="https://pierrezemb.fr/tags/hadoop/">#hadoop</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/colossus-google.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/google/">#google</a> <a href="https://pierrezemb.fr/tags/filesystem/">#filesystem</a> <a href="https://pierrezemb.fr/tags/hadoop/">#hadoop</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -156,7 +166,7 @@
 <li>Hadoop has a bad publicity with headlines like <a rel="external" href="https://techwireasia.com/2019/07/what-does-the-death-of-hadoop-mean-for-big-data/">'What does the death of Hadoop mean for big data?'</a></li>
 </ul>
 <p>Hadoop, as a distributed-system, <strong>is hard to operate, but can be essential for some type of workload</strong>. As Hadoop is based on GFS, we can wonder how GFS evolved inside Google.</p>
-<h2 id="hadoop-s-story"><a class="zola-anchor" href="#hadoop-s-story" aria-label="Anchor link for: hadoop-s-story">🔗</a>Hadoop's story</h2>
+<h2 id="hadoop-s-story">Hadoop's story<a class="zola-anchor" href="#hadoop-s-story" aria-label="Anchor link for: hadoop-s-story">🔗</a></h2>
 <p>Hadoop is based on a Google's paper called <a rel="external" href="https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf">The Google File System</a> published in 2003. There are some key-elements on this paper:</p>
 <ul>
 <li>It was designed to be deployed with <a rel="external" href="https://ai.google/research/pubs/pub43438">Borg</a>,</li>
@@ -170,7 +180,7 @@
 <li>Datas are stored within chunkservers,</li>
 <li>There is no YARN or Map/Reduce or any kind of compute capabilities.</li>
 </ul>
-<h2 id="is-hadoop-still-revelant"><a class="zola-anchor" href="#is-hadoop-still-revelant" aria-label="Anchor link for: is-hadoop-still-revelant">🔗</a>Is Hadoop still revelant?</h2>
+<h2 id="is-hadoop-still-revelant">Is Hadoop still revelant?<a class="zola-anchor" href="#is-hadoop-still-revelant" aria-label="Anchor link for: is-hadoop-still-revelant">🔗</a></h2>
 <p>Google with GFS and the rest of the world with Hadoop hit some issues:</p>
 <ul>
 <li>One (Metadata) machine is not large enough for large FS,</li>
@@ -197,7 +207,7 @@
 <li>Should I be moving that persistent volume over my slow network?</li>
 <li>What is happening when <a rel="external" href="https://github.com/dgraph-io/dgraph/issues/2698">Kubernetes killed an alpha pod in the middle of retrieving snapshot</a>?</li>
 </ul>
-<h2 id="well-let-s-put-hadoop-in-kubernetes"><a class="zola-anchor" href="#well-let-s-put-hadoop-in-kubernetes" aria-label="Anchor link for: well-let-s-put-hadoop-in-kubernetes">🔗</a>Well, let's put Hadoop in Kubernetes</h2>
+<h2 id="well-let-s-put-hadoop-in-kubernetes">Well, let's put Hadoop in Kubernetes<a class="zola-anchor" href="#well-let-s-put-hadoop-in-kubernetes" aria-label="Anchor link for: well-let-s-put-hadoop-in-kubernetes">🔗</a></h2>
 <p>Putting a distributed systems inside Kubernetes is currently a unpleasant experience because of the current tooling:</p>
 <ul>
 <li>Helm is not helping me expressing my needs as a distributed-system operator. Even worse, the official <a rel="external" href="https://github.com/helm/charts/tree/master/stable/hadoop">Helm chart for Hadoop is limited to YARN and Map/Reduce and "Data should be read from cloud based datastores such as Google Cloud Storage, S3 or Swift."</a></li>
@@ -210,8 +220,8 @@
 </ul>
 </li>
 </ul>
-<h2 id="how-gfs-evolved-within-google"><a class="zola-anchor" href="#how-gfs-evolved-within-google" aria-label="Anchor link for: how-gfs-evolved-within-google">🔗</a>How GFS evolved within Google</h2>
-<h3 id="technical-overview"><a class="zola-anchor" href="#technical-overview" aria-label="Anchor link for: technical-overview">🔗</a>Technical overview</h3>
+<h2 id="how-gfs-evolved-within-google">How GFS evolved within Google<a class="zola-anchor" href="#how-gfs-evolved-within-google" aria-label="Anchor link for: how-gfs-evolved-within-google">🔗</a></h2>
+<h3 id="technical-overview">Technical overview<a class="zola-anchor" href="#technical-overview" aria-label="Anchor link for: technical-overview">🔗</a></h3>
 <p>As GFS's paper was published in 2003, we can ask ourselves if GFS has evolved. And it did! The sad part is that there is only a few informations about this project codenamed <code>Colossus</code>. There is no papers, and not a lot informations available, here's what can be found online:</p>
 <ul>
 <li>
@@ -287,12 +297,12 @@
 </ul>
 </li>
 </ul>
-<h3 id="deployments"><a class="zola-anchor" href="#deployments" aria-label="Anchor link for: deployments">🔗</a>Deployments</h3>
+<h3 id="deployments">Deployments<a class="zola-anchor" href="#deployments" aria-label="Anchor link for: deployments">🔗</a></h3>
 <!-- I think the team that's pushing the forefront of something k8s-like for persistency/durability is... the Colossus/D team at Google, who have been running storage servers managed by Borg for almost a decade now :) Problem is, it's not k8s. But could tell us what that roadmap is.  -->
 <p>How everything is deployed? Using Borg!</p>
-<h3 id="migration"><a class="zola-anchor" href="#migration" aria-label="Anchor link for: migration">🔗</a>Migration</h3>
+<h3 id="migration">Migration<a class="zola-anchor" href="#migration" aria-label="Anchor link for: migration">🔗</a></h3>
 <p>The migration process is described in the now free <a rel="external" href="https://static.googleusercontent.com/media/sre.google/en//static/pdf/case-studies-infrastructure-change-management.pdf">Case Studies in Infrastructure Change Management</a> book.</p>
-<h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs"><a class="zola-anchor" href="#is-there-an-open-source-effort-to-create-a-colossus-like-dfs" aria-label="Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs">🔗</a>Is there an open-source effort to create a Colossus-like DFS?</h2>
+<h2 id="is-there-an-open-source-effort-to-create-a-colossus-like-dfs">Is there an open-source effort to create a Colossus-like DFS?<a class="zola-anchor" href="#is-there-an-open-source-effort-to-create-a-colossus-like-dfs" aria-label="Anchor link for: is-there-an-open-source-effort-to-create-a-colossus-like-dfs">🔗</a></h2>
 <p>I did not found any point towards a open-source version of Colossus, beside some work made for <a rel="external" href="https://github.com/baidu/bfs">The Baidu File System</a> in which the Nameserver is implemented as a raft group.</p>
 <p>There is <a rel="external" href="https://www.slideshare.net/HadoopSummit/scaling-hdfs-to-manage-billions-of-files-with-distributed-storage-schemes">some work to add colossus's features in Hadoop</a> but based on the bad publicity Hadoop has now, I don't think there will be a lot of money to power those efforts.</p>
 <p>I do think that rewriting an distributed file-system based on Colossus would be a huge benefit for the community:</p>
@@ -308,6 +318,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/ttl-hbase/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Playing with TTL in HBase</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Diving into Hbase&#x27;s MemStore</span></a>
+  </nav>
 </article>
 
   </main>
@@ -315,11 +329,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -330,9 +344,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

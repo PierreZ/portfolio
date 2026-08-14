@@ -12,9 +12,51 @@
   var libURL = self.dataset.src;
   var loading = false;
 
-  function themeName() {
-    return document.documentElement.getAttribute("data-theme") === "cyanotype"
-      ? "dark" : "neutral";
+  // Pull the blueprint/cyanotype palette straight from the site's CSS custom
+  // properties, so diagrams use theme "base" with colors matching the page
+  // instead of mermaid's built-in "neutral"/"dark" themes (near-black note
+  // boxes in light mode, glowing gray subgraphs in dark mode).
+  function themeVars() {
+    var cs = getComputedStyle(document.documentElement);
+    function v(name) { return cs.getPropertyValue(name).trim(); }
+    var paper = v("--paper");
+    var paper2 = v("--paper-2");
+    var ink = v("--ink");
+    var inkDim = v("--ink-dim");
+    var gridBold = v("--grid-bold");
+    return {
+      background: paper,
+      primaryColor: paper,
+      primaryTextColor: ink,
+      primaryBorderColor: ink,
+      secondaryColor: paper2,
+      tertiaryColor: paper2,
+      lineColor: inkDim,
+      textColor: ink,
+      mainBkg: paper,
+      nodeBorder: ink,
+      clusterBkg: "transparent",
+      clusterBorder: gridBold,
+      defaultLinkColor: inkDim,
+      titleColor: ink,
+      edgeLabelBackground: paper,
+      actorBkg: paper,
+      actorBorder: ink,
+      actorTextColor: ink,
+      actorLineColor: inkDim,
+      signalColor: inkDim,
+      signalTextColor: ink,
+      labelBoxBkgColor: paper2,
+      labelBoxBorderColor: gridBold,
+      labelTextColor: ink,
+      loopTextColor: inkDim,
+      noteBkgColor: paper2,
+      noteTextColor: ink,
+      noteBorderColor: gridBold,
+      activationBkgColor: paper2,
+      activationBorderColor: gridBold,
+      sequenceNumberColor: paper,
+    };
   }
 
   function render() {
@@ -30,7 +72,8 @@
     });
     window.mermaid.initialize({
       startOnLoad: false,
-      theme: themeName(),
+      theme: "base",
+      themeVariables: themeVars(),
       securityLevel: "strict",
       fontFamily: "Consolas, ui-monospace, monospace",
       // Render at intrinsic size (not stretched to the full content width); CSS

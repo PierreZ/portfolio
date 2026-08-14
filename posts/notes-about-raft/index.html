@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Notes about Raft&#x27;s paper | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="List of ressources gleaned about Raft">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Notes about Raft&#x27;s paper">
   <meta property="og:description" content="List of ressources gleaned about Raft">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Notes about Raft&#x27;s paper">
@@ -30,7 +40,7 @@
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2020-07-30T07:24:27+01:00">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="consensus">
   <meta property="article:tag" content="raft">
   <meta property="article:tag" content="algorithms">
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/notes-about-raft.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;notes-about-raft">./read --quorum posts&#x2F;notes-about-raft</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / notes-about-raft
@@ -112,7 +121,8 @@
   <h2 class="title">Notes about Raft&#x27;s paper</h2>
   <div class="meta-row"><span class="m"><b>2020-07-30</b></span>
     <span class="m">read: <b>~10 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/algorithms/">#algorithms</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/notes-about-raft.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/raft/">#raft</a> <a href="https://pierrezemb.fr/tags/algorithms/">#algorithms</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -184,14 +194,14 @@
 <blockquote>
 <p>These labs are derived from the <a rel="external" href="http://nil.csail.mit.edu/6.824/2018/labs/lab-raft.html">lab2:raft</a> and <a rel="external" href="http://nil.csail.mit.edu/6.824/2018/labs/lab-kvraft.html">lab3:kvraft</a> from the famous <a rel="external" href="http://nil.csail.mit.edu/6.824/2018/index.html">MIT 6.824</a> course but rewritten in Rust.</p>
 </blockquote>
-<h2 id="abstract"><a class="zola-anchor" href="#abstract" aria-label="Anchor link for: abstract">🔗</a>Abstract</h2>
+<h2 id="abstract">Abstract<a class="zola-anchor" href="#abstract" aria-label="Anchor link for: abstract">🔗</a></h2>
 <blockquote>
 <p>Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.</p>
 </blockquote>
 <blockquote>
 <p>Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.</p>
 </blockquote>
-<h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">🔗</a>Introduction</h2>
+<h2 id="introduction">Introduction<a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">🔗</a></h2>
 <blockquote>
 <p>Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.</p>
 </blockquote>
@@ -207,7 +217,7 @@
 <blockquote>
 <p>We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.</p>
 </blockquote>
-<h2 id="replicated-state-machines"><a class="zola-anchor" href="#replicated-state-machines" aria-label="Anchor link for: replicated-state-machines">🔗</a>Replicated state machines</h2>
+<h2 id="replicated-state-machines">Replicated state machines<a class="zola-anchor" href="#replicated-state-machines" aria-label="Anchor link for: replicated-state-machines">🔗</a></h2>
 <p>The main idea is to compute identical copies of the same state (i.e <code>x:3, y:9</code>) in case of machines's failure. Most of the time, an ordered <code>wal</code> (write-ahead log) is used in the implementation, to hold the mutation (<code>x:4</code>). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.</p>
 <p>Raft creates a true split between:</p>
 <ul>
@@ -216,7 +226,7 @@
 <li>the state machine.</li>
 </ul>
 <img src="/images/notes-about-raft/fig_1.png" alt="fig1" class="center">
-<h2 id="what-s-wrong-with-paxos"><a class="zola-anchor" href="#what-s-wrong-with-paxos" aria-label="Anchor link for: what-s-wrong-with-paxos">🔗</a>What’s wrong with Paxos?</h2>
+<h2 id="what-s-wrong-with-paxos">What’s wrong with Paxos?<a class="zola-anchor" href="#what-s-wrong-with-paxos" aria-label="Anchor link for: what-s-wrong-with-paxos">🔗</a></h2>
 <p>The paper is listing the drawbacks of Paxos:</p>
 <ul>
 <li>difficult to understand, and <a rel="external" href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Part-Time-Parliament.pdf">I can't blame them</a></li>
@@ -234,7 +244,7 @@
 the final system will be based on an un-proven protocol [4].</p>
 </blockquote>
 </blockquote>
-<h2 id="designing-for-understandability"><a class="zola-anchor" href="#designing-for-understandability" aria-label="Anchor link for: designing-for-understandability">🔗</a>Designing for understandability</h2>
+<h2 id="designing-for-understandability">Designing for understandability<a class="zola-anchor" href="#designing-for-understandability" aria-label="Anchor link for: designing-for-understandability">🔗</a></h2>
 <p>Beside all the others goals of Raft:</p>
 <ul>
 <li>a complete and practical foundation for system building,</li>
@@ -251,7 +261,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.</p>
 </blockquote>
-<h2 id="the-raft-consensus-algorithm"><a class="zola-anchor" href="#the-raft-consensus-algorithm" aria-label="Anchor link for: the-raft-consensus-algorithm">🔗</a>The Raft consensus algorithm</h2>
+<h2 id="the-raft-consensus-algorithm">The Raft consensus algorithm<a class="zola-anchor" href="#the-raft-consensus-algorithm" aria-label="Anchor link for: the-raft-consensus-algorithm">🔗</a></h2>
 <p>Raft is heavily relying on the <code>leader</code> pattern:</p>
 <blockquote>
 <p>Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.</p>
@@ -265,7 +275,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <li>Log replication</li>
 <li>Safety</li>
 </ul>
-<h3 id="raft-basics"><a class="zola-anchor" href="#raft-basics" aria-label="Anchor link for: raft-basics">🔗</a>Raft basics</h3>
+<h3 id="raft-basics">Raft basics<a class="zola-anchor" href="#raft-basics" aria-label="Anchor link for: raft-basics">🔗</a></h3>
 <p>Each server can be in one of the three states:</p>
 <ul>
 <li><strong>Leader</strong> handle all requests,</li>
@@ -284,7 +294,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <li><strong>RequestVote RPCs</strong> are initiated by candidates during elections,</li>
 <li><strong>Append-Entries RPCs</strong> are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.</li>
 </ul>
-<h3 id="leader-election"><a class="zola-anchor" href="#leader-election" aria-label="Anchor link for: leader-election">🔗</a>Leader election</h3>
+<h3 id="leader-election">Leader election<a class="zola-anchor" href="#leader-election" aria-label="Anchor link for: leader-election">🔗</a></h3>
 <p>A good vizualization is available <a rel="external" href="http://thesecretlivesofdata.com/raft/#election">here</a>.</p>
 <p>The key-point of the election are the fact that:</p>
 <ul>
@@ -303,7 +313,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).</p>
 </blockquote>
-<h3 id="log-replication"><a class="zola-anchor" href="#log-replication" aria-label="Anchor link for: log-replication">🔗</a>Log replication</h3>
+<h3 id="log-replication">Log replication<a class="zola-anchor" href="#log-replication" aria-label="Anchor link for: log-replication">🔗</a></h3>
 <p>A good vizualization is available <a rel="external" href="http://thesecretlivesofdata.com/raft/#replication">here</a>.</p>
 <blockquote>
 <p>Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.</p>
@@ -325,8 +335,8 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.</p>
 </blockquote>
-<h2 id="safety"><a class="zola-anchor" href="#safety" aria-label="Anchor link for: safety">🔗</a>Safety</h2>
-<h3 id="leader-election-1"><a class="zola-anchor" href="#leader-election-1" aria-label="Anchor link for: leader-election-1">🔗</a>Leader election</h3>
+<h2 id="safety">Safety<a class="zola-anchor" href="#safety" aria-label="Anchor link for: safety">🔗</a></h2>
+<h3 id="leader-election-1">Leader election<a class="zola-anchor" href="#leader-election-1" aria-label="Anchor link for: leader-election-1">🔗</a></h3>
 <p>As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.</p>
 <blockquote>
 <p>Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.</p>
@@ -334,16 +344,16 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.</p>
 </blockquote>
-<h3 id="committing-entries-from-previous-terms"><a class="zola-anchor" href="#committing-entries-from-previous-terms" aria-label="Anchor link for: committing-entries-from-previous-terms">🔗</a>Committing entries from previous terms</h3>
+<h3 id="committing-entries-from-previous-terms">Committing entries from previous terms<a class="zola-anchor" href="#committing-entries-from-previous-terms" aria-label="Anchor link for: committing-entries-from-previous-terms">🔗</a></h3>
 <blockquote>
 <p>Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.</p>
 </blockquote>
 <p>This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.</p>
-<h3 id="follower-and-candidate-crashes"><a class="zola-anchor" href="#follower-and-candidate-crashes" aria-label="Anchor link for: follower-and-candidate-crashes">🔗</a>Follower and candidate crashes</h3>
+<h3 id="follower-and-candidate-crashes">Follower and candidate crashes<a class="zola-anchor" href="#follower-and-candidate-crashes" aria-label="Anchor link for: follower-and-candidate-crashes">🔗</a></h3>
 <blockquote>
 <p>If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.</p>
 </blockquote>
-<h2 id="cluster-membership-changes"><a class="zola-anchor" href="#cluster-membership-changes" aria-label="Anchor link for: cluster-membership-changes">🔗</a>Cluster membership changes</h2>
+<h2 id="cluster-membership-changes">Cluster membership changes<a class="zola-anchor" href="#cluster-membership-changes" aria-label="Anchor link for: cluster-membership-changes">🔗</a></h2>
 <p>This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:</p>
 <blockquote>
 <p>In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:</p>
@@ -353,7 +363,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <li>Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.</li>
 </ul>
 </blockquote>
-<h2 id="log-compaction"><a class="zola-anchor" href="#log-compaction" aria-label="Anchor link for: log-compaction">🔗</a>Log compaction</h2>
+<h2 id="log-compaction">Log compaction<a class="zola-anchor" href="#log-compaction" aria-label="Anchor link for: log-compaction">🔗</a></h2>
 <p>As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:</p>
 <img src="/images/notes-about-raft/fig_3.png" alt="fig3" class="center">
 <blockquote>
@@ -363,7 +373,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <blockquote>
 <p>The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.</p>
 </blockquote>
-<h2 id="client-interaction"><a class="zola-anchor" href="#client-interaction" aria-label="Anchor link for: client-interaction">🔗</a>Client interaction</h2>
+<h2 id="client-interaction">Client interaction<a class="zola-anchor" href="#client-interaction" aria-label="Anchor link for: client-interaction">🔗</a></h2>
 <blockquote>
 <p>Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.</p>
 </blockquote>
@@ -371,6 +381,10 @@ the final system will be based on an un-proven protocol [4].</p>
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/announcing-kop/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Announcing Kafka-on-Pulsar: bring native Kafka protocol support to Apache Pulsar</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Diving into ETCD&#x27;s linearizable reads</span></a>
+  </nav>
 </article>
 
   </main>
@@ -378,11 +392,11 @@ the final system will be based on an un-proven protocol [4].</p>
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -393,9 +407,7 @@ the final system will be based on an un-proven protocol [4].</p>
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

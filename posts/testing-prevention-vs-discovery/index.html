@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Testing: prevention vs discovery | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Testing: prevention vs discovery">
   <meta property="og:description" content="Most testing prevents old bugs from returning. But what if we built systems where LLMs could actively discover new bugs instead?">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Testing: prevention vs discovery">
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/testing-prevention-vs-discovery.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;testing-prevention-vs-discovery">./read --quorum posts&#x2F;testing-prevention-vs-discovery</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / testing-prevention-vs-discovery
@@ -112,6 +121,7 @@
   <h2 class="title">Testing: prevention vs discovery</h2>
   <div class="meta-row"><span class="m"><b>2025-09-08</b></span>
     <span class="m">read: <b>~6 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2025/testing-prevention-vs-discovery.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a></span>
   </div>
   <nav class="toc">
@@ -143,7 +153,7 @@
 <p><img src="/images/testing-prevention-vs-discovery/claude-moonpool.png" alt="Claude Code autonomously debugging moonpool" /></p>
 </div>
 <p>Claude identified a faulty seed triggering an edge case, debugged it locally using deterministic replay, and added it to the test suite. All by itself. 🤯 <strong>This wasn't prevention but discovery.</strong> It's time to shift our testing paradigm from preventing regressions to actively discovering unknown bugs.</p>
-<h2 id="building-for-discovery"><a class="zola-anchor" href="#building-for-discovery" aria-label="Anchor link for: building-for-discovery">🔗</a>Building for Discovery</h2>
+<h2 id="building-for-discovery">Building for Discovery<a class="zola-anchor" href="#building-for-discovery" aria-label="Anchor link for: building-for-discovery">🔗</a></h2>
 <p>The difference between prevention and discovery isn't just philosophical but requires completely different system design. Moonpool was built from day one around three principles that enable active bug discovery:</p>
 <p><strong>Deterministic simulation</strong>: Every execution is completely reproducible. Given the same seed, the system makes identical decisions every time. This changes debugging from "I can't reproduce this" to "let me replay exactly what happened." More importantly, it lets LLMs explore the state space step by step without getting lost in non-deterministic noise.</p>
 <p><strong>Controlled failure injection</strong>: Built-in mechanisms intentionally introduce failures in controlled, reproducible ways. This includes timed failures like network delays and disconnects, plus <a rel="external" href="https://transactional.blog/simulation/buggify">"buggify" mechanisms</a> that inject faulty internal state at strategic points in the code. Each buggify point is either enabled or disabled for an entire simulation run, creating consistent failure scenarios instead of random chaos. Instead of waiting for production to reveal edge cases, we force the system to encounter dangerous, bug-finding behaviors during development.</p>
@@ -163,7 +173,7 @@
 <span class="giallo-l"><span>)</span><span>;</span></span></code></pre>
 <p>Traditional code coverage only tells you "this line was reached." Sometimes assertions verify "this interesting scenario actually happened." If a sometimes assertion never triggers across thousands of test runs, you know you're not discovering the edge cases that matter.</p>
 <p>These three elements shift testing from prevention to discovery. Instead of developers writing tests for scenarios they already know about, the system forces them to hit failure modes they haven't thought of. For Claude, this meant it could explore the state space step by step, understanding not just what the code does, but what breaks it.</p>
-<h2 id="the-chaos-environment"><a class="zola-anchor" href="#the-chaos-environment" aria-label="Anchor link for: the-chaos-environment">🔗</a>The Chaos Environment</h2>
+<h2 id="the-chaos-environment">The Chaos Environment<a class="zola-anchor" href="#the-chaos-environment" aria-label="Anchor link for: the-chaos-environment">🔗</a></h2>
 <p>Moonpool is currently limited to simulating TCP connections through its Peer abstraction, but even this narrow scope creates a surprisingly rich failure environment. Here's what the chaos testing configuration looks like (borrowed from TigerBeetle's approach):</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> NetworkRandomizationRanges</span><span> {</span></span>
 <span class="giallo-l"><span class="z-comment">    ///</span><span class="z-comment"> Create chaos testing ranges with connection cutting enabled for distributed systems testing</span></span>
@@ -190,7 +200,7 @@
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Even with just TCP simulation, this creates a hostile environment where connections randomly fail, messages get delayed, and network operations experience unpredictable latencies. Each seed represents a different combination of timing and probability, creating unique failure scenarios.</p>
-<h3 id="why-even-simple-network-code-needs-chaos"><a class="zola-anchor" href="#why-even-simple-network-code-needs-chaos" aria-label="Anchor link for: why-even-simple-network-code-needs-chaos">🔗</a>Why Even Simple Network Code Needs Chaos</h3>
+<h3 id="why-even-simple-network-code-needs-chaos">Why Even Simple Network Code Needs Chaos<a class="zola-anchor" href="#why-even-simple-network-code-needs-chaos" aria-label="Anchor link for: why-even-simple-network-code-needs-chaos">🔗</a></h3>
 <p>You might think testing a simple peer implementation with fault injection is overkill, but production experience and research show otherwise. <a rel="external" href="https://www.usenix.org/system/files/osdi18-alquraan.pdf">"An Analysis of Network-Partitioning Failures in Cloud Systems"</a> (OSDI '18) studied real-world failures and found:</p>
 <ul>
 <li><strong>80%</strong> of network partition failures have catastrophic impact</li>
@@ -202,7 +212,7 @@
 <p>That last point is crucial; exactly the kind of complex interaction that deterministic simulation with fault injection helps uncover.</p>
 <p>My peer implementation only does simple ping-pong communication, yet it still took some work to make it robust enough to pass all the checks and assertions. It's enough complexity for Claude to discover edge cases in connection handling, retry logic, and recovery mechanisms.</p>
 <p>The breakthrough wasn't that Claude wrote perfect code but that <strong>Claude could discover and explore failure scenarios I hadn't thought to test, then use deterministic replay to debug and fix what went wrong.</strong></p>
-<h2 id="the-paradigm-shift"><a class="zola-anchor" href="#the-paradigm-shift" aria-label="Anchor link for: the-paradigm-shift">🔗</a>The Paradigm Shift</h2>
+<h2 id="the-paradigm-shift">The Paradigm Shift<a class="zola-anchor" href="#the-paradigm-shift" aria-label="Anchor link for: the-paradigm-shift">🔗</a></h2>
 <p>The difference between prevention and discovery completely changes how we think about software quality. <strong>Prevention testing asks "did we break what used to work?" Discovery testing asks "what else is broken that we haven't found yet?"</strong></p>
 <p>This shift creates a powerful feedback loop for young engineers and LLMs alike. Both developers and LLMs learn what production failure really looks like, not the sanitized version we imagine. When Claude can explore failure scenarios step by step and immediately see the results through sometimes assertions, it becomes a discovery partner that finds edge cases human intuition misses.</p>
 <p>This isn't theoretical. It's working in my hobby project today. Moonpool is definitely hobby-grade, but if a side project can enable LLM-assisted bug discovery, imagine what's possible with production systems designed from the ground up for deterministic testing.</p>
@@ -213,6 +223,10 @@
 <p>Feel free to reach out with any questions or to share your experiences with deterministic testing. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/shipped-vs-operated/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Shipped vs. Operated, or How Many Bash Scripts Does It Take?</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">A Practical Guide to Application Metrics: Where to Put Your Instrumentation</span></a>
+  </nav>
 </article>
 
   </main>
@@ -220,11 +234,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -235,9 +249,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

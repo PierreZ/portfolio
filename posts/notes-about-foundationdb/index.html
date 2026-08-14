@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Notes about FoundationDB | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="List of ressources gleaned about FoundationDB">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="Notes about FoundationDB">
   <meta property="og:description" content="List of ressources gleaned about FoundationDB">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Notes about FoundationDB">
@@ -30,7 +40,7 @@
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2020-01-30T10:24:27+01:00">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="foundationdb">
   <meta property="article:tag" content="storage">
   <meta property="article:tag" content="database">
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/notes-about-foundationdb.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;notes-about-foundationdb">./read --quorum posts&#x2F;notes-about-foundationdb</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / notes-about-foundationdb
@@ -112,7 +121,8 @@
   <h2 class="title">Notes about FoundationDB</h2>
   <div class="meta-row"><span class="m"><b>2020-01-30</b></span>
     <span class="m">read: <b>~14 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2020/notes-about-foundationdb.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -213,7 +223,7 @@
     <p><img src="/images/notes-about-foundationdb/fdb-white.jpg" alt="fdb image" /></p>
 <p><a href="/tags/notes/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover FoundationDB.</p>
 <hr />
-<h2 id="overview-of-foundationdb"><a class="zola-anchor" href="#overview-of-foundationdb" aria-label="Anchor link for: overview-of-foundationdb">🔗</a>Overview of FoundationDB</h2>
+<h2 id="overview-of-foundationdb">Overview of FoundationDB<a class="zola-anchor" href="#overview-of-foundationdb" aria-label="Anchor link for: overview-of-foundationdb">🔗</a></h2>
 <p>As stated in the <a rel="external" href="https://apple.github.io/foundationdb/index.html">official documentation</a>:</p>
 <blockquote>
 <p>FoundationDB is a distributed database designed to handle large volumes of structured data across clusters of commodity servers. It organizes data as an ordered key-value store and employs ACID transactions for all operations. It is especially well-suited for read/write workloads but also has excellent performance for write-intensive workloads.</p>
@@ -230,11 +240,11 @@
 <li><a rel="external" href="https://jepsen.io/consistency/models/strict-serializable">strict serializability</a>(operations appear to have occurred in some order),</li>
 <li><a rel="external" href="https://cloud.google.com/spanner/docs/true-time-external-consistency">external consistency</a>(For any two transactions, T1 and T2, if T2 starts to commit after T1 finishes committing, then the timestamp for T2 is greater than the timestamp for T1).</li>
 </ul>
-<h2 id="the-story"><a class="zola-anchor" href="#the-story" aria-label="Anchor link for: the-story">🔗</a>The story</h2>
+<h2 id="the-story">The story<a class="zola-anchor" href="#the-story" aria-label="Anchor link for: the-story">🔗</a></h2>
 <p>FoundationDB started as a company in 2009, and then <a rel="external" href="https://techcrunch.com/2015/03/24/apple-acquires-durable-database-company-foundationdb/">has been acquired in 2015 by Apple</a>. It <a rel="external" href="https://news.ycombinator.com/item?id=9259986">was a bad public publicity for the database as the download were removed.</a></p>
 <p>On April 19, 2018, Apple <a rel="external" href="https://www.foundationdb.org/blog/foundationdb-is-open-source/">open sourced the software, releasing it under the Apache 2.0 license</a>.</p>
-<h2 id="tooling-before-coding"><a class="zola-anchor" href="#tooling-before-coding" aria-label="Anchor link for: tooling-before-coding">🔗</a>Tooling before coding</h2>
-<h3 id="flow"><a class="zola-anchor" href="#flow" aria-label="Anchor link for: flow">🔗</a>Flow</h3>
+<h2 id="tooling-before-coding">Tooling before coding<a class="zola-anchor" href="#tooling-before-coding" aria-label="Anchor link for: tooling-before-coding">🔗</a></h2>
+<h3 id="flow">Flow<a class="zola-anchor" href="#flow" aria-label="Anchor link for: flow">🔗</a></h3>
 <p>From the <a rel="external" href="https://apple.github.io/foundationdb/engineering.html">Engineering page</a>:</p>
 <blockquote>
 <p>FoundationDB began with ambitious goals for both high performance per node and scalability. We knew that to achieve these goals we would face serious engineering challenges that would require tool breakthroughs. We’d need efficient asynchronous communicating processes like in Erlang or the Async in .NET, but we’d also need the raw speed, I/O efficiency, and control of C++. To meet these challenges, we developed several new tools, the most important of which is <strong>Flow</strong>, a new programming language that brings actor-based concurrency to C++11.</p>
@@ -257,7 +267,7 @@
 <p>(Fun fact: We've only ever found two bugs in Flow. After the first, we decided that we never wanted a bug again in our programming language. So, we built a program in Python that generates random Flow code and independently-executes it to validate Flow's behavior. This fuzz tester found one more bug, and we've never found another.)</p>
 </blockquote>
 <p>A very good overview of Flow is available <a rel="external" href="https://apple.github.io/foundationdb/flow.html">here</a> and some details <a rel="external" href="https://forums.foundationdb.org/t/why-was-flow-developed/1711/3">here</a>.</p>
-<h3 id="simulation-driven-development"><a class="zola-anchor" href="#simulation-driven-development" aria-label="Anchor link for: simulation-driven-development">🔗</a>Simulation-Driven development</h3>
+<h3 id="simulation-driven-development">Simulation-Driven development<a class="zola-anchor" href="#simulation-driven-development" aria-label="Anchor link for: simulation-driven-development">🔗</a></h3>
 <p>One of Flow’s most important job is enabling <strong>Simulation</strong>:</p>
 <blockquote>
 <p>We wanted FoundationDB to survive failures of machines, networks, disks, clocks, racks, data centers, file systems, etc., so we created a simulation framework closely tied to Flow. By replacing physical interfaces with shims, replacing the main epoll-based run loop with a time-based simulation, and running multiple logical processes as concurrent Flow Actors, Simulation is able to conduct a deterministic simulation of an entire FoundationDB cluster within a single-thread! Even better, we are able to execute this simulation in a deterministic way, enabling us to reproduce problems and add instrumentation ex post facto. This incredible capability enabled us to build FoundationDB exclusively in simulation for the first 18 months and ensure exceptional fault tolerance long before it sent its first real network packet. For a database with as strong a contract as the FoundationDB, testing is crucial, and over the years we have run the equivalent of a trillion CPU-hours of simulated stress testing.</p>
@@ -314,9 +324,9 @@
 </ul>
 <p>Keep in mind that all these failures will appears <strong>at the same time!</strong> Do you think that your current <strong>datastore has gone through the same test on a daily basis?</strong> <a rel="external" href="https://github.com/etcd-io/etcd/pull/11308">I think not</a>.</p>
 <p>Applications written using the FoundationDB simulator have hierarchy: <code>DataCenter -&gt; Machine -&gt; Process -&gt; Interface</code>. <strong>Each of these can be killed/freezed/nuked</strong>. Even faulty admin commands fired by some DevOps are tested!</p>
-<h3 id="known-limitations"><a class="zola-anchor" href="#known-limitations" aria-label="Anchor link for: known-limitations">🔗</a>Known limitations</h3>
+<h3 id="known-limitations">Known limitations<a class="zola-anchor" href="#known-limitations" aria-label="Anchor link for: known-limitations">🔗</a></h3>
 <p>Limitations are well described in the <a rel="external" href="https://apple.github.io/foundationdb/known-limitations.html">official documentation</a>.</p>
-<h3 id="recap"><a class="zola-anchor" href="#recap" aria-label="Anchor link for: recap">🔗</a>Recap</h3>
+<h3 id="recap">Recap<a class="zola-anchor" href="#recap" aria-label="Anchor link for: recap">🔗</a></h3>
 <p>An awesome recap is available on the <a rel="external" href="https://softwareengineeringdaily.com/2019/07/01/foundationdb-with-ryan-worl/">Software Engineering Daily podcast</a>:</p>
 <blockquote>
 <p>FoundationDB is tested in a very rigorous way using what's called <strong>a deterministic simulation</strong>. The reason they needed a new programming language to do this, is that to get a deterministic simulation, you have to make something that is deterministic. It's kind of obvious, but it's hard to do.</p>
@@ -327,7 +337,7 @@
 <blockquote>
 <p>So, all FoundationDB processes, and FoundationDB, it's basically all written in Flow except a very small amount of it from the SQLite B-tree. The reason why that was useful is that when you use Flow, you get all of these higher level abstraction that let what you do what feels to you like asynchronous stuff, but under the hood, it's all implemented using callbacks in C++, which you can make deterministic by running it in a single thread. So, there's a scheduler that just calls these callbacks one after another and it's very crazy looking C++ code, like you wouldn't want to read it, but it's because of Flow they were able to implement that deterministic simulation.</p>
 </blockquote>
-<h2 id="the-architecture"><a class="zola-anchor" href="#the-architecture" aria-label="Anchor link for: the-architecture">🔗</a>The Architecture</h2>
+<h2 id="the-architecture">The Architecture<a class="zola-anchor" href="#the-architecture" aria-label="Anchor link for: the-architecture">🔗</a></h2>
 <p>According to the <a rel="external" href="https://apple.github.io/foundationdb/administration.html#fdbmonitor-and-fdbserver">fdbmonitor and fdbserver</a>:</p>
 <blockquote>
 <p>The core FoundationDB server process is <code>fdbserver</code>. Each <code>fdbserver</code> process uses up to one full CPU core, so a production FoundationDB cluster will usually run N such processes on an N-core system.</p>
@@ -340,7 +350,7 @@
 <li>load-balanced data and traffic,</li>
 <li>self-healing.</li>
 </ul>
-<h3 id="microservices"><a class="zola-anchor" href="#microservices" aria-label="Anchor link for: microservices">🔗</a>Microservices</h3>
+<h3 id="microservices">Microservices<a class="zola-anchor" href="#microservices" aria-label="Anchor link for: microservices">🔗</a></h3>
 <p>A typical FDB cluster is composed of different actors which are describe <a rel="external" href="https://github.com/apple/foundationdb/blob/master/documentation/sphinx/source/kv-architecture.rst">here</a>.</p>
 <p>The most important role in FDB is the <code>Coordinator</code>, it uses <code>Paxos</code> to manage membership on a quorum to do writes. The <code>Coordinator</code> is mostly only used to elect some peers and during recovery. You can view it as a Zookeeper-like stack.</p>
 <p>The Coordinator starts by electing a <code>Cluster Controller</code>. It provides administratives informations about the cluster(I have 4 storage processes). Every process needs to register to the <code>Cluster Controller</code> and then it will assign roles to them. It is the one that will heart-beat all the processes.</p>
@@ -348,16 +358,16 @@
 <p><code>The Proxies</code> are responsible for providing read versions, committing transactions, and tracking the storage servers responsible for each range of keys.</p>
 <p><code>The Transaction Resolvers</code> are responsible determining conflicts between transactions. A transaction conflicts if it reads a key that has been written between the transaction’s read version and commit version. The resolver does this by holding the last 5 seconds of committed writes in memory, and comparing a new transaction’s reads against this set of commits.</p>
 <p><img src="/images/notes-about-foundationdb/architecture.png" alt="fdb image" /></p>
-<h3 id="read-and-write-path"><a class="zola-anchor" href="#read-and-write-path" aria-label="Anchor link for: read-and-write-path">🔗</a>Read and Write Path</h3>
+<h3 id="read-and-write-path">Read and Write Path<a class="zola-anchor" href="#read-and-write-path" aria-label="Anchor link for: read-and-write-path">🔗</a></h3>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;EMwhsGsxfPU" title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
-<h4 id="read-path"><a class="zola-anchor" href="#read-path" aria-label="Anchor link for: read-path">🔗</a>Read Path</h4>
+<h4 id="read-path">Read Path<a class="zola-anchor" href="#read-path" aria-label="Anchor link for: read-path">🔗</a></h4>
 <ol>
 <li>Retrieve a consistend read version for the transaction</li>
 <li>Do reads from a consistent MVCC snapshot at that read version on the storage node</li>
 </ol>
-<h4 id="write-path"><a class="zola-anchor" href="#write-path" aria-label="Anchor link for: write-path">🔗</a>Write Path</h4>
+<h4 id="write-path">Write Path<a class="zola-anchor" href="#write-path" aria-label="Anchor link for: write-path">🔗</a></h4>
 <ol>
 <li>client is sending a bundle to the <code>proxy</code> containing:
 <ul>
@@ -373,19 +383,19 @@
 <li><code>Transaction Logs</code> is responding OK to the Proxy and then the proxy is replying OK to the client.</li>
 </ol>
 <p>You can find more diagrams about transactions <a rel="external" href="https://forums.foundationdb.org/t/technical-overview-of-the-database/135/3">here</a>.</p>
-<h3 id="recovery"><a class="zola-anchor" href="#recovery" aria-label="Anchor link for: recovery">🔗</a>Recovery</h3>
+<h3 id="recovery">Recovery<a class="zola-anchor" href="#recovery" aria-label="Anchor link for: recovery">🔗</a></h3>
 <p>Recovery processes are detailled at around 25min.</p>
 <p>During failure of a process (Except storage servers), the systems will try to create a new <code>generation</code>, so new <code>Master</code>, <code>proxies</code>, <code>resolvers</code> and <code>transactions logs</code>. New master will get a read version from transactions logs, and commit with <code>Paxos</code> the fact that starting from <code>Read version</code>, the new generation is the one in charge.</p>
 <p><code>Storage servers</code> are replicating data on failures.</p>
-<h3 id="the-5-second-transaction-limit"><a class="zola-anchor" href="#the-5-second-transaction-limit" aria-label="Anchor link for: the-5-second-transaction-limit">🔗</a>The 5-second transaction limit</h3>
+<h3 id="the-5-second-transaction-limit">The 5-second transaction limit<a class="zola-anchor" href="#the-5-second-transaction-limit" aria-label="Anchor link for: the-5-second-transaction-limit">🔗</a></h3>
 <p>FoundationDB currently does not support transactions running for over five seconds. More details around 16min but the <code>tl;dr</code> is:</p>
 <ul>
 <li>Storage servers are caching latest read in-memory,</li>
 <li>Resolvers are caching the last 5 seconds transactions.</li>
 </ul>
-<h3 id="ratekeeper"><a class="zola-anchor" href="#ratekeeper" aria-label="Anchor link for: ratekeeper">🔗</a>Ratekeeper</h3>
+<h3 id="ratekeeper">Ratekeeper<a class="zola-anchor" href="#ratekeeper" aria-label="Anchor link for: ratekeeper">🔗</a></h3>
 <p>More details around 31min but the <code>tl;dr</code> is that when system is saturated, retrieving the <code>Read version</code> is slowed down.</p>
-<h3 id="storage"><a class="zola-anchor" href="#storage" aria-label="Anchor link for: storage">🔗</a>Storage</h3>
+<h3 id="storage">Storage<a class="zola-anchor" href="#storage" aria-label="Anchor link for: storage">🔗</a></h3>
 <p>A lot of information are available in this talk:</p>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;nlus1Z7TVTI" title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -395,12 +405,12 @@
 <li><code>SSD</code> Storage Engine is based on SQLite B-Tree</li>
 <li><code>Redwood</code> will be a new storage engine based on Versioned B+Tree</li>
 </ul>
-<h2 id="developer-experience"><a class="zola-anchor" href="#developer-experience" aria-label="Anchor link for: developer-experience">🔗</a>Developer experience</h2>
+<h2 id="developer-experience">Developer experience<a class="zola-anchor" href="#developer-experience" aria-label="Anchor link for: developer-experience">🔗</a></h2>
 <p>FoundationDB’s keys are ordered, making <code>tuples</code> a particularly useful tool for data modeling. FoundationDB provides a <strong>tuple layer</strong> (available in each language binding) that encodes tuples into keys. This layer lets you store data using a tuple like <code>(state, county)</code> as a key. Later, you can perform reads using a prefix like <code>(state,)</code>. The layer works by preserving the natural ordering of the tuples.</p>
 <p>Everything is wrapped into a transaction in FDB.</p>
 <p>You can have a nice overview by reading the README of <a rel="external" href="https://github.com/richardartoul/tsdb-layer/blob/master/README.md">tsdb-layer</a>, an experiment combining Time Series and FoundationDB: Millions of writes/s and 10x compression in under 2,000 lines of Go.</p>
-<h2 id="fdb-one-more-things-layers"><a class="zola-anchor" href="#fdb-one-more-things-layers" aria-label="Anchor link for: fdb-one-more-things-layers">🔗</a>FDB One more things: Layers</h2>
-<h3 id="concept-of-layers"><a class="zola-anchor" href="#concept-of-layers" aria-label="Anchor link for: concept-of-layers">🔗</a>Concept of layers</h3>
+<h2 id="fdb-one-more-things-layers">FDB One more things: Layers<a class="zola-anchor" href="#fdb-one-more-things-layers" aria-label="Anchor link for: fdb-one-more-things-layers">🔗</a></h2>
+<h3 id="concept-of-layers">Concept of layers<a class="zola-anchor" href="#concept-of-layers" aria-label="Anchor link for: concept-of-layers">🔗</a></h3>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;HLE8chgw6LI" title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
@@ -415,7 +425,7 @@
 <p>The record-layer provided by Apple is a good starting point to build things above it, as it provides <strong>structured schema, indexes, and (async) query planner.</strong></p>
 <hr />
 <p><img src="/images/notes-about-foundationdb/extract-layer-3.png" alt="fdb image" /></p>
-<h3 id="apple-s-record-layer"><a class="zola-anchor" href="#apple-s-record-layer" aria-label="Anchor link for: apple-s-record-layer">🔗</a>Apple's Record Layer</h3>
+<h3 id="apple-s-record-layer">Apple's Record Layer<a class="zola-anchor" href="#apple-s-record-layer" aria-label="Anchor link for: apple-s-record-layer">🔗</a></h3>
 <p>The paper is located <a rel="external" href="https://arxiv.org/pdf/1901.04452.pdf">FoundationDB Record Layer:A Multi-Tenant Structured Datastore</a></p>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;SvoUHHM9IKU" title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -437,8 +447,8 @@
 <hr />
 <p><img src="/images/notes-about-foundationdb/record-extract-5.png" alt="fdb image" /></p>
 <hr />
-<h2 id="kubernetes-operators"><a class="zola-anchor" href="#kubernetes-operators" aria-label="Anchor link for: kubernetes-operators">🔗</a>Kubernetes Operators</h2>
-<h3 id="overview-of-the-operator"><a class="zola-anchor" href="#overview-of-the-operator" aria-label="Anchor link for: overview-of-the-operator">🔗</a>Overview of the operator</h3>
+<h2 id="kubernetes-operators">Kubernetes Operators<a class="zola-anchor" href="#kubernetes-operators" aria-label="Anchor link for: kubernetes-operators">🔗</a></h2>
+<h3 id="overview-of-the-operator">Overview of the operator<a class="zola-anchor" href="#overview-of-the-operator" aria-label="Anchor link for: overview-of-the-operator">🔗</a></h3>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;A3U8M8pt3Ks" title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
@@ -452,7 +462,7 @@
 <p><img src="/images/notes-about-foundationdb/operator-extract-3.png" alt="fdb image" /></p>
 <hr />
 <p><img src="/images/notes-about-foundationdb/operator-extract-4.png" alt="fdb image" /></p>
-<h3 id="combining-chaos-mesh-and-the-operator"><a class="zola-anchor" href="#combining-chaos-mesh-and-the-operator" aria-label="Anchor link for: combining-chaos-mesh-and-the-operator">🔗</a>Combining chaos-mesh and the operator</h3>
+<h3 id="combining-chaos-mesh-and-the-operator">Combining chaos-mesh and the operator<a class="zola-anchor" href="#combining-chaos-mesh-and-the-operator" aria-label="Anchor link for: combining-chaos-mesh-and-the-operator">🔗</a></h3>
 <p>I played a bit with the operator by combining:</p>
 <ul>
 <li><a rel="external" href="https://github.com/FoundationDB/fdb-kubernetes-operator">FoundationDB/fdb-kubernetes-operator</a></li>
@@ -461,12 +471,16 @@
 <li><a rel="external" href="https://github.com/PierreZ/fdb-prometheus-exporter/">PierreZ/fdb-prometheus-exporter</a></li>
 </ul>
 <p>The experiment is available <a rel="external" href="https://github.com/PierreZ/fdb-k8s-chaos/">here</a>.</p>
-<h2 id="roadmap"><a class="zola-anchor" href="#roadmap" aria-label="Anchor link for: roadmap">🔗</a>Roadmap</h2>
+<h2 id="roadmap">Roadmap<a class="zola-anchor" href="#roadmap" aria-label="Anchor link for: roadmap">🔗</a></h2>
 <p><a rel="external" href="https://github.com/apple/foundationdb/wiki/FoundationDB-Release-7.0-Planning">FoundationDB Release 7.0 Planning</a></p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Diving into Kafka&#x27;s Protocol</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/hbase-custom-data-balancing/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Contributing to Apache HBase: custom data balancing</span></a>
+  </nav>
 </article>
 
   </main>
@@ -474,11 +488,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -489,9 +503,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

@@ -3,7 +3,7 @@
     <channel>
       <title>Pierre Zemb&#x27;s Blog - design</title>
       <link>https://pierrezemb.fr</link>
-      <description>Pierre Zemb personal blog</description>
+      <description>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</description>
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/design/rss.xml" rel="self" type="application/rss+xml"/>
@@ -14,13 +14,13 @@
           <author>Pierre Zemb</author>
           <link>https://pierrezemb.fr/posts/hbase-data-model/</link>
           <guid>https://pierrezemb.fr/posts/hbase-data-model/</guid>
-          <description xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;HBase?&lt;&#x2F;h2&gt;
+          <description xml:base="https://pierrezemb.fr/posts/hbase-data-model/">&lt;h2 id=&quot;hbase&quot;&gt;HBase?&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase&quot; aria-label=&quot;Anchor link for: hbase&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-data-model&#x2F;hbase.jpg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;&quot;&gt;Apache HBase™&lt;&#x2F;a&gt; is a type of &quot;NoSQL&quot; database. &quot;NoSQL&quot; is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;-- &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;hbase.apache.org&#x2F;book.html#arch.overview.nosql&quot;&gt;Hbase architecture overview&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;hbase-data-model&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-data-model&quot; aria-label=&quot;Anchor link for: hbase-data-model&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase data model&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;hbase-data-model&quot;&gt;Hbase data model&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-data-model&quot; aria-label=&quot;Anchor link for: hbase-data-model&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The data model is simple: it&#x27;s like a multi-dimensional map:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Elements are stored as &lt;strong&gt;rows&lt;&#x2F;strong&gt; in a &lt;strong&gt;table&lt;&#x2F;strong&gt;.&lt;&#x2F;li&gt;
@@ -47,7 +47,7 @@
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;      }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;  }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
-&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;key-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design&quot; aria-label=&quot;Anchor link for: key-design&quot;&gt;🔗&lt;&#x2F;a&gt;Key design&lt;&#x2F;h2&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;key-design&quot;&gt;Key design&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design&quot; aria-label=&quot;Anchor link for: key-design&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Hbase is most efficient at queries when we&#x27;re getting a &lt;strong&gt;single row key&lt;&#x2F;strong&gt;, or during &lt;strong&gt;row range&lt;&#x2F;strong&gt;, ie. getting a block of contiguous data because keys are &lt;strong&gt;sorted lexicographically by row key&lt;&#x2F;strong&gt;. For example, my website &lt;code&gt;fr.pierrezemb.www&lt;&#x2F;code&gt; and &lt;code&gt;org.pierrezemb.www&lt;&#x2F;code&gt; would not be &quot;near&quot;.&lt;&#x2F;p&gt;
 &lt;p&gt;As such, the &lt;strong&gt;key design&lt;&#x2F;strong&gt; is really important:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -60,7 +60,7 @@
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;As you may have guessed, this is why we are using the &lt;strong&gt;reverse address name&lt;&#x2F;strong&gt; in my example, because &lt;code&gt;www&lt;&#x2F;code&gt; is too generic, we would have hotspot the poor region holding data for &lt;code&gt;www&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;If you are curious about Hbase schema, you should have a look on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;bigtable&#x2F;docs&#x2F;schema-design&quot;&gt;Designing Your BigTable Schema&lt;&#x2F;a&gt;, as BigTable is kind of the proprietary version of Hbase.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;be-warned&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#be-warned&quot; aria-label=&quot;Anchor link for: be-warned&quot;&gt;🔗&lt;&#x2F;a&gt;Be warned&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;be-warned&quot;&gt;Be warned&lt;a class=&quot;zola-anchor&quot; href=&quot;#be-warned&quot; aria-label=&quot;Anchor link for: be-warned&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;I have been working with Hbase for the past three years, &lt;strong&gt;including operation and on-call duty.&lt;&#x2F;strong&gt; It is a really nice data store, but it diverges from classical RDBMS. Here&#x27;s some warnings extracted from the well-written documentation:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;HBase is really more a &quot;Data Store&quot; than &quot;Data Base&quot; because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.&lt;&#x2F;p&gt;
@@ -74,7 +74,7 @@
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
 </description>
           <category domain="tag">database</category>
-          <category domain="tag">distributed</category>
+          <category domain="tag">distributed-systems</category>
           <category domain="tag">hbase</category>
           <category domain="tag">storage</category>
           <category domain="tag">design</category>
@@ -91,8 +91,8 @@
 &lt;p&gt;Do your own cover on &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;dev.to&#x2F;rly&quot;&gt;http:&#x2F;&#x2F;dev.to&#x2F;rly&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;em&gt;I’m still a student, so my point of view could be far from reality, be gentle ;)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;**&lt;em&gt;tl;dr: Queue messaging are cool. Use them at the core of your architecture.&lt;&#x2F;em&gt;**I’m currently playing a lot around &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;kafka.apache.org&#x2F;&quot;&gt;Kafka&lt;&#x2F;a&gt; and &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;flink.apache.org&#x2F;&quot;&gt;Flink&lt;&#x2F;a&gt; at work. I also discovered &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;vertx.io&#x2F;&quot;&gt;Vert.x&lt;&#x2F;a&gt; at my local JUG. All three have a common word: &lt;strong&gt;events&lt;&#x2F;strong&gt;. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.&lt;&#x2F;p&gt;
-&lt;h1 id=&quot;the-unix-philosophy&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-unix-philosophy&quot; aria-label=&quot;Anchor link for: the-unix-philosophy&quot;&gt;🔗&lt;&#x2F;a&gt;the Unix philosophy&lt;&#x2F;h1&gt;
-&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;2.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;the-unix-philosophy&quot;&gt;the Unix philosophy&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-unix-philosophy&quot; aria-label=&quot;Anchor link for: the-unix-philosophy&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;video autoplay loop muted playsinline style=&quot;max-width:100%;border:1px solid #b9c6cf;&quot; src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;2.mp4&quot; aria-label=&quot;image&quot;&gt;&lt;&#x2F;video&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;I’m a huge fan of GNU&#x2F;Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? &lt;strong&gt;Pipes or |&lt;&#x2F;strong&gt;. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;list files&lt;&#x2F;strong&gt; in a folder&lt;&#x2F;li&gt;
@@ -104,8 +104,8 @@
 &lt;p&gt;Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&amp;gt; Expect the output of every program to become the input to another, as yet unknown, program.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;Why should I care? It’s 2016, not 1978! Well…&lt;&#x2F;p&gt;
-&lt;h1 id=&quot;back-in-2016&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#back-in-2016&quot; aria-label=&quot;Anchor link for: back-in-2016&quot;&gt;🔗&lt;&#x2F;a&gt;Back in 2016&lt;&#x2F;h1&gt;
-&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;3.gif&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;back-in-2016&quot;&gt;Back in 2016&lt;a class=&quot;zola-anchor&quot; href=&quot;#back-in-2016&quot; aria-label=&quot;Anchor link for: back-in-2016&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;video autoplay loop muted playsinline style=&quot;max-width:100%;border:1px solid #b9c6cf;&quot; src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;3.mp4&quot; aria-label=&quot;image&quot;&gt;&lt;&#x2F;video&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Cloud changed everything in terms of software engineering. &lt;strong&gt;We can now deploy applications without thinking about the underlying server&lt;&#x2F;strong&gt;. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, &lt;strong&gt;Why should I deploy only one huge app ?&lt;&#x2F;strong&gt; why can’t I deploy multiples applications instead of one? &lt;strong&gt;Let’s call theses applications micro services&lt;&#x2F;strong&gt; because we are in 2016.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;4.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? &lt;strong&gt;How can they communicate? How can we simulate UNIX pipes?&lt;&#x2F;strong&gt; Before answering, let’s answer to another question first: &lt;strong&gt;What do we really need to send through our network?&lt;&#x2F;strong&gt; Don’t forget the  &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Fallacies_of_distributed_computing&quot;&gt;&lt;strong&gt;Fallacies of distributed computing&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt;&lt;strong&gt;…&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
@@ -113,7 +113,7 @@
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;eventdriven-architecture-101&#x2F;5.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Classic approach&lt;&#x2F;p&gt;
 &lt;p&gt;Is there another approach? Let’s use an &lt;strong&gt;event-based architecture&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
-&lt;h1 id=&quot;let-s-talk-events&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#let-s-talk-events&quot; aria-label=&quot;Anchor link for: let-s-talk-events&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;strong&gt;Let’s talk events&lt;&#x2F;strong&gt;&lt;&#x2F;h1&gt;
+&lt;h1 id=&quot;let-s-talk-events&quot;&gt;&lt;strong&gt;Let’s talk events&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#let-s-talk-events&quot; aria-label=&quot;Anchor link for: let-s-talk-events&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
 &lt;p&gt;Let’s ask Google, what’s an event?&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;a thing that happens, especially one of importance.&lt;&#x2F;p&gt;
@@ -132,9 +132,9 @@
 &lt;li&gt;&lt;strong&gt;Big-data friendly.&lt;&#x2F;strong&gt; This type of architecture is often used to handle a lot of data. With plateform like &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;flink.apache.org&quot;&gt;Apache Flink&lt;&#x2F;a&gt;, you can do some &lt;strong&gt;stream processing directly&lt;&#x2F;strong&gt;. &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;ci.apache.org&#x2F;projects&#x2F;flink&#x2F;flink-docs-master&#x2F;apis&#x2F;streaming&#x2F;index.html#example-program&quot;&gt;Look how easy it is&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;strong&gt;Polyglotism.&lt;&#x2F;strong&gt; Most messaging system are offering libraries for many languages.&lt;strong&gt;Like this, you can use whatever language you want&lt;&#x2F;strong&gt; . But be aware, &lt;em&gt;With great power comes great responsibility&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h1 id=&quot;what-about-serverless&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-serverless&quot; aria-label=&quot;Anchor link for: what-about-serverless&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;strong&gt;What about serverless?&lt;&#x2F;strong&gt;&lt;&#x2F;h1&gt;
+&lt;h1 id=&quot;what-about-serverless&quot;&gt;&lt;strong&gt;What about serverless?&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-serverless&quot; aria-label=&quot;Anchor link for: what-about-serverless&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
 &lt;p&gt;Serverless is the “new” buzz word. Ignited by Amazon with their product &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;lambda&#x2F;&quot;&gt;AWS Lambda&lt;&#x2F;a&gt; and quickly followed by &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;cloud.google.com&#x2F;functions&#x2F;docs&quot;&gt;Google&lt;&#x2F;a&gt;, &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;azure.microsoft.com&#x2F;en-us&#x2F;services&#x2F;functions&#x2F;&quot;&gt;Microsoft&lt;&#x2F;a&gt;, &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;new-console.ng.bluemix.net&#x2F;openwhisk&#x2F;&quot;&gt;IBM&lt;&#x2F;a&gt; and &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.iron.io&#x2F;introducing-aws-lambda-support&quot;&gt;Iron.io&lt;&#x2F;a&gt;, the goal is to &lt;strong&gt;offer to developers a new way of building apps&lt;&#x2F;strong&gt;. Instead of writing apps, &lt;strong&gt;you’ll just write a function that will respond to an event&lt;&#x2F;strong&gt;. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be &lt;strong&gt;deploying an architecture built only using events&lt;&#x2F;strong&gt;. I must admit that I didn’t try it yet, but I think i&lt;strong&gt;t’s a great idea to force developers to split their apps and really think about events,&lt;&#x2F;strong&gt; but you could just build the same thing with any cloud provider.&lt;&#x2F;p&gt;
-&lt;h1 id=&quot;additional-links-and-talks-about-this-topic&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#additional-links-and-talks-about-this-topic&quot; aria-label=&quot;Anchor link for: additional-links-and-talks-about-this-topic&quot;&gt;🔗&lt;&#x2F;a&gt;Additional links and talks about this topic&lt;&#x2F;h1&gt;
+&lt;h1 id=&quot;additional-links-and-talks-about-this-topic&quot;&gt;Additional links and talks about this topic&lt;a class=&quot;zola-anchor&quot; href=&quot;#additional-links-and-talks-about-this-topic&quot; aria-label=&quot;Anchor link for: additional-links-and-talks-about-this-topic&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;www.confluent.io&#x2F;blog&#x2F;apache-kafka-samza-and-the-unix-philosophy-of-distributed-data&quot;&gt;Apache Kafka, Samza, and the Unix Philosophy of Distributed Data&lt;&#x2F;a&gt; by &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;u&#x2F;13be457aed12&quot;&gt;Martin Kleppmann&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;blog.cloudera.com&#x2F;blog&#x2F;2014&#x2F;09&#x2F;apache-kafka-for-beginners&#x2F;&quot;&gt;Apache Kafka for Beginners&lt;&#x2F;a&gt; by Cloudera Engineering Blog&lt;&#x2F;li&gt;
@@ -147,7 +147,7 @@
 </description>
           <category domain="tag">architecture</category>
           <category domain="tag">messaging</category>
-          <category domain="tag">distributed</category>
+          <category domain="tag">distributed-systems</category>
           <category domain="tag">design</category>
       </item>
     </channel>

@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Diving into Kafka&#x27;s Protocol | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="A walkthrough of Kafka&#x27;s wire protocol, from the API_VERSIONS handshake through producing and the consumer group coordination protocol, with a sequence diagram for each exchange.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,18 +30,18 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">
   <meta property="og:title" content="Diving into Kafka&#x27;s Protocol">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="A walkthrough of Kafka&#x27;s wire protocol, from the API_VERSIONS handshake through producing and the consumer group coordination protocol, with a sequence diagram for each exchange.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Diving into Kafka&#x27;s Protocol">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="A walkthrough of Kafka&#x27;s wire protocol, from the API_VERSIONS handshake through producing and the consumer group coordination protocol, with a sequence diagram for each exchange.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2019-12-08T15:00:00+01:00">
   <meta property="article:tag" content="messaging">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="kafka">
   <meta property="article:tag" content="networking">
   <meta property="article:tag" content="diving-into"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/diving-into-kafka-protocol.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;diving-into-kafka-protocol">./read --quorum posts&#x2F;diving-into-kafka-protocol</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / diving-into-kafka-protocol
@@ -112,7 +121,8 @@
   <h2 class="title">Diving into Kafka&#x27;s Protocol</h2>
   <div class="meta-row"><span class="m"><b>2019-12-08</b></span>
     <span class="m">read: <b>~6 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/networking/">#networking</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/diving-into-kafka-protocol.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/networking/">#networking</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -141,9 +151,9 @@
     <p><img src="/images/diving-into-kafka-protocol/apache-kafka.png" alt="kafka image" /></p>
 <p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project's basecode. In this episode, we will digg into Kafka's protocol.</p>
 <hr />
-<h2 id="the-protocol-reference"><a class="zola-anchor" href="#the-protocol-reference" aria-label="Anchor link for: the-protocol-reference">🔗</a>The protocol reference</h2>
+<h2 id="the-protocol-reference">The protocol reference<a class="zola-anchor" href="#the-protocol-reference" aria-label="Anchor link for: the-protocol-reference">🔗</a></h2>
 <p>For the last few months, I worked a lot around Kafka's protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a rel="external" href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a rel="external" href="https://kafka.apache.org/protocol.html">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let's dive in!</p>
-<h3 id="common-handshake"><a class="zola-anchor" href="#common-handshake" aria-label="Anchor link for: common-handshake">🔗</a>Common handshake</h3>
+<h3 id="common-handshake">Common handshake<a class="zola-anchor" href="#common-handshake" aria-label="Anchor link for: common-handshake">🔗</a></h3>
 <p>After a client established the TCP connection, there is a few common requests and responses that are almost always here.</p>
 <p>The common handhake can be divided in three parts:</p>
 <ul>
@@ -188,7 +198,7 @@ sequenceDiagram
 
 Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to handshake &lt;br&#x2F;&gt; again with &lt;br&#x2F;&gt; another broker
 </div>
-<h3 id="producing"><a class="zola-anchor" href="#producing" aria-label="Anchor link for: producing">🔗</a>Producing</h3>
+<h3 id="producing">Producing<a class="zola-anchor" href="#producing" aria-label="Anchor link for: producing">🔗</a></h3>
 <p>The <strong><a rel="external" href="https://kafka.apache.org/protocol.html#The_Messages_Produce">PRODUCE</a></strong> API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.</p>
 <div class="mermaid">
 sequenceDiagram
@@ -206,7 +216,7 @@ sequenceDiagram
         Note left of KafkaClient: Thanks
     end
 </div>
-<h3 id="consuming"><a class="zola-anchor" href="#consuming" aria-label="Anchor link for: consuming">🔗</a>Consuming</h3>
+<h3 id="consuming">Consuming<a class="zola-anchor" href="#consuming" aria-label="Anchor link for: consuming">🔗</a></h3>
 <p>Consuming is more complicated than producing. You can learn more in <a rel="external" href="https://www.youtube.com/watch?v=maJulQ4ABNY">The Magical Group Coordination Protocol of Apache Kafka</a> By Gwen Shapira, Principal Data Architect @ Confluent and also in the <a rel="external" href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Client-side+Assignment+Proposal">Kafka Client-side Assignment Proposal</a>.</p>
 <p>Consuming can be divided in three parts:</p>
 <ul>
@@ -304,6 +314,10 @@ sequenceDiagram
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Diving into Hbase&#x27;s MemStore</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Notes about FoundationDB</span></a>
+  </nav>
 </article>
 
   </main>
@@ -311,11 +325,11 @@ sequenceDiagram
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -326,9 +340,7 @@ sequenceDiagram
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

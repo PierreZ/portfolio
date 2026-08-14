@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>Event-driven architecture 101 | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="An introduction to event-driven architecture: queue messaging systems applying the Unix pipe philosophy to microservices, and the simplicity, modularity, and scalability it buys you.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,19 +30,19 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://medium.com/@PierreZ/event-driven-architecture-101-d8e13cc4c656">
   <meta property="og:title" content="Event-driven architecture 101">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="An introduction to event-driven architecture: queue messaging systems applying the Unix pipe philosophy to microservices, and the simplicity, modularity, and scalability it buys you.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="Event-driven architecture 101">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="An introduction to event-driven architecture: queue messaging systems applying the Unix pipe philosophy to microservices, and the simplicity, modularity, and scalability it buys you.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2016-05-13T17:19:23+00:00">
   <meta property="article:tag" content="architecture">
   <meta property="article:tag" content="messaging">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="design"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2016/eventdriven-architecture-101.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;eventdriven-architecture-101">./read --quorum posts&#x2F;eventdriven-architecture-101</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / eventdriven-architecture-101
@@ -111,7 +120,8 @@
   <h2 class="title">Event-driven architecture 101</h2>
   <div class="meta-row"><span class="m"><b>2016-05-13</b></span>
     <span class="m">read: <b>~7 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/architecture/">#architecture</a> <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2016/eventdriven-architecture-101.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/architecture/">#architecture</a> <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -143,8 +153,8 @@
 <p>Do your own cover on <a rel="external" href="http://dev.to/rly">http://dev.to/rly</a></p>
 <p><em>I’m still a student, so my point of view could be far from reality, be gentle ;)</em></p>
 <p>**<em>tl;dr: Queue messaging are cool. Use them at the core of your architecture.</em>**I’m currently playing a lot around <a rel="external" href="https://kafka.apache.org/">Kafka</a> and <a rel="external" href="https://flink.apache.org/">Flink</a> at work. I also discovered <a rel="external" href="http://vertx.io/">Vert.x</a> at my local JUG. All three have a common word: <strong>events</strong>. Event-driven architecture is not something that I learned at school, and I think that’s a shame. It’s really powerful and useful, especially in a world where we speak more and more about “serverless” and “micro services” stuff. So here’s my attempt to make a big sum-up.</p>
-<h1 id="the-unix-philosophy"><a class="zola-anchor" href="#the-unix-philosophy" aria-label="Anchor link for: the-unix-philosophy">🔗</a>the Unix philosophy</h1>
-<p><img src="/images/eventdriven-architecture-101/2.gif" alt="image" /></p>
+<h1 id="the-unix-philosophy">the Unix philosophy<a class="zola-anchor" href="#the-unix-philosophy" aria-label="Anchor link for: the-unix-philosophy">🔗</a></h1>
+<p><video autoplay loop muted playsinline style="max-width:100%;border:1px solid #b9c6cf;" src="/images/eventdriven-architecture-101/2.mp4" aria-label="image"></video></p>
 <p>I’m a huge fan of GNU/Linux. I just love my terminal. It’s been difficult at the beginning, but now, I consider myself fluent with it. My favorite feature ? <strong>Pipes or |</strong>. For those who don’t know, it’s the ability to pass the result of the command to another command. For example, to count how many files you have in a folder, you’ll find yourself doing something like this:</p>
 <ul>
 <li><strong>list files</strong> in a folder</li>
@@ -156,8 +166,8 @@
 <p>Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new “features”.&gt; Expect the output of every program to become the input to another, as yet unknown, program.</p>
 </blockquote>
 <p>Why should I care? It’s 2016, not 1978! Well…</p>
-<h1 id="back-in-2016"><a class="zola-anchor" href="#back-in-2016" aria-label="Anchor link for: back-in-2016">🔗</a>Back in 2016</h1>
-<p><img src="/images/eventdriven-architecture-101/3.gif" alt="image" /></p>
+<h1 id="back-in-2016">Back in 2016<a class="zola-anchor" href="#back-in-2016" aria-label="Anchor link for: back-in-2016">🔗</a></h1>
+<p><video autoplay loop muted playsinline style="max-width:100%;border:1px solid #b9c6cf;" src="/images/eventdriven-architecture-101/3.mp4" aria-label="image"></video></p>
 <p>Cloud changed everything in terms of software engineering. <strong>We can now deploy applications without thinking about the underlying server</strong>. How cool is that? Let’s take some steps back. Now that you can easily deploy a huge application, what can be accomplished? Well, if I can deploy one app with ease, <strong>Why should I deploy only one huge app ?</strong> why can’t I deploy multiples applications instead of one? <strong>Let’s call theses applications micro services</strong> because we are in 2016.</p>
 <p><img src="/images/eventdriven-architecture-101/4.png" alt="image" /></p>
 <p>OK, so now I’m applying the first rule of the UNIX Philosophy, because I have multiples programs that are doing one job each. But about the second rule? <strong>How can they communicate? How can we simulate UNIX pipes?</strong> Before answering, let’s answer to another question first: <strong>What do we really need to send through our network?</strong> Don’t forget the  <a rel="external" href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing"><strong>Fallacies of distributed computing</strong></a><strong>…</strong></p>
@@ -165,7 +175,7 @@
 <p><img src="/images/eventdriven-architecture-101/5.png" alt="image" /></p>
 <p>Classic approach</p>
 <p>Is there another approach? Let’s use an <strong>event-based architecture</strong>:</p>
-<h1 id="let-s-talk-events"><a class="zola-anchor" href="#let-s-talk-events" aria-label="Anchor link for: let-s-talk-events">🔗</a><strong>Let’s talk events</strong></h1>
+<h1 id="let-s-talk-events"><strong>Let’s talk events</strong><a class="zola-anchor" href="#let-s-talk-events" aria-label="Anchor link for: let-s-talk-events">🔗</a></h1>
 <p>Let’s ask Google, what’s an event?</p>
 <blockquote>
 <p>a thing that happens, especially one of importance.</p>
@@ -184,9 +194,9 @@
 <li><strong>Big-data friendly.</strong> This type of architecture is often used to handle a lot of data. With plateform like <a rel="external" href="http://flink.apache.org">Apache Flink</a>, you can do some <strong>stream processing directly</strong>. <a rel="external" href="https://ci.apache.org/projects/flink/flink-docs-master/apis/streaming/index.html#example-program">Look how easy it is</a>.</li>
 <li><strong>Polyglotism.</strong> Most messaging system are offering libraries for many languages.<strong>Like this, you can use whatever language you want</strong> . But be aware, <em>With great power comes great responsibility</em>.</li>
 </ul>
-<h1 id="what-about-serverless"><a class="zola-anchor" href="#what-about-serverless" aria-label="Anchor link for: what-about-serverless">🔗</a><strong>What about serverless?</strong></h1>
+<h1 id="what-about-serverless"><strong>What about serverless?</strong><a class="zola-anchor" href="#what-about-serverless" aria-label="Anchor link for: what-about-serverless">🔗</a></h1>
 <p>Serverless is the “new” buzz word. Ignited by Amazon with their product <a rel="external" href="https://aws.amazon.com/lambda/">AWS Lambda</a> and quickly followed by <a rel="external" href="https://cloud.google.com/functions/docs">Google</a>, <a rel="external" href="https://azure.microsoft.com/en-us/services/functions/">Microsoft</a>, <a rel="external" href="https://new-console.ng.bluemix.net/openwhisk/">IBM</a> and <a rel="external" href="https://www.iron.io/introducing-aws-lambda-support">Iron.io</a>, the goal is to <strong>offer to developers a new way of building apps</strong>. Instead of writing apps, <strong>you’ll just write a function that will respond to an event</strong>. In fact, you’ll be paying only for the time it’s running. It’s a interesting point-of-view, because you’ll be <strong>deploying an architecture built only using events</strong>. I must admit that I didn’t try it yet, but I think i<strong>t’s a great idea to force developers to split their apps and really think about events,</strong> but you could just build the same thing with any cloud provider.</p>
-<h1 id="additional-links-and-talks-about-this-topic"><a class="zola-anchor" href="#additional-links-and-talks-about-this-topic" aria-label="Anchor link for: additional-links-and-talks-about-this-topic">🔗</a>Additional links and talks about this topic</h1>
+<h1 id="additional-links-and-talks-about-this-topic">Additional links and talks about this topic<a class="zola-anchor" href="#additional-links-and-talks-about-this-topic" aria-label="Anchor link for: additional-links-and-talks-about-this-topic">🔗</a></h1>
 <ul>
 <li><a rel="external" href="http://www.confluent.io/blog/apache-kafka-samza-and-the-unix-philosophy-of-distributed-data">Apache Kafka, Samza, and the Unix Philosophy of Distributed Data</a> by <a rel="external" href="https://medium.com/u/13be457aed12">Martin Kleppmann</a></li>
 <li><a rel="external" href="http://blog.cloudera.com/blog/2014/09/apache-kafka-for-beginners/">Apache Kafka for Beginners</a> by Cloudera Engineering Blog</li>
@@ -198,6 +208,10 @@
 <p>Please, Feel free to react to this article, you can reach me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, or have a look on my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/lets-talk-about-containers/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Let’s talk about containers</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Engage maximum warp speed in time series analysis with WarpScript</span></a>
+  </nav>
 </article>
 
   </main>
@@ -205,11 +219,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -220,9 +234,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

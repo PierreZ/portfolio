@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>What are ACID transactions? | Pierre Zemb&#x27;s Blog</title>
-  <meta name="description" content="Pierre Zemb personal blog">
+  <meta name="description" content="A walkthrough of the ACID properties of database transactions, from the 1983 Haerder and Reuter paper that coined them to isolation levels and PostgreSQL&#x27;s MVCC implementation.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -20,13 +30,13 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://pierrezemb.fr/posts/acid-transactions/">
   <meta property="og:title" content="What are ACID transactions?">
-  <meta property="og:description" content="Pierre Zemb personal blog">
+  <meta property="og:description" content="A walkthrough of the ACID properties of database transactions, from the 1983 Haerder and Reuter paper that coined them to isolation levels and PostgreSQL&#x27;s MVCC implementation.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="What are ACID transactions?">
-  <meta name="twitter:description" content="Pierre Zemb personal blog">
+  <meta name="twitter:description" content="A walkthrough of the ACID properties of database transactions, from the 1983 Haerder and Reuter paper that coined them to isolation levels and PostgreSQL&#x27;s MVCC implementation.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2019-02-03T00:00:00+00:00">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/acid-transactions.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;acid-transactions">./read --quorum posts&#x2F;acid-transactions</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / acid-transactions
@@ -111,6 +120,7 @@
   <h2 class="title">What are ACID transactions?</h2>
   <div class="meta-row"><span class="m"><b>2019-02-03</b></span>
     <span class="m">read: <b>~4 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2019/acid-transactions.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
   <nav class="toc">
@@ -152,7 +162,7 @@
   </nav>
 
   <div class="prose">
-    <h1 id="transaction"><a class="zola-anchor" href="#transaction" aria-label="Anchor link for: transaction">🔗</a>Transaction?</h1>
+    <h1 id="transaction">Transaction?<a class="zola-anchor" href="#transaction" aria-label="Anchor link for: transaction">🔗</a></h1>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>&quot;Programming should be about transforming data&quot;</span></span></code></pre>
 <p>--- Programming Elixir 1.3 by Dave Thomas</p>
 <hr />
@@ -166,15 +176,15 @@
 <blockquote>
 <p><strong>A</strong>tomic, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability</p>
 </blockquote>
-<h2 id="atomic"><a class="zola-anchor" href="#atomic" aria-label="Anchor link for: atomic">🔗</a>Atomic</h2>
+<h2 id="atomic">Atomic<a class="zola-anchor" href="#atomic" aria-label="Anchor link for: atomic">🔗</a></h2>
 <p>Atomic, as you may have guessed, <code>atomic</code> represents something that <strong>cannot be splitted</strong>. In the database transaction world, it means for example that if a transaction with several writes is <strong>started and failed</strong> at some point, <strong>none of the write will be committed</strong>. As stated by many, the word <code>atomic</code> could be reword as <code>abortability</code>.</p>
 <hr />
-<h2 id="consistency"><a class="zola-anchor" href="#consistency" aria-label="Anchor link for: consistency">🔗</a>Consistency</h2>
+<h2 id="consistency">Consistency<a class="zola-anchor" href="#consistency" aria-label="Anchor link for: consistency">🔗</a></h2>
 <p>You will hear about <code>consistency</code> a lot of this serie. Unfortunately, this word can be used in a lot of context. In the ACID definition, it refers to the fact that a transaction will <strong>bring the database from one valid state to another.</strong></p>
 <hr />
-<h2 id="isolation"><a class="zola-anchor" href="#isolation" aria-label="Anchor link for: isolation">🔗</a>Isolation</h2>
+<h2 id="isolation">Isolation<a class="zola-anchor" href="#isolation" aria-label="Anchor link for: isolation">🔗</a></h2>
 <p>Think back to your database. Were you the only user on it? I don't think so. Maybe they were concurrent transactions at the same time, beside yours. <strong>Isolation while keeping good performance is the most difficult item on the list.</strong> There's a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.</p>
-<h3 id="isolation-by-the-theory"><a class="zola-anchor" href="#isolation-by-the-theory" aria-label="Anchor link for: isolation-by-the-theory">🔗</a>Isolation by the theory</h3>
+<h3 id="isolation-by-the-theory">Isolation by the theory<a class="zola-anchor" href="#isolation-by-the-theory" aria-label="Anchor link for: isolation-by-the-theory">🔗</a></h3>
 <p>The SQL standard defines four isolation levels: <code>Serializable</code>, <code>Repeatable Read</code>, <code>Read Commited</code> and <code>Read Uncommited</code>. The strongest isolation is <code>Serializable</code> where transaction are <strong>not runned in parallel</strong>. As you may have guessed, it is also the slowest. <strong>Weaker isolation level are trading speed against anomalies</strong> that can be sum-up like this:</p>
 <table><thead><tr><th>Isolation level</th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Dirty_reads">dirty reads</a></th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads">Non-repeatable reads</a></th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Phantom_reads">Phantom reads</a></th><th>Performance</th></tr></thead><tbody>
 <tr><td>Serializable</td><td>😎</td><td>😎</td><td>😎</td><td>👍</td></tr>
@@ -185,7 +195,7 @@
 <blockquote>
 <p>I encourage you to click on all the links within the table to <strong>see everything that could go wrong in a weak database!</strong></p>
 </blockquote>
-<h3 id="isolation-in-real-databases"><a class="zola-anchor" href="#isolation-in-real-databases" aria-label="Anchor link for: isolation-in-real-databases">🔗</a>Isolation in Real Databases</h3>
+<h3 id="isolation-in-real-databases">Isolation in Real Databases<a class="zola-anchor" href="#isolation-in-real-databases" aria-label="Anchor link for: isolation-in-real-databases">🔗</a></h3>
 <p>Now that we saw some theory, let's have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?</p>
 <blockquote>
 <p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
@@ -193,14 +203,18 @@
 <p>--- <a rel="external" href="https://www.postgresql.org/docs/current/mvcc-intro.html">Concurrency Control introduction</a></p>
 <p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a rel="external" href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC">a standard used by the industry</a>.</p>
 <hr />
-<h2 id="durability"><a class="zola-anchor" href="#durability" aria-label="Anchor link for: durability">🔗</a>Durability</h2>
+<h2 id="durability">Durability<a class="zola-anchor" href="#durability" aria-label="Anchor link for: durability">🔗</a></h2>
 <p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
-<h1 id="that-s-it"><a class="zola-anchor" href="#that-s-it" aria-label="Anchor link for: that-s-it">🔗</a>That's it?</h1>
+<h1 id="that-s-it">That's it?<a class="zola-anchor" href="#that-s-it" aria-label="Anchor link for: that-s-it">🔗</a></h1>
 <p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/hbase-data-model/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Hbase Data Model</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Handling OVH&#x27;s alerts with Apache Flink</span></a>
+  </nav>
 </article>
 
   </main>
@@ -208,11 +222,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -223,9 +237,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

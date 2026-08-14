@@ -1,12 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - consensus</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/consensus/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-05T00:00:00+00:00</updated>
+    <updated>2026-08-13T00:00:00+00:00</updated>
     <id>https://pierrezemb.fr/tags/consensus/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</title>
+        <published>2026-08-13T00:00:00+00:00</published>
+        <updated>2026-08-13T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Pierre Zemb
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/"/>
+        <id>https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/</id>
+        
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
+        <category term="foundationdb" schema="https://pierrezemb.fr/tags/" label="foundationdb"/>
+        <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
+        <category term="algorithms" schema="https://pierrezemb.fr/tags/" label="algorithms"/>
+        <content type="html" xml:base="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">&lt;h2 id=&quot;the-architecture-i-couldn-t-explain&quot;&gt;The architecture I couldn&#x27;t explain&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-architecture-i-couldn-t-explain&quot; aria-label=&quot;Anchor link for: the-architecture-i-couldn-t-explain&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;One thing always puzzled me about FoundationDB: compared to many distributed databases, its architecture looks almost excessive: GRV proxies, commit proxies, resolvers, log servers, storage servers, and that&#x27;s only the data plane. When I say that I operate FDB, people often ask, &quot;Isn&#x27;t that complicated? There are so many processes and roles.&quot; After years of operating FDB for &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.clever-cloud.com&#x2F;materia&#x2F;&quot;&gt;Materia&lt;&#x2F;a&gt; at Clever Cloud, I understood what every component did, but I couldn&#x27;t explain why the system had been split that way. Michael Whittaker&#x27;s &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;mwhittaker.github.io&#x2F;publications&#x2F;compartmentalized_paxos.html&quot;&gt;&lt;strong&gt;Scaling Replicated State Machines with Compartmentalization&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; (VLDB 2021) finally gave me the vocabulary I was missing.&lt;&#x2F;p&gt;
+&lt;p&gt;Start with his talk, it explains the paper better than I could:&lt;&#x2F;p&gt;
+&lt;div class=&quot;embed-video &quot;&gt;
+  &lt;iframe src=&quot;https:&amp;#x2F;&amp;#x2F;www.youtube-nocookie.com&amp;#x2F;embed&amp;#x2F;LWFml1LFIqc&quot; title=&quot;Scaling Replicated State Machines with Compartmentalization&quot; loading=&quot;lazy&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen&gt;&lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;a-different-way-to-look-at-distributed-systems&quot;&gt;A different way to look at distributed systems&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-different-way-to-look-at-distributed-systems&quot; aria-label=&quot;Anchor link for: a-different-way-to-look-at-distributed-systems&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;When we learn distributed systems, we usually learn to partition data and replicate it. The paper asks a different question: &lt;strong&gt;which responsibilities are accidentally coupled inside the bottleneck?&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;It calls the answer &lt;strong&gt;compartmentalization&lt;&#x2F;strong&gt;: separate those responsibilities, then scale each one independently.&lt;&#x2F;p&gt;
+&lt;p&gt;The MultiPaxos leader is its canonical example, since it sequences commands into the log and handles communication for the whole protocol. For f = 1, each command gives the leader one client message, four messages exchanged with a quorum of two acceptors, and two messages to replicas, seven messages in total, so adding acceptors or replicas only gives it more nodes to talk to.&lt;&#x2F;p&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant A as Acceptors
+    participant R as Replicas
+    C-&amp;gt;&amp;gt;L: x
+    L-&amp;gt;&amp;gt;A: replicate x to quorum of 2 acceptors
+    A-&amp;gt;&amp;gt;L: acknowledgements from 2 acceptors
+    L-&amp;gt;&amp;gt;R: x is chosen, sent to 2 replicas
+    R-&amp;gt;&amp;gt;C: result of x
+    Note over L: 7 messages touch leader
+&lt;&#x2F;div&gt;
+&lt;p&gt;There is no fundamental reason those two jobs have to live together. Sequencing is inherently serialized, communication is embarrassingly parallel, so the paper introduces &lt;strong&gt;proxy leaders&lt;&#x2F;strong&gt;: the leader keeps sequencing and hands each command to a proxy leader that runs the rest of the protocol, dropping the leader to two messages per command. I will not paraphrase the whole construction, the talk does it better, so here is just the paper&#x27;s result: applied across the protocol, compartmentalization raises MultiPaxos throughput by 6x on a write-only workload and 16x on a workload with 90% reads, without adopting a new protocol.&lt;&#x2F;p&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant P as Proxy leader
+    participant A as Acceptors
+    participant R as Replicas
+    C-&amp;gt;&amp;gt;L: x
+    L-&amp;gt;&amp;gt;P: x at position 0
+    P-&amp;gt;&amp;gt;A: replicate x to quorum of 2 acceptors
+    A-&amp;gt;&amp;gt;P: acknowledgements from 2 acceptors
+    P-&amp;gt;&amp;gt;R: x is chosen, sent to 2 replicas
+    R-&amp;gt;&amp;gt;C: result of x
+    Note over L: 2 messages touch leader
+    Note over P: 7 messages touch proxy
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;how-i-read-systems-now&quot;&gt;How I read systems now&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-i-read-systems-now&quot; aria-label=&quot;Anchor link for: how-i-read-systems-now&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Since reading the paper, I read distributed systems through the same short list of questions.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;How many RPCs does each component touch per request?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;What is this component actually responsible for?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Which steps are inherently serialized, and which are embarrassingly parallel?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;When I add instances, does the work per node go down, or does fan-out go up?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Can this work be partitioned across independent groups?&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Looking back at FoundationDB, I stopped seeing dozens of processes and started seeing answers to those questions. The RPC flow makes those splits visible:&lt;&#x2F;p&gt;
+&lt;div class=&quot;mermaid&quot;&gt;
+sequenceDiagram
+    participant C as Client
+    participant G as GRV proxy
+    participant M as Master (singleton sequencer)
+    participant S as Storage servers
+    participant CP as Commit proxy
+    participant R as Resolvers
+    participant T as TLogs
+    C-&amp;gt;&amp;gt;G: get read version
+    G-&amp;gt;&amp;gt;M: batched request
+    M--&amp;gt;&amp;gt;G: read version
+    G--&amp;gt;&amp;gt;C: read version
+    C-&amp;gt;&amp;gt;S: read keys at version
+    S--&amp;gt;&amp;gt;C: values
+    C-&amp;gt;&amp;gt;CP: commit transaction
+    CP-&amp;gt;&amp;gt;M: batched commit-version request
+    M--&amp;gt;&amp;gt;CP: commit version
+    CP-&amp;gt;&amp;gt;R: conflict ranges
+    R--&amp;gt;&amp;gt;CP: conflict decisions
+    CP-&amp;gt;&amp;gt;T: mutations and commit version
+    T--&amp;gt;&amp;gt;CP: durable
+    CP-&amp;gt;&amp;gt;M: live committed version
+    M--&amp;gt;&amp;gt;CP: acknowledged
+    CP--&amp;gt;&amp;gt;C: commit result
+&lt;&#x2F;div&gt;
+&lt;p&gt;FoundationDB does not minimize the total number of round trips. It keeps the RPC count low at the serialized role. The Master sees batched version requests and live committed version reports, while GRV and commit proxies carry the client traffic. Commit proxies coordinate the fan-out to resolvers and TLogs.&lt;&#x2F;p&gt;
+&lt;p&gt;The remaining work is divided along its own boundaries. Resolvers partition conflict checking by key range, TLogs durably retain mutation streams for storage servers, and storage servers serve reads directly once clients locate the relevant ranges. The scalable responsibilities have their own pools, while the Master remains a singleton. FDB&#x27;s process count comes from those separate scaling decisions.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;every-split-has-a-cost&quot;&gt;Every split has a cost&lt;a class=&quot;zola-anchor&quot; href=&quot;#every-split-has-a-cost&quot; aria-label=&quot;Anchor link for: every-split-has-a-cost&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Compartmentalization isn&#x27;t free. The paper&#x27;s 6x speedup used 6.66x the machines, a command crosses six network delays instead of four, and running more machines shortens the expected time to f failures. Those additional roles also create more RPC paths, upgrade boundaries, and interactions between roles during failures.&lt;&#x2F;p&gt;
+&lt;div class=&quot;note&quot;&gt;
+  &lt;span class=&quot;note-h&quot;&gt;note&lt;&#x2F;span&gt;
+  As a side note, reconfiguration is a hard enough problem that Michael Whittaker also wrote &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;mwhittaker.github.io&#x2F;publications&#x2F;matchmaker_paxos.html&quot;&gt;&lt;strong&gt;Matchmaker Paxos&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; about it, another paper I like a lot.
+&lt;&#x2F;div&gt;
+&lt;p&gt;FoundationDB pays that cost when the transaction system&#x27;s shape changes. GRV proxies, commit proxies, resolvers, and TLogs have configured counts, but changing one does not resize a pool in place. FDB starts a new transaction-system epoch and recruits the roles according to the new configuration. I really like this: from the outside, it looks like tearing the transaction system down and bringing it back up, although old TLogs can remain until storage servers consume their mutations.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;&#x2F;posts&#x2F;diving-into-foundationdb-simulation&#x2F;&quot;&gt;FoundationDB&#x27;s simulation suite&lt;&#x2F;a&gt; exercises shutdown and recovery so often that it almost makes this look easy.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Feel free to reach out with any questions or to share your experiences with compartmentalization. You can find me on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt;, &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;pierrezemb.fr&quot;&gt;Bluesky&lt;&#x2F;a&gt; or through my &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;pierrezemb.fr&quot;&gt;website&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Simulating Leader Election on top of FoundationDB</title>
         <published>2026-02-05T00:00:00+00:00</published>
@@ -31,7 +142,7 @@
         <category term="leader-election" schema="https://pierrezemb.fr/tags/" label="leader-election"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">&lt;p&gt;People are right to fear LLM-generated code. The models hallucinate APIs, miss edge cases, and produce code that looks correct but fails under pressure. For distributed systems, where bugs hide behind race conditions and network partitions, the stakes are even higher. A subtle leader election bug can cause split-brain, data corruption, or cascading failures across your cluster.&lt;&#x2F;p&gt;
 &lt;p&gt;But what if you could give an LLM &lt;a href=&quot;&#x2F;posts&#x2F;llms-for-engineering&#x2F;#feedback-loops&quot;&gt;the right feedback loop&lt;&#x2F;a&gt;? Not just &quot;write me leader election&quot; but &quot;write me leader election, and here&#x27;s how I&#x27;ll prove it correct.&quot; That feedback loop is simulation. I decided to test this idea by building a leader election recipe for &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&quot;&gt;foundationdb-rs&lt;&#x2F;a&gt;, with invariants generated by Claude Code.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-algorithm&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-algorithm&quot; aria-label=&quot;Anchor link for: the-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;The Algorithm&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-algorithm&quot;&gt;The Algorithm&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-algorithm&quot; aria-label=&quot;Anchor link for: the-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The recipe uses a ballot-based approach, similar to Raft&#x27;s term concept but simpler. The algorithm is based on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;inria.hal.science&#x2F;hal-01775025v1&#x2F;document&quot;&gt;&quot;Leader Election Using NewSQL Database Systems&quot;&lt;&#x2F;a&gt; (Ismail et al., DAIS 2015), which uses a database as distributed shared memory. Our implementation differs by leveraging FDB&#x27;s &lt;a href=&quot;&#x2F;posts&#x2F;fdb-transaction-model-for-layer-engineers&#x2F;&quot;&gt;strictly serializable transactions&lt;&#x2F;a&gt; and versionstamps instead of timestamps. Leaders hold time-bounded leases. Ballots are monotonically increasing fencing tokens that prevent stale leaders from corrupting state. FDB&#x27;s serializable transactions handle mutual exclusion without explicit locking.&lt;&#x2F;p&gt;
 &lt;p&gt;The key insight is storing the leader state at a &lt;strong&gt;single key&lt;&#x2F;strong&gt;, making all operations O(1) instead of O(N) candidate scanning. Most leader election implementations require scanning all candidates to determine who&#x27;s in charge. With N candidates, that&#x27;s N reads per query. Our approach stores the current leader explicitly, so checking who&#x27;s leader is a single read. Claiming leadership is a single write with a conflict check. No quorum is needed because FDB already provides the coordination guarantees we need through its serializable transactions.&lt;&#x2F;p&gt;
 &lt;div class=&quot;mermaid&quot;&gt;
@@ -57,7 +168,7 @@ sequenceDiagram
 &lt;p&gt;The diagram shows what happens when two processes try to claim leadership simultaneously. Both read the same expired leader state. Both try to write ballot=6. FDB&#x27;s serializable transactions guarantee only one succeeds. The loser gets a conflict error, retries, sees ballot=6 with an active lease, and backs off. No split-brain possible. This is the fundamental safety property that the entire algorithm rests on.&lt;&#x2F;p&gt;
 &lt;p&gt;When a process wants to become leader, it first registers as a candidate. FDB assigns a versionstamp at commit time using the &lt;code&gt;SetVersionstampedValue&lt;&#x2F;code&gt; atomic operation. This versionstamp is assigned by FDB itself when the transaction commits, providing a globally-ordered identity that no other process can have. The versionstamp never changes throughout the process&#x27;s lifetime, even as the process sends heartbeats and refreshes its registration. This immutability is important: it means the process&#x27;s identity is stable and can be used reliably in log replay during verification.&lt;&#x2F;p&gt;
 &lt;p&gt;Then the process enters a loop: send heartbeats to prove liveness, try to claim leadership if the current lease expired, and optionally resign if graceful handoff is needed. Each leadership claim increments the ballot number. The new leader stores its versionstamp in the leader state, so followers can verify they&#x27;re talking to the actual leader. The full implementation lives in the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;tree&#x2F;main&#x2F;foundationdb&#x2F;src&#x2F;recipes&#x2F;leader_election&quot;&gt;foundationdb-rs recipes module&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-simulation-workload&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-simulation-workload&quot; aria-label=&quot;Anchor link for: the-simulation-workload&quot;&gt;🔗&lt;&#x2F;a&gt;The Simulation Workload&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-simulation-workload&quot;&gt;The Simulation Workload&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-simulation-workload&quot; aria-label=&quot;Anchor link for: the-simulation-workload&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Simulation on top of FoundationDB may feel redundant. FDB itself has been validated through &lt;a href=&quot;&#x2F;posts&#x2F;diving-into-foundationdb-simulation&#x2F;&quot;&gt;a trillion CPU-hours of simulation&lt;&#x2F;a&gt;. But FDB&#x27;s resiliency doesn&#x27;t mean your code is resilient. Your layer sits on top of FDB. Your transaction logic, your conflict handling, your retry behavior. How does your code respond when FDB is unhealthy?&lt;&#x2F;p&gt;
 &lt;p&gt;Simulation introduces chaos to answer that question. Network partitions, process crashes, clock skew up to ±1 second. Same seed, same execution, same bugs. Deterministic replay.&lt;&#x2F;p&gt;
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Phase&lt;&#x2F;th&gt;&lt;th&gt;Who&lt;&#x2F;th&gt;&lt;th&gt;What&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
@@ -67,7 +178,7 @@ sequenceDiagram
 &lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
 &lt;p&gt;FDB&#x27;s simulator runs built-in chaos workloads alongside ours: &lt;strong&gt;RandomClogging&lt;&#x2F;strong&gt; injects network partitions, &lt;strong&gt;Attrition&lt;&#x2F;strong&gt; kills and reboots processes. Our workload adds clock skew simulation up to ±1 second.&lt;&#x2F;p&gt;
 &lt;p&gt;Each operation logs its intent atomically in the same transaction, using the pattern from FDB&#x27;s own &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;foundationdb&#x2F;blob&#x2F;main&#x2F;fdbserver&#x2F;workloads&#x2F;AtomicOps.actor.cpp&quot;&gt;AtomicOps workload&lt;&#x2F;a&gt;. The &lt;code&gt;SetVersionstampedKey&lt;&#x2F;code&gt; &lt;a href=&quot;&#x2F;posts&#x2F;fdb-transaction-model-for-layer-engineers&#x2F;#atomic-operations-writing-without-reading&quot;&gt;atomic operation&lt;&#x2F;a&gt; writes both the leader election mutation and its log entry in a single transaction. If the transaction commits, both succeed. If it aborts, neither does. This gives us a proper write-ahead log without the complexity of two-phase commit. The log key uses a versionstamp prefix for true FDB commit ordering. No clock skew ambiguity.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;how-atomic-logging-works&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-atomic-logging-works&quot; aria-label=&quot;Anchor link for: how-atomic-logging-works&quot;&gt;🔗&lt;&#x2F;a&gt;How Atomic Logging Works&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;how-atomic-logging-works&quot;&gt;How Atomic Logging Works&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-atomic-logging-works&quot; aria-label=&quot;Anchor link for: how-atomic-logging-works&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Each operation writes a log entry in the same transaction as the operation itself. The log key uses a versionstamp prefix, so entries sort by true FDB commit order, not by wall clock (which can drift ±1 second under simulation).&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Log Key Structure:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;┌─────────────────────┬───────────┬────────┐&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -88,7 +199,7 @@ sequenceDiagram
 &lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
 &lt;p&gt;Client 0 became leader with ballot 1. Client 1&#x27;s claim failed (conflict). Client 2 later claimed ballot 2 when client 0&#x27;s lease expired, then resigned. The versionstamp ordering is ground truth: no matter how skewed each client&#x27;s clock was, the log shows exactly what committed and in what order.&lt;&#x2F;p&gt;
 &lt;p&gt;During &lt;strong&gt;check&lt;&#x2F;strong&gt;, client 0 reads all logs and database state in a single snapshot, then runs the invariants. Same seed, same execution, same bugs. Deterministic replay.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-invariants&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-invariants&quot; aria-label=&quot;Anchor link for: the-invariants&quot;&gt;🔗&lt;&#x2F;a&gt;The Invariants&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-invariants&quot;&gt;The Invariants&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-invariants&quot; aria-label=&quot;Anchor link for: the-invariants&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Here&#x27;s where Claude Code enters the story. I asked it to generate invariants for leader election validation. I didn&#x27;t give it a detailed specification. I pointed it at my &lt;a href=&quot;&#x2F;posts&#x2F;writing-rust-fdb-workloads-that-find-bugs&#x2F;&quot;&gt;previous post about designing workloads that find bugs&lt;&#x2F;a&gt; and said &quot;apply these patterns to leader election.&quot;&lt;&#x2F;p&gt;
 &lt;p&gt;It generated &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;foundationdb-rs&#x2F;foundationdb-rs&#x2F;blob&#x2F;main&#x2F;foundationdb-recipes-simulation&#x2F;README.md&quot;&gt;13 invariants&lt;&#x2F;a&gt;. Here are the seven most important ones:&lt;&#x2F;p&gt;
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Invariant&lt;&#x2F;th&gt;&lt;th&gt;What&lt;&#x2F;th&gt;&lt;th&gt;Why&lt;&#x2F;th&gt;&lt;th&gt;How&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
@@ -100,7 +211,7 @@ sequenceDiagram
 &lt;tr&gt;&lt;td&gt;&lt;strong&gt;GlobalBallotSuccession&lt;&#x2F;strong&gt;&lt;&#x2F;td&gt;&lt;td&gt;Each new leader must have ballot &amp;gt; previous leader&#x27;s ballot&lt;&#x2F;td&gt;&lt;td&gt;Catches state regression after partition heals. An old leader can&#x27;t &quot;go back&quot; to a stale ballot&lt;&#x2F;td&gt;&lt;td&gt;Track previous_ballot in log entries, verify new_ballot &amp;gt; previous_ballot for every transition&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;strong&gt;LeaseExpiryAfterClaim&lt;&#x2F;strong&gt;&lt;&#x2F;td&gt;&lt;td&gt;Lease must expire after the claim timestamp&lt;&#x2F;td&gt;&lt;td&gt;Clock skew can cause a leader to claim with an already-expired lease. This catches incorrect lease calculation or extreme clock drift&lt;&#x2F;td&gt;&lt;td&gt;For each claim, verify lease_expiry_nanos &amp;gt; claim_timestamp_nanos&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
 &lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
-&lt;h2 id=&quot;what-s-next&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-next&quot; aria-label=&quot;Anchor link for: what-s-next&quot;&gt;🔗&lt;&#x2F;a&gt;What&#x27;s Next&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-s-next&quot;&gt;What&#x27;s Next&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-next&quot; aria-label=&quot;Anchor link for: what-s-next&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The leader election recipe has just been merged into foundationdb-rs as experimental. I haven&#x27;t run it in production yet. The entire development was simulation-driven: write code, run simulation, fix what breaks, repeat. The simulation runs in CI on every PR.&lt;&#x2F;p&gt;
 &lt;p&gt;Simulation gives us guarantees that the code behaves correctly under the right rules, even when FDB is tortured. Network partitions, clock skew, process crashes. The invariants verify that safety properties hold through all of it. Not a proof of correctness, but confidence earned through chaos.&lt;&#x2F;p&gt;
 &lt;p&gt;The invariants that Claude Code generated encode patterns from prior simulation work: dual-path validation from AtomicOps, fencing tokens from the literature, lease checks tied to clock skew. What the LLM provided was speed: weeks of invariant development compressed into hours of review. The LLM proposes, simulation disposes.&lt;&#x2F;p&gt;
@@ -126,19 +237,19 @@ sequenceDiagram
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-etcd/"/>
         <id>https://pierrezemb.fr/posts/notes-about-etcd/</id>
         
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="etcd" schema="https://pierrezemb.fr/tags/" label="etcd"/>
         <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
         <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
         <category term="notes" schema="https://pierrezemb.fr/tags/" label="notes"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/notes-about-etcd/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;notes-about-etcd&#x2F;images&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;notes&#x2F;&quot;&gt;Notes About&lt;&#x2F;a&gt; is a blogpost serie  you will find a lot of &lt;strong&gt;links, videos, quotes, podcasts to click on&lt;&#x2F;strong&gt; about a specific topic. Today we will discover ETCD.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;overview-of-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;Overview of ETCD&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;overview-of-etcd&quot;&gt;Overview of ETCD&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview-of-etcd&quot; aria-label=&quot;Anchor link for: overview-of-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;As stated in the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;history&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#history&quot; aria-label=&quot;Anchor link for: history&quot;&gt;🔗&lt;&#x2F;a&gt;History&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;history&quot;&gt;History&lt;a class=&quot;zola-anchor&quot; href=&quot;#history&quot; aria-label=&quot;Anchor link for: history&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;ETCD was initially developed by CoreOS:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;CoreOS built etcd to solve the problem of shared configuration and service discovery.&lt;&#x2F;p&gt;
@@ -153,7 +264,7 @@ sequenceDiagram
 &lt;li&gt;February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more&lt;&#x2F;li&gt;
 &lt;li&gt;August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;overall-architecture&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overall-architecture&quot; aria-label=&quot;Anchor link for: overall-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;Overall architecture&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;overall-architecture&quot;&gt;Overall architecture&lt;a class=&quot;zola-anchor&quot; href=&quot;#overall-architecture&quot; aria-label=&quot;Anchor link for: overall-architecture&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -166,7 +277,7 @@ sequenceDiagram
 &lt;li&gt;storing key-values into bbolt,&lt;&#x2F;li&gt;
 &lt;li&gt;optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;PACELC_theorem&quot;&gt;in terms of the PACELC theorem&lt;&#x2F;a&gt;).&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;consensus-raft&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#consensus-raft&quot; aria-label=&quot;Anchor link for: consensus-raft&quot;&gt;🔗&lt;&#x2F;a&gt;Consensus? Raft?&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;consensus-raft&quot;&gt;Consensus? Raft?&lt;a class=&quot;zola-anchor&quot; href=&quot;#consensus-raft&quot; aria-label=&quot;Anchor link for: consensus-raft&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;ul&gt;
 &lt;li&gt;Raft is a consensus algorithm for managing a replicated log.&lt;&#x2F;li&gt;
 &lt;li&gt;consensus involves multiple servers agreeing on values.&lt;&#x2F;li&gt;
@@ -189,7 +300,7 @@ sequenceDiagram
 &lt;li&gt;Learner role,&lt;&#x2F;li&gt;
 &lt;li&gt;Client-side load-balancing.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;exposed-api&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#exposed-api&quot; aria-label=&quot;Anchor link for: exposed-api&quot;&gt;🔗&lt;&#x2F;a&gt;Exposed API&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;exposed-api&quot;&gt;Exposed API&lt;a class=&quot;zola-anchor&quot; href=&quot;#exposed-api&quot; aria-label=&quot;Anchor link for: exposed-api&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;ETCD is exposing several APIs through different gRPC services:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Put(key, value),&lt;&#x2F;li&gt;
@@ -207,7 +318,7 @@ sequenceDiagram
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Key and values are bytes-oriented but ordered.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;transactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions&quot; aria-label=&quot;Anchor link for: transactions&quot;&gt;🔗&lt;&#x2F;a&gt;Transactions&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;transactions&quot;&gt;Transactions&lt;a class=&quot;zola-anchor&quot; href=&quot;#transactions&quot; aria-label=&quot;Anchor link for: transactions&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;proto&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; From google paxosdb paper:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Our implementation hinges around a powerful primitive which we call MultiOp. All other database&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -234,13 +345,13 @@ sequenceDiagram
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  repeated&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage&quot;&gt; RequestOp&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; success&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; failure is a list of requests which will be applied when compare evaluates to false.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  repeated&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage&quot;&gt; RequestOp&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; failure&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 3&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
-&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;versioned-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#versioned-data&quot; aria-label=&quot;Anchor link for: versioned-data&quot;&gt;🔗&lt;&#x2F;a&gt;Versioned data&lt;&#x2F;h3&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;versioned-data&quot;&gt;Versioned data&lt;a class=&quot;zola-anchor&quot; href=&quot;#versioned-data&quot; aria-label=&quot;Anchor link for: versioned-data&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Each Key&#x2F;Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.&lt;&#x2F;p&gt;
 &lt;p&gt;In order to avoid having a growing keySpace, one can issue the &lt;code&gt;Compact&lt;&#x2F;code&gt; gRPC service:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;lease&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease&quot; aria-label=&quot;Anchor link for: lease&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;lease&quot;&gt;Lease&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease&quot; aria-label=&quot;Anchor link for: lease&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;proto&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; this message represent a Lease&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;message&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-class&quot;&gt; Lease&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; TTL is the advisory time-to-live in seconds. Expired lease will return -1.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -249,7 +360,7 @@ sequenceDiagram
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  int64&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; ID&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  int64&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; insert_timestamp&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 3&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
-&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;watches&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#watches&quot; aria-label=&quot;Anchor link for: watches&quot;&gt;🔗&lt;&#x2F;a&gt;Watches&lt;&#x2F;h3&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;watches&quot;&gt;Watches&lt;a class=&quot;zola-anchor&quot; href=&quot;#watches&quot; aria-label=&quot;Anchor link for: watches&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;proto&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;message&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-class&quot;&gt; Watch&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; key is the key to register for watching.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  bytes&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; key&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -267,13 +378,13 @@ sequenceDiagram
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; watchers on the same stream. Creating a watcher with an ID already in&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; use on the stream will cause an error to be returned.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;  int64&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; watch_id&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-numeric&quot;&gt; 7&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
-&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;linearizable-reads&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linearizable-reads&quot; aria-label=&quot;Anchor link for: linearizable-reads&quot;&gt;🔗&lt;&#x2F;a&gt;Linearizable reads&lt;&#x2F;h3&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;linearizable-reads&quot;&gt;Linearizable reads&lt;a class=&quot;zola-anchor&quot; href=&quot;#linearizable-reads&quot; aria-label=&quot;Anchor link for: linearizable-reads&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Section 8 of the raft paper explains the issue:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD implements &lt;code&gt;ReadIndex&lt;&#x2F;code&gt; read(more info on &lt;a href=&quot;&#x2F;posts&#x2F;diving-into-etcd-linearizable&#x2F;&quot;&gt;Diving into ETCD’s linearizable reads&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;how-etcd-is-using-bbolt&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-etcd-is-using-bbolt&quot; aria-label=&quot;Anchor link for: how-etcd-is-using-bbolt&quot;&gt;🔗&lt;&#x2F;a&gt;How ETCD is using bbolt&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;how-etcd-is-using-bbolt&quot;&gt;How ETCD is using bbolt&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-etcd-is-using-bbolt&quot; aria-label=&quot;Anchor link for: how-etcd-is-using-bbolt&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;bbolt&quot;&gt;bbolt&lt;&#x2F;a&gt; is the underlying kv used in etcd. &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;kvstore_txn.go#L214&quot;&gt;A bucket called &lt;code&gt;key&lt;&#x2F;code&gt; is used to store data, and the key is the revision&lt;&#x2F;a&gt;. Then, to find keys, &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.14&#x2F;mvcc&#x2F;index.go#L68&quot;&gt;a B-Tree is used&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;ul&gt;
@@ -290,7 +401,7 @@ sequenceDiagram
 &lt;blockquote&gt;
 &lt;p&gt;Note that the underlying &lt;code&gt;bbolt&lt;&#x2F;code&gt; mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;etcd-in-k8s&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#etcd-in-k8s&quot; aria-label=&quot;Anchor link for: etcd-in-k8s&quot;&gt;🔗&lt;&#x2F;a&gt;ETCD in K8S&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;etcd-in-k8s&quot;&gt;ETCD in K8S&lt;a class=&quot;zola-anchor&quot; href=&quot;#etcd-in-k8s&quot; aria-label=&quot;Anchor link for: etcd-in-k8s&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;blob&#x2F;master&#x2F;staging&#x2F;src&#x2F;k8s.io&#x2F;apiserver&#x2F;pkg&#x2F;storage&#x2F;interfaces.go#L159&quot;&gt;The interface can be found here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Create use TTL and Txn&lt;&#x2F;li&gt;
@@ -300,7 +411,7 @@ sequenceDiagram
 &lt;li&gt;List uses Get&lt;&#x2F;li&gt;
 &lt;li&gt;Watch uses Watch with a channel&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;jepsen&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#jepsen&quot; aria-label=&quot;Anchor link for: jepsen&quot;&gt;🔗&lt;&#x2F;a&gt;Jepsen&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;jepsen&quot;&gt;Jepsen&lt;a class=&quot;zola-anchor&quot; href=&quot;#jepsen&quot; aria-label=&quot;Anchor link for: jepsen&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The Jepsen team tested &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;analyses&#x2F;etcd-3.4.3&quot;&gt;etcd-3.4.3&lt;&#x2F;a&gt;, here&#x27;s some quotes:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.&lt;&#x2F;p&gt;
@@ -314,8 +425,8 @@ sequenceDiagram
 &lt;blockquote&gt;
 &lt;p&gt;If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;operation-notes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operation-notes&quot; aria-label=&quot;Anchor link for: operation-notes&quot;&gt;🔗&lt;&#x2F;a&gt;Operation notes&lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;deployements-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployements-tips&quot; aria-label=&quot;Anchor link for: deployements-tips&quot;&gt;🔗&lt;&#x2F;a&gt;Deployements tips&lt;&#x2F;h3&gt;
+&lt;h2 id=&quot;operation-notes&quot;&gt;Operation notes&lt;a class=&quot;zola-anchor&quot; href=&quot;#operation-notes&quot; aria-label=&quot;Anchor link for: operation-notes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;deployements-tips&quot;&gt;Deployements tips&lt;a class=&quot;zola-anchor&quot; href=&quot;#deployements-tips&quot; aria-label=&quot;Anchor link for: deployements-tips&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;docs&#x2F;v3.4.0&#x2F;faq&#x2F;&quot;&gt;From the official documentation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Since etcd writes data to disk, SSD is highly recommended.
@@ -323,24 +434,24 @@ To prevent performance degradation or unintentionally overloading the key-value 
 To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
 8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;defrag&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#defrag&quot; aria-label=&quot;Anchor link for: defrag&quot;&gt;🔗&lt;&#x2F;a&gt;Defrag&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;defrag&quot;&gt;Defrag&lt;a class=&quot;zola-anchor&quot; href=&quot;#defrag&quot; aria-label=&quot;Anchor link for: defrag&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;After compacting the keyspace, the backend database may exhibit internal fragmentation.
 Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;Defrag is basically &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;2b79442d8e9fc54b1ac27e7e230ac0e4c132a054&#x2F;mvcc&#x2F;backend&#x2F;backend.go#L349&quot;&gt;dumping the bbolt tree on disk and reopening it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;snapshot&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#snapshot&quot; aria-label=&quot;Anchor link for: snapshot&quot;&gt;🔗&lt;&#x2F;a&gt;Snapshot&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;snapshot&quot;&gt;Snapshot&lt;a class=&quot;zola-anchor&quot; href=&quot;#snapshot&quot; aria-label=&quot;Anchor link for: snapshot&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;An ETCD snapshot is related to Raft&#x27;s snapshot:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;Snapshot can be saved using &lt;code&gt;etcdctl&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
-&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;etcdctl&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; snapshot&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; save&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; backup.db&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;lease-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease-1&quot; aria-label=&quot;Anchor link for: lease-1&quot;&gt;🔗&lt;&#x2F;a&gt;Lease&lt;&#x2F;h3&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;etcdctl&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; snapshot&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; save&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; backup.db&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;lease-1&quot;&gt;Lease&lt;a class=&quot;zola-anchor&quot; href=&quot;#lease-1&quot; aria-label=&quot;Anchor link for: lease-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Be careful on Leader&#x27;s change and lease, this can &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;issues&#x2F;65497&quot;&gt;create some issues&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;war-stories&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#war-stories&quot; aria-label=&quot;Anchor link for: war-stories&quot;&gt;🔗&lt;&#x2F;a&gt;War stories&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;war-stories&quot;&gt;War stories&lt;a class=&quot;zola-anchor&quot; href=&quot;#war-stories&quot; aria-label=&quot;Anchor link for: war-stories&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;blog.cloudflare.com&#x2F;a-byzantine-failure-in-the-real-world&#x2F;&quot;&gt;An analysis of the Cloudflare API availability incident on 2020-11-02&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;grafana.com&#x2F;blog&#x2F;2020&#x2F;04&#x2F;07&#x2F;how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup&#x2F;&quot;&gt;How a production outage in Grafana Cloud&#x27;s Hosted Prometheus service was caused by a bad etcd client setup&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -366,7 +477,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/"/>
         <id>https://pierrezemb.fr/posts/diving-into-etcd-linearizable/</id>
         
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="etcd" schema="https://pierrezemb.fr/tags/" label="etcd"/>
         <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
         <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
@@ -375,18 +486,18 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <content type="html" xml:base="https://pierrezemb.fr/posts/diving-into-etcd-linearizable/">&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;diving-into-etcd-linearizable&#x2F;etcd.png&quot; alt=&quot;etcd image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of the project&#x27;s basecode. In this episode, we will digg into the implementation behind ETCD&#x27;s Linearizable reads.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
-&lt;h2 id=&quot;what-is-etcd&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;What is ETCD?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-is-etcd&quot;&gt;What is ETCD?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-etcd&quot; aria-label=&quot;Anchor link for: what-is-etcd&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;From &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;etcd.io&#x2F;&quot;&gt;the official website&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;ETCD is well-known to be Kubernetes&#x27;s datastore, and a CNCF incubating project.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;linea-what&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;Linea-what?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;linea-what&quot;&gt;Linea-what?&lt;a class=&quot;zola-anchor&quot; href=&quot;#linea-what&quot; aria-label=&quot;Anchor link for: linea-what&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;jepsen.io&#x2F;consistency&#x2F;models&#x2F;linearizable&quot;&gt;Let&#x27;s quote Kyle Kingsbury, a.k.a &quot;Aphyr&quot;&lt;&#x2F;a&gt;, for this one:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Linearizability is one of the strongest single-object consistency models, and implies that every operation appears to take place atomically, in some order, consistent with the real-time ordering of those operations: e.g., if operation A completes before operation B begins, then B should logically take effect after A.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;why&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;Why?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;why&quot;&gt;Why?&lt;a class=&quot;zola-anchor&quot; href=&quot;#why&quot; aria-label=&quot;Anchor link for: why&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;ETCD is using &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;&quot;&gt;Raft&lt;&#x2F;a&gt;, a consensus algorithm at his core. As always, the devil is hidden in the details, or when things are going wrong. Here&#x27;s an example:&lt;&#x2F;p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;node1&lt;&#x2F;code&gt; is &lt;code&gt;leader&lt;&#x2F;code&gt; and heartbeating properly to &lt;code&gt;node2&lt;&#x2F;code&gt; and &lt;code&gt;node3&lt;&#x2F;code&gt;,&lt;&#x2F;li&gt;
@@ -399,7 +510,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;&#x2F;ul&gt;
 &lt;p&gt;This situation is violating Linearizable reads, as reads going through &lt;code&gt;node1&lt;&#x2F;code&gt; will not see the last updates from the current leader.&lt;&#x2F;p&gt;
 &lt;p&gt;How can we solve this? One way is to use &lt;code&gt;ReadIndex&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;readindex&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;ReadIndex&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;readindex&quot;&gt;ReadIndex&lt;a class=&quot;zola-anchor&quot; href=&quot;#readindex&quot; aria-label=&quot;Anchor link for: readindex&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The basic idea behind this is to confirm that the &lt;strong&gt;leader is true leader or not&lt;&#x2F;strong&gt; by sending a message to the followers. If a majority of responses are healthy, then the leader can safely serve the reads. Let&#x27;s dive into the implementation!&lt;&#x2F;p&gt;
 &lt;p&gt;All codes are from the current latest release &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;releases&#x2F;tag&#x2F;v3.4.13&quot;&gt;v3.4.13&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v3.4.13&#x2F;etcdserver&#x2F;v3_server.go#L114-L120&quot;&gt;Let&#x27;s take a Range operation&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
@@ -525,7 +636,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; unblock all l-reads requested at indices before rs.Index&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  nr&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;notify&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant z-language&quot;&gt;nil&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;The first part is a safety measure to makes sure the applied index is lower that the index stored in &lt;code&gt;ReadState&lt;&#x2F;code&gt;. And then finally we are unlocking all pending reads 🤩&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;One more thing: Follower read&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;one-more-thing-follower-read&quot;&gt;One more thing: Follower read&lt;a class=&quot;zola-anchor&quot; href=&quot;#one-more-thing-follower-read&quot; aria-label=&quot;Anchor link for: one-more-thing-follower-read&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;We went through &lt;code&gt;stepLeader&lt;&#x2F;code&gt; a lot, be there is something interesting in &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;etcd-io&#x2F;etcd&#x2F;blob&#x2F;v4.3.13&#x2F;raft&#x2F;raft.go#L1320&quot;&gt;&lt;code&gt;stepFollower&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;go&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt; case&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; pb&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;MsgReadIndex&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;lead&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; ==&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; None&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -535,7 +646,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  m&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;To&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;lead&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;  r&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-function&quot;&gt;send&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;m&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This means that a follower can send a &lt;code&gt;MsgReadIndex&lt;&#x2F;code&gt; message to perform the same kind of checks than a leader. This small features is in fact enabling &lt;strong&gt;follower-reads&lt;&#x2F;strong&gt; on ETCD 🤩 That is why you can see &lt;code&gt;Range&lt;&#x2F;code&gt; requests from a &lt;code&gt;follower&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;operational-tips&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;operational tips&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;operational-tips&quot;&gt;operational tips&lt;a class=&quot;zola-anchor&quot; href=&quot;#operational-tips&quot; aria-label=&quot;Anchor link for: operational-tips&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;ul&gt;
 &lt;li&gt;If you are running etcd &amp;lt;= 3.4, make sure &lt;strong&gt;logger=zap&lt;&#x2F;strong&gt; is set. Like this, you will be able to see some tracing logs, and I trully hope you will not witness this one:&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
@@ -582,7 +693,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
         <link rel="alternate" type="text/html" href="https://pierrezemb.fr/posts/notes-about-raft/"/>
         <id>https://pierrezemb.fr/posts/notes-about-raft/</id>
         
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="consensus" schema="https://pierrezemb.fr/tags/" label="consensus"/>
         <category term="raft" schema="https://pierrezemb.fr/tags/" label="raft"/>
         <category term="algorithms" schema="https://pierrezemb.fr/tags/" label="algorithms"/>
@@ -594,14 +705,14 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;blockquote&gt;
 &lt;p&gt;These labs are derived from the &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-raft.html&quot;&gt;lab2:raft&lt;&#x2F;a&gt; and &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;labs&#x2F;lab-kvraft.html&quot;&gt;lab3:kvraft&lt;&#x2F;a&gt; from the famous &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;nil.csail.mit.edu&#x2F;6.824&#x2F;2018&#x2F;index.html&quot;&gt;MIT 6.824&lt;&#x2F;a&gt; course but rewritten in Rust.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;abstract&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;abstract&quot;&gt;Abstract&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft is a consensus algorithm for managing a replicated log. It produces a result equivalent to (multi-)Paxos, andit is as efficient as Paxos, but its structure is differentfrom Paxos; this makes Raft more understandable thanPaxos and also provides a better foundation for build-ing practical systems.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft separates the key elements of consensus, such asleader election, log replication, and safety, and it enforcesa stronger degree of coherency to reduce the number ofstates that must be considered.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;introduction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;Introduction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Consensus algorithms allow a collection of machines to work as a coherent group that can survive the failures of some of its members.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -617,7 +728,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;blockquote&gt;
 &lt;p&gt;We believe that Raft is superior to Paxos and other consensus algorithms, both for educational purposes and as a foundation for implementation.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;replicated-state-machines&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;Replicated state machines&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;replicated-state-machines&quot;&gt;Replicated state machines&lt;a class=&quot;zola-anchor&quot; href=&quot;#replicated-state-machines&quot; aria-label=&quot;Anchor link for: replicated-state-machines&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The main idea is to compute identical copies of the same state (i.e &lt;code&gt;x:3, y:9&lt;&#x2F;code&gt;) in case of machines&#x27;s failure. Most of the time, an ordered &lt;code&gt;wal&lt;&#x2F;code&gt; (write-ahead log) is used in the implementation, to hold the mutation (&lt;code&gt;x:4&lt;&#x2F;code&gt;). Keeping the replicated log consistent is the job of the consensus algorithm, here Raft.&lt;&#x2F;p&gt;
 &lt;p&gt;Raft creates a true split between:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -626,7 +737,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 &lt;li&gt;the state machine.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_1.png&quot; alt=&quot;fig1&quot; class=&quot;center&quot;&gt;
-&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;What’s wrong with Paxos?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-s-wrong-with-paxos&quot;&gt;What’s wrong with Paxos?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-s-wrong-with-paxos&quot; aria-label=&quot;Anchor link for: what-s-wrong-with-paxos&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The paper is listing the drawbacks of Paxos:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;difficult to understand, and &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.microsoft.com&#x2F;en-us&#x2F;research&#x2F;uploads&#x2F;prod&#x2F;2016&#x2F;12&#x2F;The-Part-Time-Parliament.pdf&quot;&gt;I can&#x27;t blame them&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
@@ -644,7 +755,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;designing-for-understandability&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;Designing for understandability&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;designing-for-understandability&quot;&gt;Designing for understandability&lt;a class=&quot;zola-anchor&quot; href=&quot;#designing-for-understandability&quot; aria-label=&quot;Anchor link for: designing-for-understandability&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Beside all the others goals of Raft:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;a complete and practical foundation for system building,&lt;&#x2F;li&gt;
@@ -661,7 +772,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Our second approach was to simplify the state spaceby reducing the number of states to consider, making thesystem more coherent and eliminating nondeterminism where possible.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;The Raft consensus algorithm&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-raft-consensus-algorithm&quot;&gt;The Raft consensus algorithm&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-raft-consensus-algorithm&quot; aria-label=&quot;Anchor link for: the-raft-consensus-algorithm&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Raft is heavily relying on the &lt;code&gt;leader&lt;&#x2F;code&gt; pattern:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft implements consensus by first electing a distinguished leader, then giving the leader complete responsibility for managing the replicated log.&lt;&#x2F;p&gt;
@@ -675,7 +786,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;Log replication&lt;&#x2F;li&gt;
 &lt;li&gt;Safety&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;raft-basics&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;Raft basics&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;raft-basics&quot;&gt;Raft basics&lt;a class=&quot;zola-anchor&quot; href=&quot;#raft-basics&quot; aria-label=&quot;Anchor link for: raft-basics&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Each server can be in one of the three states:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Leader&lt;&#x2F;strong&gt; handle all requests,&lt;&#x2F;li&gt;
@@ -694,7 +805,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;&lt;strong&gt;RequestVote RPCs&lt;&#x2F;strong&gt; are initiated by candidates during elections,&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;strong&gt;Append-Entries RPCs&lt;&#x2F;strong&gt; are initiated by leaders to replicate log en-tries and to provide a form of heartbeat.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;leader-election&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;leader-election&quot;&gt;Leader election&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election&quot; aria-label=&quot;Anchor link for: leader-election&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;A good vizualization is available &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#election&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;The key-point of the election are the fact that:&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -713,7 +824,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms).&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;log-replication&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;Log replication&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;log-replication&quot;&gt;Log replication&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-replication&quot; aria-label=&quot;Anchor link for: log-replication&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;A good vizualization is available &lt;a rel=&quot;external&quot; href=&quot;http:&#x2F;&#x2F;thesecretlivesofdata.com&#x2F;raft&#x2F;#replication&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Once a leader has been elected, it begins servicing client requests. Each client request contains a command to be executed by the replicated state machines. The leader appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry. When the entry has been safely replicated (as described below), the leader applies the entry to its state machine and returns the result of that execution to the client.&lt;&#x2F;p&gt;
@@ -735,8 +846,8 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;To bring a follower’s log into consistency with its own,the leader must find the latest log entry where the two logs agree, delete any entries in the follower’s log after that point, and send the follower all of the leader’s entries after that point.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;safety&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;Safety&lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;leader-election-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;Leader election&lt;&#x2F;h3&gt;
+&lt;h2 id=&quot;safety&quot;&gt;Safety&lt;a class=&quot;zola-anchor&quot; href=&quot;#safety&quot; aria-label=&quot;Anchor link for: safety&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;leader-election-1&quot;&gt;Leader election&lt;a class=&quot;zola-anchor&quot; href=&quot;#leader-election-1&quot; aria-label=&quot;Anchor link for: leader-election-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;As Raft guarantees that all the committed entries are available on all followers, log entries only flow in one di-rection, from leaders to followers, and leaders never over-write existing entries in their logs.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries. A candidate must contact a majority of the cluster in order to be elected, which means that every committed entry must be present in at least one of those servers.&lt;&#x2F;p&gt;
@@ -744,16 +855,16 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the log send with the same term, then whichever log is longer is more up-to-date.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;Committing entries from previous terms&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;committing-entries-from-previous-terms&quot;&gt;Committing entries from previous terms&lt;a class=&quot;zola-anchor&quot; href=&quot;#committing-entries-from-previous-terms&quot; aria-label=&quot;Anchor link for: committing-entries-from-previous-terms&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Raft never commits log entries from previous terms by counting replicas. Only log entries from the leader’s current term are committed by counting replicas.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;This behavior avoids future leaders to attempt to finish replicating an entry where the leader crashes before committing an entry.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;Follower and candidate crashes&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;follower-and-candidate-crashes&quot;&gt;Follower and candidate crashes&lt;a class=&quot;zola-anchor&quot; href=&quot;#follower-and-candidate-crashes&quot; aria-label=&quot;Anchor link for: follower-and-candidate-crashes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;If a follower or candidate crashes, then future RequestVote and AppendEntries RPCs sent to it will fail. Raft handles these failures by retrying indefinitely.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;Cluster membership changes&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;cluster-membership-changes&quot;&gt;Cluster membership changes&lt;a class=&quot;zola-anchor&quot; href=&quot;#cluster-membership-changes&quot; aria-label=&quot;Anchor link for: cluster-membership-changes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;This section presents how to do cluster configuration(the set of servers participating in the consensus algorithm). Raft implements a two-phase approach:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;In Raft the cluster first switches to a transitional configuration we call joint consensus; once the joint consensus has been committed,the system then transitions to the new configuration. The joint consensus combines both the old and new configurations:&lt;&#x2F;p&gt;
@@ -763,7 +874,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;li&gt;Agreement (for elections and entry commitment) requires separate majorities from both the old and new configurations.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;log-compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Log compaction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;log-compaction&quot;&gt;Log compaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#log-compaction&quot; aria-label=&quot;Anchor link for: log-compaction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;As the WAL holds the commands, we need to compact it. Raft is using snapshots as describe here:&lt;&#x2F;p&gt;
 &lt;img src=&quot;&#x2F;images&#x2F;notes-about-raft&#x2F;fig_3.png&quot; alt=&quot;fig3&quot; class=&quot;center&quot;&gt;
 &lt;blockquote&gt;
@@ -773,7 +884,7 @@ the final system will be based on an un-proven protocol [4].&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The leader uses a new RPC called InstallSnapshot to send snapshots to followers that are too far behind.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h2 id=&quot;client-interaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;Client interaction&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;client-interaction&quot;&gt;Client interaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-interaction&quot; aria-label=&quot;Anchor link for: client-interaction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Clients of Raft send all of their requests to the leader. When a client first starts up, it connects to a randomly-chosen server. If the client’s first choice is not the leader,that server will reject the client’s request and supply information about the most recent leader it has heard from.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;

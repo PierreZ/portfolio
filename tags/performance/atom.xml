@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - performance</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/performance/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -27,9 +27,9 @@
         <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
         <category term="optimization" schema="https://pierrezemb.fr/tags/" label="optimization"/>
         <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/reverse-number-scanning/">&lt;p&gt;Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let&#x27;s explore a simple yet powerful optimization technique that I&#x27;ve been using recently 🚀&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;Key design in Key-value stores&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;key-design-in-key-value-stores&quot;&gt;Key design in Key-value stores&lt;a class=&quot;zola-anchor&quot; href=&quot;#key-design-in-key-value-stores&quot; aria-label=&quot;Anchor link for: key-design-in-key-value-stores&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Let&#x27;s look at this using a tuple structure of &lt;code&gt;(key, number)&lt;&#x2F;code&gt;. This could represent a document version, a timestamp, or any numeric identifier:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 1)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 2)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -41,7 +41,7 @@
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;...&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;(&amp;quot;my-key-1&amp;quot;, 99)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;You could scan in reverse mode, but you would lose the order of your first prefix(the &quot;my-key-1&quot;).&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;Reverse Number Scanning&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;reverse-number-scanning&quot;&gt;Reverse Number Scanning&lt;a class=&quot;zola-anchor&quot; href=&quot;#reverse-number-scanning&quot; aria-label=&quot;Anchor link for: reverse-number-scanning&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;By reversing the numbers using a simple subtraction from the maximum possible value (e.g., &lt;code&gt;Long.MAX_VALUE&lt;&#x2F;code&gt; in Java), we can optimize the scanning process:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;java&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;long&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; reversedNumber&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; Long&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;MAX_VALUE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span&gt; number&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;This transforms our data into:&lt;&#x2F;p&gt;
@@ -83,7 +83,7 @@
         <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
         <category term="tuning" schema="https://pierrezemb.fr/tags/" label="tuning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/redwood-memory-tuning/">&lt;p&gt;While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;btree-page-cache&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;BTree page cache&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;btree-page-cache&quot;&gt;BTree page cache&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;10.0.3.23:4501 ( 65% cpu; 61% machine; 0.010 Gbps; 93% disk IO; 7.5 GB &#x2F; 7.4 GB RAM  )&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;10.0.3.24:4501 ( 61% cpu; 61% machine; 0.010 Gbps; 87% disk IO; 9.7 GB &#x2F; 7.4 GB RAM  )&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -97,20 +97,20 @@
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&amp;quot;PagerCacheHit&amp;quot;: &amp;quot;51968&amp;quot;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&amp;quot;PagerCacheMiss&amp;quot;: &amp;quot;432&amp;quot;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt; &lt;&#x2F;p&gt;
-&lt;h2 id=&quot;byte-sample-memory-usage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#byte-sample-memory-usage&quot; aria-label=&quot;Anchor link for: byte-sample-memory-usage&quot;&gt;🔗&lt;&#x2F;a&gt;Byte Sample memory usage&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;byte-sample-memory-usage&quot;&gt;Byte Sample memory usage&lt;a class=&quot;zola-anchor&quot; href=&quot;#byte-sample-memory-usage&quot; aria-label=&quot;Anchor link for: byte-sample-memory-usage&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;But our problems are still unresolved, as we are still seeing some OOM 😭 Because this cluster is storing time-series data, each StorageServers is holding around 1TiB of data. As we were holding more and more data, we saw more and more OOM errors on our &lt;code&gt;fdbmonitor&lt;&#x2F;code&gt; logs. Something was growing linearly with our usage and needed tuning. This time, we had help from &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;u&#x2F;SteavedHams&#x2F;summary&quot;&gt;Steve Atherton&lt;&#x2F;a&gt; which pointed us towards the direction of the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;t&#x2F;foundationdb-7-1-24-the-memory-usage-after-clean-startup-of-fdbserver-process-is-too-high&#x2F;3863&#x2F;8?u=pierrez&quot;&gt;Byte Sample&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;There is a data structure that storage servers have called the Byte Sample which stores a deterministic random sample of keys. This data is persisted on disk in the storage engine and is loaded immediately upon storage server startup. Unfortunately, its size is not tracked or reported, but grows linearly with KV size and I suspect yours is somewhere around 4GB-6GB based on the memory usage I’ve seen for smaller storage KV sizes.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;So, we need to add around 4GB more in the memory, but there is no config for that parameter. It needs to be embedded in the global &lt;code&gt;memory&lt;&#x2F;code&gt; parameter. Let’s compute the right value!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-global-memory-formula&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-global-memory-formula&quot; aria-label=&quot;Anchor link for: the-global-memory-formula&quot;&gt;🔗&lt;&#x2F;a&gt;The global memory formula&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-global-memory-formula&quot;&gt;The global memory formula&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-global-memory-formula&quot; aria-label=&quot;Anchor link for: the-global-memory-formula&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;By testing things on our clusters, we ended up with this formula:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# Default is 2&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;cache_memory = (1-2% of kvstore_used_bytes)GiB&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# Default is 8&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;Which fixed all our memory issues with FoundationDB 🎉 And to be fair, this is the only things we needed to tune on our clusters, which is quite impressive 👀&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;special-thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#special-thanks&quot; aria-label=&quot;Anchor link for: special-thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Special thanks&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;special-thanks&quot;&gt;Special thanks&lt;a class=&quot;zola-anchor&quot; href=&quot;#special-thanks&quot; aria-label=&quot;Anchor link for: special-thanks&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;I would like to thank Markus, William and Steve from the FoundationDB community for their help 🤝&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
@@ -134,7 +134,7 @@
         <id>https://pierrezemb.fr/posts/hbase-custom-data-balancing/</id>
         
         <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
         <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
         <category term="opensource" schema="https://pierrezemb.fr/tags/" label="opensource"/>
@@ -145,7 +145,7 @@
 contribution to Apache HBase&#x27;s stochastic load balancer, based on our
 experience of running HBase clusters to support OVHcloud&#x27;s monitoring.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-custom-data-balancing&#x2F;hbase-ovh-1.jpeg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-context&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-context&quot; aria-label=&quot;Anchor link for: the-context&quot;&gt;🔗&lt;&#x2F;a&gt;The context&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-context&quot;&gt;The context&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-context&quot; aria-label=&quot;Anchor link for: the-context&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Have you ever wondered how:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;we generate the graphs for your OVHcloud server or web hosting package?&lt;&#x2F;li&gt;
@@ -161,7 +161,7 @@ experience of running HBase clusters to support OVHcloud&#x27;s monitoring.&lt;&
 &lt;li&gt;around 300TB of telemetry, stored within Apache HBase&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;As you can probably imagine, storing 300TB of data in 270 nodes comes with some challenges regarding repartition, as &lt;strong&gt;every&lt;&#x2F;strong&gt; &lt;strong&gt;bit is hot data, and should be accessible at any time&lt;&#x2F;strong&gt;. Let&#x27;s dive in!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;how-does-balancing-work-in-apache-hbase&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-balancing-work-in-apache-hbase&quot; aria-label=&quot;Anchor link for: how-does-balancing-work-in-apache-hbase&quot;&gt;🔗&lt;&#x2F;a&gt;How does balancing work in Apache HBase?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;how-does-balancing-work-in-apache-hbase&quot;&gt;How does balancing work in Apache HBase?&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-balancing-work-in-apache-hbase&quot; aria-label=&quot;Anchor link for: how-does-balancing-work-in-apache-hbase&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Before diving into the balancer, let&#x27;s take a look at how it works. In Apache HBase, data is split into shards called &lt;code&gt;Regions&lt;&#x2F;code&gt;, and distributed through &lt;code&gt;RegionServers&lt;&#x2F;code&gt;. The number of regions will increase as the data is coming in, and regions will be split as a result. This is where the &lt;code&gt;Balancer&lt;&#x2F;code&gt; comes in. It will &lt;strong&gt;move regions&lt;&#x2F;strong&gt; to avoid hotspotting a single &lt;code&gt;RegionServer&lt;&#x2F;code&gt; and effectively distribute the load.&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-custom-data-balancing&#x2F;hbase-ovh-2.jpeg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;The actual implementation, called &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;master&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;master&#x2F;balancer&#x2F;StochasticLoadBalancer.java&quot;&gt;StochasticBalancer&lt;&#x2F;a&gt;, uses &lt;strong&gt;a cost-based approach:&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
@@ -170,7 +170,7 @@ experience of running HBase clusters to support OVHcloud&#x27;s monitoring.&lt;&
 &lt;li&gt;Now that the initial cost is computed, we can try to &lt;code&gt;Mutate&lt;&#x2F;code&gt; our cluster. For this, the Balancer creates a random &lt;code&gt;nextAction&lt;&#x2F;code&gt;, which could be something like &lt;strong&gt;swapping two regions&lt;&#x2F;strong&gt;, or &lt;strong&gt;moving one region to another RegionServer&lt;&#x2F;strong&gt;. The action is &lt;strong&gt;applied&lt;&#x2F;strong&gt; &lt;strong&gt;virtually&lt;&#x2F;strong&gt; , and then the &lt;strong&gt;new cost is calculated&lt;&#x2F;strong&gt;. If the new cost is lower than our previous one, the action is stored. If not, it is skipped. This operation is repeated &lt;code&gt;thousands of times&lt;&#x2F;code&gt;, hence the &lt;code&gt;Stochastic&lt;&#x2F;code&gt;.&lt;&#x2F;li&gt;
 &lt;li&gt;At the end, &lt;strong&gt;the list of valid actions is applied to the actual cluster.&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ol&gt;
-&lt;h2 id=&quot;what-was-not-working-for-us&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-was-not-working-for-us&quot; aria-label=&quot;Anchor link for: what-was-not-working-for-us&quot;&gt;🔗&lt;&#x2F;a&gt;What was not working for us?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-was-not-working-for-us&quot;&gt;What was not working for us?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-was-not-working-for-us&quot; aria-label=&quot;Anchor link for: what-was-not-working-for-us&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;We found out that &lt;strong&gt;for our specific use case&lt;&#x2F;strong&gt;, which involved:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;Single table&lt;&#x2F;li&gt;
@@ -192,10 +192,10 @@ our cluster.&lt;&#x2F;p&gt;
 and give it back to the community. When we talked around, we saw that
 we weren&#x27;t the only one concerned by the heterogenous cluster problem.
 We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;contribute&lt;&#x2F;strong&gt; it &lt;strong&gt;directly upstream&lt;&#x2F;strong&gt; to the HBase project &lt;strong&gt;.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;our-contributions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#our-contributions&quot; aria-label=&quot;Anchor link for: our-contributions&quot;&gt;🔗&lt;&#x2F;a&gt;Our contributions&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;our-contributions&quot;&gt;Our contributions&lt;a class=&quot;zola-anchor&quot; href=&quot;#our-contributions&quot; aria-label=&quot;Anchor link for: our-contributions&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The first contribution was pretty simple, the cost function list was a &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;8cb531f207b9f9f51ab1509655ae59701b66ac37&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;master&#x2F;balancer&#x2F;StochasticLoadBalancer.java#L199-L213&quot;&gt;constant&lt;&#x2F;a&gt;. We &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;commit&#x2F;836f26976e1ad8b35d778c563067ed0614c026e9&quot;&gt;added the possibility to load custom cost functions&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;The second contribution was about &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;commit&#x2F;42d535a57a75b58f585b48df9af9c966e6c7e46a&quot;&gt;adding an optional costFunction to balance regions according to a capacity rule&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;how-does-it-works&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-it-works&quot; aria-label=&quot;Anchor link for: how-does-it-works&quot;&gt;🔗&lt;&#x2F;a&gt;How does it works?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;how-does-it-works&quot;&gt;How does it works?&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-does-it-works&quot; aria-label=&quot;Anchor link for: how-does-it-works&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;The balancer will load a file containing lines of rules. &lt;strong&gt;A rule is composed of a regexp for hostname, and a limit.&lt;&#x2F;strong&gt; For example, we could have:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;rs[0-9] 200&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;rs1[0-9] 50&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
@@ -217,7 +217,7 @@ We decided to rewrite our tooling to make it more general, and to &lt;strong&gt;
 &lt;p&gt;... we can see that the &lt;strong&gt;second group is overloaded&lt;&#x2F;strong&gt;, whereas the first group has plenty of space.&lt;&#x2F;p&gt;
 &lt;p&gt;We know that we can handle a maximum of &lt;strong&gt;2,500 regions&lt;&#x2F;strong&gt; (200×10 + 50×10), and we have currently &lt;strong&gt;1,200 regions&lt;&#x2F;strong&gt; (60×20). As such, the &lt;code&gt;HeterogeneousRegionCountCostFunction&lt;&#x2F;code&gt; will understand that the cluster is &lt;strong&gt;full at 48.0%&lt;&#x2F;strong&gt; (1200&#x2F;2500). Based on this information, we will then &lt;strong&gt;try to put all the RegionServers at ~48% of the load, according to the rules.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;hbase-custom-data-balancing&#x2F;hbase-ovh-4.jpeg&quot; alt=&quot;hbase image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;where-to-next&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#where-to-next&quot; aria-label=&quot;Anchor link for: where-to-next&quot;&gt;🔗&lt;&#x2F;a&gt;Where to next?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;where-to-next&quot;&gt;Where to next?&lt;a class=&quot;zola-anchor&quot; href=&quot;#where-to-next&quot; aria-label=&quot;Anchor link for: where-to-next&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;Thanks to Apache HBase&#x27;s contributors, our patches are now &lt;strong&gt;merged&lt;&#x2F;strong&gt; into the master branch. As soon as Apache HBase maintainers publish a new release, we will deploy and use it at scale. This &lt;strong&gt;will allow more automation on our side, and ease operations for the Observability Team.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Contributing was an awesome journey. What I love most about open
 source is the opportunity ability to contribute back, and build stronger
@@ -243,7 +243,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
         
         <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
         <category term="storage" schema="https://pierrezemb.fr/tags/" label="storage"/>
-        <category term="distributed" schema="https://pierrezemb.fr/tags/" label="distributed"/>
+        <category term="distributed-systems" schema="https://pierrezemb.fr/tags/" label="distributed-systems"/>
         <category term="hbase" schema="https://pierrezemb.fr/tags/" label="hbase"/>
         <category term="performance" schema="https://pierrezemb.fr/tags/" label="performance"/>
         <category term="diving-into" schema="https://pierrezemb.fr/tags/" label="diving-into"/>
@@ -251,15 +251,15 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;p&gt;&lt;a href=&quot;&#x2F;tags&#x2F;diving-into&#x2F;&quot;&gt;Diving Into&lt;&#x2F;a&gt; is a blogpost serie where we are digging a specific part of of the project&#x27;s basecode. In this episode, we will digg into the implementation behind Hbase&#x27;s MemStore.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;code&gt;tl;dr:&lt;&#x2F;code&gt; Hbase is using the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;api&#x2F;java&#x2F;util&#x2F;concurrent&#x2F;ConcurrentSkipListMap.html&quot;&gt;ConcurrentSkipListMap&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;what-is-the-memstore&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-memstore&quot; aria-label=&quot;Anchor link for: what-is-the-memstore&quot;&gt;🔗&lt;&#x2F;a&gt;What is the MemStore?&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;what-is-the-memstore&quot;&gt;What is the MemStore?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-the-memstore&quot; aria-label=&quot;Anchor link for: what-is-the-memstore&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The &lt;code&gt;memtable&lt;&#x2F;code&gt; from the official &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt; is the equivalent of the &lt;code&gt;MemStore&lt;&#x2F;code&gt; in Hbase.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;As rows are &lt;strong&gt;sorted lexicographically&lt;&#x2F;strong&gt; in Hbase, when data comes in, you need to have some kind of a &lt;strong&gt;in-memory buffer&lt;&#x2F;strong&gt; to order those keys. This is where the &lt;code&gt;MemStore&lt;&#x2F;code&gt; comes in. It absorbs the recent write (or put in Hbase semantics) operations. All the rest are immutable files called &lt;code&gt;HFile&lt;&#x2F;code&gt; stored in HDFS. There is one &lt;code&gt;MemStore&lt;&#x2F;code&gt; per &lt;code&gt;column family&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Let&#x27;s dig into how the MemStore internally works in Hbase 1.X.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;hbase-1&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-1&quot; aria-label=&quot;Anchor link for: hbase-1&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 1&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;hbase-1&quot;&gt;Hbase 1&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-1&quot; aria-label=&quot;Anchor link for: hbase-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;All extract of code for this section are taken from &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;1.4.9&quot;&gt;rel&#x2F;1.4.9&lt;&#x2F;a&gt; tag.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;in-memory-storage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-storage&quot; aria-label=&quot;Anchor link for: in-memory-storage&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory storage&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;in-memory-storage&quot;&gt;in-memory storage&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-storage&quot; aria-label=&quot;Anchor link for: in-memory-storage&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;The &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;1.4.9&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L35&quot;&gt;MemStore interface&lt;&#x2F;a&gt; is giving us insight on how it is working internally.&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;java&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;**&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;   * Write an update&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -277,15 +277,15 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;li&gt;concurrency&lt;&#x2F;li&gt;
 &lt;li&gt;sorted elements&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h3 id=&quot;flush-on-hdfs&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#flush-on-hdfs&quot; aria-label=&quot;Anchor link for: flush-on-hdfs&quot;&gt;🔗&lt;&#x2F;a&gt;Flush on HDFS&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;flush-on-hdfs&quot;&gt;Flush on HDFS&lt;a class=&quot;zola-anchor&quot; href=&quot;#flush-on-hdfs&quot; aria-label=&quot;Anchor link for: flush-on-hdfs&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;As we seen above, the &lt;code&gt;MemStore&lt;&#x2F;code&gt; is supporting all the puts. When asked to flush, the current memstore is &lt;strong&gt;moved to snapshot and is cleared&lt;&#x2F;strong&gt;. Flushed file are called (&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;io&#x2F;hfile&#x2F;HFile.java&quot;&gt;HFiles&lt;&#x2F;a&gt;) and they are similar to &lt;code&gt;SSTables&lt;&#x2F;code&gt; introduced by the official &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;archive&#x2F;bigtable-osdi06.pdf&quot;&gt;BigTable paper&lt;&#x2F;a&gt;. HFiles are flushed on the Hadoop Distributed File System called &lt;code&gt;HDFS&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;If you want deeper insight about SSTables, I recommend reading &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;facebook&#x2F;rocksdb&#x2F;wiki&#x2F;Rocksdb-BlockBasedTable-Format&quot;&gt;Table Format from the awesome RocksDB wiki&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;h3 id=&quot;compaction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#compaction&quot; aria-label=&quot;Anchor link for: compaction&quot;&gt;🔗&lt;&#x2F;a&gt;Compaction&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;compaction&quot;&gt;Compaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#compaction&quot; aria-label=&quot;Anchor link for: compaction&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Compaction are only run on HFiles. It means that &lt;strong&gt;if hot data is continuously updated, we are overusing memory due to duplicate entries per row per MemStore&lt;&#x2F;strong&gt;. Accordion tends to solve this problem through &lt;em&gt;in-memory compactions&lt;&#x2F;em&gt;. Let&#x27;s have a look to Hbase 2.X!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;hbase-2&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-2&quot; aria-label=&quot;Anchor link for: hbase-2&quot;&gt;🔗&lt;&#x2F;a&gt;Hbase 2&lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;storing-data&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#storing-data&quot; aria-label=&quot;Anchor link for: storing-data&quot;&gt;🔗&lt;&#x2F;a&gt;storing data&lt;&#x2F;h3&gt;
+&lt;h2 id=&quot;hbase-2&quot;&gt;Hbase 2&lt;a class=&quot;zola-anchor&quot; href=&quot;#hbase-2&quot; aria-label=&quot;Anchor link for: hbase-2&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;storing-data&quot;&gt;storing data&lt;a class=&quot;zola-anchor&quot; href=&quot;#storing-data&quot; aria-label=&quot;Anchor link for: storing-data&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;&lt;strong&gt;All extract of code starting from here are taken from &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;tree&#x2F;rel&#x2F;2.1.2&quot;&gt;rel&#x2F;2.1.2&lt;&#x2F;a&gt; tag.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Does &lt;code&gt;MemStore&lt;&#x2F;code&gt; interface changed?&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;java&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-comment&quot;&gt;  &#x2F;**&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -298,7 +298,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;p&gt;-- &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;MemStore.java#L67-L73&quot;&gt;add function in MemStore interface&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;The signature changed a bit, to include passing a object instead of returning a long. Moving on.&lt;&#x2F;p&gt;
 &lt;p&gt;The new structure implementing MemStore is called &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;AbstractMemStore.java#L42&quot;&gt;AbstractMemStore&lt;&#x2F;a&gt;. Again, we have some layers, where AbstractMemStore is writing to a &lt;code&gt;MutableSegment&lt;&#x2F;code&gt;, which itsef is wrapping &lt;code&gt;Segment&lt;&#x2F;code&gt;. If you dig far enough, you will find that data are stored into the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;hbase&#x2F;blob&#x2F;rel&#x2F;2.1.2&#x2F;hbase-server&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;hadoop&#x2F;hbase&#x2F;regionserver&#x2F;CellSet.java#L35-L51&quot;&gt;CellSet class&lt;&#x2F;a&gt; which is also things built on top of &lt;strong&gt;ConcurrentSkipListMap&lt;&#x2F;strong&gt;!&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;in-memory-compactions&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-compactions&quot; aria-label=&quot;Anchor link for: in-memory-compactions&quot;&gt;🔗&lt;&#x2F;a&gt;in-memory Compactions&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;in-memory-compactions&quot;&gt;in-memory Compactions&lt;a class=&quot;zola-anchor&quot; href=&quot;#in-memory-compactions&quot; aria-label=&quot;Anchor link for: in-memory-compactions&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Hbase 2.0 introduces a big change to the original memstore called Accordion which is a codename for in-memory compactions. An awesome blogpost is available here: &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;blogs.apache.org&#x2F;hbase&#x2F;entry&#x2F;accordion-hbase-breathes-with-in&quot;&gt;Accordion: HBase Breathes with In-Memory Compaction&lt;&#x2F;a&gt; and the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;issues.apache.org&#x2F;jira&#x2F;secure&#x2F;attachment&#x2F;12709471&#x2F;HBaseIn-MemoryMemstoreCompactionDesignDocument.pdf&quot;&gt;document design&lt;&#x2F;a&gt; is also available.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! feel free to react to this article, I&#x27;m also available on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
@@ -377,16 +377,16 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;li&gt;OpenTSDB.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Then there’s &lt;strong&gt;Warp10&lt;&#x2F;strong&gt;. The difference is quite simple, Warp10 is &lt;strong&gt;a platform&lt;&#x2F;strong&gt; whereas all the time series listed above are &lt;strong&gt;stores&lt;&#x2F;strong&gt;. This is game changing, for multiples reasons.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;security-first-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#security-first-design&quot; aria-label=&quot;Anchor link for: security-first-design&quot;&gt;🔗&lt;&#x2F;a&gt;Security-first design&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;security-first-design&quot;&gt;Security-first design&lt;a class=&quot;zola-anchor&quot; href=&quot;#security-first-design&quot; aria-label=&quot;Anchor link for: security-first-design&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;research.google.com&#x2F;pubs&#x2F;pub41892.html&quot;&gt;Macaroons&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;high-level-analysis-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#high-level-analysis-capabilities&quot; aria-label=&quot;Anchor link for: high-level-analysis-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;High level analysis capabilities&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;high-level-analysis-capabilities&quot;&gt;High level analysis capabilities&lt;a class=&quot;zola-anchor&quot; href=&quot;#high-level-analysis-capabilities&quot; aria-label=&quot;Anchor link for: high-level-analysis-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;Using classical time series database, &lt;strong&gt;high level analysis must be done elsewhere&lt;&#x2F;strong&gt;, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just &lt;strong&gt;submit your script&lt;&#x2F;strong&gt; and &lt;em&gt;voilà&lt;&#x2F;em&gt;!&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;server-side-calculation&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#server-side-calculation&quot; aria-label=&quot;Anchor link for: server-side-calculation&quot;&gt;🔗&lt;&#x2F;a&gt;Server-side calculation&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;server-side-calculation&quot;&gt;Server-side calculation&lt;a class=&quot;zola-anchor&quot; href=&quot;#server-side-calculation&quot; aria-label=&quot;Anchor link for: server-side-calculation&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit &lt;strong&gt;limitations&lt;&#x2F;strong&gt; on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be &lt;strong&gt;scalable&lt;&#x2F;strong&gt;, analysis must be done &lt;strong&gt;server-side&lt;&#x2F;strong&gt;.### Meet WarpScript&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;2.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Warp10 folks created WarpScript, an &lt;strong&gt;extensible&lt;&#x2F;strong&gt; &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Stack-oriented_programming_language&quot;&gt;&lt;strong&gt;stack oriented programming language&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; which offers more than &lt;strong&gt;800 functions&lt;&#x2F;strong&gt; and &lt;strong&gt;several high level frameworks&lt;&#x2F;strong&gt; to ease and speed your data analysis. Simply &lt;strong&gt;create scripts&lt;&#x2F;strong&gt; containing your data analysis code and &lt;strong&gt;submit them to the platform&lt;&#x2F;strong&gt;, they will &lt;strong&gt;execute close to where the data resides&lt;&#x2F;strong&gt; and you will get the result of that analysis as a &lt;strong&gt;JSON object&lt;&#x2F;strong&gt; that you can &lt;strong&gt;integrate into your application&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Yes, you’ll be able to run that &lt;strong&gt;awesome query that is fetching millions of datapoints&lt;&#x2F;strong&gt; and only get the result. You need all the data, or just the timestamp of a weird datapoint? &lt;strong&gt;The result of the script is simply what’s left on the stack&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;dataflow-language&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dataflow-language&quot; aria-label=&quot;Anchor link for: dataflow-language&quot;&gt;🔗&lt;&#x2F;a&gt;Dataflow language&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;dataflow-language&quot;&gt;Dataflow language&lt;a class=&quot;zola-anchor&quot; href=&quot;#dataflow-language&quot; aria-label=&quot;Anchor link for: dataflow-language&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;WarpScript is really easy to code, &lt;strong&gt;because of the stack design&lt;&#x2F;strong&gt;. You’ll be &lt;strong&gt;pushing elements into the stack and consume them&lt;&#x2F;strong&gt;. Coding became logical. First you need to &lt;strong&gt;fetch&lt;&#x2F;strong&gt; your points, then &lt;strong&gt;applying some downsampling&lt;&#x2F;strong&gt; and then &lt;strong&gt;aggregate&lt;&#x2F;strong&gt;. These 3 steps are translated into &lt;strong&gt;3 lines of WarpScript&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;FETCH&lt;&#x2F;strong&gt; will push the needed Geo Time Series into the stack&lt;&#x2F;li&gt;
@@ -394,13 +394,13 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;li&gt;&lt;strong&gt;REDUCE&lt;&#x2F;strong&gt; will take the Geo Time Series from the stack, aggregate them, and push them back into the stack&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;Debugguing as never be that easy, just use the keyword &lt;strong&gt;STOP&lt;&#x2F;strong&gt; to see the stack at any moment.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;rich-programming-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#rich-programming-capabilities&quot; aria-label=&quot;Anchor link for: rich-programming-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;Rich programming capabilities&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;rich-programming-capabilities&quot;&gt;Rich programming capabilities&lt;a class=&quot;zola-anchor&quot; href=&quot;#rich-programming-capabilities&quot; aria-label=&quot;Anchor link for: rich-programming-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;WarpScript is coming with more than &lt;strong&gt;800 functions&lt;&#x2F;strong&gt;, ready to use. Things like &lt;strong&gt;Patterns and outliers detections, rolling average, FFT, IDWT&lt;&#x2F;strong&gt; are built-in.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;geo-fencing-capabilities&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#geo-fencing-capabilities&quot; aria-label=&quot;Anchor link for: geo-fencing-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;Geo-Fencing capabilities&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;geo-fencing-capabilities&quot;&gt;Geo-Fencing capabilities&lt;a class=&quot;zola-anchor&quot; href=&quot;#geo-fencing-capabilities&quot; aria-label=&quot;Anchor link for: geo-fencing-capabilities&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;Both &lt;strong&gt;space&lt;&#x2F;strong&gt; (location) and &lt;strong&gt;time&lt;&#x2F;strong&gt; are considered &lt;strong&gt;first class citizens&lt;&#x2F;strong&gt;. Complex searches like “&lt;strong&gt;find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon&lt;&#x2F;strong&gt;” can be done without involving expensive joins between separate time series for the same source.&lt;&#x2F;p&gt;
-&lt;h4 id=&quot;unified-language&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#unified-language&quot; aria-label=&quot;Anchor link for: unified-language&quot;&gt;🔗&lt;&#x2F;a&gt;Unified Language&lt;&#x2F;h4&gt;
+&lt;h4 id=&quot;unified-language&quot;&gt;Unified Language&lt;a class=&quot;zola-anchor&quot; href=&quot;#unified-language&quot; aria-label=&quot;Anchor link for: unified-language&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
 &lt;p&gt;WarpScript can be used in &lt;strong&gt;batch&lt;&#x2F;strong&gt; mode, or in &lt;strong&gt;real-time&lt;&#x2F;strong&gt;, because you need both of them in the real world.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;geez-give-me-an-example&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#geez-give-me-an-example&quot; aria-label=&quot;Anchor link for: geez-give-me-an-example&quot;&gt;🔗&lt;&#x2F;a&gt;Geez, give me an example&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;geez-give-me-an-example&quot;&gt;Geez, give me an example&lt;a class=&quot;zola-anchor&quot; href=&quot;#geez-give-me-an-example&quot; aria-label=&quot;Anchor link for: geez-give-me-an-example&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;Here’s an example of a simple but advanced query:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&#x2F;&#x2F; Fetching all values  &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[ $token ‘temperature’ {} NOW 1 h ] FETCH &#x2F;&#x2F; Get max value for each minute  &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -408,7 +408,7 @@ software. We &lt;strong&gt;had an opinion&lt;&#x2F;strong&gt; about how a partic
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[ SWAP mapper.round 0 0 0 ] MAP &#x2F;&#x2F; reduce the data by keeping the max, grouping by &amp;#39;buildingID&amp;#39;  &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[ SWAP [ &amp;#39;buildingID&amp;#39; ] reducer.max ] REDUCE&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;Have you guessed the goal? The result will &lt;strong&gt;display the temperature from now to 1 hour of the hottest room per buildingID&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
-&lt;h3 id=&quot;what-about-a-more-complex-example&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-a-more-complex-example&quot; aria-label=&quot;Anchor link for: what-about-a-more-complex-example&quot;&gt;🔗&lt;&#x2F;a&gt;What about a more complex example?&lt;&#x2F;h3&gt;
+&lt;h3 id=&quot;what-about-a-more-complex-example&quot;&gt;What about a more complex example?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-about-a-more-complex-example&quot; aria-label=&quot;Anchor link for: what-about-a-more-complex-example&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
 &lt;p&gt;You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript&#x2F;3.png&quot; alt=&quot;image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;I want to &lt;strong&gt;detect the green part&lt;&#x2F;strong&gt; of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a &lt;strong&gt;2 functions calls&lt;&#x2F;strong&gt;:&lt;&#x2F;p&gt;

@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>True idempotent transactions with FoundationDB 7.3 | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Learn how to avoid FDB&#x27;s biggest caveats by using a new feature called automatic idempotency in FoundationDB">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="True idempotent transactions with FoundationDB 7.3">
   <meta property="og:description" content="Learn how to avoid FDB&#x27;s biggest caveats by using a new feature called automatic idempotency in FoundationDB">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="True idempotent transactions with FoundationDB 7.3">
@@ -31,7 +41,7 @@
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta property="article:published_time" content="2024-03-12T00:37:27+01:00">
   <meta property="article:tag" content="database">
-  <meta property="article:tag" content="distributed">
+  <meta property="article:tag" content="distributed-systems">
   <meta property="article:tag" content="transactions">
   <meta property="article:tag" content="foundationdb">
   <meta property="article:tag" content="storage"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/automatic-txn-fdb-730.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;automatic-txn-fdb-730">./read --quorum posts&#x2F;automatic-txn-fdb-730</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / automatic-txn-fdb-730
@@ -112,7 +121,8 @@
   <h2 class="title">True idempotent transactions with FoundationDB 7.3</h2>
   <div class="meta-row"><span class="m"><b>2024-03-12</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed/">#distributed</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/automatic-txn-fdb-730.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
   <nav class="toc">
     <div class="h">index of sections</div>
@@ -130,7 +140,7 @@
 
   <div class="prose">
     <p>I have been working around <a rel="external" href="https://foundationdb.org">FoundationDB</a> for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: <code>commit_unknown_result</code>.</p>
-<h2 id="transactions-with-unknown-results"><a class="zola-anchor" href="#transactions-with-unknown-results" aria-label="Anchor link for: transactions-with-unknown-results">🔗</a>Transactions with unknown results</h2>
+<h2 id="transactions-with-unknown-results">Transactions with unknown results<a class="zola-anchor" href="#transactions-with-unknown-results" aria-label="Anchor link for: transactions-with-unknown-results">🔗</a></h2>
 <p>When you start writing code with FDB, you may be under the assertions that given the database’s robustness, you will not experience some strange behavior under certain failure scenarios. Turns out, there is one scenario that is possible to reach, and quickly explained in the official <a rel="external" href="https://apple.github.io/foundationdb/developer-guide.html#transactions-with-unknown-results">documentation</a>:</p>
 <blockquote>
 <p>As with other client/server databases, in some failure scenarios a client may be unable to determine whether a transaction succeeded. In these cases, commit() will raise a <a rel="external" href="https://apple.github.io/foundationdb/api-error-codes.html#developer-guide-error-codes"><code>commit_unknown_result</code></a> exception. The on_error() function treats this exception as retriable, so retry loops that don’t check for <a rel="external" href="https://apple.github.io/foundationdb/api-error-codes.html#developer-guide-error-codes"><code>commit_unknown_result</code></a> could execute the transaction twice. In these cases, you must consider the idempotency of the transaction.</p>
@@ -141,7 +151,7 @@
 </blockquote>
 <p>It truly depends whether it is acceptable for your transaction to be committed twice. For most of the case, it is not, but sometimes developers are not aware of this behavior, leading to errors. This is one of the reasons why we worked and open-sourced a way to embed rust-code within FoundationDB’s simulation framework. Using the simulation crate, your layer can be tested like FDB, and I can assure you: you <strong>will see</strong> those transactions in simulation 🙈.</p>
 <p>This behavior has given headache to my colleagues, as we tried to bypass correctness and validation code in simulation when transactions state are unknown, and who could blame us? Validate the correctness of your code is hard when certains transactions (for example, one that could clean everything) are “maybe committed”. Fortunately, the community has released a workaround for this: <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/documentation/sphinx/source/automatic-idempotency.rst"><code>automatic idempotency</code></a>.</p>
-<h2 id="automatic-idempotency"><a class="zola-anchor" href="#automatic-idempotency" aria-label="Anchor link for: automatic-idempotency">🔗</a>Automatic idempotency</h2>
+<h2 id="automatic-idempotency">Automatic idempotency<a class="zola-anchor" href="#automatic-idempotency" aria-label="Anchor link for: automatic-idempotency">🔗</a></h2>
 <p>The documentation is fairly explicit:</p>
 <blockquote>
 <p>Use the automatic_idempotency transaction option to prevent commits from failing with <code>commit_unknown_result</code> at a small performance cost.</p>
@@ -170,6 +180,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/academic-conferences/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">The unseen treasures of Infrastructure Engineering: Academic Papers</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/redwood-memory-tuning/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Redwood’s memory tuning in FoundationDB</span></a>
+  </nav>
 </article>
 
   </main>
@@ -177,11 +191,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -192,9 +206,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

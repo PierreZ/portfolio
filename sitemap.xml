@@ -109,6 +109,10 @@
         <lastmod>2026-01-30</lastmod>
     </url>
     <url>
+        <loc>https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/</loc>
+        <lastmod>2026-08-13</lastmod>
+    </url>
+    <url>
         <loc>https://pierrezemb.fr/posts/from-arc-to-box-one-deref-bound/</loc>
         <lastmod>2025-10-02</lastmod>
     </url>
@@ -264,9 +268,6 @@
         <loc>https://pierrezemb.fr/tags/database/</loc>
     </url>
     <url>
-        <loc>https://pierrezemb.fr/tags/databases/</loc>
-    </url>
-    <url>
         <loc>https://pierrezemb.fr/tags/datafusion/</loc>
     </url>
     <url>
@@ -283,9 +284,6 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/distributed-systems/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/distributed/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/diving-into/</loc>
@@ -379,9 +377,6 @@
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/nix/</loc>
-    </url>
-    <url>
-        <loc>https://pierrezemb.fr/tags/nixos/</loc>
     </url>
     <url>
         <loc>https://pierrezemb.fr/tags/notes/</loc>

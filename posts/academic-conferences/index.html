@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>The unseen treasures of Infrastructure Engineering: Academic Papers | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="Are you not using academic papers in your favorite RSS app? You should!">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
   <meta property="og:description" content="Are you not using academic papers in your favorite RSS app? You should!">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="The unseen treasures of Infrastructure Engineering: Academic Papers">
@@ -47,24 +57,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/academic-conferences.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -83,7 +92,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;academic-conferences">./read --quorum posts&#x2F;academic-conferences</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -102,7 +111,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / academic-conferences
@@ -111,6 +120,7 @@
   <h2 class="title">The unseen treasures of Infrastructure Engineering: Academic Papers</h2>
   <div class="meta-row"><span class="m"><b>2024-01-22</b></span>
     <span class="m">read: <b>~4 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2024/academic-conferences.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/research/">#research</a> <a href="https://pierrezemb.fr/tags/learning/">#learning</a> <a href="https://pierrezemb.fr/tags/engineering/">#engineering</a> <a href="https://pierrezemb.fr/tags/papers/">#papers</a></span>
   </div>
   <nav class="toc">
@@ -186,28 +196,28 @@
 <p>I'm intrigued! Where should I start?</p>
 </blockquote>
 <p>Here's a short list of my go-to academic papers and conferences that you can follow for infrastructure engineering. Please note that many conferences exists on other subjects, like security and so.</p>
-<h2 id="the-usenix-community"><a class="zola-anchor" href="#the-usenix-community" aria-label="Anchor link for: the-usenix-community">🔗</a>The USENIX community</h2>
-<h3 id="osdi"><a class="zola-anchor" href="#osdi" aria-label="Anchor link for: osdi">🔗</a>OSDI</h3>
+<h2 id="the-usenix-community">The USENIX community<a class="zola-anchor" href="#the-usenix-community" aria-label="Anchor link for: the-usenix-community">🔗</a></h2>
+<h3 id="osdi">OSDI<a class="zola-anchor" href="#osdi" aria-label="Anchor link for: osdi">🔗</a></h3>
 <p>As part of the USENIX Association, the <a rel="external" href="https://www.usenix.org/conferences">Operating Systems Design and Implementation</a> is an annual computer science conference that you shouldn't miss. You can catch most of the sessions online along with some useful slides.</p>
-<h3 id="nsdi"><a class="zola-anchor" href="#nsdi" aria-label="Anchor link for: nsdi">🔗</a>NSDI</h3>
+<h3 id="nsdi">NSDI<a class="zola-anchor" href="#nsdi" aria-label="Anchor link for: nsdi">🔗</a></h3>
 <p>In a similar fashion, the <a rel="external" href="https://www.usenix.org/conferences">Networked Systems Design and Implementation</a> focuses on the design principles, implementation, and practical evaluation of networked and distributed systems.</p>
-<h3 id="usenix-atc"><a class="zola-anchor" href="#usenix-atc" aria-label="Anchor link for: usenix-atc">🔗</a>Usenix ATC</h3>
+<h3 id="usenix-atc">Usenix ATC<a class="zola-anchor" href="#usenix-atc" aria-label="Anchor link for: usenix-atc">🔗</a></h3>
 <p>The Usenix <a rel="external" href="https://www.usenix.org/conferences">Annual Technical Conference</a> is another classic to follow.</p>
-<h2 id="the-acm-family"><a class="zola-anchor" href="#the-acm-family" aria-label="Anchor link for: the-acm-family">🔗</a>The ACM family</h2>
-<h3 id="sigmod"><a class="zola-anchor" href="#sigmod" aria-label="Anchor link for: sigmod">🔗</a>SIGMOD</h3>
+<h2 id="the-acm-family">The ACM family<a class="zola-anchor" href="#the-acm-family" aria-label="Anchor link for: the-acm-family">🔗</a></h2>
+<h3 id="sigmod">SIGMOD<a class="zola-anchor" href="#sigmod" aria-label="Anchor link for: sigmod">🔗</a></h3>
 <p>SIGMOD, or the <a rel="external" href="https://sigmod.org/">Special Interest Group on Management of Data</a>, is an essential conference under the ACM umbrella, focusing on the management and organization of data.</p>
-<h3 id="damon"><a class="zola-anchor" href="#damon" aria-label="Anchor link for: damon">🔗</a>DaMoN</h3>
+<h3 id="damon">DaMoN<a class="zola-anchor" href="#damon" aria-label="Anchor link for: damon">🔗</a></h3>
 <p>Held with ACM SIGMOD/PODS, you can also find the <a rel="external" href="https://damon-db.org/">Data Management on New Hardware </a>.</p>
-<h3 id="socc"><a class="zola-anchor" href="#socc" aria-label="Anchor link for: socc">🔗</a>SoCC</h3>
+<h3 id="socc">SoCC<a class="zola-anchor" href="#socc" aria-label="Anchor link for: socc">🔗</a></h3>
 <p>The <a rel="external" href="https://acmsocc.org/2023/">Symposium on Cloud Computing</a> or SoCC for short belongs to ACM. It has a bit less content, as videos are not published, but you should keep it in your watchlist.</p>
-<h3 id="sosp"><a class="zola-anchor" href="#sosp" aria-label="Anchor link for: sosp">🔗</a>SOSP</h3>
+<h3 id="sosp">SOSP<a class="zola-anchor" href="#sosp" aria-label="Anchor link for: sosp">🔗</a></h3>
 <p>The <a rel="external" href="http://sosp.org/">Symposium on Operating Systems Principles</a> is another noteworthy conference in the ACM family. It's a top-tier venue for discussing operating systems research. Stay tuned for updates on the latest breakthroughs and innovative ideas.</p>
-<h2 id="others"><a class="zola-anchor" href="#others" aria-label="Anchor link for: others">🔗</a>Others</h2>
-<h3 id="vldb"><a class="zola-anchor" href="#vldb" aria-label="Anchor link for: vldb">🔗</a>VLDB</h3>
+<h2 id="others">Others<a class="zola-anchor" href="#others" aria-label="Anchor link for: others">🔗</a></h2>
+<h3 id="vldb">VLDB<a class="zola-anchor" href="#vldb" aria-label="Anchor link for: vldb">🔗</a></h3>
 <p>Not belonging to USENIX or ACM, the <a rel="external" href="https://vldb.org/">Very Large Data Bases</a> (VLDB) conference is a key event in the database community. It provides a platform for researchers and professionals to exchange ideas on managing and analyzing large-scale datasets.</p>
-<h3 id="cidr"><a class="zola-anchor" href="#cidr" aria-label="Anchor link for: cidr">🔗</a>CIDR</h3>
+<h3 id="cidr">CIDR<a class="zola-anchor" href="#cidr" aria-label="Anchor link for: cidr">🔗</a></h3>
 <p>The <a rel="external" href="https://www.cidrdb.org">Conference on Innovative Data Systems Research</a> (CIDR) is a systems-oriented conference, complementary in its mission to the mainstream database conferences like SIGMOD and VLDB, emphasizing the systems architecture perspective.</p>
-<h2 id="cool-papers-examples"><a class="zola-anchor" href="#cool-papers-examples" aria-label="Anchor link for: cool-papers-examples">🔗</a>Cool papers examples</h2>
+<h2 id="cool-papers-examples">Cool papers examples<a class="zola-anchor" href="#cool-papers-examples" aria-label="Anchor link for: cool-papers-examples">🔗</a></h2>
 <blockquote>
 <p>This is a nice list, but how about some paper examples that <strong>you</strong> like?🤔</p>
 </blockquote>
@@ -225,6 +235,10 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/distsys-resources/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Best resources to learn about data and distributed systems</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">True idempotent transactions with FoundationDB 7.3</span></a>
+  </nav>
 </article>
 
   </main>
@@ -232,11 +246,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -247,9 +261,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

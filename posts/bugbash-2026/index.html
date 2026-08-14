@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
   <title>BugBash 2026, or how the correctness decade has started | Pierre Zemb&#x27;s Blog</title>
   <meta name="description" content="A retrospective on BugBash 2026, and why software engineering looks brighter than ever.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -22,7 +32,7 @@
   <meta property="og:title" content="BugBash 2026, or how the correctness decade has started">
   <meta property="og:description" content="A retrospective on BugBash 2026, and why software engineering looks brighter than ever.">
   <meta property="og:locale" content="en_US">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
   <meta name="twitter:title" content="BugBash 2026, or how the correctness decade has started">
@@ -48,24 +58,23 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/bugbash-2026.md">
+
 
   <script>
-  // Set theme before first paint (no flash). Persisted choice wins, else light (blueprint).
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
   (function () {
-    try {
-      var saved = localStorage.getItem("bp-theme");
-      var dark = saved === "cyanotype";
-      var theme = dark ? "cyanotype" : "blueprint";
-      document.documentElement.setAttribute("data-theme", theme);
-      var l = document.getElementById("syntax-light");
-      var d = document.getElementById("syntax-dark");
-      if (l) l.disabled = dark;
-      if (d) d.disabled = !dark;
-    } catch (e) {}
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
   })();
   </script>
 </head>
-<body><div class="sheet">
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
   <div class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
   <nav>
@@ -84,7 +93,7 @@
 </div>
 
   <div class="console">
-  <div class="log">
+  <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;bugbash-2026">./read --quorum posts&#x2F;bugbash-2026</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
@@ -103,7 +112,7 @@
 </div>
 
 
-  <main>
+  <main id="main">
     <article class="article">
   <div class="crumbs">
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / bugbash-2026
@@ -112,6 +121,7 @@
   <h2 class="title">BugBash 2026, or how the correctness decade has started</h2>
   <div class="meta-row"><span class="m"><b>2026-05-05</b></span>
     <span class="m">read: <b>~5 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/bf147e866f607613cde445e370f974120d5a30cf/content/posts/2026/bugbash-2026.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/correctness/">#correctness</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a></span>
   </div>
   <nav class="toc">
@@ -143,27 +153,27 @@
   <div class="prose">
     <p><a rel="external" href="https://antithesis.com/bugbash/conference2026">BugBash 2026</a> was two days in Washington D.C., organized by Antithesis, dedicated to <strong>extracting reliable software from the slop factory</strong>. The conference brought together thirty speakers from across the correctness landscape: Kyle Kingsbury running a seminar on transaction safety, Peter Alvaro reflecting on twenty years of attacking distributed systems, Brian Potter explaining why buildings don't fall down, Frank McSherry on why Materialize works for one reason, and Steve Klabnik connecting Descartes to Rust. I attended <a rel="external" href="https://pierrezemb.fr/posts/2025-year-in-review/#the-awakening">the first edition last year</a> and it was where I finally met the correctness niche in person. This year I was back with <a rel="external" href="https://pierrezemb.fr/slides/2026-04-fdb-sim.pdf">a lightning talk on borrowing FoundationDB's simulator</a>, sharing the stage with people whose work shaped how I think about distributed systems.</p>
 <p>Despite being a conference where we talk about simulation, formal methods and property-based testing, this year almost everyone was asking a single question: <strong>how can we trust LLM-generated code?</strong></p>
-<h2 id="the-gap-agents-opened"><a class="zola-anchor" href="#the-gap-agents-opened" aria-label="Anchor link for: the-gap-agents-opened">🔗</a>The gap agents opened</h2>
+<h2 id="the-gap-agents-opened">The gap agents opened<a class="zola-anchor" href="#the-gap-agents-opened" aria-label="Anchor link for: the-gap-agents-opened">🔗</a></h2>
 <p>Steve Klabnik named the problem in his keynote, <em>Steel, Rust, and truth</em>:</p>
 <blockquote>
 <p>We said "good enough" because we wrote it, we understood it, we tried it. AI broke all three.</p>
 </blockquote>
 <p>That gap, between the speed at which agents produce code and the confidence we have that the code is right, is what filled the conference. Engineers had used LLMs to ship faster, then discovered a new class of correctness problem they did not have before. At Clever Cloud, we saw it firsthand: once we ran our <a rel="external" href="https://www.clever.cloud/materia">Materia</a> layers through FoundationDB's simulator, it found bugs that neither humans nor agents had anticipated. Query planners picking the wrong index, data corruption during reindexing, dual leader election under clock skew. The kind of bugs that pass code review and unit tests but explode under real failure conditions.</p>
-<h2 id="the-loop-that-closes-the-gap"><a class="zola-anchor" href="#the-loop-that-closes-the-gap" aria-label="Anchor link for: the-loop-that-closes-the-gap">🔗</a>The loop that closes the gap</h2>
+<h2 id="the-loop-that-closes-the-gap">The loop that closes the gap<a class="zola-anchor" href="#the-loop-that-closes-the-gap" aria-label="Anchor link for: the-loop-that-closes-the-gap">🔗</a></h2>
 <p>On the side, I am doing <a rel="external" href="https://simonwillison.net/2025/Oct/7/vibe-engineering/">agentic engineering</a> on <a rel="external" href="https://github.com/PierreZ/moonpool">moonpool</a>, my own hobby-grade DST framework in Rust, inspired by FoundationDB and TigerBeetle. I am having more fun engineering than at any point in my career. Claude writes a lot of the code, the simulator beats it up, <a rel="external" href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/">a faulty seed reproduces the bug deterministically</a>, and the loop closes the same way for me as it does for the agent. You do not trust Claude. You trust the simulator. It finds what you never thought to test.</p>
 <p>This is what I told people at BugBash when they asked the question. But the more interesting story is that I was no longer the only one saying it.</p>
-<h2 id="from-tribe-to-requirement"><a class="zola-anchor" href="#from-tribe-to-requirement" aria-label="Anchor link for: from-tribe-to-requirement">🔗</a>From tribe to requirement</h2>
+<h2 id="from-tribe-to-requirement">From tribe to requirement<a class="zola-anchor" href="#from-tribe-to-requirement" aria-label="Anchor link for: from-tribe-to-requirement">🔗</a></h2>
 <p>Will Wilson opened the conference with a keynote titled <em>We won, what now?</em></p>
 <p><img src="/images/bugbash-2026/property-based-testing.png" alt="property-based testing search interest, near-zero through 2024, vertical spike in late 2025" /></p>
 <p><img src="/images/bugbash-2026/formal-methods.png" alt="formal methods search interest, flat baseline, sharp climb in late 2025" /></p>
 <p>In 2025 that "we" was a small tribe. In 2026 it was a packed room. The conversations confirmed it. People came up after my talk wanting to know how we designed <a rel="external" href="https://www.clever.cloud/materia">Materia</a> at Clever Cloud, how to introduce simulation to an existing team, whether their system was complex enough to need it. Practical questions from people who had decided to start.</p>
-<h2 id="understanding-lives-in-behaviors"><a class="zola-anchor" href="#understanding-lives-in-behaviors" aria-label="Anchor link for: understanding-lives-in-behaviors">🔗</a>Understanding lives in behaviors</h2>
+<h2 id="understanding-lives-in-behaviors">Understanding lives in behaviors<a class="zola-anchor" href="#understanding-lives-in-behaviors" aria-label="Anchor link for: understanding-lives-in-behaviors">🔗</a></h2>
 <p>Gabriela Moreira walked the chain backwards in her keynote <em>Behaviors as the backbone of software correctness</em>:</p>
 <blockquote>
 <p>We start wanting correctness. We realize we need confidence. Confidence requires understanding. Understanding lives in behaviors.</p>
 </blockquote>
 <p>The original way to learn the behaviors of software was to operate it. <a rel="external" href="https://www.honeycomb.io/blog/testing-in-production">Charity Majors</a> has been making this case for years, and I have been advocating that developers should be on the on-call rotation for the systems they ship, because nothing teaches you what your code actually does like getting paged by it at 3am. Simulation gives you a second way to witness behaviors, this time in a controlled environment instead of in production. Both routes lead to the same place: understanding.</p>
-<h2 id="sixty-years-of-preparation"><a class="zola-anchor" href="#sixty-years-of-preparation" aria-label="Anchor link for: sixty-years-of-preparation">🔗</a>Sixty years of preparation</h2>
+<h2 id="sixty-years-of-preparation">Sixty years of preparation<a class="zola-anchor" href="#sixty-years-of-preparation" aria-label="Anchor link for: sixty-years-of-preparation">🔗</a></h2>
 <p>Klabnik finished his keynote with another slide:</p>
 <blockquote>
 <p>You've been taking this seriously for sixty years. The rest of the field is about to catch up in a hurry. Contracts. Specifications. Invariants. Refinement. Types. Proof. You're the ones who know how to wield this. Every programmer is about to need what you already know.</p>
@@ -171,12 +181,16 @@
 <p>The techniques to restore trust in code we did not fully write, <strong>deterministic replay, simulation, property-based testing, model checking, types</strong>, are not new. They have been refined for decades by people who cared about correctness when caring about correctness was a niche interest. The agents made these techniques mandatory. The techniques themselves are mature, documented, and getting cheaper to adopt every year.</p>
 <p>The academic world keeps pushing too. Peter Alvaro showed how <a rel="external" href="https://sigops.org/s/conferences/hotos/2025/papers/hotos25-106.pdf">mathematical models combined with simulation</a> can now predict where distributed systems are vulnerable to <a rel="external" href="https://sigops.org/s/conferences/hotos/2021/papers/hotos21-s11-bronson.pdf">metastable failures</a> before they hit production.</p>
 <p>The boring parts of the job are getting cheaper. The interesting parts, <strong>the right abstractions, designing for chaos, finding unknown unknowns, building tools that catch what humans miss</strong>, are becoming central. The people in the room were not worried about their careers. They were too busy figuring out what to build next.</p>
-<h2 id="the-correctness-decade"><a class="zola-anchor" href="#the-correctness-decade" aria-label="Anchor link for: the-correctness-decade">🔗</a>The correctness decade</h2>
+<h2 id="the-correctness-decade">The correctness decade<a class="zola-anchor" href="#the-correctness-decade" aria-label="Anchor link for: the-correctness-decade">🔗</a></h2>
 <p>Every generation of engineers gets a moment where the field shifts underneath them. The correctness crowd waited sixty years for theirs. It is here.</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your experiences from BugBash. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
+  <nav class="pn">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Why Fakes Beat Mocks and Testcontainers</span></a>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/designing-fakes-that-prove-correctness/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Designing Fakes That Prove Correctness</span></a>
+  </nav>
 </article>
 
   </main>
@@ -184,11 +198,11 @@
   <div class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-07-30
+    © 2026 Pierre Zemb · last rev. 2026-08-14
   </div>
   <div class="cell">
     <span class="label">contact</span>
-    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
 </div>
@@ -199,9 +213,7 @@
 <script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
 <script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
 
-<script src="https://pierrezemb.fr/js/elasticlunr.min.js" defer></script>
-<script src="https://pierrezemb.fr/search_index.en.js" defer></script>
-<script src="https://pierrezemb.fr/js/search.js" defer></script>
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
 
 
 </body>

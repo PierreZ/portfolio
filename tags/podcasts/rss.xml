@@ -3,7 +3,7 @@
     <channel>
       <title>Pierre Zemb&#x27;s Blog - podcasts</title>
       <link>https://pierrezemb.fr</link>
-      <description>Pierre Zemb personal blog</description>
+      <description>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</description>
       <generator>Zola</generator>
       <language>en</language>
       <atom:link href="https://pierrezemb.fr/tags/podcasts/rss.xml" rel="self" type="application/rss+xml"/>

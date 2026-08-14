@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
     <title>Pierre Zemb&#x27;s Blog - tuning</title>
-    <subtitle>Pierre Zemb personal blog</subtitle>
+    <subtitle>Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://pierrezemb.fr/tags/tuning/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://pierrezemb.fr"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
@@ -29,7 +29,7 @@
         <category term="database" schema="https://pierrezemb.fr/tags/" label="database"/>
         <category term="tuning" schema="https://pierrezemb.fr/tags/" label="tuning"/>
         <content type="html" xml:base="https://pierrezemb.fr/posts/redwood-memory-tuning/">&lt;p&gt;While FoundationDB allows you to obtain sub-milliseconds transactions’s latency without any knob-tuning, we had to bump a bit memory usage for Redwood under certain usage and workload. The following configuration has been tested on clusters from 7.1 to 7.3.&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;btree-page-cache&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;BTree page cache&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;btree-page-cache&quot;&gt;BTree page cache&lt;a class=&quot;zola-anchor&quot; href=&quot;#btree-page-cache&quot; aria-label=&quot;Anchor link for: btree-page-cache&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;We discovered the issue when we saw a performance decrease on our cluster storing time-series data. Our cluster was reporting some high disk-business, causing outages:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;10.0.3.23:4501 ( 65% cpu; 61% machine; 0.010 Gbps; 93% disk IO; 7.5 GB &#x2F; 7.4 GB RAM  )&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;10.0.3.24:4501 ( 61% cpu; 61% machine; 0.010 Gbps; 87% disk IO; 9.7 GB &#x2F; 7.4 GB RAM  )&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -43,20 +43,20 @@
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&amp;quot;PagerCacheHit&amp;quot;: &amp;quot;51968&amp;quot;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&amp;quot;PagerCacheMiss&amp;quot;: &amp;quot;432&amp;quot;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt; &lt;&#x2F;p&gt;
-&lt;h2 id=&quot;byte-sample-memory-usage&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#byte-sample-memory-usage&quot; aria-label=&quot;Anchor link for: byte-sample-memory-usage&quot;&gt;🔗&lt;&#x2F;a&gt;Byte Sample memory usage&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;byte-sample-memory-usage&quot;&gt;Byte Sample memory usage&lt;a class=&quot;zola-anchor&quot; href=&quot;#byte-sample-memory-usage&quot; aria-label=&quot;Anchor link for: byte-sample-memory-usage&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;But our problems are still unresolved, as we are still seeing some OOM 😭 Because this cluster is storing time-series data, each StorageServers is holding around 1TiB of data. As we were holding more and more data, we saw more and more OOM errors on our &lt;code&gt;fdbmonitor&lt;&#x2F;code&gt; logs. Something was growing linearly with our usage and needed tuning. This time, we had help from &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;u&#x2F;SteavedHams&#x2F;summary&quot;&gt;Steve Atherton&lt;&#x2F;a&gt; which pointed us towards the direction of the &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;forums.foundationdb.org&#x2F;t&#x2F;foundationdb-7-1-24-the-memory-usage-after-clean-startup-of-fdbserver-process-is-too-high&#x2F;3863&#x2F;8?u=pierrez&quot;&gt;Byte Sample&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;There is a data structure that storage servers have called the Byte Sample which stores a deterministic random sample of keys. This data is persisted on disk in the storage engine and is loaded immediately upon storage server startup. Unfortunately, its size is not tracked or reported, but grows linearly with KV size and I suspect yours is somewhere around 4GB-6GB based on the memory usage I’ve seen for smaller storage KV sizes.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;p&gt;So, we need to add around 4GB more in the memory, but there is no config for that parameter. It needs to be embedded in the global &lt;code&gt;memory&lt;&#x2F;code&gt; parameter. Let’s compute the right value!&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;the-global-memory-formula&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-global-memory-formula&quot; aria-label=&quot;Anchor link for: the-global-memory-formula&quot;&gt;🔗&lt;&#x2F;a&gt;The global memory formula&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;the-global-memory-formula&quot;&gt;The global memory formula&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-global-memory-formula&quot; aria-label=&quot;Anchor link for: the-global-memory-formula&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;By testing things on our clusters, we ended up with this formula:&lt;&#x2F;p&gt;
 &lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# Default is 2&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;cache_memory = (1-2% of kvstore_used_bytes)GiB&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# Default is 8&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;memory = (8 + cache_memory + 4-6GB per TB of kvstore_used_bytes)GiB&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
 &lt;p&gt;Which fixed all our memory issues with FoundationDB 🎉 And to be fair, this is the only things we needed to tune on our clusters, which is quite impressive 👀&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;special-thanks&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#special-thanks&quot; aria-label=&quot;Anchor link for: special-thanks&quot;&gt;🔗&lt;&#x2F;a&gt;Special thanks&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;special-thanks&quot;&gt;Special thanks&lt;a class=&quot;zola-anchor&quot; href=&quot;#special-thanks&quot; aria-label=&quot;Anchor link for: special-thanks&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;I would like to thank Markus, William and Steve from the FoundationDB community for their help 🤝&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;p&gt;&lt;strong&gt;Thank you&lt;&#x2F;strong&gt; for reading my post! Feel free to react to this article, I am also available on &lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;PierreZ&quot;&gt;Twitter&lt;&#x2F;a&gt; if needed.&lt;&#x2F;p&gt;
