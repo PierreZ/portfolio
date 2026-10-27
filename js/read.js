@@ -12,7 +12,7 @@
 //
 // Supersedes render.js (node pick) + chaos.js (corruption): they raced over the
 // same .cluster nodes, so one controller now owns the whole read state. The mode
-// persists (localStorage); F re-rolls each load (a failing disk is not deterministic).
+// persists for the session (sessionStorage); F re-rolls each load (a failing disk is not deterministic).
 (function () {
   var script = document.getElementById("read-ctl");
   var cluster = document.querySelector(".cluster");
@@ -26,6 +26,9 @@
   var ENABLED = !script || script.dataset.enabled !== "false";
   var DEFAULT = (script && script.dataset.defaultMode) || "quorum";
   var KEY = "bp-read";
+  // Older versions persisted the mode in localStorage; drop it so returning
+  // visitors start in the default mode.
+  try { localStorage.removeItem(KEY); } catch (e) {}
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Roll the cluster state once per load (a failing disk is not deterministic):
@@ -54,6 +57,7 @@
 
   // Pristine snapshots, captured once so quorum restores byte-for-byte.
   var pristine = roots.map(function (r) { return r.innerHTML; });
+  var dirty = false; // true while the roots hold a corrupted render (needs a restore)
 
   function escapeHtml(s) {
     return s.replace(/[&<>]/g, function (c) {
@@ -119,7 +123,10 @@
       var ni = cands[c][0], pj = cands[c][1];
       var scrambled = typoglyce(split[ni][pj]);
       if (scrambled === split[ni][pj]) continue; // couldn't differ — leave it clean
-      split[ni][pj] = '<span class="rot">' + escapeHtml(scrambled) + "</span>";
+      // Scrambled copy is hidden from assistive tech and selection; the original
+      // word stays readable for screen readers and copy/paste.
+      split[ni][pj] = '<span class="rot" aria-hidden="true">' + escapeHtml(scrambled) +
+                      '</span><span class="sr-only">' + escapeHtml(split[ni][pj]) + "</span>";
       touched[ni] = true;
     }
     for (var idx in touched) {
@@ -143,6 +150,15 @@
     }
   }
   function label(i) { return "n" + i; }
+
+  // Wide code blocks need keyboard focus to be scrollable. Runs after any
+  // innerHTML restore so the attribute is not wiped.
+  function markScrollable() {
+    var pres = document.querySelectorAll(".prose pre");
+    for (var i = 0; i < pres.length; i++) {
+      if (pres[i].scrollWidth > pres[i].clientWidth) pres[i].setAttribute("tabindex", "0");
+    }
+  }
 
   function render(mode) {
     var single = mode === "single";
@@ -179,18 +195,25 @@
       }
     }
 
-    for (var r = 0; r < roots.length; r++) {
-      roots[r].innerHTML = pristine[r];
-      if (corrupted) corrupt(roots[r]);
+    // Only touch the DOM when it differs from pristine: either a previous
+    // corrupted render must be undone, or this one is corrupted. Skipping the
+    // restore keeps images, iframes, diagrams and the #anchor scroll intact.
+    if (dirty || corrupted) {
+      for (var r = 0; r < roots.length; r++) {
+        roots[r].innerHTML = pristine[r];
+        if (corrupted) corrupt(roots[r]);
+      }
+      dirty = corrupted;
+      // We just rewrote .prose innerHTML, tell mermaid-init to re-draw any diagrams
+      // (the restore wiped their rendered SVG back to raw source text).
+      document.dispatchEvent(new Event("readmode:changed"));
     }
-    // We just rewrote .prose innerHTML — tell mermaid-init to re-draw any diagrams
-    // (the restore wiped their rendered SVG back to raw source text).
-    document.dispatchEvent(new Event("readmode:changed"));
+    markScrollable();
 
     if (btn) {
       btn.textContent = single ? "read: single" : "read: quorum";
       btn.classList.toggle("single", single);
-      btn.setAttribute("aria-pressed", single ? "true" : "false");
+      btn.removeAttribute("aria-pressed"); // visible text already carries the state
       btn.title = single ? "switch to quorum read (R=2)" : "switch to single read (R=1)";
     }
     document.body.classList.toggle("read-single", single);
@@ -198,7 +221,7 @@
 
   var mode = DEFAULT;
   if (ENABLED) {
-    try { mode = localStorage.getItem(KEY) || DEFAULT; } catch (e) {}
+    try { mode = sessionStorage.getItem(KEY) || DEFAULT; } catch (e) {}
   }
   if (mode !== "single" && mode !== "quorum") mode = DEFAULT;
   if (!ENABLED) mode = "quorum";
@@ -209,7 +232,7 @@
     document.body.classList.add("read-armed"); // CSS shows the cluster as clickable
     function toggle() {
       mode = (mode === "single") ? "quorum" : "single";
-      try { localStorage.setItem(KEY, mode); } catch (e) {}
+      try { sessionStorage.setItem(KEY, mode); } catch (e) {}
       render(mode);
     }
     if (btn) btn.addEventListener("click", toggle);

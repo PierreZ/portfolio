@@ -77,8 +77,9 @@ body::before {
   opacity: .6;
 }
 
-.skip-link { position: absolute; top: -40px; left: 0; z-index: 10; padding: .5rem 1rem; font-family: var(--font-mono); background: var(--paper); color: var(--ink); border: 1px solid var(--ink); }
-.skip-link:focus { top: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; top: 0; left: 0; transform: translateY(-120%); z-index: 10; padding: .5rem 1rem; font-family: var(--font-mono); background: var(--paper); color: var(--ink); border: 1px solid var(--ink); }
+.skip-link:focus { transform: none; }
 
 a { color: var(--cyan); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -104,7 +105,7 @@ pre, code, kbd { font-family: var(--font-mono); }
 .topnav nav a { color: var(--ink); font-weight: 600; white-space: nowrap; }
 .topnav nav a::before { content: "$ "; color: var(--ink-dim); }
 .topnav nav a:hover { color: var(--cyan); text-decoration: none; }
-.flip { background: none; border: 1px solid var(--grid-bold); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; }
+.flip { background: none; border: 1px solid var(--ink-dim); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; }
 .flip:hover { border-color: var(--cyan); color: var(--cyan); }
 
 /* ---- CONSOLE STRIP (the terminal client) ---- */
@@ -156,8 +157,8 @@ pre, code, kbd { font-family: var(--font-mono); }
 .bom .row:hover a.ttl { color: var(--cyan); text-decoration: none; }
 .bom .desc { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: .2rem; }
 .bom a.desc:hover { color: var(--cyan); text-decoration: none; }
-.bom .row:hover a.desc { color: var(--ink); }
-.bom .rt { display: block; color: var(--ink-faint); font-size: .68rem; margin-top: .2rem; font-variant-numeric: tabular-nums; }
+.bom .row:hover .desc { color: var(--ink); }
+.bom .rt { display: block; color: var(--ink-dim); font-size: .68rem; margin-top: .2rem; font-variant-numeric: tabular-nums; }
 
 /* year separator between rows (posts listing only) */
 .bom .row:has(+ .yr) { border-bottom: none; }
@@ -189,18 +190,19 @@ pre, code, kbd { font-family: var(--font-mono); }
 .article .crumbs .sig { color: var(--cyan); }
 .article .crumbs a { color: var(--ink-dim); }
 .article .crumbs a:hover { color: var(--cyan); }
-.article h2.title { font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; margin-bottom: 1.4rem; }
+.article h1.title, .article h2.title { font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; margin-bottom: 1.4rem; }
 
 .toc { border: 1px solid var(--ink); margin-bottom: 1.8rem; }
 .toc .h { background: var(--paper-2); padding: .45rem .8rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-dim); border-bottom: 1px solid var(--grid-bold); }
 .toc .h::before { content: "▼ "; color: var(--cyan); }
 .toc ol { list-style: none; }
 .toc > ol { padding: .4rem 0; }
-.toc li { display: flex; flex-wrap: wrap; gap: .5rem; padding: .22rem .8rem; font-size: .85rem; }
+.toc li { display: flex; flex-wrap: wrap; gap: 0 .5rem; padding: .22rem .8rem; font-size: .85rem; }
 .toc li .n { color: var(--cyan); flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.toc li > a { color: var(--ink); flex: 1 1 0; min-width: 0; }
 .toc a { color: var(--ink); }
 .toc a:hover { color: var(--cyan); text-decoration: none; }
-.toc ol ol { list-style: none; width: 100%; margin-left: 1.1rem; }
+.toc ol ol { list-style: none; flex: 0 0 auto; width: calc(100% - 1.1rem); margin-left: 1.1rem; }
 
 .series { border: 1px solid var(--ink); margin-bottom: 1.8rem; }
 .series-h { background: var(--paper-2); padding: .45rem .8rem; font-family: var(--font-mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-dim); border-bottom: 1px solid var(--grid-bold); }
@@ -249,9 +251,9 @@ pre, code, kbd { font-family: var(--font-mono); }
 .prose th { background: var(--paper-2); color: var(--ink); }
 
 /* heading anchor links (insert_anchor_links = "right") */
-.prose a.zola-anchor { color: var(--ink-faint); margin-left: .4rem; opacity: 0; font-weight: 400; transition: opacity .15s ease; text-decoration: none; }
-.prose h2:hover a.zola-anchor, .prose h3:hover a.zola-anchor, .prose h4:hover a.zola-anchor { opacity: 1; }
-.prose a.zola-anchor:hover { color: var(--cyan); }
+.prose a.zola-anchor { font-family: var(--font-mono); color: var(--ink-dim); margin-left: .4rem; opacity: 0; font-weight: 400; transition: opacity .15s ease; text-decoration: none; }
+.prose h2:hover a.zola-anchor, .prose h3:hover a.zola-anchor, .prose h4:hover a.zola-anchor, .prose h5:hover a.zola-anchor, .prose h6:hover a.zola-anchor { opacity: 1; }
+.prose a.zola-anchor:hover, .prose a.zola-anchor:focus-visible { color: var(--cyan); }
 @media (hover: none) { .prose a.zola-anchor { opacity: .4; } }
 
 blockquote { border: 1px solid var(--ink); border-left: 4px solid var(--cyan); background: var(--paper-2); padding: .9rem 1.1rem; margin: 1.4rem 0; }
@@ -263,10 +265,20 @@ code.inline, .prose p > code, .prose li > code, .hero-intro code { background: v
 
 /* syntax-highlighted code blocks (Zola emits <pre class="...z-code...">) */
 .prose pre { background: var(--paper-2); border: 1px solid var(--grid-bold); border-left: 4px solid var(--cyan); padding: .9rem 1.1rem; overflow-x: auto; margin: 1.4rem 0; font-size: .82rem; line-height: 1.5; }
+.prose pre:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .prose pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
 .prose pre[data-linenos] { padding-left: 0; }
 .prose pre table td { border: none; padding: 0 .8rem; }
 .prose pre mark { background: var(--selection); color: inherit; }
+
+/* syntax tokens: raise the github-light / github-dark defaults to >=4.5:1 on --paper-2.
+   Scoped per scheme; the extra :root[data-theme] part outranks the giallo selectors. */
+.giallo-ln { color: var(--ink-dim); }
+:root[data-theme="blueprint"] :is(.z-comment, .z-string.z-comment, .z-punctuation.z-definition.z-comment) { color: #5A636D; }
+:root[data-theme="blueprint"] :is(.z-keyword, .z-storage, .z-storage.z-type) { color: #C02B3B; }
+:root[data-theme="blueprint"] :is(.z-markup.z-changed, .z-punctuation.z-definition.z-changed) { color: #B04A06; }
+:root[data-theme="blueprint"] :is(.z-markup.z-quote, .z-markup.z-inserted, .z-entity.z-name.z-tag, .z-constant.z-character.z-escape, .z-punctuation.z-definition.z-inserted) { color: #1E7A34; }
+:root[data-theme="cyanotype"] :is(.z-comment, .z-string.z-comment, .z-punctuation.z-definition.z-comment) { color: #8B949E; }
 
 /* ---- NOTE CALLOUT (shortcode) ---- */
 .note { border: 1px solid var(--grid-bold); border-left: 4px solid var(--cyan); background: var(--paper-2); padding: .8rem 1.1rem; margin: 1.4rem 0; font-size: .9rem; }
@@ -318,23 +330,24 @@ code.inline, .prose p > code, .prose li > code, .hero-intro code { background: v
 
 /* ---- READ-MODE TOGGLE (quorum R=2 ⇄ single R=1) ---- */
 /* sits next to the theme flip; turns red when a single read exposes the rot */
-.readmode { background: none; border: 1px solid var(--grid-bold); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; transition: border-color .15s ease, color .15s ease; }
+.readmode { background: none; border: 1px solid var(--ink-dim); color: var(--ink-dim); font-family: inherit; font-size: .74rem; cursor: pointer; padding: .2rem .5rem; white-space: nowrap; transition: border-color .15s ease, color .15s ease; }
 .console .readmode { flex: none; align-self: center; }
 .readmode:hover { border-color: var(--cyan); color: var(--cyan); }
 .readmode.single { border-color: var(--red); color: var(--red); }
 
 /* typoglycemia artifacts from a single read on a corrupted replica:
    still readable (first/last letter intact), but marked as corrupted */
-.rot { text-decoration: underline dotted var(--red); text-decoration-thickness: 3px; text-underline-offset: 3px; }
+.rot { user-select: none; text-decoration: underline dotted var(--red); text-decoration-thickness: 3px; text-underline-offset: 3px; }
 
 /* ---- SEARCH (optional, lives in the nav) ---- */
 .nav-search { position: relative; }
-.nav-search input { background: var(--paper-2); border: 1px solid var(--grid-bold); color: var(--ink); font-family: inherit; font-size: .74rem; padding: .2rem .5rem; width: 8.5rem; transition: width .15s ease, border-color .15s ease; }
+.nav-search input { background: var(--paper-2); border: 1px solid var(--ink-dim); color: var(--ink); font-family: inherit; font-size: .74rem; padding: .2rem .5rem; width: 8.5rem; transition: width .15s ease, border-color .15s ease; }
 .nav-search input::placeholder { color: var(--ink-dim); }
 .nav-search input:focus { outline: none; border-color: var(--cyan); width: 12rem; }
 .search-results { position: absolute; top: calc(100% + .35rem); right: 0; width: min(22rem, 78vw); max-height: 60vh; overflow-y: auto; background: var(--paper); border: 1px solid var(--ink); z-index: 20; }
 .search-results:empty { display: none; }
 .search-results .sr { padding: .45rem .7rem; border-bottom: 1px dotted var(--grid-bold); font-size: .82rem; }
+.search-results .search-empty { padding: .45rem .7rem; font-size: .82rem; color: var(--ink-dim); }
 .search-results .sr:last-child { border-bottom: none; }
 .search-results .sr a { color: var(--ink); font-weight: 600; }
 .search-results .sr a:hover { color: var(--cyan); text-decoration: none; }
@@ -361,4 +374,6 @@ code.inline, .prose p > code, .prose li > code, .hero-intro code { background: v
   .pn-next { text-align: left; align-items: flex-start; }
   /* Wide markdown tables scroll instead of breaking the layout. */
   .prose table { display: block; overflow-x: auto; }
+  .foot { grid-template-columns: 1fr; }
+  .foot .cell + .cell { border-left: none; border-top: 1px solid var(--grid-bold); }
 }

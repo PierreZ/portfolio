@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="blueprint">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Set data-theme before first paint (no flash). Persisted choice wins, else follow OS preference.
+  (function () {
+    try {
+      var saved = localStorage.getItem("bp-theme");
+      var dark = saved ? saved === "cyanotype" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "cyanotype" : "blueprint");
+    } catch (e) {}
+  })();
+  </script>
+  <title>Notes about cell-based architecture | Pierre Zemb&#x27;s Blog</title>
+  <meta name="description" content="Cell-based architecture as the middle ground between one dense cluster and one cluster per customer, and why moving data is the core capability.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="preload" href="https://pierrezemb.fr/fonts/Roboto-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://pierrezemb.fr/css/main.css">
+  <link rel="stylesheet" id="syntax-light" href="https://pierrezemb.fr/giallo-light.css">
+  <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
+  <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
+  <link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/">
+  <meta name="author" content="Pierre Zemb">
+  <meta name="theme-color" content="#15324d">
+  <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/">
+  <meta property="og:title" content="Notes about cell-based architecture">
+  <meta property="og:description" content="Cell-based architecture as the middle ground between one dense cluster and one cluster per customer, and why moving data is the core capability.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@PierreZ">
+  <meta name="twitter:creator" content="@PierreZ">
+  <meta name="twitter:title" content="Notes about cell-based architecture">
+  <meta name="twitter:description" content="Cell-based architecture as the middle ground between one dense cluster and one cluster per customer, and why moving data is the core capability.">
+  <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg">
+  <meta property="article:published_time" content="2026-10-27T00:00:00+00:00">
+  <meta property="article:tag" content="distributed-systems">
+  <meta property="article:tag" content="notes">
+  <meta property="article:tag" content="foundationdb">
+  <meta property="article:tag" content="software-engineering"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://pierrezemb.fr/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://pierrezemb.fr/favicon-16x16.png">
+  <link rel="icon" href="https://pierrezemb.fr/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="https://pierrezemb.fr/apple-touch-icon.png">
+  <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
+
+  
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/notes-about-cell-based-architecture.md">
+
+
+  <script>
+  // Sync the syntax-highlight stylesheet to the data-theme set above (can't run
+  // earlier: needs the #syntax-light / #syntax-dark <link> elements to exist).
+  (function () {
+    var dark = document.documentElement.getAttribute("data-theme") === "cyanotype";
+    var l = document.getElementById("syntax-light");
+    var d = document.getElementById("syntax-dark");
+    if (l) l.disabled = dark;
+    if (d) d.disabled = !dark;
+  })();
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">skip to content</a><div class="sheet">
+  <header class="topnav">
+  <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
+  <nav aria-label="main">
+      <a href="https://pierrezemb.fr/">Home</a>
+      <a href="https://pierrezemb.fr/posts/">Blog</a>
+      <a href="https://pierrezemb.fr/tags/">Tags</a>
+      <a href="https://pierrezemb.fr/talks/">Talks</a>
+      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/contact/">Contact</a>
+  </nav>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
+
+  <div class="console">
+  <div class="log" aria-hidden="true">
+    <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;notes-about-cell-based-architecture">./read --quorum posts&#x2F;notes-about-cell-based-architecture</span></div>
+    <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
+  </div>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
+  <div class="cluster-cell">
+    <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
+  <line class="link" x1="29" y1="8" x2="12" y2="32"/>
+  <line class="link" x1="29" y1="8" x2="46" y2="32"/>
+  <line class="link" x1="12" y1="32" x2="46" y2="32"/>
+  <circle class="node n0" cx="29" cy="8" r="5"/>
+  <circle class="node n1" cx="12" cy="32" r="4"/>
+  <circle class="node n2" cx="46" cy="32" r="4"/>
+</svg>
+
+  </div>
+</div>
+
+
+  <main id="main">
+    <article class="article">
+  <div class="crumbs">
+    <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / notes-about-cell-based-architecture
+  </div>
+
+  <h1 class="title">Notes about cell-based architecture</h1>
+  <div class="meta-row"><span class="m"><b>2026-10-27</b></span>
+    <span class="m">read: <b>~13 min</b></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/notes-about-cell-based-architecture.md">markdown</a></span>
+    <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering</a></span>
+  </div>
+  <nav class="toc" aria-label="table of contents">
+    <div class="h">index of sections</div>
+    
+<ol>
+  <li>
+    <span class="n">1</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#the-deployment-layout-of-a-distributed-system">The deployment layout of a distributed system</a>
+  </li>
+  <li>
+    <span class="n">2</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#overall-cell-design">Overall cell design</a>
+  </li>
+  <li>
+    <span class="n">3</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#the-partition-key">The partition key</a>
+<ol>
+  <li>
+    <span class="n">3.1</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#choosing-the-key">Choosing the key</a>
+  </li>
+  <li>
+    <span class="n">3.2</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#mapping-keys-to-cells">Mapping keys to cells</a>
+  </li>
+  <li>
+    <span class="n">3.3</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#the-override-table">The override table</a>
+  </li>
+</ol>
+
+  </li>
+  <li>
+    <span class="n">4</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#sizing-and-shaping-cells">Sizing and shaping cells</a>
+  </li>
+  <li>
+    <span class="n">5</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#moving-data-is-the-core-capability-and-the-worst-one">Moving data is the core capability, and the worst one</a>
+  </li>
+  <li>
+    <span class="n">6</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#the-control-plane-is-a-tenant">The control plane is a tenant</a>
+  </li>
+  <li>
+    <span class="n">7</span><a href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/#operating-many-cells">Operating many cells</a>
+  </li>
+</ol>
+
+  </nav>
+
+  <div class="prose">
+    <h2 id="the-deployment-layout-of-a-distributed-system">The deployment layout of a distributed system<a class="zola-anchor" href="#the-deployment-layout-of-a-distributed-system" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>At OVHcloud, I operated the HBase cluster behind the Metrics platform, 255 machines taking 2 million writes and 6 million reads per second in a single cluster. HBase was fragile under network issues, and every incident triggered region split inconsistencies that hit every user of the platform at the same time. After HBase, I worked on etcd for Kubernetes control planes. Spawning three etcd nodes per customer is not a valid approach at scale, so we put hundreds of customers on each etcd cluster, and because of etcd's limitations, we had to move them manually and painfully across these clusters of three machines.</p>
+<p>Both experiences come from the same recurring decision that everyone working on multi-tenant systems needs to make: how are you going to densify? Are you going to have a single, almighty distributed cluster to hold everything, or are you going to create a cluster per usage?</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span> one dense cluster           one cluster per usage</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   A   B   C   D               A      B      C      D</span></span>
+<span class="giallo-l"><span>   |   |   |   |               |      |      |      |</span></span>
+<span class="giallo-l"><span> +----------------+          +---+  +---+  +---+  +---+</span></span>
+<span class="giallo-l"><span> |    cluster     |          | 1 |  | 2 |  | 3 |  | 4 |</span></span>
+<span class="giallo-l"><span> +----------------+          +---+  +---+  +---+  +---+</span></span>
+<span class="giallo-l"><span> 1 cluster to operate        4 clusters to operate</span></span>
+<span class="giallo-l"><span> failure hits A,B,C,D        failure hits 1 usage</span></span></code></pre>
+<p>Big clusters are efficient in terms of SRE time and infrastructure cost, but they have a big impact when they fail. One cluster per usage keeps the blast radius of a failure minimal, and you pay for it with one more cluster to operate for every usage. Can we have something in the middle? The <a rel="external" href="https://docs.aws.amazon.com/pdfs/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/reducing-scope-of-impact-with-cell-based-architecture.pdf">AWS whitepaper on the topic</a>, written by Robisson Oliveira in September 2023, asks a pretty interesting question:</p>
+<blockquote>
+<p>"Is it better for 100% of customers to experience a 5% failure rate, or 5% of customers to experience a 100% failure rate?"</p>
+</blockquote>
+<p>AWS's answer to this problem is <strong>cell-based architecture</strong>.</p>
+<h2 id="overall-cell-design">Overall cell design<a class="zola-anchor" href="#overall-cell-design" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>The main idea is to design your system so that customers have a single entry point, but internally, they are routed to different backends, called cells:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>               clients</span></span>
+<span class="giallo-l"><span>                  |</span></span>
+<span class="giallo-l"><span>           +-------------+  map   +---------------+</span></span>
+<span class="giallo-l"><span>           | thin router | &lt;----- | control plane |</span></span>
+<span class="giallo-l"><span>           +-------------+        +---------------+</span></span>
+<span class="giallo-l"><span>            /     |     \</span></span>
+<span class="giallo-l"><span>      +------+ +------+ +------+</span></span>
+<span class="giallo-l"><span>      |cell 1| |cell 2| |cell 3|</span></span>
+<span class="giallo-l"><span>      +------+ +------+ +------+</span></span></code></pre>
+<p>A <strong>cell</strong> is a complete copy of your workload that shares no state with the others: its own storage, its own deployment and its own failure domain, with no calls to the other cells and no shared database or bucket. A cell can be lost, drained or upgraded without the other cells noticing, and this is what each etcd cluster was at OVHcloud for its own set of customers.</p>
+<p>The <strong>thin router</strong> only sends each request to the right cell based on a <strong>partition key</strong>, like the customer ID. It is the one component shared by every cell, so its failures are not divided by anything, and this is why the whitepaper wants it to be the "thinnest possible layer".</p>
+<p>The <strong>control plane</strong> provisions cells and migrates customers between them, and it stays off the request path, because routers keep serving on the last map it published even when it is down.</p>
+<p>Load and blast radius are divided by the number of cells, except at the router, and it does not have to mean more infrastructure: 30 hosts can stay 30 hosts, grouped behind a router. When cells hold data, the design comes down to spreading data and moving it.</p>
+<h2 id="the-partition-key">The partition key<a class="zola-anchor" href="#the-partition-key" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<h3 id="choosing-the-key">Choosing the key<a class="zola-anchor" href="#choosing-the-key" aria-hidden="true" tabindex="-1">#</a>
+</h3>
+<p>To spread customers across cells, you need a key to shard on, and the obvious candidate in a multi-tenant system is the tenant:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>           +-------------+</span></span>
+<span class="giallo-l"><span>           | thin router |</span></span>
+<span class="giallo-l"><span>           +-------------+</span></span>
+<span class="giallo-l"><span>            /     |     \</span></span>
+<span class="giallo-l"><span>      +------+ +------+ +------+</span></span>
+<span class="giallo-l"><span>      |cell 1| |cell 2| |cell 3|</span></span>
+<span class="giallo-l"><span>      | A, D | | B, E | | C, F |</span></span>
+<span class="giallo-l"><span>      +------+ +------+ +------+</span></span></code></pre>
+<p>The problem is that a tenant can never outgrow its cell, so the largest tenant decides the size of every cell. The whitepaper suggests adding a second dimension to the key, aligned with your business and next to the customer ID, so a large tenant can spread over several cells.</p>
+<p>Whatever the key, the router must find it cheaply in every request, otherwise it stops being thin. For our Kubernetes control planes, a proxy read the tenant from the TLS client certificate of each API server, and it also handled per-tenant monitoring and quotas.</p>
+<h3 id="mapping-keys-to-cells">Mapping keys to cells<a class="zola-anchor" href="#mapping-keys-to-cells" aria-hidden="true" tabindex="-1">#</a>
+</h3>
+<p>The router applies the mapping from partition key to cell on every request, and the same mapping decides how many tenants move every time a cell is added. The naive transformation is to hash the partition key and take it modulo the number of cells. The problem is that adding a cell then moves a lot of tenants on day one, and going from 3 to 4 cells in this example moves every single one of them:</p>
+<table><thead><tr><th>Tenant</th><th>hash(key)</th><th>3 cells (mod 3 + 1)</th><th>4 cells (mod 4 + 1)</th></tr></thead><tbody>
+<tr><td>A</td><td>17</td><td><code>Cell(3)</code></td><td><code>Cell(2)</code></td></tr>
+<tr><td>B</td><td>22</td><td><code>Cell(2)</code></td><td><code>Cell(3)</code></td></tr>
+<tr><td>C</td><td>27</td><td><code>Cell(1)</code></td><td><code>Cell(4)</code></td></tr>
+<tr><td>D</td><td>40</td><td><code>Cell(2)</code></td><td><code>Cell(1)</code></td></tr>
+<tr><td>E</td><td>53</td><td><code>Cell(3)</code></td><td><code>Cell(2)</code></td></tr>
+<tr><td>F</td><td>68</td><td><code>Cell(3)</code></td><td><code>Cell(1)</code></td></tr>
+</tbody></table>
+<p>A better way is to hash into a fixed number of buckets, here 12, that does not change when cells are added:</p>
+<table><thead><tr><th>Tenant</th><th>hash(key)</th><th>hash mod 12</th><th>Bucket</th></tr></thead><tbody>
+<tr><td>A</td><td>17</td><td>5</td><td><code>Bucket(5)</code></td></tr>
+<tr><td>B</td><td>22</td><td>10</td><td><code>Bucket(10)</code></td></tr>
+<tr><td>C</td><td>27</td><td>3</td><td><code>Bucket(3)</code></td></tr>
+<tr><td>D</td><td>40</td><td>4</td><td><code>Bucket(4)</code></td></tr>
+<tr><td>E</td><td>53</td><td>5</td><td><code>Bucket(5)</code></td></tr>
+<tr><td>F</td><td>68</td><td>8</td><td><code>Bucket(8)</code></td></tr>
+</tbody></table>
+<p>The 12 buckets are for readability, real systems use far more, like the 16384 hash slots of <a rel="external" href="https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/">Redis Cluster</a>, and the whitepaper gives an order of magnitude rather than a recommendation:</p>
+<blockquote>
+<p>"A general use of consistent hash in cell mapping is a system that is configured with a fixed large number (for example, tens of thousands) of logical buckets which are explicitly mapped to much smaller number of physical cells."</p>
+</blockquote>
+<p>Each bucket is then assigned to a cell, and the tenants follow their bucket:</p>
+<table><thead><tr><th>Buckets</th><th>State</th><th>Tenants</th></tr></thead><tbody>
+<tr><td><code>Bucket(0)</code> to <code>Bucket(3)</code></td><td><code>Assigned(Cell(1))</code></td><td>C</td></tr>
+<tr><td><code>Bucket(4)</code> to <code>Bucket(7)</code></td><td><code>Assigned(Cell(2))</code></td><td>D, A, E</td></tr>
+<tr><td><code>Bucket(8)</code> to <code>Bucket(11)</code></td><td><code>Assigned(Cell(3))</code></td><td>F, B</td></tr>
+</tbody></table>
+<p>Adding a fourth cell then means moving one bucket from each existing cell, and only C, sitting in <code>Bucket(3)</code>, has to move:</p>
+<table><thead><tr><th>Bucket</th><th>State</th><th>Tenants</th></tr></thead><tbody>
+<tr><td><code>Bucket(3)</code></td><td><code>Moving(From(Cell(1)), To(Cell(4)))</code></td><td>C</td></tr>
+<tr><td><code>Bucket(7)</code></td><td><code>Moving(From(Cell(2)), To(Cell(4)))</code></td><td></td></tr>
+<tr><td><code>Bucket(11)</code></td><td><code>Moving(From(Cell(3)), To(Cell(4)))</code></td><td></td></tr>
+<tr><td>all others</td><td>unchanged</td><td></td></tr>
+</tbody></table>
+<p>The hash step never changes, so the bucket is a stable identity for a tenant, and adding or removing a cell only touches the bucket-to-cell table. The bucket count is the grain of a move: with 12 buckets the smallest move is a twelfth of the data, with tens of thousands it is a tiny slice, which is why the whitepaper's number is that large. A new tenant needs no write at all, its hash lands in a bucket that already points to a cell, so the control plane is not on the path of the first request. The whitepaper's other option, a full map with one row per tenant, has to be written before that first request and grows with the number of tenants.</p>
+<h3 id="the-override-table">The override table<a class="zola-anchor" href="#the-override-table" aria-hidden="true" tabindex="-1">#</a>
+</h3>
+<p>We still need an override table for testing, quarantine and heavy tenants, and the whitepaper makes it a rule: "Regardless of partition mapping approach, it's important to also use an override table to force specific keys to specific cells". In our example it looks like this:</p>
+<table><thead><tr><th>Tenant</th><th>State</th><th>Reason</th></tr></thead><tbody>
+<tr><td>A</td><td><code>Assigned(Cell(5))</code></td><td>heavy tenant, gets a dedicated cell, E stays in <code>Bucket(5)</code></td></tr>
+<tr><td>internal-*</td><td><code>Assigned(Cell(4))</code></td><td>testing, internal tenants land on the newest cell first</td></tr>
+<tr><td>G</td><td><code>Assigned(Cell(6))</code></td><td>quarantine, poison pills</td></tr>
+</tbody></table>
+<p>The router checks the override table first and falls back to the bucket table, which has a fixed number of rows whatever the number of tenants. The override table only holds the exceptions, so the whole directory fits in the memory of every router and can be published as a single document.</p>
+<h2 id="sizing-and-shaping-cells">Sizing and shaping cells<a class="zola-anchor" href="#sizing-and-shaping-cells" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>The next question is "how big should a cell be?", and this is a tough one, because it mixes technical and business decisions. I ended up with this kind of long list of axes to look at, and one cell needs to be:</p>
+<ul>
+<li>big enough to accept the largest workloads without splitting a customer across cells,</li>
+<li>big enough to gain economies of scale and amortize the fixed cost of a cell,</li>
+<li>big enough to keep the number of cells operable,</li>
+<li>small enough that losing or draining one cell is a small share of customers,</li>
+<li>small enough to stay below the quotas and the scaling cliffs you have not met yet,</li>
+<li>known and enforced, expressed in transactions per second, tenants or GB stored, with load shedding at the limit,</li>
+<li>operated with headroom, half the tested ceiling, so spikes, failovers and incoming moves have room.</li>
+</ul>
+<p>These axes pull against each other, with the business side pushing the size up, because a bigger cell lowers the cost per tenant and leaves room for the next big customer. The whitepaper's cell sizing section weighs the same trade-off, with smaller cells giving more cells to manage and a smaller share of customers per outage, and larger cells giving better utilization and fewer customers split across cells. At OVHcloud, the axis that bit me was the scaling cliff of etcd, whose whole keyspace must fit on every member under a recommended 8GB limit.</p>
+<p>With FoundationDB, the <a rel="external" href="https://apple.github.io/foundationdb/known-limitations.html">known limitations</a> are written down:</p>
+<blockquote>
+<p>FoundationDB has undergone performance testing and tuning with clusters of up to 500 cores/processes</p>
+</blockquote>
+<blockquote>
+<p>FoundationDB has been tested with databases up to 100 TB</p>
+</blockquote>
+<p>These are the hard technical limitations, but inside them there are a lot of things we can choose for a FoundationDB-based cell, like the redundancy mode, the hardware, the storage engine, the major version, and more. Mixing these choices could give us something like this, which is a design exercise and not what we run at Clever Cloud today:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>                   thin router</span></span>
+<span class="giallo-l"><span>                        |</span></span>
+<span class="giallo-l"><span>       +-----------+----+------+-----------+</span></span>
+<span class="giallo-l"><span>       |           |           |           |</span></span>
+<span class="giallo-l"><span>  +---------+ +---------+ +---------+ +---------+</span></span>
+<span class="giallo-l"><span>  | cell 1  | | cell 2  | | cell 3  | | cell 4  |</span></span>
+<span class="giallo-l"><span>  | triple  | | double  | | 3 halls | | triple  |</span></span>
+<span class="giallo-l"><span>  | ssd-2   | | ssd-2   | | redwood | | redwood |</span></span>
+<span class="giallo-l"><span>  | SATA    | | SATA    | | NVMe    | | NVMe    |</span></span>
+<span class="giallo-l"><span>  | 7.3     | | 7.3     | | 7.3     | | 7.4     |</span></span>
+<span class="giallo-l"><span>  +---------+ +---------+ +---------+ +---------+</span></span>
+<span class="giallo-l"><span>  shared      cheap       critical    canary</span></span>
+<span class="giallo-l"><span>  tenants     tier        low volume  internal</span></span></code></pre>
+<p>The shared tenants live on triple redundancy, and the cheap tier runs double redundancy, also on SATA, for tenants who accept fewer copies of their data in exchange for a lower price. Critical tenants with a low volume get a cell spread over three data halls, on NVMe with the Redwood storage engine, so the cell survives the loss of a whole data hall. The canary runs 7.4 and takes the internal tenants first, which is the <code>internal-*</code> row of the override table pointing to <code>Cell(4)</code>.</p>
+<p>None of these choices is final: the cheap cell fills up, the canary becomes a regular cell once the release is trusted, a tenant outgrows the shared cell, and each revision means moving tenants from one shape to another.</p>
+<h2 id="moving-data-is-the-core-capability-and-the-worst-one">Moving data is the core capability, and the worst one<a class="zola-anchor" href="#moving-data-is-the-core-capability-and-the-worst-one" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>On the etcd clusters at OVHcloud, which I <a rel="external" href="https://www.youtube.com/watch?v=IrJyrGQ_R9c">talked about at KubeCon</a>, what forced a move was almost always a noisy neighbor, usually a Kubernetes operator in one customer's cluster that was a bit too aggressive with etcd. Moving that customer was an offline and manual procedure, where we blocked writes, copied the data to another etcd cluster, verified it, switched traffic and deleted the old copy. The noisy cell was already struggling, so sometimes the copy made both cells unstable.</p>
+<p>Almost every operation on a cell-based system is a move, from rebalancing and evacuating a failing cell to isolating a noisy tenant or adopting cells in the first place, which is why the whitepaper's best practice is "Start with a cell migration mechanism from day one". Apple does it in CloudKit, where Scott Gray <a rel="external" href="https://www.youtube.com/watch?v=SvoUHHM9IKU">describes</a> moving contiguous key ranges between FoundationDB clusters to rebalance load.</p>
+<p>The whitepaper names the steps of a move <strong>clone</strong>, <strong>flip</strong>, <strong>redirect</strong> and <strong>forget</strong>, which in the bucket tables above is one row going from <code>Assigned</code> to <code>Moving</code> and back. We blocked writes during the whole copy, and in the live migration Peter Vosshall describes in the <a rel="external" href="https://www.youtube.com/watch?v=swQbA4zub20">ARC338 talk at re:Invent 2018</a>, writes are only blocked for a brief final sync, and shrinking that window is the hard part.</p>
+<p>A move touches two cells at once, which breaks the rule Peter Vosshall says every new AWS engineer learns, never touch more than one zone at a time, so the receiving cell needs headroom before the copy starts. It also has consequences above the storage layer: CloudKit syncs devices with an index ordered by FoundationDB commit versions, which are uncorrelated between clusters, so Apple added a per-user count of moves called the <strong>incarnation</strong>, as the <a rel="external" href="https://arxiv.org/abs/1901.04452">Record Layer paper at SIGMOD 2019</a> explains.</p>
+<h2 id="the-control-plane-is-a-tenant">The control plane is a tenant<a class="zola-anchor" href="#the-control-plane-is-a-tenant" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>If every piece of the system must move, the control plane must move too, otherwise its cell becomes the one you can never drain or retire. Scott Gray's CloudKit talk also shows how Apple runs it on FoundationDB and the Record Layer:</p>
+<p><img src="/images/notes-about-foundationdb/record-extract-3.png" alt="Record stores and sharding in CloudKit, from Scott Gray&#39;s CloudKit talk" /></p>
+<p>Each FoundationDB cluster is a cell holding millions of users and tens of millions of <strong>record stores</strong>, one per user and per application, and each record store is a virtual database with its records, indexes and metadata in one contiguous range of keys. A directory service keeps track of which cluster owns each user, and I have no insight into how Apple runs it, but I see no reason why it has to be an external system. When I look at this picture, the control plane is only one more specialized record store somewhere in the infrastructure, a tenant like any other:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>               clients</span></span>
+<span class="giallo-l"><span>                  |</span></span>
+<span class="giallo-l"><span>           +-------------+  map   +---------------+</span></span>
+<span class="giallo-l"><span>           | thin router | &lt;----- | control plane |</span></span>
+<span class="giallo-l"><span>           +-------------+        +---------------+</span></span>
+<span class="giallo-l"><span>            /     |     \                 |</span></span>
+<span class="giallo-l"><span>      +------+ +------+ +------+          |</span></span>
+<span class="giallo-l"><span>      |cell 1| |cell 2| |cell 3|          |</span></span>
+<span class="giallo-l"><span>      |  C   | | A,D,E| | B, F |          |</span></span>
+<span class="giallo-l"><span>      |      | |  CP  | |      |          |</span></span>
+<span class="giallo-l"><span>      +------+ +--^---+ +------+          |</span></span>
+<span class="giallo-l"><span>                  |                       |</span></span>
+<span class="giallo-l"><span>                  +-----------------------+</span></span>
+<span class="giallo-l"><span>              control plane state = tenant CP</span></span></code></pre>
+<p>This works when the control plane data fits the tenant split and the cells are strongly consistent, which is the case with FoundationDB. It then becomes an application of the <strong>eat your own dog food</strong> principle: the control plane lives in the same cells, with the same guarantees and the same moves as every customer. It also forces you to handle the move of your most critical tenant, and to do it fast, because while the control plane moves, nobody can move anyone else. Routers keep serving on their last published map in the meantime, so traffic does not stop.</p>
+<h2 id="operating-many-cells">Operating many cells<a class="zola-anchor" href="#operating-many-cells" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<p>For operators, the main goal of all this is to keep each distributed system under a load that makes operations easy. Running a system at 80 or 90% of its capacity leaves no room for failures, incidents and spikes, and at OVHcloud I <a href="/posts/2025-year-in-review/">got paged too often when etcd hit its performance ceiling</a>. With cells, a cell close to its ceiling moves tenants out, so the move is what keeps every cell at a load where an incident or a spike still fits.</p>
+<p>Adopting cells does not need a big migration either. The whitepaper says "Your current instance/stack is your cell zero", so you put a router in front of what you already have, and the first migration out of it is your first move.</p>
+<p>The rest is automation from day one, deployments in waves starting with the canary cell, and cell-aware observability. The isolation only helps if operations respect it, and in ARC338 Peter Vosshall recalled the 2017 S3 outage, where an engineer who knew the philosophy still made a command-line mistake.</p>
+<p>At what load do your clusters run today, and could you move a tenant out of the hottest one tomorrow?</p>
+<hr />
+<p>Feel free to reach out with any questions or to share your experiences with cell-based architecture. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
+
+  </div>
+  <nav class="pn" aria-label="previous and next posts">
+    <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</span></a>
+    <span class="pn-item pn-empty"></span>
+  </nav>
+</article>
+
+  </main>
+
+  <footer class="foot">
+  <div class="cell">
+    <span class="label">revision history</span>
+    © 2026 Pierre Zemb · last rev. 2026-10-27
+  </div>
+  <div class="cell">
+    <span class="label">contact</span>
+    <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script src="https://pierrezemb.fr/js/theme-toggle.js" defer></script>
+<script id="read-ctl" src="https://pierrezemb.fr/js/read.js" data-default-mode="quorum" data-enabled="true" defer></script>
+<script id="mermaid-init" src="https://pierrezemb.fr/js/mermaid-init.js" data-src="https://pierrezemb.fr/js/mermaid.min.js" defer></script>
+
+<script src="https://pierrezemb.fr/js/search.js" defer data-elasticlunr="https://pierrezemb.fr/js/elasticlunr.min.js" data-index="https://pierrezemb.fr/search_index.en.js" id="search-ctl"></script>
+
+
+</body>
+</html>

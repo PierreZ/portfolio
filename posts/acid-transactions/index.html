@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/acid-transactions/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -57,7 +58,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/acid-transactions.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/acid-transactions.md">
 
 
   <script>
@@ -74,9 +75,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -84,19 +85,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;acid-transactions">./read --quorum posts&#x2F;acid-transactions</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -117,13 +115,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / acid-transactions
   </div>
 
-  <h2 class="title">What are ACID transactions?</h2>
+  <h1 class="title">What are ACID transactions?</h1>
   <div class="meta-row"><span class="m"><b>2019-02-03</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/acid-transactions.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/acid-transactions.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/sql/">#sql</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -162,7 +160,8 @@
   </nav>
 
   <div class="prose">
-    <h1 id="transaction">Transaction?<a class="zola-anchor" href="#transaction" aria-label="Anchor link for: transaction">🔗</a></h1>
+    <h1 id="transaction">Transaction?<a class="zola-anchor" href="#transaction" aria-hidden="true" tabindex="-1">#</a>
+</h1>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>&quot;Programming should be about transforming data&quot;</span></span></code></pre>
 <p>--- Programming Elixir 1.3 by Dave Thomas</p>
 <hr />
@@ -176,15 +175,19 @@
 <blockquote>
 <p><strong>A</strong>tomic, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability</p>
 </blockquote>
-<h2 id="atomic">Atomic<a class="zola-anchor" href="#atomic" aria-label="Anchor link for: atomic">🔗</a></h2>
+<h2 id="atomic">Atomic<a class="zola-anchor" href="#atomic" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Atomic, as you may have guessed, <code>atomic</code> represents something that <strong>cannot be splitted</strong>. In the database transaction world, it means for example that if a transaction with several writes is <strong>started and failed</strong> at some point, <strong>none of the write will be committed</strong>. As stated by many, the word <code>atomic</code> could be reword as <code>abortability</code>.</p>
 <hr />
-<h2 id="consistency">Consistency<a class="zola-anchor" href="#consistency" aria-label="Anchor link for: consistency">🔗</a></h2>
+<h2 id="consistency">Consistency<a class="zola-anchor" href="#consistency" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>You will hear about <code>consistency</code> a lot of this serie. Unfortunately, this word can be used in a lot of context. In the ACID definition, it refers to the fact that a transaction will <strong>bring the database from one valid state to another.</strong></p>
 <hr />
-<h2 id="isolation">Isolation<a class="zola-anchor" href="#isolation" aria-label="Anchor link for: isolation">🔗</a></h2>
+<h2 id="isolation">Isolation<a class="zola-anchor" href="#isolation" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Think back to your database. Were you the only user on it? I don't think so. Maybe they were concurrent transactions at the same time, beside yours. <strong>Isolation while keeping good performance is the most difficult item on the list.</strong> There's a lot of litterature and papers about it, and we will only scratch the surface. There is different transaction isolation levels, depending on the number of guarantees provided.</p>
-<h3 id="isolation-by-the-theory">Isolation by the theory<a class="zola-anchor" href="#isolation-by-the-theory" aria-label="Anchor link for: isolation-by-the-theory">🔗</a></h3>
+<h3 id="isolation-by-the-theory">Isolation by the theory<a class="zola-anchor" href="#isolation-by-the-theory" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>The SQL standard defines four isolation levels: <code>Serializable</code>, <code>Repeatable Read</code>, <code>Read Commited</code> and <code>Read Uncommited</code>. The strongest isolation is <code>Serializable</code> where transaction are <strong>not runned in parallel</strong>. As you may have guessed, it is also the slowest. <strong>Weaker isolation level are trading speed against anomalies</strong> that can be sum-up like this:</p>
 <table><thead><tr><th>Isolation level</th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Dirty_reads">dirty reads</a></th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Non-repeatable_reads">Non-repeatable reads</a></th><th><a rel="external" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)#Phantom_reads">Phantom reads</a></th><th>Performance</th></tr></thead><tbody>
 <tr><td>Serializable</td><td>😎</td><td>😎</td><td>😎</td><td>👍</td></tr>
@@ -195,7 +198,8 @@
 <blockquote>
 <p>I encourage you to click on all the links within the table to <strong>see everything that could go wrong in a weak database!</strong></p>
 </blockquote>
-<h3 id="isolation-in-real-databases">Isolation in Real Databases<a class="zola-anchor" href="#isolation-in-real-databases" aria-label="Anchor link for: isolation-in-real-databases">🔗</a></h3>
+<h3 id="isolation-in-real-databases">Isolation in Real Databases<a class="zola-anchor" href="#isolation-in-real-databases" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Now that we saw some theory, let's have a look on a particular well-known database: PostgreSQL. What kind of isolation PostgreSQL is offering?</p>
 <blockquote>
 <p>PostgreSQL provides a rich set of tools for developers to manage concurrent access to data. Internally, data consistency is maintained by using a multiversion model (<strong>Multiversion Concurrency Control, MVCC</strong>).</p>
@@ -203,15 +207,17 @@
 <p>--- <a rel="external" href="https://www.postgresql.org/docs/current/mvcc-intro.html">Concurrency Control introduction</a></p>
 <p>Wait what? What is MVCC? Well, turns out that after the SQL standards came another type of Isolation: <strong>Snapshot Isolation</strong>. Instead of locking that row for reading when somebody starts working on it, it ensures that <strong>any transaction will see a version of the data that is corresponding to the start of the query</strong>. As it is providing a good balance between <strong>performance and consistency</strong>, it became <a rel="external" href="https://en.wikipedia.org/wiki/List_of_databases_using_MVCC">a standard used by the industry</a>.</p>
 <hr />
-<h2 id="durability">Durability<a class="zola-anchor" href="#durability" aria-label="Anchor link for: durability">🔗</a></h2>
+<h2 id="durability">Durability<a class="zola-anchor" href="#durability" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p><code>Durability</code> ensure that your database is a <strong>safe place</strong> where data can be stored without fear of losing it. If a transaction has commited successfully, any written data will not be forgotten.</p>
-<h1 id="that-s-it">That's it?<a class="zola-anchor" href="#that-s-it" aria-label="Anchor link for: that-s-it">🔗</a></h1>
+<h1 id="that-s-it">That's it?<a class="zola-anchor" href="#that-s-it" aria-hidden="true" tabindex="-1">#</a>
+</h1>
 <p><strong>All these properties may seems obvious to you</strong> but each of the item is involving a lot of engineering and researchs. And this is only valid for a single machine, <strong>the distributed transaction field</strong> is even more complicated, but we will get to it in another blogpost!</p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/hbase-data-model/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Hbase Data Model</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/ovh-alerts-flink/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Handling OVH&#x27;s alerts with Apache Flink</span></a>
   </nav>
@@ -219,17 +225,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

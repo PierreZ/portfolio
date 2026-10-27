@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/automatic-txn-fdb-730/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2024/automatic-txn-fdb-730.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2024/automatic-txn-fdb-730.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;automatic-txn-fdb-730">./read --quorum posts&#x2F;automatic-txn-fdb-730</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / automatic-txn-fdb-730
   </div>
 
-  <h2 class="title">True idempotent transactions with FoundationDB 7.3</h2>
+  <h1 class="title">True idempotent transactions with FoundationDB 7.3</h1>
   <div class="meta-row"><span class="m"><b>2024-03-12</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2024/automatic-txn-fdb-730.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2024/automatic-txn-fdb-730.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/transactions/">#transactions</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -140,7 +138,8 @@
 
   <div class="prose">
     <p>I have been working around <a rel="external" href="https://foundationdb.org">FoundationDB</a> for several years now, and the new upcoming version is fixing one of the most evil and painful caveats you can deal with when writing layers: <code>commit_unknown_result</code>.</p>
-<h2 id="transactions-with-unknown-results">Transactions with unknown results<a class="zola-anchor" href="#transactions-with-unknown-results" aria-label="Anchor link for: transactions-with-unknown-results">🔗</a></h2>
+<h2 id="transactions-with-unknown-results">Transactions with unknown results<a class="zola-anchor" href="#transactions-with-unknown-results" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>When you start writing code with FDB, you may be under the assertions that given the database’s robustness, you will not experience some strange behavior under certain failure scenarios. Turns out, there is one scenario that is possible to reach, and quickly explained in the official <a rel="external" href="https://apple.github.io/foundationdb/developer-guide.html#transactions-with-unknown-results">documentation</a>:</p>
 <blockquote>
 <p>As with other client/server databases, in some failure scenarios a client may be unable to determine whether a transaction succeeded. In these cases, commit() will raise a <a rel="external" href="https://apple.github.io/foundationdb/api-error-codes.html#developer-guide-error-codes"><code>commit_unknown_result</code></a> exception. The on_error() function treats this exception as retriable, so retry loops that don’t check for <a rel="external" href="https://apple.github.io/foundationdb/api-error-codes.html#developer-guide-error-codes"><code>commit_unknown_result</code></a> could execute the transaction twice. In these cases, you must consider the idempotency of the transaction.</p>
@@ -151,36 +150,37 @@
 </blockquote>
 <p>It truly depends whether it is acceptable for your transaction to be committed twice. For most of the case, it is not, but sometimes developers are not aware of this behavior, leading to errors. This is one of the reasons why we worked and open-sourced a way to embed rust-code within FoundationDB’s simulation framework. Using the simulation crate, your layer can be tested like FDB, and I can assure you: you <strong>will see</strong> those transactions in simulation 🙈.</p>
 <p>This behavior has given headache to my colleagues, as we tried to bypass correctness and validation code in simulation when transactions state are unknown, and who could blame us? Validate the correctness of your code is hard when certains transactions (for example, one that could clean everything) are “maybe committed”. Fortunately, the community has released a workaround for this: <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/documentation/sphinx/source/automatic-idempotency.rst"><code>automatic idempotency</code></a>.</p>
-<h2 id="automatic-idempotency">Automatic idempotency<a class="zola-anchor" href="#automatic-idempotency" aria-label="Anchor link for: automatic-idempotency">🔗</a></h2>
+<h2 id="automatic-idempotency">Automatic idempotency<a class="zola-anchor" href="#automatic-idempotency" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The documentation is fairly explicit:</p>
 <blockquote>
 <p>Use the automatic_idempotency transaction option to prevent commits from failing with <code>commit_unknown_result</code> at a small performance cost.</p>
 </blockquote>
 <p>The option appeared in FoundationDB 7.3, and could solve our issue. I decided to give it a try and modify the foundationdb-simulation crate example. The example is trying to use a atomic increment under simulation. Before 7.1, during validation, we had to write <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/blob/98136cbea1c9b8d40ea9a599438ce0fa8d0297c0/foundationdb-simulation/examples/atomic/workload.rs#L99C1-L99C94">some code</a> that looks like this:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> We don&#39;t know how much maybe_committed transactions has succeeded,</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> so we are checking the possible range</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> We don&#39;t know how much maybe_committed transactions has succeeded,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> so we are checking the possible range</span></span>
 <span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>success_count </span><span class="z-keyword">&lt;=</span><span class="z-variable z-other"> count</span></span>
 <span class="giallo-l"><span class="z-keyword">   &amp;&amp;</span><span class="z-variable z-other"> count</span><span class="z-keyword"> &lt;=</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>expected_count </span><span class="z-keyword">+</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>maybe_committed_count </span><span>{</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
 <p>As I was adding 7.3 support in the crate, I decided to update the example and try the new option:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Enable idempotent txn</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> trx</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">set_option</span><span>(</span><span class="z-entity z-name z-namespace">TransactionOption</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">AutomaticIdempotency</span><span>)</span><span class="z-keyword">?</span><span>;</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Enable idempotent txn</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> trx</span><span class="z-keyword">.</span><span class="z-entity z-name">set_option</span><span>(</span><span class="z-entity z-name">TransactionOption</span><span class="z-keyword">::</span><span class="z-entity z-name">AutomaticIdempotency</span><span>)</span><span class="z-keyword">?</span><span>;</span></span></code></pre>
 <p>If the behavior is correct, I can simplify my consistency checks:</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>success_count </span><span class="z-keyword">==</span><span class="z-variable z-other"> count</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-language">    self</span><span class="z-keyword">.</span><span>context</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">trace</span><span>(</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">        Severity</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">Info</span><span>,</span></span>
-<span class="giallo-l"><span class="z-string">        &quot;</span><span class="z-string">Atomic count match</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">        details!</span><span>[</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-language">    self</span><span class="z-keyword">.</span><span>context</span><span class="z-keyword">.</span><span class="z-entity z-name">trace</span><span>(</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Severity</span><span class="z-keyword">::</span><span class="z-entity z-name">Info</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &quot;</span><span class="z-string">Atomic count match</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        details!</span><span>[</span><span>]</span><span>,</span></span>
 <span class="giallo-l"><span>     )</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
 <p>I’ve been running hundreds of seeds on my machine and everything works great: no more maybe-committed transactions! Now that 7.3 support is merged in the rust bindings, we will be able to expands our testing thanks to our simulation farm. I'm also looking to see the performance impact of the feature, even if I'm pretty sure that it will outperform any layer-work.</p>
 <p>This is truly a very useful feature and I hope this option will be turned on by default on the next major release. The initial PR can be found <a rel="external" href="https://github.com/apple/foundationdb/pull/8398">here</a>.</p>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/academic-conferences/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">The unseen treasures of Infrastructure Engineering: Academic Papers</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/redwood-memory-tuning/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Redwood’s memory tuning in FoundationDB</span></a>
   </nav>
@@ -188,17 +188,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

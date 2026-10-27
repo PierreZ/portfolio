@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/tags/leader-election/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -67,9 +68,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -77,19 +78,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags&#x2F;leader-election">./read --quorum tags&#x2F;leader-election</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 1 document · committed</span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -106,13 +104,14 @@
 
   <main id="main">
     
+<h1 class="sr-only">#leader-election</h1>
 <div class="sec-head">ls ./tags/leader-election</div>
 <div class="bom">
   
   <div class="row">
     <div class="date">2026-02-05<span class="rt">~8 min</span></div>
     <div>
-      <a class="ttl" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Simulating Leader Election on top of FoundationDB</a><a class="desc" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.</a>
+      <a class="ttl" href="https://pierrezemb.fr/posts/simulating-leader-election-on-foundationdb/">Simulating Leader Election on top of FoundationDB</a><p class="desc">Can LLM-generated code be trusted for distributed systems? Only if you have the right feedback loop.</p>
     </div>
   </div>
 
@@ -120,17 +119,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

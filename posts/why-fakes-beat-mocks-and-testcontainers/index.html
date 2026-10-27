@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/why-fakes-beat-mocks-and-testcontainers/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -56,7 +57,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">
 
 
   <script>
@@ -73,9 +74,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -83,19 +84,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;why-fakes-beat-mocks-and-testcontainers">./read --quorum posts&#x2F;why-fakes-beat-mocks-and-testcontainers</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -116,13 +114,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / why-fakes-beat-mocks-and-testcontainers
   </div>
 
-  <h2 class="title">Why Fakes Beat Mocks and Testcontainers</h2>
+  <h1 class="title">Why Fakes Beat Mocks and Testcontainers</h1>
   <div class="meta-row"><span class="m"><b>2026-03-26</b></span>
     <span class="m">read: <b>~8 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/why-fakes-beat-mocks-and-testcontainers.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -151,7 +149,8 @@
   <div class="prose">
     <p>Your CI pipeline spins up Kafka, Postgres, and Redis in Docker containers. It takes 4 minutes to start. Every test passes. And none of them can simulate the one failure mode that will page you at 3 AM.</p>
 <p>The problem is not speed or convenience. The problem is that Testcontainers give you a binary outcome: the whole service is up, or it is down. But production failures are <strong>partial</strong>. A Kafka broker loses partition 3 while partitions 1, 2, and 4 stay healthy. A Postgres replica falls behind by 30 seconds while the primary is fine. A Redis cluster has one shard OOM while five others serve normally. These are the failures where the real bugs hide, and Testcontainers simply cannot produce them.</p>
-<h2 id="mocks-testcontainers-and-fakes">Mocks, Testcontainers, and fakes<a class="zola-anchor" href="#mocks-testcontainers-and-fakes" aria-label="Anchor link for: mocks-testcontainers-and-fakes">🔗</a></h2>
+<h2 id="mocks-testcontainers-and-fakes">Mocks, Testcontainers, and fakes<a class="zola-anchor" href="#mocks-testcontainers-and-fakes" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Mocks and Testcontainers are the two tools most developers reach for. Both have fundamental limitations. There is a third option that is surprisingly underused: <strong>fakes</strong>.</p>
 <table><thead><tr><th></th><th>Mocks</th><th>Testcontainers</th><th>Fakes</th></tr></thead><tbody>
 <tr><td><strong>State</strong></td><td>None — scripted returns</td><td>Full — real database</td><td>Realistic — in-memory</td></tr>
@@ -161,7 +160,8 @@
 <tr><td><strong>Deterministic</strong></td><td>Yes</td><td>No</td><td>Yes</td></tr>
 </tbody></table>
 <p>A fake is a real implementation of a dependency's interface that runs in-memory, maintains realistic state, and can inject failures at arbitrary granularity. Not a compromise between mocks and real dependencies, but something <strong>more powerful</strong> than both.</p>
-<h2 id="what-is-wrong-with-mocks">What is wrong with mocks<a class="zola-anchor" href="#what-is-wrong-with-mocks" aria-label="Anchor link for: what-is-wrong-with-mocks">🔗</a></h2>
+<h2 id="what-is-wrong-with-mocks">What is wrong with mocks<a class="zola-anchor" href="#what-is-wrong-with-mocks" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The first problem is that mock expectations couple your tests to implementation details. Oxide Computer's <a rel="external" href="https://github.com/oxidecomputer/omicron/blob/main/illumos-utils/src/fakes/README.adoc">README on fakes</a> captures it:</p>
 <blockquote>
 <p>"If you're calling a mocked API which accesses the host OS several call stacks down, your test must have an expect call for that API, or it will fail."</p>
@@ -178,7 +178,8 @@
 </blockquote>
 <p>A fake avoids this entirely because it is just another implementation of the same interface. It exercises the same production wiring, the same error handling. The only thing that changes is what sits behind the interface.</p>
 <p>But if mocks are the wrong tool, what replaces them?</p>
-<h2 id="the-pattern">The pattern<a class="zola-anchor" href="#the-pattern" aria-label="Anchor link for: the-pattern">🔗</a></h2>
+<h2 id="the-pattern">The pattern<a class="zola-anchor" href="#the-pattern" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The idea is simple enough to fit in a single paragraph: define an interface for the external dependency, implement it once for real usage (the version that calls the OS, the network, the disk), implement it again as a fake (in-memory, stateful, with injectable failure modes), and inject via interface reference so you can swap between real and fake at runtime. Tests compose multiple fake implementations into a complete test environment. That is the entire pattern.</p>
 <p>Two principles help you choose where to draw the boundary.</p>
 <p><strong>Code ownership.</strong> Fake where your code meets code you do not own. If you fake at the JDBC level, you are simulating PostgreSQL's behavior: connection pooling, transaction isolation, error codes. That is code you do not own. When PostgreSQL changes behavior between major versions, your fake silently diverges from reality. If you fake at <code>UserRepository</code>, you are simulating a contract you defined. Three methods, a <code>HashMap</code>. You can keep it correct because you wrote the spec.</p>
@@ -194,81 +195,84 @@
 </tbody></table>
 <p>Not every fake needs the same depth. A no-op that returns <code>Ok(())</code> is enough when you do not care about the component's behavior. An in-memory implementation with real data operations covers most cases. Chaos injection is only needed when you want to test failure handling. Start with the simplest fake that catches the bugs you care about.</p>
 <p>Start with the trait:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-storage">trait</span><span class="z-entity z-name z-type"> UserRepository</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span class="z-entity z-name z-type">Option</span><span>&lt;</span><span class="z-entity z-name z-type">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-storage z-type">trait</span><span class="z-entity z-name"> UserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span class="z-entity z-name">Option</span><span>&lt;</span><span class="z-entity z-name">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Your code depends on this trait, not on PostgreSQL. Now write two implementations:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Production</span></span>
-<span class="giallo-l"><span class="z-storage">struct</span><span class="z-entity z-name z-type"> PostgresUserRepository</span><span> {</span><span class="z-variable z-other"> pool</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> PgPool</span><span> }</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Production</span></span>
+<span class="giallo-l"><span class="z-storage z-type">struct</span><span class="z-entity z-name"> PostgresUserRepository</span><span> {</span><span class="z-variable z-other"> pool</span><span class="z-keyword">:</span><span class="z-entity z-name"> PgPool</span><span> }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> PostgresUserRepository</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">        sqlx</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">query</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">INSERT INTO users ...</span><span class="z-string">&quot;</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">execute</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>pool</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">?</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name"> PostgresUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        sqlx</span><span class="z-keyword">::</span><span class="z-entity z-name">query</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">INSERT INTO users ...</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name">execute</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>pool</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">?</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Test</span></span>
-<span class="giallo-l"><span class="z-storage">struct</span><span class="z-entity z-name z-type"> FakeUserRepository</span><span> {</span><span class="z-variable z-other"> store</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> HashMap</span><span>&lt;</span><span class="z-entity z-name z-type">u64</span><span>,</span><span class="z-entity z-name z-type"> User</span><span>&gt;</span><span> }</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Test</span></span>
+<span class="giallo-l"><span class="z-storage z-type">struct</span><span class="z-entity z-name"> FakeUserRepository</span><span> {</span><span class="z-variable z-other"> store</span><span class="z-keyword">:</span><span class="z-entity z-name"> HashMap</span><span>&lt;</span><span class="z-entity z-name">u64</span><span>,</span><span class="z-entity z-name"> User</span><span>&gt;</span><span> }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> FakeUserRepository</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name"> FakeUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Same trait. One talks to Postgres. One lives in memory. Your system cannot tell the difference. The fake maintains real state, supports real queries against that state, and runs in microseconds with zero infrastructure.</p>
 <p>So the pattern is straightforward. But why is it better than just running the real dependency in a container?</p>
-<h2 id="the-failures-containers-miss">The failures containers miss<a class="zola-anchor" href="#the-failures-containers-miss" aria-label="Anchor link for: the-failures-containers-miss">🔗</a></h2>
+<h2 id="the-failures-containers-miss">The failures containers miss<a class="zola-anchor" href="#the-failures-containers-miss" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Testcontainers running real Kafka give you binary: up or down. A <code>FakeMessageBroker</code> can return <code>Ok</code> for partition 1 and <code>Err(PartitionUnavailable)</code> for partition 3 in the same call. A real PostgreSQL container serves consistent reads. A <code>FakeStore</code> can return stale data on 50% of reads, simulating replica lag your application must handle. A real Redis container never evicts keys mid-test. A <code>FakeCache</code> can expire entries between a write and the immediately following read. A real system clock never goes backward. A <code>FakeClock</code> can jump forward, rewind, or freeze, exposing every time-dependent assumption in your code.</p>
 <p>These are not exotic edge cases. They are Tuesday in production. And containers cannot produce any of them because containers faithfully implement the dependency's happy path. A fake controls the failure surface at arbitrary granularity: which operation fails, when it fails, and how it fails.</p>
 <p>A fake that covers 80% of a dependency's behavior with determinism and fault injection is strictly better than Testcontainers covering 100% with none of those properties. The 20% you do not model belongs in a separate integration test against the real dependency, run less frequently.</p>
-<h2 id="be-worse-than-production">Be worse than production<a class="zola-anchor" href="#be-worse-than-production" aria-label="Anchor link for: be-worse-than-production">🔗</a></h2>
+<h2 id="be-worse-than-production">Be worse than production<a class="zola-anchor" href="#be-worse-than-production" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>A fake that faithfully reproduces production behavior is useful, but a fake that is <strong>worse</strong> than production is powerful. Consider MariaDB Galera Cluster: the documentation claims transaction isolation "between Serializable and Repeatable Read." <a rel="external" href="https://jepsen.io/analyses/mariadb-galera-cluster-12.1.2">Jepsen tested a healthy cluster with zero injected faults</a> and found lost committed transactions, lost updates, and stale reads. The actual isolation appeared <strong>weaker than Read Uncommitted</strong>.</p>
 <p>Most code handles loud failures: errors, timeouts, connection resets. The dangerous failures are <strong>silent</strong>. A write that reports success but vanishes. A read that returns stale data. An operation that simply never comes back. No error to catch. Your code thinks everything is fine.</p>
 <p>Take the <code>FakeUserRepository</code> from earlier and make it lie:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name z-type"> ChaosUserRepository</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Loud failure: connection lost</span></span>
-<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">1</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Err</span><span>(</span><span class="z-entity z-name z-type">StorageError</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">ConnectionLost</span><span>)</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> UserRepository</span><span class="z-keyword"> for</span><span class="z-entity z-name"> ChaosUserRepository</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> save</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> user</span><span class="z-keyword">:</span><span class="z-entity z-name"> User</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span>(</span><span>)</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Loud failure: connection lost</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">1</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name"> Err</span><span>(</span><span class="z-entity z-name">StorageError</span><span class="z-keyword">::</span><span class="z-entity z-name">ConnectionLost</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: lost committed transaction</span></span>
-<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">1</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Ok</span><span>(</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Silent failure: lost committed transaction</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">1</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name"> Ok</span><span>(</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: hangs forever</span></span>
-<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">05</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">            std</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">future</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">pending</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Silent failure: hangs forever</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">05</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            std</span><span class="z-keyword">::</span><span class="z-entity z-name">future</span><span class="z-keyword">::</span><span class="z-entity z-name">pending</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name">cloned</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name">insert</span><span>(</span><span class="z-variable z-other">user</span><span class="z-keyword">.</span><span>id</span><span>,</span><span class="z-variable z-other"> user</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Ok</span><span>(</span><span>(</span><span>)</span><span>)</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Result</span><span>&lt;</span><span class="z-entity z-name z-type">Option</span><span>&lt;</span><span class="z-entity z-name z-type">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name z-type"> StorageError</span><span>&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Silent failure: stale read</span></span>
-<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">2</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name z-type"> Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">flatten</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> find_by_id</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>,</span><span class="z-variable z-other"> id</span><span class="z-keyword">:</span><span class="z-entity z-name"> u64</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Result</span><span>&lt;</span><span class="z-entity z-name">Option</span><span>&lt;</span><span class="z-entity z-name">User</span><span>&gt;</span><span>,</span><span class="z-entity z-name"> StorageError</span><span>&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Silent failure: stale read</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span class="z-variable z-language"> self</span><span class="z-keyword">.</span><span>rng</span><span class="z-keyword">.</span><span class="z-entity z-name">next_f32</span><span>(</span><span>)</span><span> &lt;</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">2</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span class="z-entity z-name"> Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>stale</span><span class="z-keyword">.</span><span class="z-entity z-name">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name">cloned</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name">flatten</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-type">        Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Ok</span><span>(</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>store</span><span class="z-keyword">.</span><span class="z-entity z-name">get</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">id</span><span>)</span><span class="z-keyword">.</span><span class="z-entity z-name">cloned</span><span>(</span><span>)</span><span>)</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>This fake does not just return errors. It silently drops writes, returns stale data, and sometimes never responds at all. Every one of these failure modes exists in production. If your code detects and handles them, it survives the real thing.</p>
 <p>So fakes are more powerful than Testcontainers, and cranking up their hostility makes them even more effective. But is this a fringe idea?</p>
-<h2 id="you-are-not-alone">You are not alone<a class="zola-anchor" href="#you-are-not-alone" aria-label="Anchor link for: you-are-not-alone">🔗</a></h2>
+<h2 id="you-are-not-alone">You are not alone<a class="zola-anchor" href="#you-are-not-alone" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>This is not a niche technique. AWS has used interface-swapped simulation for <a rel="external" href="https://www.usenix.org/conference/nsdi20/presentation/brooker">15+ years</a> to test distributed consensus, with typical correctness tests executing in under 100 milliseconds. Google's <a rel="external" href="https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/">Fauxmaster</a> runs real scheduler code against simulated workers replaying production data. Microsoft's <a rel="external" href="https://www.microsoft.com/en-us/research/publication/crystalnet-faithfully-emulating-large-production-networks/">CrystalNet</a> found <strong>50+ bugs</strong> using virtualized network hardware, catching <strong>69%</strong> of Azure network outage categories. <a rel="external" href="https://github.com/oxidecomputer/omicron">Oxide Computer</a> uses trait-based fakes across 500,000+ lines of Rust with a mock framework in exactly one place. The pattern scales from startups to hyperscalers.</p>
 <p>Start with one fake. Replace one mock with a stateful, injectable implementation of the same trait. Every fake you write is a step toward <a href="/posts/simulation-driven-development/">simulation</a>.</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your experiences with fakes and simulation. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/diving-into-coverage-guided-fuzzing/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Diving Into Coverage-Guided Fuzzing</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/bugbash-2026/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">BugBash 2026, or how the correctness decade has started</span></a>
   </nav>
@@ -276,17 +280,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

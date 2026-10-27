@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/reverse-number-scanning/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/reverse-number-scanning.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/reverse-number-scanning.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;reverse-number-scanning">./read --quorum posts&#x2F;reverse-number-scanning</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / reverse-number-scanning
   </div>
 
-  <h2 class="title">Key design tip: reverse number scanning in ordered key-value stores</h2>
+  <h1 class="title">Key design tip: reverse number scanning in ordered key-value stores</h1>
   <div class="meta-row"><span class="m"><b>2025-03-27</b></span>
     <span class="m">read: <b>~2 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/reverse-number-scanning.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/reverse-number-scanning.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a> <a href="https://pierrezemb.fr/tags/optimization/">#optimization</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -140,7 +138,8 @@
 
   <div class="prose">
     <p>Ordered key-value stores like HBase, FoundationDB or RocksDB store keys in lexicographical order. When getting the latest version or most recent events, this ordering often requires scanning through all values in reverse order. While this works, it can become a performance bottleneck, especially in distributed systems. Let's explore a simple yet powerful optimization technique that I've been using recently 🚀</p>
-<h2 id="key-design-in-key-value-stores">Key design in Key-value stores<a class="zola-anchor" href="#key-design-in-key-value-stores" aria-label="Anchor link for: key-design-in-key-value-stores">🔗</a></h2>
+<h2 id="key-design-in-key-value-stores">Key design in Key-value stores<a class="zola-anchor" href="#key-design-in-key-value-stores" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Let's look at this using a tuple structure of <code>(key, number)</code>. This could represent a document version, a timestamp, or any numeric identifier:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>(&quot;my-key-1&quot;, 1)</span></span>
 <span class="giallo-l"><span>(&quot;my-key-1&quot;, 2)</span></span>
@@ -152,9 +151,10 @@
 <span class="giallo-l"><span>...</span></span>
 <span class="giallo-l"><span>(&quot;my-key-1&quot;, 99)</span></span></code></pre>
 <p>You could scan in reverse mode, but you would lose the order of your first prefix(the "my-key-1").</p>
-<h2 id="reverse-number-scanning">Reverse Number Scanning<a class="zola-anchor" href="#reverse-number-scanning" aria-label="Anchor link for: reverse-number-scanning">🔗</a></h2>
+<h2 id="reverse-number-scanning">Reverse Number Scanning<a class="zola-anchor" href="#reverse-number-scanning" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>By reversing the numbers using a simple subtraction from the maximum possible value (e.g., <code>Long.MAX_VALUE</code> in Java), we can optimize the scanning process:</p>
-<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage">long</span><span class="z-variable z-other"> reversedNumber</span><span class="z-keyword"> =</span><span class="z-variable z-other"> Long</span><span>.</span><span class="z-variable z-other">MAX_VALUE</span><span class="z-keyword"> -</span><span> number</span><span>;</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage z-type">long</span><span class="z-variable z-other"> reversedNumber</span><span class="z-keyword"> =</span><span class="z-variable z-other"> Long</span><span>.</span><span class="z-variable z-other">MAX_VALUE</span><span class="z-keyword"> -</span><span> number</span><span>;</span></span></code></pre>
 <p>This transforms our data into:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>(&quot;my-key-1&quot;, 9223372036854775804) // number 3</span></span>
 <span class="giallo-l"><span>(&quot;my-key-1&quot;, 9223372036854775805) // number 2</span></span>
@@ -171,7 +171,7 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> or <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/fdb-data-distributor/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Debugging FoundationDB&#x27;s Data Distributor</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/learn-about-dst/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">So, You Want to Learn More About Deterministic Simulation Testing?</span></a>
   </nav>
@@ -179,17 +179,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

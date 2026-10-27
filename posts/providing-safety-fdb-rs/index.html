@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/providing-safety-fdb-rs.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/providing-safety-fdb-rs.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;providing-safety-fdb-rs">./read --quorum posts&#x2F;providing-safety-fdb-rs</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / providing-safety-fdb-rs
   </div>
 
-  <h2 class="title">Ensuring Safety in FoundationDB&#x27;s Rust Crate</h2>
+  <h1 class="title">Ensuring Safety in FoundationDB&#x27;s Rust Crate</h1>
   <div class="meta-row"><span class="m"><b>2025-02-11</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/providing-safety-fdb-rs.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/providing-safety-fdb-rs.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -155,7 +153,8 @@
 
   <div class="prose">
     <p>As we approach 5 million downloads of the <a rel="external" href="https://crates.io/crates/foundationdb">FoundationDB Rust crate</a> (4,998,185 at the time of writing), I wanted to share some insights into how I ensure the safety of the crate. Being the primary maintainer of a database driver comes with responsibility, but I sleep well at night knowing that we have robust safety measures in place.</p>
-<h2 id="crate-overview">Crate Overview<a class="zola-anchor" href="#crate-overview" aria-label="Anchor link for: crate-overview">🔗</a></h2>
+<h2 id="crate-overview">Crate Overview<a class="zola-anchor" href="#crate-overview" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The Rust crate, <code>foundationdb-rs</code>, provides bindings to interact with FoundationDB's C API (<code>libfdb</code>). It has around 13k lines of code and is used by companies (like Clever Cloud) and projects (such as Apache OpenDAL, SurrealDB). Having experienced numerous outages and issues with drivers and distributed systems, I understand the importance of safety. To ensure the safety of the crate, we need to focus on three layers:</p>
 <ul>
 <li>The underlying client, <code>libfdb</code>,</li>
@@ -163,9 +162,11 @@
 <li>The code that uses the crate.</li>
 </ul>
 <p>Let's dig into each of these areas.</p>
-<h2 id="libfdb-safety">libfdb Safety<a class="zola-anchor" href="#libfdb-safety" aria-label="Anchor link for: libfdb-safety">🔗</a></h2>
+<h2 id="libfdb-safety">libfdb Safety<a class="zola-anchor" href="#libfdb-safety" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>This is the simplest part. <code>libfdb</code>'s safety is guaranteed by FoundationDB's <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation framework</a>. Therefore, we can consider it safe.</p>
-<h3 id="classic-testing-suite">Classic testing suite<a class="zola-anchor" href="#classic-testing-suite" aria-label="Anchor link for: classic-testing-suite">🔗</a></h3>
+<h3 id="classic-testing-suite">Classic testing suite<a class="zola-anchor" href="#classic-testing-suite" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Since we are using a C library, we need to use FFI (Foreign Function Interface) and unsafe code blocks. With around 130 unsafe blocks, we must be extra careful when calling C code, ensuring all preconditions are met. Naturally, we conduct extensive testing, but most importantly, we run tests in high-variety environments:</p>
 <ul>
 <li>On multiple operating systems (Ubuntu, macOS)</li>
@@ -174,34 +175,35 @@
 </ul>
 <p>The most useful tests are run on the nightly Rust compiler, as we can catch <a rel="external" href="https://github.com/foundationdb-rs/foundationdb-rs/issues/90">new behaviors in the Rust compiler early</a>.</p>
 <p>While these testing practices provide significant coverage, the most powerful tool we utilize comes from FoundationDB’s maintainers: the <code>BindingTester</code>.</p>
-<h3 id="the-bindingtester">The BindingTester<a class="zola-anchor" href="#the-bindingtester" aria-label="Anchor link for: the-bindingtester">🔗</a></h3>
+<h3 id="the-bindingtester">The BindingTester<a class="zola-anchor" href="#the-bindingtester" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>FoundationDB is renowned for its <a rel="external" href="https://apple.github.io/foundationdb/testing.html">simulation and testing</a> frameworks. Bindings are no exception. They developed the BindingTester, a cross-language validation suite ensuring that all bindings behave correctly and consistently across different languages.</p>
 <p>The BindingTester uses <a rel="external" href="https://github.com/apple/foundationdb/blob/main/bindings/bindingtester/spec/bindingApiTester.md">a stack-based machine</a> to queue operations for FoundationDB. A program then reads the stack and performs the operations. These operations are run twice: once in the target environment and once against a reference implementation. Any differences are reported by the BindingTester.</p>
 <p>It looks like this:</p>
-<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">./bindings/bindingtester/bindingtester.py</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-num-ops</span><span class="z-constant z-numeric"> 1000</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-api-version</span><span class="z-constant z-numeric"> 730</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-test-name</span><span class="z-string"> api</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-compare</span><span class="z-string"> python</span><span class="z-string"> rust</span></span>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">./bindings/bindingtester/bindingtester.py</span><span class="z-constant"> -</span><span class="z-constant">-num-ops</span><span class="z-constant"> 1000</span><span class="z-constant"> -</span><span class="z-constant">-api-version</span><span class="z-constant"> 730</span><span class="z-constant"> -</span><span class="z-constant">-test-name</span><span class="z-string"> api</span><span class="z-constant"> -</span><span class="z-constant">-compare</span><span class="z-string"> python</span><span class="z-string"> rust</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Creating</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant z-numeric"> 730</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Generating</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> with</span><span class="z-constant z-numeric"> 1000</span><span class="z-string"> op</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 1</span><span class="z-string"> concurrent</span><span class="z-string"> tester</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Creating</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant"> 730</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Generating</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> at</span><span class="z-string"> seed</span><span class="z-constant"> 3208032894</span><span class="z-string"> with</span><span class="z-constant"> 1000</span><span class="z-string"> op</span><span>(</span><span class="z-entity z-name">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant"> 1</span><span class="z-string"> concurrent</span><span class="z-string"> tester</span><span>(</span><span class="z-entity z-name">s</span><span>)</span><span class="z-string">...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Inserting Rust tests</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Running</span><span class="z-string"> tester</span><span class="z-string"> &#39;</span><span class="z-string">/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Inserting Rust tests</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Running</span><span class="z-string"> tester</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">/home/runner/work/foundationdb-rs/foundationdb-rs/target/debug/bindingtester test_spec 730</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">workspace</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">stack</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Inserting Python tests</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Running</span><span class="z-string"> tester</span><span class="z-string"> &#39;</span><span class="z-string">python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Inserting Python tests</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Inserting</span><span class="z-string"> test</span><span class="z-string"> into</span><span class="z-string"> database...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Running</span><span class="z-string"> tester</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">python /home/runner/work/foundationdb-rs/foundationdb-rs/target/foundationdb_build/foundationdb/bindings/bindingtester/../python/tests/tester.py test_spec 730</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">workspace</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Reading</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">stack</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Comparing the results</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">workspace</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-string"> &#39;</span><span class="z-string">(</span><span class="z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-string">&#39;</span><span class="z-string">, </span><span class="z-string">&#39;</span><span class="z-string">stack</span><span class="z-string">&#39;</span><span class="z-string">)</span><span class="z-string">&#39;</span><span class="z-string">...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Test</span><span class="z-string"> with</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> and</span><span class="z-string"> concurrency</span><span class="z-constant z-numeric"> 1</span><span class="z-string"> had</span><span class="z-constant z-numeric"> 0</span><span class="z-string"> incorrect</span><span class="z-string"> result</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 0</span><span class="z-string"> error</span><span>(</span><span class="z-entity z-name z-function">s</span><span>)</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant z-numeric"> 730</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Completed</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> with</span><span class="z-string"> random</span><span class="z-string"> seed</span><span class="z-constant z-numeric"> 3208032894</span><span class="z-string"> and</span><span class="z-constant z-numeric"> 1000</span><span class="z-string"> operations</span></span></code></pre>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Comparing the results</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">workspace</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Comparing</span><span class="z-string"> results</span><span class="z-string"> from</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">tester_output</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">, </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">stack</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">)</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Test</span><span class="z-string"> with</span><span class="z-string"> seed</span><span class="z-constant"> 3208032894</span><span class="z-string"> and</span><span class="z-string"> concurrency</span><span class="z-constant"> 1</span><span class="z-string"> had</span><span class="z-constant"> 0</span><span class="z-string"> incorrect</span><span class="z-string"> result</span><span>(</span><span class="z-entity z-name">s</span><span>)</span><span class="z-string"> and</span><span class="z-constant"> 0</span><span class="z-string"> error</span><span>(</span><span class="z-entity z-name">s</span><span>)</span><span class="z-string"> at</span><span class="z-string"> API</span><span class="z-string"> version</span><span class="z-constant"> 730</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Completed</span><span class="z-string"> api</span><span class="z-string"> test</span><span class="z-string"> with</span><span class="z-string"> random</span><span class="z-string"> seed</span><span class="z-constant"> 3208032894</span><span class="z-string"> and</span><span class="z-constant"> 1000</span><span class="z-string"> operations</span></span></code></pre>
 <p>The great advantage of this method is that the tests are seeded, meaning the operations are:</p>
 <ul>
 <li>randomly selected to cover all binding usages,</li>
@@ -209,55 +211,57 @@
 </ul>
 <p>Combined with code coverage, this gives us a good idea of what has been tested (though code coverage may vary).</p>
 <p>We run the <code>BindingTester</code> <strong>every hour</strong> on our GitHub actions, amounting to <strong>around 219 days of continuous testing each month</strong> (316,335 minutes of correctness last month according to Github).</p>
-<h2 id="user-safety">User Safety<a class="zola-anchor" href="#user-safety" aria-label="Anchor link for: user-safety">🔗</a></h2>
+<h2 id="user-safety">User Safety<a class="zola-anchor" href="#user-safety" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Thanks to <code>libfdb</code> and the <code>BindingTester</code>, we can ensure that the library is quite safe. But what about the user's code? How can we help users ensure their code can handle all of FoundationDB's caveats, such as <a href="/posts/automatic-txn-fdb-730/#transactions-with-unknown-results">commit_unknown_result</a>? We added a great feature: the ability to include Rust code <strong>within FDB's simulation framework</strong>.</p>
 <p>We can implement an Rust workload with the following Trait:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage"> trait</span><span class="z-entity z-name z-type"> RustWorkload</span><span> {</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> description</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> String</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> setup</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> start</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> check</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name z-type">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name z-type"> Promise</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> get_metrics</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> Vec</span><span>&lt;</span><span class="z-entity z-name z-type">Metric</span><span>&gt;</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-function"> get_check_timeout</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name z-type"> f64</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage z-type"> trait</span><span class="z-entity z-name"> RustWorkload</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> description</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> String</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> setup</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> start</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> check</span><span>(</span><span class="z-keyword">&amp;</span><span>&#39;</span><span class="z-entity z-name">static</span><span class="z-storage"> mut</span><span class="z-variable z-language"> self</span><span>,</span><span class="z-variable z-other"> db</span><span class="z-keyword">:</span><span class="z-entity z-name"> SimDatabase</span><span>,</span><span class="z-variable z-other"> done</span><span class="z-keyword">:</span><span class="z-entity z-name"> Promise</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> get_metrics</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> Vec</span><span>&lt;</span><span class="z-entity z-name">Metric</span><span>&gt;</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name"> get_check_timeout</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-language">self</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-entity z-name"> f64</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Which can be runned inside the simulation while injecting some faults:</p>
-<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">fdbserver</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">r</span><span class="z-string"> simulation</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">f</span><span class="z-string"> /root/atomic.toml</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">b</span><span class="z-string"> on</span><span class="z-constant z-other"> -</span><span class="z-constant z-other">-trace-format</span><span class="z-string"> json</span></span>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">fdbserver</span><span class="z-constant"> -</span><span class="z-constant">r</span><span class="z-string"> simulation</span><span class="z-constant"> -</span><span class="z-constant">f</span><span class="z-string"> /root/atomic.toml</span><span class="z-constant"> -</span><span class="z-constant">b</span><span class="z-string"> on</span><span class="z-constant"> -</span><span class="z-constant">-trace-format</span><span class="z-string"> json</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Choosing a random seed</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Random</span><span class="z-string"> seed</span><span class="z-string"> is</span><span class="z-string"> 394378360...</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Choosing a random seed</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Random</span><span class="z-string"> seed</span><span class="z-string"> is</span><span class="z-string"> 394378360...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Then, everything is derived from the seed, including:</span></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * cluster topology,</span></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * cluster configuration,</span></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * timing to inject faults,</span></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * operations to run</span></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> * ...</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 0:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 1/1</span><span class="z-string"> coordinators</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 1:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 2:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Datacenter</span><span class="z-string"> 3:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Then, everything is derived from the seed, including:</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> * cluster topology,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> * cluster configuration,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> * timing to inject faults,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> * operations to run</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> * ...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Datacenter</span><span class="z-string"> 0:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 1/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Datacenter</span><span class="z-string"> 1:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Datacenter</span><span class="z-string"> 2:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Datacenter</span><span class="z-string"> 3:</span><span class="z-string"> 3/12</span><span class="z-string"> machines,</span><span class="z-string"> 0/1</span><span class="z-string"> coordinators</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">#</span><span class="z-comment"> Starting the Atomic workload</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> start</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Starting the Atomic workload</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> start</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">AtomicWorkload</span><span class="z-string"> complete</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">checking</span><span class="z-string"> test</span><span> (AtomicWorkload</span><span>)...</span></span>
+<span class="giallo-l"><span class="z-entity z-name">AtomicWorkload</span><span class="z-string"> complete</span></span>
+<span class="giallo-l"><span class="z-entity z-name">checking</span><span class="z-string"> test</span><span> (AtomicWorkload</span><span>)...</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">5</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name z-function"> 0</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> failed</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> Done.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">5</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name"> 0</span><span class="z-string"> test</span><span class="z-string"> clients</span><span class="z-string"> failed</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Run</span><span class="z-string"> test:AtomicWorkload</span><span class="z-string"> Done.</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">1</span><span class="z-string"> tests</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name z-function"> 0</span><span class="z-string"> tests</span><span class="z-string"> failed.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">1</span><span class="z-string"> tests</span><span class="z-string"> passed</span><span>;</span><span class="z-entity z-name"> 0</span><span class="z-string"> tests</span><span class="z-string"> failed.</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Unseed:</span><span class="z-constant z-numeric"> 66324</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">Elapsed:</span><span class="z-constant z-numeric"> 405.055622</span><span class="z-string"> simsec,</span><span class="z-constant z-numeric"> 30.342000</span><span class="z-string"> real</span><span class="z-string"> seconds</span></span></code></pre>
+<span class="giallo-l"><span class="z-entity z-name">Unseed:</span><span class="z-constant"> 66324</span></span>
+<span class="giallo-l"><span class="z-entity z-name">Elapsed:</span><span class="z-constant"> 405.055622</span><span class="z-string"> simsec,</span><span class="z-constant"> 30.342000</span><span class="z-string"> real</span><span class="z-string"> seconds</span></span></code></pre>
 <p>This has been a <strong>major keypoint</strong> for us to develop and operate <a rel="external" href="https://www.clever-cloud.com/materia/">Materia, Clever Cloud's serverless database offer</a>, as we can enjoy the same Simulation framework used by FDB's core engineers for layer engineering 🤯</p>
-<h2 id="closing-words">Closing words<a class="zola-anchor" href="#closing-words" aria-label="Anchor link for: closing-words">🔗</a></h2>
+<h2 id="closing-words">Closing words<a class="zola-anchor" href="#closing-words" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>As with any open-source project, there is always more to accomplish, but I am quite satisfied with the current level of safety provided by the crate. I would like to express my gratitude to the FoundationDB community for developing the BindingTester, and former contributors to the crate.</p>
 <p>I also would like to encourage everyone to explore the simulation framework. Integrating Rust code within this framework has allowed us to harness the full potential of simulation without the need to build our own, and it has forever changed my perspective on testing and software engineering.</p>
 <p>There is a strong likelihood that future blog posts will focus on simulation, so feel free to explore the <a href="/tags/simulation/">simulation tags</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/back-engineering/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Back in engineering!</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/fdb-data-distributor/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Debugging FoundationDB&#x27;s Data Distributor</span></a>
   </nav>
@@ -265,17 +269,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/podcasts/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -68,29 +69,26 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
-      <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
+      <a href="https://pierrezemb.fr/podcasts/" aria-current="page">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="podcasts">./read --quorum podcasts</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -111,24 +109,27 @@
     <span class="sig">~</span> / podcasts
   </div>
 
-  <h2 class="title">Podcasts</h2>
+  <h1 class="title">Podcasts</h1>
 
   <div class="prose">
     <p>This page gives an overview over some podcasts I have done over the last years. All of them are in french.</p>
 <p>If you’d like to have me in a podcast episode, please get in touch.</p>
-<h2 id="2024">2024<a class="zola-anchor" href="#2024" aria-label="Anchor link for: 2024">🔗</a></h2>
+<h2 id="2024">2024<a class="zola-anchor" href="#2024" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <ul>
 <li><a rel="external" href="https://www.youtube.com/watch?v=GFKf9lZUG8M">MACI 122</a></li>
 <li><a rel="external" href="https://www.youtube.com/watch?v=AfsLEz8oAb4">MACI 121</a></li>
 </ul>
-<h2 id="2022">2022<a class="zola-anchor" href="#2022" aria-label="Anchor link for: 2022">🔗</a></h2>
+<h2 id="2022">2022<a class="zola-anchor" href="#2022" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <ul>
 <li><a rel="external" href="https://www.youtube.com/watch?v=x2vvn0D-54k">MACI 64</a></li>
 <li><a rel="external" href="https://www.youtube.com/watch?v=9Gz2n7NRrog">MACI 63</a></li>
 <li><a rel="external" href="https://www.youtube.com/watch?v=uIHsf5bKWRs">MACI 62</a></li>
 <li><a rel="external" href="https://www.youtube.com/watch?v=3AF-uKse1bI">MACI 61</a></li>
 </ul>
-<h2 id="2021">2021<a class="zola-anchor" href="#2021" aria-label="Anchor link for: 2021">🔗</a></h2>
+<h2 id="2021">2021<a class="zola-anchor" href="#2021" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <ul>
 <li><a rel="external" href="https://www.youtube.com/watch?v=-MW9I1ZjtF8">MACI 61</a></li>
 <li><a rel="external" href="https://www.youtube.com/watch?v=dUSS-ohzPUM">MACI 59</a></li>
@@ -136,7 +137,8 @@
 <li><a rel="external" href="https://www.youtube.com/watch?v=NiHEwgCN7y4">MACI 46</a></li>
 <li><a rel="external" href="https://medium.com/electro-monkeys/62-etcd-avec-pierre-zemb-3caa63769397">Electo Monkey 62: ETCD</a></li>
 </ul>
-<h2 id="2020">2020<a class="zola-anchor" href="#2020" aria-label="Anchor link for: 2020">🔗</a></h2>
+<h2 id="2020">2020<a class="zola-anchor" href="#2020" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <ul>
 <li><a rel="external" href="https://bigdatahebdo.com/podcast/episode-99-apache-pulsar-et-kafka-on-pulsar/">Big Data Hebdo 99: Apache Pulsar</a></li>
 <li><a rel="external" href="https://bigdatahebdo.com/podcast/episode-93-foundation-db/">Big Data Hebdo 93: FoundationDB</a></li>
@@ -147,17 +149,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

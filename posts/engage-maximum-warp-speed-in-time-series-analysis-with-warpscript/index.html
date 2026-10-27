@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -57,7 +58,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2017/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2017/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript.md">
 
 
   <script>
@@ -74,9 +75,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -84,19 +85,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript">./read --quorum posts&#x2F;engage-maximum-warp-speed-in-time-series-analysis-with-warpscript</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -117,13 +115,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / engage-maximum-warp-speed-in-time-series-analysis-with-warpscript
   </div>
 
-  <h2 class="title">Engage maximum warp speed in time series analysis with WarpScript</h2>
+  <h1 class="title">Engage maximum warp speed in time series analysis with WarpScript</h1>
   <div class="meta-row"><span class="m"><b>2017-10-08</b></span>
     <span class="m">read: <b>~8 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2017/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2017/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/timeseries/">#timeseries</a> <a href="https://pierrezemb.fr/tags/analytics/">#analytics</a> <a href="https://pierrezemb.fr/tags/performance/">#performance</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -211,16 +209,20 @@
 <li>OpenTSDB.</li>
 </ul>
 <p>Then there’s <strong>Warp10</strong>. The difference is quite simple, Warp10 is <strong>a platform</strong> whereas all the time series listed above are <strong>stores</strong>. This is game changing, for multiples reasons.</p>
-<h4 id="security-first-design">Security-first design<a class="zola-anchor" href="#security-first-design" aria-label="Anchor link for: security-first-design">🔗</a></h4>
+<h4 id="security-first-design">Security-first design<a class="zola-anchor" href="#security-first-design" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>Security is mandatory for data access and sharing job’s results, but in most of the above databases, security access is not handled by default. With Warp10, security is handled with crypto tokens similar to <a rel="external" href="https://research.google.com/pubs/pub41892.html">Macaroons</a>.</p>
-<h4 id="high-level-analysis-capabilities">High level analysis capabilities<a class="zola-anchor" href="#high-level-analysis-capabilities" aria-label="Anchor link for: high-level-analysis-capabilities">🔗</a></h4>
+<h4 id="high-level-analysis-capabilities">High level analysis capabilities<a class="zola-anchor" href="#high-level-analysis-capabilities" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>Using classical time series database, <strong>high level analysis must be done elsewhere</strong>, with R, Spark, Flink, Python, or whatever languages or frameworks that you want to use. Using Warp10, you can just <strong>submit your script</strong> and <em>voilà</em>!</p>
-<h4 id="server-side-calculation">Server-side calculation<a class="zola-anchor" href="#server-side-calculation" aria-label="Anchor link for: server-side-calculation">🔗</a></h4>
+<h4 id="server-side-calculation">Server-side calculation<a class="zola-anchor" href="#server-side-calculation" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>Algorithms are resource heavy. Whatever they’re using CPU, ram, disk and network, you’ll hit <strong>limitations</strong> on your personal computer. Can you really aggregate and analyze one year of data from thousands of sensors on your laptop? Maybe, but what if you’re submitting the job from a mobile? To be <strong>scalable</strong>, analysis must be done <strong>server-side</strong>.### Meet WarpScript</p>
 <p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/2.png" alt="image" /></p>
 <p>Warp10 folks created WarpScript, an <strong>extensible</strong> <a rel="external" href="https://en.wikipedia.org/wiki/Stack-oriented_programming_language"><strong>stack oriented programming language</strong></a> which offers more than <strong>800 functions</strong> and <strong>several high level frameworks</strong> to ease and speed your data analysis. Simply <strong>create scripts</strong> containing your data analysis code and <strong>submit them to the platform</strong>, they will <strong>execute close to where the data resides</strong> and you will get the result of that analysis as a <strong>JSON object</strong> that you can <strong>integrate into your application</strong>.</p>
 <p>Yes, you’ll be able to run that <strong>awesome query that is fetching millions of datapoints</strong> and only get the result. You need all the data, or just the timestamp of a weird datapoint? <strong>The result of the script is simply what’s left on the stack</strong>.</p>
-<h4 id="dataflow-language">Dataflow language<a class="zola-anchor" href="#dataflow-language" aria-label="Anchor link for: dataflow-language">🔗</a></h4>
+<h4 id="dataflow-language">Dataflow language<a class="zola-anchor" href="#dataflow-language" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>WarpScript is really easy to code, <strong>because of the stack design</strong>. You’ll be <strong>pushing elements into the stack and consume them</strong>. Coding became logical. First you need to <strong>fetch</strong> your points, then <strong>applying some downsampling</strong> and then <strong>aggregate</strong>. These 3 steps are translated into <strong>3 lines of WarpScript</strong>:</p>
 <ul>
 <li><strong>FETCH</strong> will push the needed Geo Time Series into the stack</li>
@@ -228,13 +230,17 @@
 <li><strong>REDUCE</strong> will take the Geo Time Series from the stack, aggregate them, and push them back into the stack</li>
 </ul>
 <p>Debugguing as never be that easy, just use the keyword <strong>STOP</strong> to see the stack at any moment.</p>
-<h4 id="rich-programming-capabilities">Rich programming capabilities<a class="zola-anchor" href="#rich-programming-capabilities" aria-label="Anchor link for: rich-programming-capabilities">🔗</a></h4>
+<h4 id="rich-programming-capabilities">Rich programming capabilities<a class="zola-anchor" href="#rich-programming-capabilities" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>WarpScript is coming with more than <strong>800 functions</strong>, ready to use. Things like <strong>Patterns and outliers detections, rolling average, FFT, IDWT</strong> are built-in.</p>
-<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities<a class="zola-anchor" href="#geo-fencing-capabilities" aria-label="Anchor link for: geo-fencing-capabilities">🔗</a></h4>
+<h4 id="geo-fencing-capabilities">Geo-Fencing capabilities<a class="zola-anchor" href="#geo-fencing-capabilities" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>Both <strong>space</strong> (location) and <strong>time</strong> are considered <strong>first class citizens</strong>. Complex searches like “<strong>find all the sensors active during last Monday in the perimeter delimited by this geo-fencing polygon</strong>” can be done without involving expensive joins between separate time series for the same source.</p>
-<h4 id="unified-language">Unified Language<a class="zola-anchor" href="#unified-language" aria-label="Anchor link for: unified-language">🔗</a></h4>
+<h4 id="unified-language">Unified Language<a class="zola-anchor" href="#unified-language" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>WarpScript can be used in <strong>batch</strong> mode, or in <strong>real-time</strong>, because you need both of them in the real world.</p>
-<h3 id="geez-give-me-an-example">Geez, give me an example<a class="zola-anchor" href="#geez-give-me-an-example" aria-label="Anchor link for: geez-give-me-an-example">🔗</a></h3>
+<h3 id="geez-give-me-an-example">Geez, give me an example<a class="zola-anchor" href="#geez-give-me-an-example" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Here’s an example of a simple but advanced query:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>// Fetching all values  </span></span>
 <span class="giallo-l"><span>[ $token ‘temperature’ {} NOW 1 h ] FETCH // Get max value for each minute  </span></span>
@@ -242,7 +248,8 @@
 <span class="giallo-l"><span>[ SWAP mapper.round 0 0 0 ] MAP // reduce the data by keeping the max, grouping by &#39;buildingID&#39;  </span></span>
 <span class="giallo-l"><span>[ SWAP [ &#39;buildingID&#39; ] reducer.max ] REDUCE</span></span></code></pre>
 <p>Have you guessed the goal? The result will <strong>display the temperature from now to 1 hour of the hottest room per buildingID</strong>.</p>
-<h3 id="what-about-a-more-complex-example">What about a more complex example?<a class="zola-anchor" href="#what-about-a-more-complex-example" aria-label="Anchor link for: what-about-a-more-complex-example">🔗</a></h3>
+<h3 id="what-about-a-more-complex-example">What about a more complex example?<a class="zola-anchor" href="#what-about-a-more-complex-example" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>You’re still here? Good, let’s have a more complex example. Let’s say that I want to do some patterns recognition. Let’s take an example. Here’s a cosinus with an increasing amplitude:</p>
 <p><img src="/images/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/3.png" alt="image" /></p>
 <p>I want to <strong>detect the green part</strong> of the time series, because I know that my service is crashing when I have that kind of load. With WarpScript, it’s only a <strong>2 functions calls</strong>:</p>
@@ -276,7 +283,7 @@
 </ul>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/eventdriven-architecture-101/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Event-driven architecture 101</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</span></a>
   </nav>
@@ -284,17 +291,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/testing-prevention-vs-discovery/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/testing-prevention-vs-discovery.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/testing-prevention-vs-discovery.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;testing-prevention-vs-discovery">./read --quorum posts&#x2F;testing-prevention-vs-discovery</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / testing-prevention-vs-discovery
   </div>
 
-  <h2 class="title">Testing: prevention vs discovery</h2>
+  <h1 class="title">Testing: prevention vs discovery</h1>
   <div class="meta-row"><span class="m"><b>2025-09-08</b></span>
     <span class="m">read: <b>~6 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/testing-prevention-vs-discovery.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/testing-prevention-vs-discovery.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/simulation/">#simulation</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a> <a href="https://pierrezemb.fr/tags/llm/">#llm</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -153,54 +151,57 @@
 <p><img src="/images/testing-prevention-vs-discovery/claude-moonpool.png" alt="Claude Code autonomously debugging moonpool" /></p>
 </div>
 <p>Claude identified a faulty seed triggering an edge case, debugged it locally using deterministic replay, and added it to the test suite. All by itself. 🤯 <strong>This wasn't prevention but discovery.</strong> It's time to shift our testing paradigm from preventing regressions to actively discovering unknown bugs.</p>
-<h2 id="building-for-discovery">Building for Discovery<a class="zola-anchor" href="#building-for-discovery" aria-label="Anchor link for: building-for-discovery">🔗</a></h2>
+<h2 id="building-for-discovery">Building for Discovery<a class="zola-anchor" href="#building-for-discovery" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The difference between prevention and discovery isn't just philosophical but requires completely different system design. Moonpool was built from day one around three principles that enable active bug discovery:</p>
 <p><strong>Deterministic simulation</strong>: Every execution is completely reproducible. Given the same seed, the system makes identical decisions every time. This changes debugging from "I can't reproduce this" to "let me replay exactly what happened." More importantly, it lets LLMs explore the state space step by step without getting lost in non-deterministic noise.</p>
 <p><strong>Controlled failure injection</strong>: Built-in mechanisms intentionally introduce failures in controlled, reproducible ways. This includes timed failures like network delays and disconnects, plus <a rel="external" href="https://transactional.blog/simulation/buggify">"buggify" mechanisms</a> that inject faulty internal state at strategic points in the code. Each buggify point is either enabled or disabled for an entire simulation run, creating consistent failure scenarios instead of random chaos. Instead of waiting for production to reveal edge cases, we force the system to encounter dangerous, bug-finding behaviors during development.</p>
 <p><strong>Observability through sometimes assertions</strong>: Borrowed from <a rel="external" href="https://antithesis.com/docs/best_practices/sometimes_assertions/">Antithesis</a>, these verify we're actually discovering the edge cases we think we're testing. Here's what they look like:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Verify that server binds sometimes fail during chaos testing</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">sometimes_assert!</span><span>(</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Verify that server binds sometimes fail during chaos testing</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sometimes_assert!</span><span>(</span></span>
 <span class="giallo-l"><span class="z-variable z-other">    server_bind_fails</span><span>,</span></span>
-<span class="giallo-l"><span class="z-variable z-language">    self</span><span class="z-keyword">.</span><span>bind_result</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">is_err</span><span>(</span><span>)</span><span>,</span></span>
-<span class="giallo-l"><span class="z-string">    &quot;</span><span class="z-string">Server bind should sometimes fail during chaos testing</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-variable z-language">    self</span><span class="z-keyword">.</span><span>bind_result</span><span class="z-keyword">.</span><span class="z-entity z-name">is_err</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">    &quot;</span><span class="z-string">Server bind should sometimes fail during chaos testing</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Ensure message queues sometimes approach capacity under load</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">sometimes_assert!</span><span>(</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Ensure message queues sometimes approach capacity under load</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sometimes_assert!</span><span>(</span></span>
 <span class="giallo-l"><span class="z-variable z-other">    peer_queue_near_capacity</span><span>,</span></span>
-<span class="giallo-l"><span class="z-variable z-other">    state</span><span class="z-keyword">.</span><span>send_queue</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">len</span><span>(</span><span>)</span><span class="z-keyword"> &gt;=</span><span> (</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>config</span><span class="z-keyword">.</span><span>max_queue_size </span><span class="z-keyword">as</span><span class="z-entity z-name z-type"> f64</span><span class="z-keyword"> *</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">8</span><span>)</span><span class="z-keyword"> as</span><span class="z-entity z-name z-type"> usize</span><span>,</span></span>
-<span class="giallo-l"><span class="z-string">    &quot;</span><span class="z-string">Message queue should sometimes approach capacity limit</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-variable z-other">    state</span><span class="z-keyword">.</span><span>send_queue</span><span class="z-keyword">.</span><span class="z-entity z-name">len</span><span>(</span><span>)</span><span class="z-keyword"> &gt;=</span><span> (</span><span class="z-variable z-language">self</span><span class="z-keyword">.</span><span>config</span><span class="z-keyword">.</span><span>max_queue_size </span><span class="z-keyword">as</span><span class="z-entity z-name"> f64</span><span class="z-keyword"> *</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">8</span><span>)</span><span class="z-keyword"> as</span><span class="z-entity z-name"> usize</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">    &quot;</span><span class="z-string">Message queue should sometimes approach capacity limit</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>)</span><span>;</span></span></code></pre>
 <p>Traditional code coverage only tells you "this line was reached." Sometimes assertions verify "this interesting scenario actually happened." If a sometimes assertion never triggers across thousands of test runs, you know you're not discovering the edge cases that matter.</p>
 <p>These three elements shift testing from prevention to discovery. Instead of developers writing tests for scenarios they already know about, the system forces them to hit failure modes they haven't thought of. For Claude, this meant it could explore the state space step by step, understanding not just what the code does, but what breaks it.</p>
-<h2 id="the-chaos-environment">The Chaos Environment<a class="zola-anchor" href="#the-chaos-environment" aria-label="Anchor link for: the-chaos-environment">🔗</a></h2>
+<h2 id="the-chaos-environment">The Chaos Environment<a class="zola-anchor" href="#the-chaos-environment" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Moonpool is currently limited to simulating TCP connections through its Peer abstraction, but even this narrow scope creates a surprisingly rich failure environment. Here's what the chaos testing configuration looks like (borrowed from TigerBeetle's approach):</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name z-type"> NetworkRandomizationRanges</span><span> {</span></span>
-<span class="giallo-l"><span class="z-comment">    ///</span><span class="z-comment"> Create chaos testing ranges with connection cutting enabled for distributed systems testing</span></span>
-<span class="giallo-l"><span class="z-keyword">    pub</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> chaos_testing</span><span>(</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-variable z-language"> Self</span><span> {</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> NetworkRandomizationRanges</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    ///</span><span class="z-comment"> Create chaos testing ranges with connection cutting enabled for distributed systems testing</span></span>
+<span class="giallo-l"><span class="z-keyword">    pub</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> chaos_testing</span><span>(</span><span>)</span><span class="z-keyword"> -&gt;</span><span class="z-variable z-language"> Self</span><span> {</span></span>
 <span class="giallo-l"><span class="z-variable z-language">        Self</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            bind_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 10</span><span class="z-keyword">..</span><span class="z-constant z-numeric">200</span><span>,</span><span class="z-comment">                       //</span><span class="z-comment"> 10-200µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            bind_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 10</span><span class="z-keyword">..</span><span class="z-constant z-numeric">100</span><span>,</span><span class="z-comment">                     //</span><span class="z-comment"> 10-100µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            accept_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 1000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">10000</span><span>,</span><span class="z-comment">                 //</span><span class="z-comment"> 1-10ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            accept_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 1000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">15000</span><span>,</span><span class="z-comment">               //</span><span class="z-comment"> 1-15ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            connect_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 1000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">50000</span><span>,</span><span class="z-comment">                //</span><span class="z-comment"> 1-50ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            connect_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 5000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">100000</span><span>,</span><span class="z-comment">             //</span><span class="z-comment"> 5-100ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            read_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 5</span><span class="z-keyword">..</span><span class="z-constant z-numeric">100</span><span>,</span><span class="z-comment">                        //</span><span class="z-comment"> 5-100µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            read_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 10</span><span class="z-keyword">..</span><span class="z-constant z-numeric">200</span><span>,</span><span class="z-comment">                     //</span><span class="z-comment"> 10-200µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            write_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 50</span><span class="z-keyword">..</span><span class="z-constant z-numeric">1000</span><span>,</span><span class="z-comment">                     //</span><span class="z-comment"> 50-1000µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            write_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 100</span><span class="z-keyword">..</span><span class="z-constant z-numeric">2000</span><span>,</span><span class="z-comment">                  //</span><span class="z-comment"> 100-2000µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            clogging_probability_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">1</span><span class="z-keyword">..</span><span class="z-constant z-numeric">0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">3</span><span>,</span><span class="z-comment">           //</span><span class="z-comment"> 10-30% chance of temporary network congestion</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            clogging_base_duration_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 50000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">300000</span><span>,</span><span class="z-comment">    //</span><span class="z-comment"> 50-300ms congestion duration in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            clogging_jitter_duration_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 100000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">400000</span><span>,</span><span class="z-comment"> //</span><span class="z-comment"> 100-400ms additional congestion variance in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            cutting_probability_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">10</span><span class="z-keyword">..</span><span class="z-constant z-numeric">0</span><span class="z-constant z-numeric">.</span><span class="z-constant z-numeric">20</span><span>,</span><span class="z-comment">          //</span><span class="z-comment"> 10-20% cutting chance per tick</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            cutting_reconnect_base_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 200000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">800000</span><span>,</span><span class="z-comment">   //</span><span class="z-comment"> 200-800ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            cutting_reconnect_jitter_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 100000</span><span class="z-keyword">..</span><span class="z-constant z-numeric">500000</span><span>,</span><span class="z-comment"> //</span><span class="z-comment"> 100-500ms in µs</span></span>
-<span class="giallo-l"><span class="z-variable z-other">            cutting_max_cuts_range</span><span class="z-keyword">:</span><span class="z-constant z-numeric"> 1</span><span class="z-keyword">..</span><span class="z-constant z-numeric">3</span><span>,</span><span class="z-comment">                   //</span><span class="z-comment"> 1-2 cuts per connection max (exclusive upper bound)</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            bind_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 10</span><span class="z-keyword">..</span><span class="z-constant">200</span><span>,</span><span class="z-punctuation z-definition z-comment">                       //</span><span class="z-comment"> 10-200µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            bind_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 10</span><span class="z-keyword">..</span><span class="z-constant">100</span><span>,</span><span class="z-punctuation z-definition z-comment">                     //</span><span class="z-comment"> 10-100µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            accept_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 1000</span><span class="z-keyword">..</span><span class="z-constant">10000</span><span>,</span><span class="z-punctuation z-definition z-comment">                 //</span><span class="z-comment"> 1-10ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            accept_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 1000</span><span class="z-keyword">..</span><span class="z-constant">15000</span><span>,</span><span class="z-punctuation z-definition z-comment">               //</span><span class="z-comment"> 1-15ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            connect_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 1000</span><span class="z-keyword">..</span><span class="z-constant">50000</span><span>,</span><span class="z-punctuation z-definition z-comment">                //</span><span class="z-comment"> 1-50ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            connect_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 5000</span><span class="z-keyword">..</span><span class="z-constant">100000</span><span>,</span><span class="z-punctuation z-definition z-comment">             //</span><span class="z-comment"> 5-100ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            read_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 5</span><span class="z-keyword">..</span><span class="z-constant">100</span><span>,</span><span class="z-punctuation z-definition z-comment">                        //</span><span class="z-comment"> 5-100µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            read_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 10</span><span class="z-keyword">..</span><span class="z-constant">200</span><span>,</span><span class="z-punctuation z-definition z-comment">                     //</span><span class="z-comment"> 10-200µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            write_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 50</span><span class="z-keyword">..</span><span class="z-constant">1000</span><span>,</span><span class="z-punctuation z-definition z-comment">                     //</span><span class="z-comment"> 50-1000µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            write_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 100</span><span class="z-keyword">..</span><span class="z-constant">2000</span><span>,</span><span class="z-punctuation z-definition z-comment">                  //</span><span class="z-comment"> 100-2000µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            clogging_probability_range</span><span class="z-keyword">:</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">1</span><span class="z-keyword">..</span><span class="z-constant">0</span><span class="z-constant">.</span><span class="z-constant">3</span><span>,</span><span class="z-punctuation z-definition z-comment">           //</span><span class="z-comment"> 10-30% chance of temporary network congestion</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            clogging_base_duration_range</span><span class="z-keyword">:</span><span class="z-constant"> 50000</span><span class="z-keyword">..</span><span class="z-constant">300000</span><span>,</span><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> 50-300ms congestion duration in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            clogging_jitter_duration_range</span><span class="z-keyword">:</span><span class="z-constant"> 100000</span><span class="z-keyword">..</span><span class="z-constant">400000</span><span>,</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> 100-400ms additional congestion variance in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            cutting_probability_range</span><span class="z-keyword">:</span><span class="z-constant"> 0</span><span class="z-constant">.</span><span class="z-constant">10</span><span class="z-keyword">..</span><span class="z-constant">0</span><span class="z-constant">.</span><span class="z-constant">20</span><span>,</span><span class="z-punctuation z-definition z-comment">          //</span><span class="z-comment"> 10-20% cutting chance per tick</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            cutting_reconnect_base_range</span><span class="z-keyword">:</span><span class="z-constant"> 200000</span><span class="z-keyword">..</span><span class="z-constant">800000</span><span>,</span><span class="z-punctuation z-definition z-comment">   //</span><span class="z-comment"> 200-800ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            cutting_reconnect_jitter_range</span><span class="z-keyword">:</span><span class="z-constant"> 100000</span><span class="z-keyword">..</span><span class="z-constant">500000</span><span>,</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> 100-500ms in µs</span></span>
+<span class="giallo-l"><span class="z-variable z-other">            cutting_max_cuts_range</span><span class="z-keyword">:</span><span class="z-constant"> 1</span><span class="z-keyword">..</span><span class="z-constant">3</span><span>,</span><span class="z-punctuation z-definition z-comment">                   //</span><span class="z-comment"> 1-2 cuts per connection max (exclusive upper bound)</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Even with just TCP simulation, this creates a hostile environment where connections randomly fail, messages get delayed, and network operations experience unpredictable latencies. Each seed represents a different combination of timing and probability, creating unique failure scenarios.</p>
-<h3 id="why-even-simple-network-code-needs-chaos">Why Even Simple Network Code Needs Chaos<a class="zola-anchor" href="#why-even-simple-network-code-needs-chaos" aria-label="Anchor link for: why-even-simple-network-code-needs-chaos">🔗</a></h3>
+<h3 id="why-even-simple-network-code-needs-chaos">Why Even Simple Network Code Needs Chaos<a class="zola-anchor" href="#why-even-simple-network-code-needs-chaos" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>You might think testing a simple peer implementation with fault injection is overkill, but production experience and research show otherwise. <a rel="external" href="https://www.usenix.org/system/files/osdi18-alquraan.pdf">"An Analysis of Network-Partitioning Failures in Cloud Systems"</a> (OSDI '18) studied real-world failures and found:</p>
 <ul>
 <li><strong>80%</strong> of network partition failures have catastrophic impact</li>
@@ -212,7 +213,8 @@
 <p>That last point is crucial; exactly the kind of complex interaction that deterministic simulation with fault injection helps uncover.</p>
 <p>My peer implementation only does simple ping-pong communication, yet it still took some work to make it robust enough to pass all the checks and assertions. It's enough complexity for Claude to discover edge cases in connection handling, retry logic, and recovery mechanisms.</p>
 <p>The breakthrough wasn't that Claude wrote perfect code but that <strong>Claude could discover and explore failure scenarios I hadn't thought to test, then use deterministic replay to debug and fix what went wrong.</strong></p>
-<h2 id="the-paradigm-shift">The Paradigm Shift<a class="zola-anchor" href="#the-paradigm-shift" aria-label="Anchor link for: the-paradigm-shift">🔗</a></h2>
+<h2 id="the-paradigm-shift">The Paradigm Shift<a class="zola-anchor" href="#the-paradigm-shift" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The difference between prevention and discovery completely changes how we think about software quality. <strong>Prevention testing asks "did we break what used to work?" Discovery testing asks "what else is broken that we haven't found yet?"</strong></p>
 <p>This shift creates a powerful feedback loop for young engineers and LLMs alike. Both developers and LLMs learn what production failure really looks like, not the sanitized version we imagine. When Claude can explore failure scenarios step by step and immediately see the results through sometimes assertions, it becomes a discovery partner that finds edge cases human intuition misses.</p>
 <p>This isn't theoretical. It's working in my hobby project today. Moonpool is definitely hobby-grade, but if a side project can enable LLM-assisted bug discovery, imagine what's possible with production systems designed from the ground up for deterministic testing.</p>
@@ -223,7 +225,7 @@
 <p>Feel free to reach out with any questions or to share your experiences with deterministic testing. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/shipped-vs-operated/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Shipped vs. Operated, or How Many Bash Scripts Does It Take?</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/practical-guide-to-application-metrics/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">A Practical Guide to Application Metrics: Where to Put Your Instrumentation</span></a>
   </nav>
@@ -231,17 +233,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

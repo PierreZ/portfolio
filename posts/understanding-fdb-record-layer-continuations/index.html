@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -60,7 +61,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/understanding-fdb-record-layer-continuations.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/understanding-fdb-record-layer-continuations.md">
 
 
   <script>
@@ -77,9 +78,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -87,19 +88,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;understanding-fdb-record-layer-continuations">./read --quorum posts&#x2F;understanding-fdb-record-layer-continuations</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -120,13 +118,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / understanding-fdb-record-layer-continuations
   </div>
 
-  <h2 class="title">Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</h2>
+  <h1 class="title">Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</h1>
   <div class="meta-row"><span class="m"><b>2025-06-03</b></span>
     <span class="m">read: <b>~7 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/understanding-fdb-record-layer-continuations.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/understanding-fdb-record-layer-continuations.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/record-layer/">#record-layer</a> <a href="https://pierrezemb.fr/tags/java/">#java</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/continuation/">#continuation</a> <a href="https://pierrezemb.fr/tags/pagination/">#pagination</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -156,16 +154,17 @@
   </nav>
 
   <div class="prose">
-    <h2 id="introducing-the-foundationdb-record-layer">Introducing the FoundationDB Record Layer<a class="zola-anchor" href="#introducing-the-foundationdb-record-layer" aria-label="Anchor link for: introducing-the-foundationdb-record-layer">🔗</a></h2>
+    <h2 id="introducing-the-foundationdb-record-layer">Introducing the FoundationDB Record Layer<a class="zola-anchor" href="#introducing-the-foundationdb-record-layer" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Before we dive into the specifics of handling large operations with continuations (the main topic of this post), let's briefly introduce the <a rel="external" href="https://foundationdb.github.io/fdb-record-layer/index.html"><strong>FoundationDB Record Layer</strong></a>. It's a powerful open-source library built atop FoundationDB that brings a structured, record-oriented data model to FDB's highly scalable key-value store. Think of it as adding schema management, rich indexing capabilities, and a sophisticated query engine, making it easier to build complex applications.</p>
 <p>The Record Layer is versatile and has been adopted for demanding use-cases, most notably by Apple as the core of CloudKit, powering services for millions of users. It allows developers to define their data models using Protocol Buffers and then query them in a flexible manner.</p>
 <p>For instance, you can express queries like finding all 'Order' records for roses costing less than $50 with a declarative API (example in Java):</p>
-<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage">RecordQuery</span><span class="z-variable z-other"> query</span><span class="z-keyword"> =</span><span class="z-variable z-other"> RecordQuery</span><span>.</span><span class="z-entity z-name z-function">newBuilder</span><span>(</span><span>)</span></span>
-<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">setRecordType</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Order</span><span class="z-string">&quot;</span><span>)</span></span>
-<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">setFilter</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name z-function">and</span><span>(</span></span>
-<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">price</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">lessThan</span><span>(</span><span class="z-constant z-numeric">50</span><span>)</span><span>,</span></span>
-<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">flower</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">matches</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name z-function">field</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">type</span><span class="z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name z-function">equalsValue</span><span>(</span><span class="z-variable z-other">FlowerType</span><span>.</span><span class="z-variable z-other">ROSE</span><span>.</span><span class="z-entity z-name z-function">name</span><span>(</span><span>)</span><span>)</span><span>)</span><span>)</span><span>)</span></span>
-<span class="giallo-l"><span>        .</span><span class="z-entity z-name z-function">build</span><span>(</span><span>)</span><span>;</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-storage z-type z-java">RecordQuery</span><span class="z-variable z-other"> query</span><span class="z-keyword"> =</span><span class="z-variable z-other"> RecordQuery</span><span>.</span><span class="z-entity z-name">newBuilder</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name">setRecordType</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Order</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name">setFilter</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name">and</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name">field</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">price</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name">lessThan</span><span>(</span><span class="z-constant">50</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other">                Query</span><span>.</span><span class="z-entity z-name">field</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">flower</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name">matches</span><span>(</span><span class="z-variable z-other">Query</span><span>.</span><span class="z-entity z-name">field</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">type</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>.</span><span class="z-entity z-name">equalsValue</span><span>(</span><span class="z-variable z-other">FlowerType</span><span>.</span><span class="z-variable z-other">ROSE</span><span>.</span><span class="z-entity z-name">name</span><span>(</span><span>)</span><span>)</span><span>)</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span class="z-entity z-name">build</span><span>(</span><span>)</span><span>;</span></span></code></pre>
 <p>To get started and explore its capabilities further, the official <a rel="external" href="https://foundationdb.github.io/fdb-record-layer/GettingStarted.html">Getting Started Guide</a> is an excellent resource. You can also watch these talks for a deeper understanding:</p>
 <ul>
 <li><a rel="external" href="https://www.youtube.com/watch?v=SvoUHHM9IKU">Using FoundationDB and the FDB Record Layer to Build CloudKit - Scott Gray, Apple</a></li>
@@ -174,11 +173,13 @@
 <blockquote>
 <p>For a detailed academic perspective on its design and how CloudKit uses it, refer to the <a rel="external" href="https://www.foundationdb.org/files/record-layer-paper.pdf">SIGMOD'19 paper: FoundationDB Record Layer: A Multi-Tenant Structured Datastore</a>.</p>
 </blockquote>
-<h2 id="the-challenge-fdb-s-transaction-constraints">The Challenge: FDB's Transaction Constraints<a class="zola-anchor" href="#the-challenge-fdb-s-transaction-constraints" aria-label="Anchor link for: the-challenge-fdb-s-transaction-constraints">🔗</a></h2>
+<h2 id="the-challenge-fdb-s-transaction-constraints">The Challenge: FDB's Transaction Constraints<a class="zola-anchor" href="#the-challenge-fdb-s-transaction-constraints" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>FoundationDB (FDB) imposes strict constraints on its transactions: they must complete within 5 seconds and are limited to 10MB of manipulated data, either writes or reads. These constraints are fundamental to FDB's design, ensuring high performance and serializable isolation. However, they pose a significant challenge for operations that inherently require processing large datasets or executing complex queries that cannot complete within these tight boundaries, such as full table scans, large analytical queries, or bulk data exports.</p>
 <p>The <strong>FoundationDB Record Layer</strong> addresses this challenge through a mechanism known as <strong>continuations</strong>. Continuations allow a single logical operation to be broken down into a sequence of smaller, independent FDB transactions. Each transaction processes a segment of the total workload and, if more work remains, yields a <strong>continuation token</strong>. This opaque token encapsulates the state required to resume the operation precisely where the previous transaction left off.</p>
 <p>This article delves into the technical details of Record Layer continuations, exploring how they function and how to leverage them effectively to build robust, scalable applications on FDB.</p>
-<h2 id="bridging-transactions-the-role-of-continuations">Bridging Transactions: The Role of Continuations<a class="zola-anchor" href="#bridging-transactions-the-role-of-continuations" aria-label="Anchor link for: bridging-transactions-the-role-of-continuations">🔗</a></h2>
+<h2 id="bridging-transactions-the-role-of-continuations">Bridging Transactions: The Role of Continuations<a class="zola-anchor" href="#bridging-transactions-the-role-of-continuations" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Consider a query to retrieve all records matching a specific filter from a large dataset. Executing this as a single FDB transaction would likely violate the 5-second or 10MB limit. The Record Layer employs continuations to serialize this operation across multiple transactions:</p>
 <ol>
 <li><strong>Initial Request:</strong> The application initiates a query against the Record Layer.</li>
@@ -189,7 +190,8 @@
 <li><strong>State Deserialization &amp; Continued Execution:</strong> The Record Layer deserializes the token, restores the query plan's state, and resumes execution from the exact point it paused. This typically involves adjusting scan boundaries (e.g., starting a key-range scan from the key after the last one processed).</li>
 </ol>
 <p>This cycle repeats until the entire logical operation is complete. The continuation token acts as the critical link, enabling a series of short, FDB-compliant transactions to collectively achieve the effect of a single, long-running operation without violating FDB's core constraints.</p>
-<h2 id="dissecting-the-continuation-token">Dissecting the Continuation Token<a class="zola-anchor" href="#dissecting-the-continuation-token" aria-label="Anchor link for: dissecting-the-continuation-token">🔗</a></h2>
+<h2 id="dissecting-the-continuation-token">Dissecting the Continuation Token<a class="zola-anchor" href="#dissecting-the-continuation-token" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>While the continuation token is <strong>opaque</strong> to the application (it's a <code>byte[]</code> that should not be introspected or modified), it internally contains structured information vital for resuming query execution. The exact format is an implementation detail of the Record Layer and can evolve, but conceptually, it must capture:</p>
 <ul>
 <li><strong>Scan Boundaries:</strong> The key (or keys, for multi-dimensional indexes) where the next scan segment should begin. This ensures no data is missed or re-processed unnecessarily.</li>
@@ -198,7 +200,8 @@
 <li><strong>Version Information:</strong> To ensure compatibility if the token format changes across Record Layer versions.</li>
 </ul>
 <p>The opacity of the token is a deliberate design choice. It decouples the application from the internal mechanics of the Record Layer, allowing the latter to evolve its continuation strategies (e.g., for efficiency or new features) without breaking client applications. The application's responsibility is solely to store and return this token verbatim.</p>
-<h2 id="resuming-query-execution-via-continuations">Resuming Query Execution via Continuations<a class="zola-anchor" href="#resuming-query-execution-via-continuations" aria-label="Anchor link for: resuming-query-execution-via-continuations">🔗</a></h2>
+<h2 id="resuming-query-execution-via-continuations">Resuming Query Execution via Continuations<a class="zola-anchor" href="#resuming-query-execution-via-continuations" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>When a continuation token is provided to a <code>RecordCursor</code> (the Record Layer's abstraction for iterating over query results), the underlying <code>RecordQueryPlan</code> uses it to reconstruct its state.</p>
 <ol>
 <li><strong>Plan Identification:</strong> The token typically identifies the specific query plan or sub-plan it pertains to.</li>
@@ -206,15 +209,17 @@
 <li><strong>Execution Resumption:</strong> Once the plan's state is restored, the <code>RecordCursor</code> can proceed to fetch the next batch of records. The execution effectively "jumps" to the point encoded in the continuation.</li>
 </ol>
 <p>This mechanism allows the Record Layer to transparently manage the complexities of distributed, stateful iteration over potentially vast datasets, all while adhering to FDB's transactional model.</p>
-<h2 id="implications-of-non-atomicity">Implications of Non-Atomicity<a class="zola-anchor" href="#implications-of-non-atomicity" aria-label="Anchor link for: implications-of-non-atomicity">🔗</a></h2>
+<h2 id="implications-of-non-atomicity">Implications of Non-Atomicity<a class="zola-anchor" href="#implications-of-non-atomicity" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>It's important to understand a key implication of this multi-transaction approach: while each individual FDB transaction executed as part of a continued operation is atomic and isolated (typically providing serializable isolation), the overall logical operation spanning multiple continuations is <strong>not atomic</strong> in the same way. Mutations to the data by other concurrent transactions can occur <em>between</em> the FDB transactions of a continued scan. As a result, a long-running operation that uses continuations doesn't see the entire dataset at a single, frozen moment in time. Instead, it might see some data that was present or changed <em>after</em> the operation began but <em>before</em> it completed. This is a natural consequence of breaking the work into smaller pieces to fit within FDB's transaction limits. Applications should be aware of this behavior, particularly if they need all the data to reflect its state from one specific instant.</p>
-<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a></h2>
+<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The Record Layer's continuation feature is a powerful tool for handling large datasets and complex queries in FoundationDB, but it's important to understand the implications of non-atomicity. By breaking operations into smaller, FDB-compliant transactions, the Record Layer provides a flexible and scalable solution while maintaining the core principles of FDB's transactional model.</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your thoughts. You can find me on <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a>, <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/tokio-hidden-gems/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/thank-you-datafusion/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Thank You, DataFusion: Queries in Rust, Without the Pain</span></a>
   </nav>
@@ -222,17 +227,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

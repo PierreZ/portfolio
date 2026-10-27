@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/notes-about-etcd/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2021/notes-about-etcd.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2021/notes-about-etcd.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;notes-about-etcd">./read --quorum posts&#x2F;notes-about-etcd</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / notes-about-etcd
   </div>
 
-  <h2 class="title">Notes about ETCD</h2>
+  <h1 class="title">Notes about ETCD</h1>
   <div class="meta-row"><span class="m"><b>2021-01-11</b></span>
     <span class="m">read: <b>~9 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2021/notes-about-etcd.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2021/notes-about-etcd.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/etcd/">#etcd</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/notes/">#notes</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -198,12 +196,14 @@
   <div class="prose">
     <p><img src="/images/notes-about-etcd/images/etcd.png" alt="etcd image" /></p>
 <p><a href="/tags/notes/">Notes About</a> is a blogpost serie  you will find a lot of <strong>links, videos, quotes, podcasts to click on</strong> about a specific topic. Today we will discover ETCD.</p>
-<h2 id="overview-of-etcd">Overview of ETCD<a class="zola-anchor" href="#overview-of-etcd" aria-label="Anchor link for: overview-of-etcd">🔗</a></h2>
+<h2 id="overview-of-etcd">Overview of ETCD<a class="zola-anchor" href="#overview-of-etcd" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>As stated in the <a rel="external" href="https://etcd.io/">official documentation</a>:</p>
 <blockquote>
 <p>etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be accessed by a distributed system or cluster of machines. It gracefully handles leader elections during network partitions and can tolerate machine failure, even in the leader node.</p>
 </blockquote>
-<h2 id="history">History<a class="zola-anchor" href="#history" aria-label="Anchor link for: history">🔗</a></h2>
+<h2 id="history">History<a class="zola-anchor" href="#history" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>ETCD was initially developed by CoreOS:</p>
 <blockquote>
 <p>CoreOS built etcd to solve the problem of shared configuration and service discovery.</p>
@@ -218,7 +218,8 @@
 <li>February 01, 2018 - etcd 3.3 - Announcing etcd 3.3, with improvements to stability, performance, and more</li>
 <li>August 30, 2019 - etcd 3.4 - Better Storage Backend, concurrent Read, Improved Raft Voting Process, Raft Learner Member</li>
 </ul>
-<h2 id="overall-architecture">Overall architecture<a class="zola-anchor" href="#overall-architecture" aria-label="Anchor link for: overall-architecture">🔗</a></h2>
+<h2 id="overall-architecture">Overall architecture<a class="zola-anchor" href="#overall-architecture" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <blockquote>
 <p>The etcd key-value store is a distributed system intended for use as a coordination primitive. Like Zookeeper and Consul, etcd stores a small volume of infrequently-updated state (by default, up to 8 GB) in a key-value map, and offers strict-serializable reads, writes and micro-transactions across the entire datastore, plus coordination primitives like locks, watches, and leader election. Many distributed systems, such as Kubernetes and OpenStack, use etcd to store cluster metadata, to coordinate consistent views over data, to choose leaders, and so on.</p>
 </blockquote>
@@ -231,7 +232,8 @@
 <li>storing key-values into bbolt,</li>
 <li>optimized for consistency over latency in normal situations and consistency over availability in the case of a partition (<a rel="external" href="https://en.wikipedia.org/wiki/PACELC_theorem">in terms of the PACELC theorem</a>).</li>
 </ul>
-<h3 id="consensus-raft">Consensus? Raft?<a class="zola-anchor" href="#consensus-raft" aria-label="Anchor link for: consensus-raft">🔗</a></h3>
+<h3 id="consensus-raft">Consensus? Raft?<a class="zola-anchor" href="#consensus-raft" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <ul>
 <li>Raft is a consensus algorithm for managing a replicated log.</li>
 <li>consensus involves multiple servers agreeing on values.</li>
@@ -254,7 +256,8 @@
 <li>Learner role,</li>
 <li>Client-side load-balancing.</li>
 </ul>
-<h3 id="exposed-api">Exposed API<a class="zola-anchor" href="#exposed-api" aria-label="Anchor link for: exposed-api">🔗</a></h3>
+<h3 id="exposed-api">Exposed API<a class="zola-anchor" href="#exposed-api" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>ETCD is exposing several APIs through different gRPC services:</p>
 <ul>
 <li>Put(key, value),</li>
@@ -272,7 +275,8 @@
 </li>
 </ul>
 <p>Key and values are bytes-oriented but ordered.</p>
-<h3 id="transactions">Transactions<a class="zola-anchor" href="#transactions" aria-label="Anchor link for: transactions">🔗</a></h3>
+<h3 id="transactions">Transactions<a class="zola-anchor" href="#transactions" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <pre class="giallo z-code"><code data-lang="proto"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> From google paxosdb paper:</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Our implementation hinges around a powerful primitive which we call MultiOp. All other database</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> operations except for iteration are implemented as a single call to MultiOp. A MultiOp is applied atomically</span></span>
@@ -288,57 +292,62 @@
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> if guard evaluates to</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> true.</span></span>
 <span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.</span></span>
-<span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name z-class"> TxnRequest</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name"> TxnRequest</span><span> {</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> compare is a list of predicates representing a conjunction of terms.</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> If the comparisons succeed, then the success requests will be processed in order,</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> and the response will contain their respective responses in order.</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> If the comparisons fail, then the failure requests will be processed in order,</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> and the response will contain their respective responses in order.</span></span>
-<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage"> Compare</span><span class="z-variable z-other"> compare</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 1</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage z-type"> Compare</span><span class="z-variable z-other"> compare</span><span class="z-keyword"> =</span><span class="z-constant"> 1</span><span>;</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> success is a list of requests which will be applied when compare evaluates to true.</span></span>
-<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage"> RequestOp</span><span class="z-variable z-other"> success</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 2</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage z-type"> RequestOp</span><span class="z-variable z-other"> success</span><span class="z-keyword"> =</span><span class="z-constant"> 2</span><span>;</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> failure is a list of requests which will be applied when compare evaluates to false.</span></span>
-<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage"> RequestOp</span><span class="z-variable z-other"> failure</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 3</span><span>;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="versioned-data">Versioned data<a class="zola-anchor" href="#versioned-data" aria-label="Anchor link for: versioned-data">🔗</a></h3>
+<span class="giallo-l"><span class="z-storage">  repeated</span><span class="z-storage z-type"> RequestOp</span><span class="z-variable z-other"> failure</span><span class="z-keyword"> =</span><span class="z-constant"> 3</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="versioned-data">Versioned data<a class="zola-anchor" href="#versioned-data" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Each Key/Value has a revision. When creating a new key, revision starts at 1, and then will be incremented each time the key is updated.</p>
 <p>In order to avoid having a growing keySpace, one can issue the <code>Compact</code> gRPC service:</p>
 <blockquote>
 <p>Compacting the keyspace history drops all information about keys superseded prior to a given keyspace revision</p>
 </blockquote>
-<h3 id="lease">Lease<a class="zola-anchor" href="#lease" aria-label="Anchor link for: lease">🔗</a></h3>
+<h3 id="lease">Lease<a class="zola-anchor" href="#lease" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <pre class="giallo z-code"><code data-lang="proto"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> this message represent a Lease</span></span>
-<span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name z-class"> Lease</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name"> Lease</span><span> {</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> TTL is the advisory time-to-live in seconds. Expired lease will return -1.</span></span>
-<span class="giallo-l"><span class="z-storage">  int64</span><span class="z-variable z-other"> TTL</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 1</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  int64</span><span class="z-variable z-other"> TTL</span><span class="z-keyword"> =</span><span class="z-constant"> 1</span><span>;</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.</span></span>
-<span class="giallo-l"><span class="z-storage">  int64</span><span class="z-variable z-other"> ID</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 2</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  int64</span><span class="z-variable z-other"> ID</span><span class="z-keyword"> =</span><span class="z-constant"> 2</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-storage">  int64</span><span class="z-variable z-other"> insert_timestamp</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 3</span><span>;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="watches">Watches<a class="zola-anchor" href="#watches" aria-label="Anchor link for: watches">🔗</a></h3>
-<pre class="giallo z-code"><code data-lang="proto"><span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name z-class"> Watch</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  int64</span><span class="z-variable z-other"> insert_timestamp</span><span class="z-keyword"> =</span><span class="z-constant"> 3</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="watches">Watches<a class="zola-anchor" href="#watches" aria-hidden="true" tabindex="-1">#</a>
+</h3>
+<pre class="giallo z-code"><code data-lang="proto"><span class="giallo-l"><span class="z-keyword">message</span><span class="z-entity z-name"> Watch</span><span> {</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> key is the key to register for watching.</span></span>
-<span class="giallo-l"><span class="z-storage">  bytes</span><span class="z-variable z-other"> key</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 1</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  bytes</span><span class="z-variable z-other"> key</span><span class="z-keyword"> =</span><span class="z-constant"> 1</span><span>;</span></span>
 <span class="giallo-l"></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> range_end is the end of the range [key, range_end) to watch. If range_end is not given,</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> only the key argument is watched. If range_end is equal to &#39;\0&#39;, all keys greater than</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> or equal to the key argument are watched.</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> If the range_end is one bit larger than the given key,</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> then all keys with the prefix (the given key) will be watched.</span></span>
-<span class="giallo-l"><span class="z-storage">  bytes</span><span class="z-variable z-other"> range_end</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 2</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  bytes</span><span class="z-variable z-other"> range_end</span><span class="z-keyword"> =</span><span class="z-constant"> 2</span><span>;</span></span>
 <span class="giallo-l"></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> If watch_id is provided and non-zero, it will be assigned to this watcher.</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> Since creating a watcher in etcd is not a synchronous operation,</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> this can be used ensure that ordering is correct when creating multiple</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> watchers on the same stream. Creating a watcher with an ID already in</span></span>
 <span class="giallo-l"><span class="z-comment">  //</span><span class="z-comment"> use on the stream will cause an error to be returned.</span></span>
-<span class="giallo-l"><span class="z-storage">  int64</span><span class="z-variable z-other"> watch_id</span><span class="z-keyword"> =</span><span class="z-constant z-numeric"> 7</span><span>;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="linearizable-reads">Linearizable reads<a class="zola-anchor" href="#linearizable-reads" aria-label="Anchor link for: linearizable-reads">🔗</a></h3>
+<span class="giallo-l"><span class="z-storage z-type">  int64</span><span class="z-variable z-other"> watch_id</span><span class="z-keyword"> =</span><span class="z-constant"> 7</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="linearizable-reads">Linearizable reads<a class="zola-anchor" href="#linearizable-reads" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Section 8 of the raft paper explains the issue:</p>
 <blockquote>
 <p>Read-only operations can be handled without writing anything into the log. However, with no additional measures, this would run the risk of returning stale data, since the leader responding to the request might have been superseded by a newer leader of which it is unaware. Linearizable reads must not return stale data, and Raft needs two extra precautions to guarantee this without using the log. First, a leader must have the latest information on which entries are committed. The Leader Completeness Property guarantees that a leader has all committed entries, but at the start of its term, it may not know which those are. To find out, it needs to commit an entry from its term. Raft handles this by having each leader commit a blank no-op entry into the log at the start of its term. Second,a leader must check whether it has been deposed before processing a read-only request (its information may be stale if a more recent leader has been elected). Raft handles this by having the leader exchange heartbeat messages with a majority of the cluster before responding to read-only requests.</p>
 </blockquote>
 <p>ETCD implements <code>ReadIndex</code> read(more info on <a href="/posts/diving-into-etcd-linearizable/">Diving into ETCD’s linearizable reads</a>).</p>
-<h3 id="how-etcd-is-using-bbolt">How ETCD is using bbolt<a class="zola-anchor" href="#how-etcd-is-using-bbolt" aria-label="Anchor link for: how-etcd-is-using-bbolt">🔗</a></h3>
+<h3 id="how-etcd-is-using-bbolt">How ETCD is using bbolt<a class="zola-anchor" href="#how-etcd-is-using-bbolt" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p><a rel="external" href="https://github.com/etcd-io/bbolt">bbolt</a> is the underlying kv used in etcd. <a rel="external" href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/kvstore_txn.go#L214">A bucket called <code>key</code> is used to store data, and the key is the revision</a>. Then, to find keys, <a rel="external" href="https://github.com/etcd-io/etcd/blob/v3.4.14/mvcc/index.go#L68">a B-Tree is used</a>.</p>
 <blockquote>
 <ul>
@@ -355,7 +364,8 @@
 <blockquote>
 <p>Note that the underlying <code>bbolt</code> mmap its file in memory. For better performance, usually it is a good idea to ensure the physical memory available to etcd is larger than its data size.</p>
 </blockquote>
-<h2 id="etcd-in-k8s">ETCD in K8S<a class="zola-anchor" href="#etcd-in-k8s" aria-label="Anchor link for: etcd-in-k8s">🔗</a></h2>
+<h2 id="etcd-in-k8s">ETCD in K8S<a class="zola-anchor" href="#etcd-in-k8s" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p><a rel="external" href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/storage/interfaces.go#L159">The interface can be found here</a>.</p>
 <ul>
 <li>Create use TTL and Txn</li>
@@ -365,7 +375,8 @@
 <li>List uses Get</li>
 <li>Watch uses Watch with a channel</li>
 </ul>
-<h2 id="jepsen">Jepsen<a class="zola-anchor" href="#jepsen" aria-label="Anchor link for: jepsen">🔗</a></h2>
+<h2 id="jepsen">Jepsen<a class="zola-anchor" href="#jepsen" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The Jepsen team tested <a rel="external" href="https://jepsen.io/analyses/etcd-3.4.3">etcd-3.4.3</a>, here's some quotes:</p>
 <blockquote>
 <p>In our tests, etcd 3.4.3 lived up to its claims for key-value operations: we observed nothing but strict-serializable consistency for reads, writes, and even multi-key transactions, during process pauses, crashes, clock skew, network partitions, and membership changes.</p>
@@ -379,8 +390,10 @@
 <blockquote>
 <p>If you use etcd locks, consider whether those locks are used to ensure safety, or simply to improve performance by probabilistically limiting concurrency. It’s fine to use etcd locks for performance, but using them for safety might be risky.</p>
 </blockquote>
-<h2 id="operation-notes">Operation notes<a class="zola-anchor" href="#operation-notes" aria-label="Anchor link for: operation-notes">🔗</a></h2>
-<h3 id="deployements-tips">Deployements tips<a class="zola-anchor" href="#deployements-tips" aria-label="Anchor link for: deployements-tips">🔗</a></h3>
+<h2 id="operation-notes">Operation notes<a class="zola-anchor" href="#operation-notes" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<h3 id="deployements-tips">Deployements tips<a class="zola-anchor" href="#deployements-tips" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p><a rel="external" href="https://etcd.io/docs/v3.4.0/faq/">From the official documentation</a>:</p>
 <blockquote>
 <p>Since etcd writes data to disk, SSD is highly recommended.
@@ -388,24 +401,28 @@ To prevent performance degradation or unintentionally overloading the key-value 
 To avoid swapping or running out of memory, the machine should have at least as much RAM to cover the quota.
 8GB is a suggested maximum size for normal environments and etcd warns at startup if the configured value exceeds it.</p>
 </blockquote>
-<h3 id="defrag">Defrag<a class="zola-anchor" href="#defrag" aria-label="Anchor link for: defrag">🔗</a></h3>
+<h3 id="defrag">Defrag<a class="zola-anchor" href="#defrag" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <blockquote>
 <p>After compacting the keyspace, the backend database may exhibit internal fragmentation.
 Defragmentation is issued on a per-member so that cluster-wide latency spikes may be avoided.</p>
 </blockquote>
 <p>Defrag is basically <a rel="external" href="https://github.com/etcd-io/etcd/blob/2b79442d8e9fc54b1ac27e7e230ac0e4c132a054/mvcc/backend/backend.go#L349">dumping the bbolt tree on disk and reopening it</a>.</p>
-<h3 id="snapshot">Snapshot<a class="zola-anchor" href="#snapshot" aria-label="Anchor link for: snapshot">🔗</a></h3>
+<h3 id="snapshot">Snapshot<a class="zola-anchor" href="#snapshot" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>An ETCD snapshot is related to Raft's snapshot:</p>
 <blockquote>
 <p>Snapshotting is the simplest approach to compaction. In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded</p>
 </blockquote>
 <p>Snapshot can be saved using <code>etcdctl</code>:</p>
-<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name z-function">etcdctl</span><span class="z-string"> snapshot</span><span class="z-string"> save</span><span class="z-string"> backup.db</span></span></code></pre><h3 id="lease-1">Lease<a class="zola-anchor" href="#lease-1" aria-label="Anchor link for: lease-1">🔗</a></h3>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">etcdctl</span><span class="z-string"> snapshot</span><span class="z-string"> save</span><span class="z-string"> backup.db</span></span></code></pre><h3 id="lease-1">Lease<a class="zola-anchor" href="#lease-1" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Be careful on Leader's change and lease, this can <a rel="external" href="https://github.com/kubernetes/kubernetes/issues/65497">create some issues</a>:</p>
 <blockquote>
 <p>The new leader extends timeouts automatically for all leases. This mechanism ensures no lease expires due to server side unavailability.</p>
 </blockquote>
-<h3 id="war-stories">War stories<a class="zola-anchor" href="#war-stories" aria-label="Anchor link for: war-stories">🔗</a></h3>
+<h3 id="war-stories">War stories<a class="zola-anchor" href="#war-stories" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <ul>
 <li><a rel="external" href="https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/">An analysis of the Cloudflare API availability incident on 2020-11-02</a></li>
 <li><a rel="external" href="https://grafana.com/blog/2020/04/07/how-a-production-outage-in-grafana-clouds-hosted-prometheus-service-was-caused-by-a-bad-etcd-client-setup/">How a production outage in Grafana Cloud's Hosted Prometheus service was caused by a bad etcd client setup</a></li>
@@ -414,7 +431,7 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 </ul>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/ten-years-programming/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">10 years of programming and counting 🚀</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Crafting row keys in FoundationDB</span></a>
   </nav>
@@ -422,17 +439,17 @@ Defragmentation is issued on a per-member so that cluster-wide latency spikes ma
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

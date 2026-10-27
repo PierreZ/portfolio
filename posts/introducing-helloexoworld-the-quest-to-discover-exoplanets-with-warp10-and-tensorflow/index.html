@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://medium.com/@PierreZ/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript-c97a9f4a0016">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -57,7 +58,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2017/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2017/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow.md">
 
 
   <script>
@@ -74,9 +75,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -84,19 +85,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow">./read --quorum posts&#x2F;introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -117,13 +115,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow
   </div>
 
-  <h2 class="title">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</h2>
+  <h1 class="title">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</h1>
   <div class="meta-row"><span class="m"><b>2017-10-11</b></span>
     <span class="m">read: <b>~8 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2017/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2017/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/space/">#space</a> <a href="https://pierrezemb.fr/tags/timeseries/">#timeseries</a> <a href="https://pierrezemb.fr/tags/analytics/">#analytics</a> <a href="https://pierrezemb.fr/tags/machinelearning/">#machinelearning</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -168,7 +166,8 @@
 <p><strong>I was looking for something that would unit my two passions: computer and astronomy</strong>. So I started googling:</p>
 <p><img src="/images/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/3.png" alt="image" /></p>
 <p>I found a lot of amazing projects using Raspberry pis, but I didn’t find something that would <strong>motivate me</strong> over the time. So I started typing over keywords, more work-related, such as <em><strong>time series</strong></em> or <em><strong>analytics</strong></em>. I found many papers related to astrophysics, but there was two keywords that were coming back: <strong>exoplanet detection</strong>.</p>
-<h3 id="what-is-an-exoplanet-and-how-to-detect-it">What is an exoplanet and how to detect it?<a class="zola-anchor" href="#what-is-an-exoplanet-and-how-to-detect-it" aria-label="Anchor link for: what-is-an-exoplanet-and-how-to-detect-it">🔗</a></h3>
+<h3 id="what-is-an-exoplanet-and-how-to-detect-it">What is an exoplanet and how to detect it?<a class="zola-anchor" href="#what-is-an-exoplanet-and-how-to-detect-it" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Let’s quote our good old friend <a rel="external" href="https://en.wikipedia.org/wiki/Exoplanet"><strong>Wikipedia</strong></a>:</p>
 <blockquote>
 <p><em>An exoplanet or extrasolar planet is a planet outside of our solar system that orbits a star.</em></p>
@@ -177,12 +176,14 @@
 <p><video autoplay loop muted playsinline style="max-width:100%;border:1px solid #b9c6cf;" src="/images/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/4.mp4" aria-label="image"></video></p>
 <p>animation illustrating how a dip in the observed brightness of a star may indicate the presence of an exoplanet. <em><strong>Credits: NASA’s Goddard Space Flight Center</strong></em></p>
 <p>To recap, exoplanet detection using the transit method are in reality a <strong>time series analysis problem</strong>. As I’m starting to be familiar with that type of analytics thanks to my current work at OVH in <a rel="external" href="https://www.ovh.com/fr/data-platforms/metrics/"><strong>Metrics Data Platform</strong></a>, I wanted to give it a try.</p>
-<h3 id="kepler-k2-mission">Kepler/K2 mission<a class="zola-anchor" href="#kepler-k2-mission" aria-label="Anchor link for: kepler-k2-mission">🔗</a></h3>
+<h3 id="kepler-k2-mission">Kepler/K2 mission<a class="zola-anchor" href="#kepler-k2-mission" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p><img src="/images/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/5.jpeg" alt="image" /></p>
 <p><em>Image Credit: NASA Ames/W. Stenzel</em></p>
 <p>Kepler is a <strong>space observatory</strong> launched by NASA in March 2009 to <strong>discover Earth-sized planets orbiting other stars</strong>. <a rel="external" href="https://www.nasa.gov/feature/ames/nasas-k2-mission-the-kepler-space-telescopes-second-chance-to-shine">The loss of a second of the four reaction wheels during May 2013</a> put an end to the original mission. Fortunately, scientists decided to create an <strong>entirely community-driven mission</strong> called K2, to <strong>reuse the Kepler spacecraft and its assets</strong>. But furthermore, the community is also encouraged to exploit the mission’s unique <strong>open</strong> data archive. Every image taken by the satellite can be <strong>downloaded and analyzed by anyone</strong>.</p>
 <p>More information about the telescope itself can be found <a rel="external" href="https://keplerscience.arc.nasa.gov/the-kepler-space-telescope.html"><strong>here</strong></a>.</p>
-<h3 id="where-i-m-going">Where I’m going<a class="zola-anchor" href="#where-i-m-going" aria-label="Anchor link for: where-i-m-going">🔗</a></h3>
+<h3 id="where-i-m-going">Where I’m going<a class="zola-anchor" href="#where-i-m-going" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>The goal of my project is to see if <strong>I can contribute to the exoplanets search</strong> using new tools such as <a rel="external" href="http://www.warp10.io"><strong>Warp10</strong></a> and <a rel="external" href="https://tensorflow.org/"><strong>TensorFlow</strong></a>. Using <strong>Deep Learning to search for anomalies could be much more effective</strong> than writing WarpScript, because it is the <strong>neural network's job to learn</strong> by itself <strong>how</strong> to detect the exoplanets.</p>
 <p>As I’m currently following <a rel="external" href="https://www.coursera.org/learn/neural-networks-deep-learning"><strong>Andrew Ng courses about Deep Learning</strong></a>, it is also a great opportunity for me to play with <strong>Tensorflow</strong> in a personal project. The project can be divided into several steps:</p>
 <ul>
@@ -191,12 +192,15 @@
 <li><strong>Build</strong> a neural network to search for exoplanets</li>
 </ul>
 <p>Let's see how the import was done!</p>
-<h3 id="importing-kepler-and-k2-dataset">Importing Kepler and K2 dataset<a class="zola-anchor" href="#importing-kepler-and-k2-dataset" aria-label="Anchor link for: importing-kepler-and-k2-dataset">🔗</a></h3>
-<h4 id="step-0-find-the-data">Step 0: Find the data<a class="zola-anchor" href="#step-0-find-the-data" aria-label="Anchor link for: step-0-find-the-data">🔗</a></h4>
+<h3 id="importing-kepler-and-k2-dataset">Importing Kepler and K2 dataset<a class="zola-anchor" href="#importing-kepler-and-k2-dataset" aria-hidden="true" tabindex="-1">#</a>
+</h3>
+<h4 id="step-0-find-the-data">Step 0: Find the data<a class="zola-anchor" href="#step-0-find-the-data" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>As mentioned previously, data are available from The Mikulski Archive for Space Telescopes or <a rel="external" href="https://archive.stsci.edu/">MAST</a>. It’s a <strong>NASA funded project</strong> to support and provide the astronomical community with a variety of astronomical data archives. Both Kepler and K2 dataset are <strong>available</strong> through <strong>campaigns</strong>. Each campaign has a collection of tar files, which are containing the FITS files associated. A <a rel="external" href="https://en.wikipedia.org/wiki/FITS"><strong>FITS</strong></a> file is an <strong>open format</strong> for images which is also <strong>containing scientific data</strong>.</p>
 <p><img src="/images/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/6.png" alt="image" /></p>
 <p><em>FITS file representation.</em> <a rel="external" href="https://keplerscience.arc.nasa.gov/k2-observing.html"><em>Image Credit: KEPLER &amp; K2 Science Center</em></a></p>
-<h4 id="step-1-etl-extract-transform-and-load-into-warp10">Step 1: ETL (Extract, Transform and Load) into Warp10<a class="zola-anchor" href="#step-1-etl-extract-transform-and-load-into-warp10" aria-label="Anchor link for: step-1-etl-extract-transform-and-load-into-warp10">🔗</a></h4>
+<h4 id="step-1-etl-extract-transform-and-load-into-warp10">Step 1: ETL (Extract, Transform and Load) into Warp10<a class="zola-anchor" href="#step-1-etl-extract-transform-and-load-into-warp10" aria-hidden="true" tabindex="-1">#</a>
+</h4>
 <p>To speed-up acquisition, I developed <a rel="external" href="https://github.com/PierreZ/kepler-lens"><strong>kepler-lens</strong></a> to <strong>automatically</strong> <strong>download Kepler/K2 datasets and extract the needed time series</strong> into a CSV format. <strong>Kepler-lens</strong> is using two awesome libraries:</p>
 <ul>
 <li><a rel="external" href="https://github.com/KeplerGO/PyKE"><strong>pyKe</strong></a> to export the data from the <a rel="external" href="https://en.wikipedia.org/wiki/FITS"><strong>FITS</strong></a> files to CSV (<a rel="external" href="https://github.com/KeplerGO/PyKE/pull/69"><strong>#PR69</strong></a> and <a rel="external" href="https://github.com/KeplerGO/PyKE/pull/76"><strong>#PR76</strong></a>  have been merged).</li>
@@ -226,7 +230,7 @@
 <p><strong>Artist’s impression of the ultracool dwarf star TRAPPIST-1 from close to one of its planets</strong>. Image Credit: By <a rel="external" href="http://www.eso.org/public/images/eso1615b/">ESO/M. Kornmesser</a> — <a rel="external" href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/engage-maximum-warp-speed-in-time-series-analysis-with-warpscript/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Engage maximum warp speed in time series analysis with WarpScript</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/hbase-data-model/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Hbase Data Model</span></a>
   </nav>
@@ -234,17 +238,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

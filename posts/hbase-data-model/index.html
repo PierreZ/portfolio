@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/hbase-data-model/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/hbase-data-model.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/hbase-data-model.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;hbase-data-model">./read --quorum posts&#x2F;hbase-data-model</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / hbase-data-model
   </div>
 
-  <h2 class="title">Hbase Data Model</h2>
+  <h1 class="title">Hbase Data Model</h1>
   <div class="meta-row"><span class="m"><b>2019-01-27</b></span>
     <span class="m">read: <b>~4 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/hbase-data-model.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/hbase-data-model.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/hbase/">#hbase</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/design/">#design</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -145,13 +143,15 @@
   </nav>
 
   <div class="prose">
-    <h2 id="hbase">HBase?<a class="zola-anchor" href="#hbase" aria-label="Anchor link for: hbase">🔗</a></h2>
+    <h2 id="hbase">HBase?<a class="zola-anchor" href="#hbase" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p><img src="/images/hbase-data-model/hbase.jpg" alt="hbase image" /></p>
 <blockquote>
 <p><a rel="external" href="https://hbase.apache.org/">Apache HBase™</a> is a type of "NoSQL" database. "NoSQL" is a general term meaning that the database isn’t an RDBMS which supports SQL as its primary access language. Technically speaking, HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc.</p>
 </blockquote>
 <p>-- <a rel="external" href="https://hbase.apache.org/book.html#arch.overview.nosql">Hbase architecture overview</a></p>
-<h2 id="hbase-data-model">Hbase data model<a class="zola-anchor" href="#hbase-data-model" aria-label="Anchor link for: hbase-data-model">🔗</a></h2>
+<h2 id="hbase-data-model">Hbase data model<a class="zola-anchor" href="#hbase-data-model" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The data model is simple: it's like a multi-dimensional map:</p>
 <ul>
 <li>Elements are stored as <strong>rows</strong> in a <strong>table</strong>.</li>
@@ -164,21 +164,22 @@
 </ul>
 <p>Not as easy as you thought? Here's an example! Let's say that we're trying to <strong>save the whole internet</strong>. To do this, we need to store the content of each pages, and versioned it. We can use <strong>the page address as the row key</strong> and store the contents in a <strong>column called "Contents"</strong>. Nowadays, website <strong>contents can be anything</strong>, from a HTML file to a binary such as a PDF. To handle that, we can create as many <strong>qualifiers</strong> as we want, such as "content:html" or "content:video".</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">fr.pierrezemb.www</span><span class="z-support z-type">&quot;</span><span>:</span><span> {</span><span class="z-comment">          //</span><span class="z-comment"> Row key</span></span>
-<span class="giallo-l"><span class="z-support z-type">    &quot;</span><span class="z-support z-type">contents</span><span class="z-support z-type">&quot;</span><span>:</span><span> {</span><span class="z-comment">                 //</span><span class="z-comment"> Column family</span></span>
-<span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">content:html</span><span class="z-support z-type">&quot;</span><span>:</span><span> {</span><span class="z-comment">           //</span><span class="z-comment"> Column qualifier</span></span>
-<span class="giallo-l"><span class="z-support z-type">        &quot;</span><span class="z-support z-type">2017-01-01</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-comment">             //</span><span class="z-comment"> A timestamp</span></span>
-<span class="giallo-l"><span class="z-string">          &quot;</span><span class="z-string">&lt;html&gt;...</span><span class="z-string">&quot;</span><span>,</span><span class="z-comment">            //</span><span class="z-comment"> The actual value</span></span>
-<span class="giallo-l"><span class="z-support z-type">        &quot;</span><span class="z-support z-type">2016-01-01</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-comment">             //</span><span class="z-comment"> Another timestamp</span></span>
-<span class="giallo-l"><span class="z-string">          &quot;</span><span class="z-string">&lt;html&gt;...</span><span class="z-string">&quot;</span><span class="z-comment">             //</span><span class="z-comment"> Another cell</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">fr.pierrezemb.www</span><span class="z-support">&quot;</span><span>:</span><span> {</span><span class="z-punctuation z-definition z-comment">          //</span><span class="z-comment"> Row key</span></span>
+<span class="giallo-l"><span class="z-support">    &quot;</span><span class="z-support">contents</span><span class="z-support">&quot;</span><span>:</span><span> {</span><span class="z-punctuation z-definition z-comment">                 //</span><span class="z-comment"> Column family</span></span>
+<span class="giallo-l"><span class="z-support">      &quot;</span><span class="z-support">content:html</span><span class="z-support">&quot;</span><span>:</span><span> {</span><span class="z-punctuation z-definition z-comment">           //</span><span class="z-comment"> Column qualifier</span></span>
+<span class="giallo-l"><span class="z-support">        &quot;</span><span class="z-support">2017-01-01</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-comment">             //</span><span class="z-comment"> A timestamp</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">          &quot;</span><span class="z-string">&lt;html&gt;...</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-comment">            //</span><span class="z-comment"> The actual value</span></span>
+<span class="giallo-l"><span class="z-support">        &quot;</span><span class="z-support">2016-01-01</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-comment">             //</span><span class="z-comment"> Another timestamp</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">          &quot;</span><span class="z-string">&lt;html&gt;...</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation z-definition z-comment">             //</span><span class="z-comment"> Another cell</span></span>
 <span class="giallo-l"><span>      }</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">content:pdf</span><span class="z-support z-type">&quot;</span><span>:</span><span> {</span><span class="z-comment">            //</span><span class="z-comment"> Another Column qualifier</span></span>
-<span class="giallo-l"><span class="z-support z-type">        &quot;</span><span class="z-support z-type">2015-01-01</span><span class="z-support z-type">&quot;</span><span>:</span><span> </span></span>
-<span class="giallo-l"><span class="z-string">          &quot;</span><span class="z-string">&lt;pdf&gt;...</span><span class="z-string">&quot;</span><span class="z-comment">  //</span><span class="z-comment"> my website may only contained a pdf in 2015</span></span>
+<span class="giallo-l"><span class="z-support">      &quot;</span><span class="z-support">content:pdf</span><span class="z-support">&quot;</span><span>:</span><span> {</span><span class="z-punctuation z-definition z-comment">            //</span><span class="z-comment"> Another Column qualifier</span></span>
+<span class="giallo-l"><span class="z-support">        &quot;</span><span class="z-support">2015-01-01</span><span class="z-support">&quot;</span><span>:</span><span> </span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">          &quot;</span><span class="z-string">&lt;pdf&gt;...</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> my website may only contained a pdf in 2015</span></span>
 <span class="giallo-l"><span>      }</span></span>
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>  }</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h2 id="key-design">Key design<a class="zola-anchor" href="#key-design" aria-label="Anchor link for: key-design">🔗</a></h2>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="key-design">Key design<a class="zola-anchor" href="#key-design" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Hbase is most efficient at queries when we're getting a <strong>single row key</strong>, or during <strong>row range</strong>, ie. getting a block of contiguous data because keys are <strong>sorted lexicographically by row key</strong>. For example, my website <code>fr.pierrezemb.www</code> and <code>org.pierrezemb.www</code> would not be "near".</p>
 <p>As such, the <strong>key design</strong> is really important:</p>
 <ul>
@@ -191,7 +192,8 @@
 </blockquote>
 <p>As you may have guessed, this is why we are using the <strong>reverse address name</strong> in my example, because <code>www</code> is too generic, we would have hotspot the poor region holding data for <code>www</code>.</p>
 <p>If you are curious about Hbase schema, you should have a look on <a rel="external" href="https://cloud.google.com/bigtable/docs/schema-design">Designing Your BigTable Schema</a>, as BigTable is kind of the proprietary version of Hbase.</p>
-<h2 id="be-warned">Be warned<a class="zola-anchor" href="#be-warned" aria-label="Anchor link for: be-warned">🔗</a></h2>
+<h2 id="be-warned">Be warned<a class="zola-anchor" href="#be-warned" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>I have been working with Hbase for the past three years, <strong>including operation and on-call duty.</strong> It is a really nice data store, but it diverges from classical RDBMS. Here's some warnings extracted from the well-written documentation:</p>
 <blockquote>
 <p>HBase is really more a "Data Store" than "Data Base" because it lacks many of the features you find in an RDBMS, such as typed columns, secondary indexes, triggers, and advanced query languages, etc. However, HBase has many features which supports both linear and modular scaling.</p>
@@ -205,7 +207,7 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/introducing-helloexoworld-the-quest-to-discover-exoplanets-with-warp10-and-tensorflow/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Introducing HelloExoWorld: The quest to discover exoplanets with Warp10 and Tensorflow</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/acid-transactions/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">What are ACID transactions?</span></a>
   </nav>
@@ -213,17 +215,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

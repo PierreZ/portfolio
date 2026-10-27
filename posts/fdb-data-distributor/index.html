@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/fdb-data-distributor/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/fdb-data-distributor.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/fdb-data-distributor.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;fdb-data-distributor">./read --quorum posts&#x2F;fdb-data-distributor</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / fdb-data-distributor
   </div>
 
-  <h2 class="title">Debugging FoundationDB&#x27;s Data Distributor</h2>
+  <h1 class="title">Debugging FoundationDB&#x27;s Data Distributor</h1>
   <div class="meta-row"><span class="m"><b>2025-03-07</b></span>
     <span class="m">read: <b>~3 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/fdb-data-distributor.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/fdb-data-distributor.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/debugging/">#debugging</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -162,14 +160,16 @@
   <div class="prose">
     <p>FoundationDB is a powerful, distributed database designed to handle massive workloads with high consistency guarantees. At its core, the <strong>Data Distributor</strong> plays a critical role in determining how shards are distributed across the cluster to maintain load balance and resilience.</p>
 <p>In this post, we dive into the <strong>Data Distributor's</strong> internals, along with practical lessons we learned during a outage.</p>
-<h2 id="what-is-the-data-distributor">What is the Data Distributor?<a class="zola-anchor" href="#what-is-the-data-distributor" aria-label="Anchor link for: what-is-the-data-distributor">🔗</a></h2>
+<h2 id="what-is-the-data-distributor">What is the Data Distributor?<a class="zola-anchor" href="#what-is-the-data-distributor" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The <strong>Data Distributor (DD)</strong> is <a rel="external" href="https://apple.github.io/foundationdb/architecture.html">a subsystem</a> responsible for efficiently placing and relocating shards (range of keys) in a FoundationDB cluster. Its key goals are:</p>
 <ul>
 <li>Balancing load across servers</li>
 <li>Handling failures by redistributing data</li>
 <li>Ensuring optimal data placement for performance reliability</li>
 </ul>
-<h2 id="data-distributor-wording">Data Distributor wording<a class="zola-anchor" href="#data-distributor-wording" aria-label="Anchor link for: data-distributor-wording">🔗</a></h2>
+<h2 id="data-distributor-wording">Data Distributor wording<a class="zola-anchor" href="#data-distributor-wording" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>The architecture and behavior of the <strong>Data Distributor</strong> are documented in the <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/design/data-distributor-internals.md">official design document</a>, and introduce the following concepts:</p>
 <ul>
 <li><strong>Machine</strong>: A failure domain in FoundationDB, often considered equivalent to a rack.</li>
@@ -178,51 +178,57 @@
 <li><strong>Machine Team</strong>: A collection of <code>k</code> machines, ensuring fault isolation for redundancy.</li>
 </ul>
 <p>The term "machine" in FoundationDB’s documentation <strong>often translates better as "rack"</strong> in many practical cases. Using racks makes the Machine Team's role clearer: it ensures fault isolation by storing copies of data in different racks.</p>
-<h2 id="debug-dd-with-status-json">Debug DD with <code>status json</code><a class="zola-anchor" href="#debug-dd-with-status-json" aria-label="Anchor link for: debug-dd-with-status-json">🔗</a></h2>
+<h2 id="debug-dd-with-status-json">Debug DD with <code>status json</code><a class="zola-anchor" href="#debug-dd-with-status-json" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Your first input point should be to have a look at the <code>team_trackers</code> key in the <code>status json</code>. The JSON should contain enough information for basic monitoring:</p>
-<pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span class="z-string">&quot;</span><span class="z-string">team_trackers</span><span class="z-string">&quot;</span><span>: </span><span>[</span></span>
+<pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">team_trackers</span><span class="z-punctuation z-definition z-string">&quot;</span><span>: </span><span>[</span></span>
 <span class="giallo-l"><span>  {</span></span>
-<span class="giallo-l"><span class="z-support z-type">    &quot;</span><span class="z-support z-type">primary</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-constant z-language"> true</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">    &quot;</span><span class="z-support z-type">unhealthy_servers</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-constant z-numeric"> 0</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">    &quot;</span><span class="z-support z-type">state</span><span class="z-support z-type">&quot;</span><span>:</span><span> {</span></span>
-<span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">healthy</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-constant z-language"> true</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">      &quot;</span><span class="z-support z-type">name</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">healthy_rebalancing</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-support">    &quot;</span><span class="z-support">primary</span><span class="z-support">&quot;</span><span>:</span><span class="z-constant"> true</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">    &quot;</span><span class="z-support">unhealthy_servers</span><span class="z-support">&quot;</span><span>:</span><span class="z-constant"> 0</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">    &quot;</span><span class="z-support">state</span><span class="z-support">&quot;</span><span>:</span><span> {</span></span>
+<span class="giallo-l"><span class="z-support">      &quot;</span><span class="z-support">healthy</span><span class="z-support">&quot;</span><span>:</span><span class="z-constant"> true</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">      &quot;</span><span class="z-support">name</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">healthy_rebalancing</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>    }</span></span>
-<span class="giallo-l"><span>  }</span></span></code></pre><h2 id="debug-dd-with-trace-events">Debug DD with Trace events<a class="zola-anchor" href="#debug-dd-with-trace-events" aria-label="Anchor link for: debug-dd-with-trace-events">🔗</a></h2>
+<span class="giallo-l"><span>  }</span></span></code></pre><h2 id="debug-dd-with-trace-events">Debug DD with Trace events<a class="zola-anchor" href="#debug-dd-with-trace-events" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>FoundationDB provides a robust tracing system where each process generates detailed events in either XML or JSON formats. To troubleshoot the <strong>Data Distributor</strong>, you first need to locate the process it has been elected to. From there, trace events can be analyzed to understand shard movements, priorities, and failures.</p>
 <p>One particularly important attribute in these events is the <code>Priority</code> field. This field determines the precedence of shard placement or redistribution tasks:</p>
-<pre class="giallo z-code"><code data-lang="cpp"><span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_RECOVER_MOVE</span><span>,</span><span class="z-constant z-numeric"> 110</span><span> )</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_REBALANCE_UNDERUTILIZED_TEAM</span><span>,</span><span class="z-constant z-numeric"> 120</span><span> )</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_REBALANCE_OVERUTILIZED_TEAM</span><span>,</span><span class="z-constant z-numeric"> 122</span><span> )</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_TEAM_UNHEALTHY</span><span>,</span><span class="z-constant z-numeric"> 700</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">init</span><span>(</span><span> PRIORITY_SPLIT_SHARD</span><span>,</span><span class="z-constant z-numeric"> 950</span><span> )</span><span>;</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="cpp"><span class="giallo-l"><span class="z-entity z-name">init</span><span>(</span><span> PRIORITY_RECOVER_MOVE</span><span>,</span><span class="z-constant"> 110</span><span> )</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">init</span><span>(</span><span> PRIORITY_REBALANCE_UNDERUTILIZED_TEAM</span><span>,</span><span class="z-constant"> 120</span><span> )</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">init</span><span>(</span><span> PRIORITY_REBALANCE_OVERUTILIZED_TEAM</span><span>,</span><span class="z-constant"> 122</span><span> )</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">init</span><span>(</span><span> PRIORITY_TEAM_UNHEALTHY</span><span>,</span><span class="z-constant"> 700</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">init</span><span>(</span><span> PRIORITY_SPLIT_SHARD</span><span>,</span><span class="z-constant"> 950</span><span> )</span><span>;</span></span></code></pre>
 <p>A full list of defined priorities can be found in the <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/fdbclient/ServerKnobs.cpp#L155-L173">Knobs file</a>, providing useful insights into how tasks are scheduled.</p>
 <p>EDIT: Yes, <code>SPLIT_SHARD</code> has an higher priority! See <a rel="external" href="https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24">https://bsky.app/profile/alexmillerdb.bsky.social/post/3ljsqqvfslc24</a>.</p>
-<h3 id="serverteaminfo-event"><code>ServerTeamInfo</code> Event<a class="zola-anchor" href="#serverteaminfo-event" aria-label="Anchor link for: serverteaminfo-event">🔗</a></h3>
+<h3 id="serverteaminfo-event"><code>ServerTeamInfo</code> Event<a class="zola-anchor" href="#serverteaminfo-event" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Understanding the state of server teams is essential since the Data Distributor schedules data movements based on real-time metrics. The <code>fdbcli</code> command <code>triggerddteaminfolog</code> triggers informative logs by invoking <a rel="external" href="https://github.com/apple/foundationdb/blob/release-7.3/fdbserver/DDTeamCollection.actor.cpp#L3425">printSnapshotTeamsInfo</a>.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">ServerTeamInfo</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Priority</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">709</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Healthy</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">0</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">TeamSize</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">3</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">MemberIDs</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">5a69... 5fc1... 8718...</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">LoadBytes</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">1135157527</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">MinAvailableSpaceRatio</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">0.94108</span><span class="z-string">&quot;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="serverteamprioritychange-event"><code>ServerTeamPriorityChange</code> Event<a class="zola-anchor" href="#serverteamprioritychange-event" aria-label="Anchor link for: serverteamprioritychange-event">🔗</a></h3>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Type</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">ServerTeamInfo</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Priority</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">709</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Healthy</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">0</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">TeamSize</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">3</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">MemberIDs</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">5a69... 5fc1... 8718...</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">LoadBytes</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">1135157527</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">MinAvailableSpaceRatio</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">0.94108</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="serverteamprioritychange-event"><code>ServerTeamPriorityChange</code> Event<a class="zola-anchor" href="#serverteamprioritychange-event" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>This event is logged when server team priorities change, often indicating server failures or rebalancing actions.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">ServerTeamPriorityChange</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Priority</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">950</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">TeamID</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">e9b362decbafbd81</span><span class="z-string">&quot;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h3 id="relocateshard-event"><code>RelocateShard</code> Event<a class="zola-anchor" href="#relocateshard-event" aria-label="Anchor link for: relocateshard-event">🔗</a></h3>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Type</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">ServerTeamPriorityChange</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Priority</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">950</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">TeamID</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">e9b362decbafbd81</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="relocateshard-event"><code>RelocateShard</code> Event<a class="zola-anchor" href="#relocateshard-event" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>This event tracks shard movement between teams to maintain balance.</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">RelocateShard</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Priority</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">120</span><span class="z-string">&quot;</span><span>,</span><span class="z-comment"> //</span><span class="z-comment"> PRIORITY_REBALANCE_UNDERUTILIZED_TEAM</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">RelocationID</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">3f1290654949771e</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Type</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">RelocateShard</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Priority</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">120</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> PRIORITY_REBALANCE_UNDERUTILIZED_TEAM</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">RelocationID</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">3f1290654949771e</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Again, the most useful field is the priority, indicating why it is relocated.</p>
-<h3 id="valleyfiller-and-mountainchopper-mechanisms">"ValleyFiller" and "MountainChopper" Mechanisms<a class="zola-anchor" href="#valleyfiller-and-mountainchopper-mechanisms" aria-label="Anchor link for: valleyfiller-and-mountainchopper-mechanisms">🔗</a></h3>
+<h3 id="valleyfiller-and-mountainchopper-mechanisms">"ValleyFiller" and "MountainChopper" Mechanisms<a class="zola-anchor" href="#valleyfiller-and-mountainchopper-mechanisms" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>To optimize shard placement, FoundationDB employs two balancing strategies:</p>
 <ul>
 <li><strong>ValleyFiller</strong>: Fills underutilized servers (the <strong>valleys</strong>) with data to balance the load.</li>
@@ -230,23 +236,23 @@
 </ul>
 <p>Both logs will have a <code>SourceTeam</code> and <code>DestTeam</code> to use in other traces:</p>
 <pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">BgDDValleyFiller</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">QueuedRelocations</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">0</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">SourceTeam</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">TeamID 95819f0d3d7ea40d</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">DestTeam</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">TeamID 0817e6fe3135e6f6</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">ShardBytes</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">398281250</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Type</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">BgDDValleyFiller</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">QueuedRelocations</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">0</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">SourceTeam</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">TeamID 95819f0d3d7ea40d</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">DestTeam</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">TeamID 0817e6fe3135e6f6</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">ShardBytes</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">398281250</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre><pre class="giallo z-code"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">Type</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">BgDDMountainChopper</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">QueuedRelocations</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">0</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">SourceTeam</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">TeamID 95819f0d3d7ea40d</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">DestTeam</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">TeamID e17dcecd86547e09</span><span class="z-string">&quot;</span><span>,</span></span>
-<span class="giallo-l"><span class="z-support z-type">  &quot;</span><span class="z-support z-type">ShardBytes</span><span class="z-support z-type">&quot;</span><span>:</span><span class="z-string"> &quot;</span><span class="z-string">308000000</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">Type</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">BgDDMountainChopper</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">QueuedRelocations</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">0</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">SourceTeam</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">TeamID 95819f0d3d7ea40d</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">DestTeam</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">TeamID e17dcecd86547e09</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-support">  &quot;</span><span class="z-support">ShardBytes</span><span class="z-support">&quot;</span><span>:</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">308000000</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <hr />
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/providing-safety-fdb-rs/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Ensuring Safety in FoundationDB&#x27;s Rust Crate</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/reverse-number-scanning/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Key design tip: reverse number scanning in ordered key-value stores</span></a>
   </nav>
@@ -254,17 +260,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

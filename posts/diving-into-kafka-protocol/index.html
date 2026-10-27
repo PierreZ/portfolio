@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/diving-into-kafka-protocol/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -58,7 +59,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/diving-into-kafka-protocol.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/diving-into-kafka-protocol.md">
 
 
   <script>
@@ -75,9 +76,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -85,19 +86,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;diving-into-kafka-protocol">./read --quorum posts&#x2F;diving-into-kafka-protocol</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -118,13 +116,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / diving-into-kafka-protocol
   </div>
 
-  <h2 class="title">Diving into Kafka&#x27;s Protocol</h2>
+  <h1 class="title">Diving into Kafka&#x27;s Protocol</h1>
   <div class="meta-row"><span class="m"><b>2019-12-08</b></span>
     <span class="m">read: <b>~6 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2019/diving-into-kafka-protocol.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2019/diving-into-kafka-protocol.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/messaging/">#messaging</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/kafka/">#kafka</a> <a href="https://pierrezemb.fr/tags/networking/">#networking</a> <a href="https://pierrezemb.fr/tags/diving-into/">#diving-into</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -151,9 +149,11 @@
     <p><img src="/images/diving-into-kafka-protocol/apache-kafka.png" alt="kafka image" /></p>
 <p><a href="/tags/diving-into/">Diving Into</a> is a blogpost serie where we are digging a specific part of of the project's basecode. In this episode, we will digg into Kafka's protocol.</p>
 <hr />
-<h2 id="the-protocol-reference">The protocol reference<a class="zola-anchor" href="#the-protocol-reference" aria-label="Anchor link for: the-protocol-reference">🔗</a></h2>
+<h2 id="the-protocol-reference">The protocol reference<a class="zola-anchor" href="#the-protocol-reference" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>For the last few months, I worked a lot around Kafka's protocols, first by creating a fully async Kafka to Pulsar Proxy in Rust, and now by contributing directly to <a rel="external" href="https://www.slideshare.net/streamnative/2-kafkaonpulsarjia">KoP (Kafka On Pulsar)</a>. The full Kafka Protocol documentation is available <a rel="external" href="https://kafka.apache.org/protocol.html">here</a>, but it does not offer a global view of what is happening for a classic Producer and Consumer exchange. Let's dive in!</p>
-<h3 id="common-handshake">Common handshake<a class="zola-anchor" href="#common-handshake" aria-label="Anchor link for: common-handshake">🔗</a></h3>
+<h3 id="common-handshake">Common handshake<a class="zola-anchor" href="#common-handshake" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>After a client established the TCP connection, there is a few common requests and responses that are almost always here.</p>
 <p>The common handhake can be divided in three parts:</p>
 <ul>
@@ -198,7 +198,8 @@ sequenceDiagram
 
 Note left of KafkaClient: That is you, I don&#x27;t &lt;br&#x2F;&gt; need to handshake &lt;br&#x2F;&gt; again with &lt;br&#x2F;&gt; another broker
 </div>
-<h3 id="producing">Producing<a class="zola-anchor" href="#producing" aria-label="Anchor link for: producing">🔗</a></h3>
+<h3 id="producing">Producing<a class="zola-anchor" href="#producing" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>The <strong><a rel="external" href="https://kafka.apache.org/protocol.html#The_Messages_Produce">PRODUCE</a></strong> API is used to send message sets to the server. For efficiency it allows sending message sets intended for many topic partitions in a single request.</p>
 <div class="mermaid">
 sequenceDiagram
@@ -216,7 +217,8 @@ sequenceDiagram
         Note left of KafkaClient: Thanks
     end
 </div>
-<h3 id="consuming">Consuming<a class="zola-anchor" href="#consuming" aria-label="Anchor link for: consuming">🔗</a></h3>
+<h3 id="consuming">Consuming<a class="zola-anchor" href="#consuming" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Consuming is more complicated than producing. You can learn more in <a rel="external" href="https://www.youtube.com/watch?v=maJulQ4ABNY">The Magical Group Coordination Protocol of Apache Kafka</a> By Gwen Shapira, Principal Data Architect @ Confluent and also in the <a rel="external" href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Client-side+Assignment+Proposal">Kafka Client-side Assignment Proposal</a>.</p>
 <p>Consuming can be divided in three parts:</p>
 <ul>
@@ -314,7 +316,7 @@ sequenceDiagram
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/diving-into-hbase-memstore/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Diving into Hbase&#x27;s MemStore</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/notes-about-foundationdb/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Notes about FoundationDB</span></a>
   </nav>
@@ -322,17 +324,17 @@ sequenceDiagram
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/crafting-keys-in-fdb/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -57,7 +58,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2021/crafting-keys-in-fdb.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2021/crafting-keys-in-fdb.md">
 
 
   <script>
@@ -74,9 +75,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -84,19 +85,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;crafting-keys-in-fdb">./read --quorum posts&#x2F;crafting-keys-in-fdb</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -117,13 +115,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / crafting-keys-in-fdb
   </div>
 
-  <h2 class="title">Crafting row keys in FoundationDB</h2>
+  <h1 class="title">Crafting row keys in FoundationDB</h1>
   <div class="meta-row"><span class="m"><b>2021-02-21</b></span>
     <span class="m">read: <b>~5 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2021/crafting-keys-in-fdb.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2021/crafting-keys-in-fdb.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/database/">#database</a> <a href="https://pierrezemb.fr/tags/storage/">#storage</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -155,7 +153,8 @@
   <div class="prose">
     <p><img src="/images/notes-about-foundationdb/fdb-white.jpg" alt="fdb image" /></p>
 <p>As I'm working <a rel="external" href="https://github.com/Clikengo/foundationdb-rs/issues/27">on my latest contribution around FoundationDB and Rust</a>, I had the chance to dig a bit into how FoundationDB's bindings are offering helpers to generate keys. Their approach is interesting enough to deserve a blogpost 😎</p>
-<h2 id="row-key">Row key?<a class="zola-anchor" href="#row-key" aria-label="Anchor link for: row-key">🔗</a></h2>
+<h2 id="row-key">Row key?<a class="zola-anchor" href="#row-key" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>When you are using a key/value store, the design of the <code>row key</code> is extremely important, as this will define how well:</p>
 <ul>
 <li>your scans will be optimized,</li>
@@ -167,41 +166,44 @@
 <li><a rel="external" href="https://cloud.google.com/bigtable/docs/schema-design">"Designing your schema" BigTable documentation</a></li>
 <li><a rel="external" href="https://hbase.apache.org/book.html#rowkey.design">"Rowkey Design" HBase documentation</a></li>
 </ul>
-<h2 id="hand-crafting-row-keys">Hand-crafting row keys<a class="zola-anchor" href="#hand-crafting-row-keys" aria-label="Anchor link for: hand-crafting-row-keys">🔗</a></h2>
+<h2 id="hand-crafting-row-keys">Hand-crafting row keys<a class="zola-anchor" href="#hand-crafting-row-keys" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Most of the time, you will need to craft the <code>row key</code> "by hand", like this for <a rel="external" href="https://github.com/senx/warp10-platform/blob/879734d7f63791b487f3e535cd79ac4c23e99377/warp10/src/main/java/io/warp10/continuum/store/Store.java#L1215-L1222">an HBase's app</a>:</p>
-<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Prefix + classId + labelsId + timestamp</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> 128 bits</span></span>
-<span class="giallo-l"><span class="z-storage">byte</span><span>[</span><span>]</span><span class="z-variable z-other"> rowkey</span><span class="z-keyword"> =</span><span class="z-keyword"> new</span><span class="z-storage"> byte</span><span>[</span><span class="z-variable z-other">Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span class="z-keyword"> +</span><span class="z-constant z-numeric"> 8</span><span class="z-keyword"> +</span><span class="z-constant z-numeric"> 8</span><span class="z-keyword"> +</span><span class="z-constant z-numeric"> 8</span><span>]</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Prefix + classId + labelsId + timestamp</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> 128 bits</span></span>
+<span class="giallo-l"><span class="z-storage z-type">byte</span><span>[</span><span>]</span><span class="z-variable z-other"> rowkey</span><span class="z-keyword"> =</span><span class="z-keyword"> new</span><span class="z-storage z-type"> byte</span><span>[</span><span class="z-variable z-other">Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span class="z-keyword"> +</span><span class="z-constant"> 8</span><span class="z-keyword"> +</span><span class="z-constant"> 8</span><span class="z-keyword"> +</span><span class="z-constant"> 8</span><span>]</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name z-function">arraycopy</span><span>(</span><span class="z-variable z-other">Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>,</span><span class="z-constant z-numeric"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-constant z-numeric"> 0</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Copy classId/labelsId</span></span>
-<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name z-function">arraycopy</span><span>(</span><span class="z-variable z-other">Longs</span><span>.</span><span class="z-entity z-name z-function">toByteArray</span><span>(</span><span class="z-variable z-other">msg</span><span>.</span><span class="z-entity z-name z-function">getClassId</span><span>(</span><span>)</span><span>)</span><span>,</span><span class="z-constant z-numeric"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span>,</span><span class="z-constant z-numeric"> 8</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name z-function">arraycopy</span><span>(</span><span class="z-variable z-other">Longs</span><span>.</span><span class="z-entity z-name z-function">toByteArray</span><span>(</span><span class="z-variable z-other">msg</span><span>.</span><span class="z-entity z-name z-function">getLabelsId</span><span>(</span><span>)</span><span>)</span><span>,</span><span class="z-constant z-numeric"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span class="z-keyword"> +</span><span class="z-constant z-numeric"> 8</span><span>,</span><span class="z-constant z-numeric"> 8</span><span>)</span><span>;</span></span></code></pre>
+<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name">arraycopy</span><span>(</span><span class="z-variable z-other">Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>,</span><span class="z-constant"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-constant"> 0</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Copy classId/labelsId</span></span>
+<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name">arraycopy</span><span>(</span><span class="z-variable z-other">Longs</span><span>.</span><span class="z-entity z-name">toByteArray</span><span>(</span><span class="z-variable z-other">msg</span><span>.</span><span class="z-entity z-name">getClassId</span><span>(</span><span>)</span><span>)</span><span>,</span><span class="z-constant"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span>,</span><span class="z-constant"> 8</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other">System</span><span>.</span><span class="z-entity z-name">arraycopy</span><span>(</span><span class="z-variable z-other">Longs</span><span>.</span><span class="z-entity z-name">toByteArray</span><span>(</span><span class="z-variable z-other">msg</span><span>.</span><span class="z-entity z-name">getLabelsId</span><span>(</span><span>)</span><span>)</span><span>,</span><span class="z-constant"> 0</span><span>,</span><span> rowkey</span><span>,</span><span class="z-variable z-other"> Constants</span><span>.</span><span class="z-variable z-other">HBASE_RAW_DATA_KEY_PREFIX</span><span>.</span><span class="z-variable z-other">length</span><span class="z-keyword"> +</span><span class="z-constant"> 8</span><span>,</span><span class="z-constant"> 8</span><span>)</span><span>;</span></span></code></pre>
 <p>Or maybe you will wrap things in a function <a rel="external" href="https://github.com/pingcap/tidb/blob/ef57bdbbb04f60a8be744060a99207e08a37514a/tablecodec/tablecodec.go#L80-L86">like this in Go</a>:</p>
-<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> EncodeRowKey encodes the table id and record handle into a kv.Key</span></span>
-<span class="giallo-l"><span class="z-keyword">func</span><span class="z-entity z-name z-function"> EncodeRowKey</span><span>(</span><span>tableID</span><span class="z-storage"> int64</span><span>,</span><span> encodedHandle</span><span> [</span><span>]</span><span class="z-storage">byte</span><span>)</span><span class="z-entity z-name z-type"> kv</span><span>.</span><span class="z-entity z-name z-type">Key</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> :=</span><span class="z-entity z-name z-function"> make</span><span>(</span><span>[</span><span>]</span><span class="z-storage">byte</span><span>,</span><span class="z-constant z-numeric"> 0</span><span>,</span><span class="z-variable z-other"> prefixLen</span><span class="z-keyword">+</span><span class="z-entity z-name z-function">len</span><span>(</span><span class="z-variable z-other">encodedHandle</span><span>)</span><span>)</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> =</span><span class="z-entity z-name z-function"> appendTableRecordPrefix</span><span>(</span><span class="z-variable z-other">buf</span><span>,</span><span class="z-variable z-other"> tableID</span><span>)</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> =</span><span class="z-entity z-name z-function"> append</span><span>(</span><span class="z-variable z-other">buf</span><span>,</span><span class="z-variable z-other"> encodedHandle</span><span class="z-keyword">...</span><span>)</span></span>
+<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> EncodeRowKey encodes the table id and record handle into a kv.Key</span></span>
+<span class="giallo-l"><span class="z-keyword">func</span><span class="z-entity z-name"> EncodeRowKey</span><span>(</span><span class="z-variable">tableID</span><span class="z-storage z-type"> int64</span><span>,</span><span class="z-variable"> encodedHandle</span><span> [</span><span>]</span><span class="z-storage z-type">byte</span><span>)</span><span class="z-entity z-name"> kv</span><span>.</span><span class="z-entity z-name">Key</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> :=</span><span class="z-entity z-name"> make</span><span>(</span><span>[</span><span>]</span><span class="z-storage z-type">byte</span><span>,</span><span class="z-constant"> 0</span><span>,</span><span class="z-variable z-other"> prefixLen</span><span class="z-keyword">+</span><span class="z-entity z-name">len</span><span>(</span><span class="z-variable z-other">encodedHandle</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> =</span><span class="z-entity z-name"> appendTableRecordPrefix</span><span>(</span><span class="z-variable z-other">buf</span><span>,</span><span class="z-variable z-other"> tableID</span><span>)</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> buf</span><span class="z-keyword"> =</span><span class="z-entity z-name"> append</span><span>(</span><span class="z-variable z-other">buf</span><span>,</span><span class="z-variable z-other"> encodedHandle</span><span class="z-keyword">...</span><span>)</span></span>
 <span class="giallo-l"><span class="z-keyword"> return</span><span class="z-variable z-other"> buf</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>Each time, you need to wrap the complexity of converting your objects to a row-key, by creating a buffer and write stuff in it.</p>
 <p>In our Java example, there is an interesting comment:</p>
-<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Prefix + classId + labelsId + timestamp</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Prefix + classId + labelsId + timestamp</span></span></code></pre>
 <p>If we are replacing some characters, we are not really far from:</p>
-<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> (Prefix, classId, labelsId, timestamp)</span></span></code></pre>
+<pre class="giallo z-code"><code data-lang="java"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> (Prefix, classId, labelsId, timestamp)</span></span></code></pre>
 <p>Which looks like a <code>Tuple</code>(a collection of values of different types) and this is what FoundationDB is using as an abstraction to create keys 😍</p>
-<h2 id="fdb-s-abstractions-and-helpers">FDB's abstractions and helpers<a class="zola-anchor" href="#fdb-s-abstractions-and-helpers" aria-label="Anchor link for: fdb-s-abstractions-and-helpers">🔗</a></h2>
-<h3 id="tuple">Tuple<a class="zola-anchor" href="#tuple" aria-label="Anchor link for: tuple">🔗</a></h3>
+<h2 id="fdb-s-abstractions-and-helpers">FDB's abstractions and helpers<a class="zola-anchor" href="#fdb-s-abstractions-and-helpers" aria-hidden="true" tabindex="-1">#</a>
+</h2>
+<h3 id="tuple">Tuple<a class="zola-anchor" href="#tuple" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Instead of crafting bytes by hand, we are <code>packing</code> a Tuple:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> create a Tuple&lt;String, i64&gt; with (&quot;tenant-42&quot;, 1)</span></span>
-<span class="giallo-l"><span class="z-storage">let</span><span class="z-variable z-other"> tuple</span><span class="z-keyword"> =</span><span> (</span><span class="z-entity z-name z-type">String</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">tenant-42</span><span class="z-string">&quot;</span><span>)</span><span>,</span><span class="z-constant z-numeric"> 1</span><span>)</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> create a Tuple&lt;String, i64&gt; with (&quot;tenant-42&quot;, 1)</span></span>
+<span class="giallo-l"><span class="z-storage z-type">let</span><span class="z-variable z-other"> tuple</span><span class="z-keyword"> =</span><span> (</span><span class="z-entity z-name">String</span><span class="z-keyword">::</span><span class="z-entity z-name">from</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">tenant-42</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>,</span><span class="z-constant"> 1</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> and compute a row-key from the Tuple</span></span>
-<span class="giallo-l"><span class="z-storage">let</span><span class="z-variable z-other"> row_key</span><span class="z-keyword"> =</span><span class="z-entity z-name z-namespace"> foundationdb</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">tuple</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">pack</span><span class="z-keyword">::</span><span>&lt;</span><span>(</span><span class="z-entity z-name z-type">String</span><span>,</span><span class="z-entity z-name z-type"> i64</span><span>)</span><span>&gt;</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">tuple</span><span>)</span><span>;</span></span></code></pre>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> and compute a row-key from the Tuple</span></span>
+<span class="giallo-l"><span class="z-storage z-type">let</span><span class="z-variable z-other"> row_key</span><span class="z-keyword"> =</span><span class="z-entity z-name"> foundationdb</span><span class="z-keyword">::</span><span class="z-entity z-name">tuple</span><span class="z-keyword">::</span><span class="z-entity z-name">pack</span><span class="z-keyword">::</span><span>&lt;</span><span>(</span><span class="z-entity z-name">String</span><span>,</span><span class="z-entity z-name"> i64</span><span>)</span><span>&gt;</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">tuple</span><span>)</span><span>;</span></span></code></pre>
 <p>The generated row-key will be readable from any bindings, as it's construction is standardized. Let's print it:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> and print-it in hexa</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> row_key</span><span>)</span><span>;</span></span></code></pre><pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> and print-it in hexa</span></span>
+<span class="giallo-l"><span class="z-entity z-name">println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> row_key</span><span>)</span><span>;</span></span></code></pre><pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl</span></span>
 <span class="giallo-l"><span>[</span></span>
 <span class="giallo-l"><span>    0x02,</span></span>
 <span class="giallo-l"><span>    0x74, // t</span></span>
@@ -218,13 +220,14 @@
 <span class="giallo-l"><span>]</span></span></code></pre>
 <p>As you can see, <code>pack</code> added some extra-characters. There are used to recognized the next type, a bit like when you are encoding/decoding some wire protocols. You can find the relevant documentation <a rel="external" href="https://github.com/apple/foundationdb/blob/master/design/tuple.md">here</a>.</p>
 <p>Having this kind of standard means that we can easily decompose/<code>unpack</code> it:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> retrieve the user and the magic number In a Tuple (String, i64)</span></span>
-<span class="giallo-l"><span class="z-storage">let</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword"> =</span><span class="z-entity z-name z-namespace"> foundationdb</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">tuple</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">unpack</span><span class="z-keyword">::</span><span>&lt;</span><span>(</span><span class="z-entity z-name z-type">String</span><span>,</span><span class="z-entity z-name z-type"> i64</span><span>)</span><span>&gt;</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">row_key</span><span>)</span><span class="z-keyword">?</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> retrieve the user and the magic number In a Tuple (String, i64)</span></span>
+<span class="giallo-l"><span class="z-storage z-type">let</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword"> =</span><span class="z-entity z-name"> foundationdb</span><span class="z-keyword">::</span><span class="z-entity z-name">tuple</span><span class="z-keyword">::</span><span class="z-entity z-name">unpack</span><span class="z-keyword">::</span><span>&lt;</span><span>(</span><span class="z-entity z-name">String</span><span>,</span><span class="z-entity z-name"> i64</span><span>)</span><span>&gt;</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-variable z-other">row_key</span><span>)</span><span class="z-keyword">?</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">user=&#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;, magic_number=</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant z-numeric">0</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant z-numeric">1</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> user=&#39;tenant-42&#39;, magic_number=42</span></span></code></pre>
+<span class="giallo-l"><span class="z-entity z-name">println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">user=&#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;, magic_number=</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant">0</span><span>,</span><span class="z-variable z-other"> from_row_key</span><span class="z-keyword">.</span><span class="z-constant">1</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> user=&#39;tenant-42&#39;, magic_number=42</span></span></code></pre>
 <p>Now that we saw <code>Tuples</code>, let's dig in the next abstraction: <code>subspaces</code></p>
-<h3 id="subspace">Subspace<a class="zola-anchor" href="#subspace" aria-label="Anchor link for: subspace">🔗</a></h3>
+<h3 id="subspace">Subspace<a class="zola-anchor" href="#subspace" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>When you are working with key-values store, we are often playing with what we call <code>keyspaces</code>, by dedicating a portion of the key to an usage, like this for example:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>/users/tenant-1/...</span></span>
 <span class="giallo-l"><span>/users/tenant-2/...</span></span>
@@ -242,11 +245,11 @@
 </blockquote>
 <p>Well, as we have now the tools to handle keyspaces easily, it is now futile to craft keys by hand 🙃 Let's create a subspace!</p>
 <pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> create a subspace from the Tuple (&quot;tenant-1&quot;, 42)</span></span>
-<span class="giallo-l"><span class="z-storage">let</span><span class="z-variable z-other"> subspace</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> Subspace</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from</span><span>(</span><span>(</span><span class="z-entity z-name z-namespace">String</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">tenant-1</span><span class="z-string">&quot;</span><span>)</span><span>,</span><span class="z-constant z-numeric"> 42</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> create a subspace from the Tuple (&quot;tenant-1&quot;, 42)</span></span>
+<span class="giallo-l"><span class="z-storage z-type">let</span><span class="z-variable z-other"> subspace</span><span class="z-keyword"> =</span><span class="z-entity z-name"> Subspace</span><span class="z-keyword">::</span><span class="z-entity z-name">from</span><span>(</span><span>(</span><span class="z-entity z-name">String</span><span class="z-keyword">::</span><span class="z-entity z-name">from</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">tenant-1</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>,</span><span class="z-constant"> 42</span><span>)</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> let&#39;s print the range</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">start: </span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-constant z-character">\</span><span class="z-constant z-character">n</span><span class="z-string"> end: </span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> subspace</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">range</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-constant z-numeric">0</span><span>,</span><span class="z-variable z-other"> subspace</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">range</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-constant z-numeric">1</span><span>)</span><span>;</span></span></code></pre>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> let&#39;s print the range</span></span>
+<span class="giallo-l"><span class="z-entity z-name">println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">start: </span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-constant">\</span><span class="z-constant">n</span><span class="z-string"> end: </span><span class="z-string">{</span><span class="z-string">:#04X?</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> subspace</span><span class="z-keyword">.</span><span class="z-entity z-name">range</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-constant">0</span><span>,</span><span class="z-variable z-other"> subspace</span><span class="z-keyword">.</span><span class="z-entity z-name">range</span><span>(</span><span>)</span><span class="z-keyword">.</span><span class="z-constant">1</span><span>)</span><span>;</span></span></code></pre>
 <p>We can see observe this:</p>
 <pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>// can be verified with https://www.utf8-chartable.de/unicode-utf8-table.pl</span></span>
 <span class="giallo-l"><span>start: [</span></span>
@@ -282,7 +285,8 @@
 <span class="giallo-l"><span>    0xFF, // biggest possible byte</span></span>
 <span class="giallo-l"><span>]</span></span></code></pre>
 <p>Which make sens, if we take <code>("tenant-1", 42)</code> as a prefix, then the range for this subspace will be between <code>("tenant-1", 42, 0x00)</code> and <code>("tenant-1", 42, 0xFF)</code></p>
-<h3 id="directory">Directory<a class="zola-anchor" href="#directory" aria-label="Anchor link for: directory">🔗</a></h3>
+<h3 id="directory">Directory<a class="zola-anchor" href="#directory" aria-hidden="true" tabindex="-1">#</a>
+</h3>
 <p>Now that we know our way around <code>Tuples</code> and <code>Subspaces</code>, we can now talk about what I'm working on, which is the <code>Directory</code>. Let's have a look at the relevant <a rel="external" href="https://apple.github.io/foundationdb/developer-guide.html#directories">documentation</a>:</p>
 <blockquote>
 <p>FoundationDB provides directories (available in each language binding) as a tool for managing related subspaces.</p>
@@ -291,37 +295,37 @@
 <p>Directories are a recommended approach for administering applications. Each application should create or open at least one directory to manage its subspaces.</p>
 </blockquote>
 <p>Okay, let's see the API(in Go, as I'm working on the Rust API):</p>
-<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-variable z-other">subspace</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> :=</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name z-function">CreateOrOpen</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> [</span><span>]</span><span class="z-storage">string</span><span>{</span><span class="z-string">&quot;</span><span class="z-string">application</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant-42</span><span class="z-string">&quot;</span><span>}</span><span>,</span><span class="z-constant z-language"> nil</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant z-language"> nil</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name z-function">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
+<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-variable z-other">subspace</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> :=</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name">CreateOrOpen</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> [</span><span>]</span><span class="z-storage z-type">string</span><span>{</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">application</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant-42</span><span class="z-punctuation z-definition z-string">&quot;</span><span>}</span><span>,</span><span class="z-constant"> nil</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant"> nil</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
 <span class="giallo-l"><span>}</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name z-function">Printf</span><span>(</span><span class="z-string">&quot;</span><span class="z-constant z-other">%+v</span><span class="z-constant z-character">\n</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> subspace</span><span>.</span><span class="z-entity z-name z-function">Bytes</span><span>(</span><span>)</span><span>)</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> [21 18]</span></span></code></pre>
+<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name">Printf</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-constant">%+v</span><span class="z-constant">\n</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> subspace</span><span>.</span><span class="z-entity z-name">Bytes</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> [21 18]</span></span></code></pre>
 <p>We can see that we have a shorter subspace! The <code>directory</code> allows you to generate some integer that will be bind to a path, like here <code>"application", "my-app", "tenant", "tenant-42"</code>.</p>
 <p>There are two advantages to this:</p>
 <ul>
 <li>shorter keys,</li>
 <li>cheap metadata operations like <code>List</code> or <code>Move</code>:</li>
 </ul>
-<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> list all tenant in &quot;application&quot;, &quot;my-app&quot;:</span></span>
-<span class="giallo-l"><span class="z-variable z-other">tenants</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> :=</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name z-function">List</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> [</span><span>]</span><span class="z-storage">string</span><span>{</span><span class="z-string">&quot;</span><span class="z-string">application</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-string">&quot;</span><span>}</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant z-language"> nil</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name z-function">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
+<pre class="giallo z-code"><code data-lang="go"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> list all tenant in &quot;application&quot;, &quot;my-app&quot;:</span></span>
+<span class="giallo-l"><span class="z-variable z-other">tenants</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> :=</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name">List</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> [</span><span>]</span><span class="z-storage z-type">string</span><span>{</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">application</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-punctuation z-definition z-string">&quot;</span><span>}</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant"> nil</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
 <span class="giallo-l"><span>}</span></span>
-<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name z-function">Printf</span><span>(</span><span class="z-string">&quot;</span><span class="z-constant z-other">%+v</span><span class="z-constant z-character">\n</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> tenants</span><span>)</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> [tenant-42]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name">Printf</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-constant">%+v</span><span class="z-constant">\n</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> tenants</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> [tenant-42]</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> renaming &#39;tenant-42&#39; in &#39;tenant-142&#39;</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> This will NOT move the data, only the metadata is modified</span></span>
-<span class="giallo-l"><span class="z-variable z-other">directorySubspace</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> =</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name z-function">Move</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> </span></span>
-<span class="giallo-l"><span> [</span><span>]</span><span class="z-storage">string</span><span>{</span><span class="z-string">&quot;</span><span class="z-string">application</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant-42</span><span class="z-string">&quot;</span><span>}</span><span>,</span><span class="z-comment">  //</span><span class="z-comment"> old path</span></span>
-<span class="giallo-l"><span> [</span><span>]</span><span class="z-storage">string</span><span>{</span><span class="z-string">&quot;</span><span class="z-string">application</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-string">&quot;</span><span>,</span><span class="z-string"> &quot;</span><span class="z-string">tenant-142</span><span class="z-string">&quot;</span><span>}</span><span>)</span><span class="z-comment"> //</span><span class="z-comment"> new path</span></span>
-<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant z-language"> nil</span><span> {</span></span>
-<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name z-function">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> renaming &#39;tenant-42&#39; in &#39;tenant-142&#39;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> This will NOT move the data, only the metadata is modified</span></span>
+<span class="giallo-l"><span class="z-variable z-other">directorySubspace</span><span>,</span><span class="z-variable z-other"> err</span><span class="z-keyword"> =</span><span class="z-variable z-other"> directory</span><span>.</span><span class="z-entity z-name">Move</span><span>(</span><span class="z-variable z-other">db</span><span>,</span><span> </span></span>
+<span class="giallo-l"><span> [</span><span>]</span><span class="z-storage z-type">string</span><span>{</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">application</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant-42</span><span class="z-punctuation z-definition z-string">&quot;</span><span>}</span><span>,</span><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> old path</span></span>
+<span class="giallo-l"><span> [</span><span>]</span><span class="z-storage z-type">string</span><span>{</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">application</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">my-app</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">tenant-142</span><span class="z-punctuation z-definition z-string">&quot;</span><span>}</span><span>)</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> new path</span></span>
+<span class="giallo-l"><span class="z-keyword">if</span><span class="z-variable z-other"> err</span><span class="z-keyword"> !=</span><span class="z-constant"> nil</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other"> log</span><span>.</span><span class="z-entity z-name">Fatal</span><span>(</span><span class="z-variable z-other">err</span><span>)</span></span>
 <span class="giallo-l"><span>}</span></span>
-<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name z-function">Printf</span><span>(</span><span class="z-string">&quot;</span><span class="z-constant z-other">%+v</span><span class="z-constant z-character">\n</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> directorySubspace</span><span>.</span><span class="z-entity z-name z-function">Bytes</span><span>(</span><span>)</span><span>)</span></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> still [21 18]</span></span></code></pre>
+<span class="giallo-l"><span class="z-variable z-other">fmt</span><span>.</span><span class="z-entity z-name">Printf</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-constant">%+v</span><span class="z-constant">\n</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> directorySubspace</span><span>.</span><span class="z-entity z-name">Bytes</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> still [21 18]</span></span></code></pre>
 <p>The returned object is actually a <code>DirectorySubspace</code>, which implements both <code>Directory</code> and <code>Subspace</code>, which means that you can use it to recreate many directories and subspaces at will 👌</p>
 <blockquote>
 <p>If you are wondering about how this integer is generated, I recommend going through this awesome blogpost on <a rel="external" href="https://activesphere.com/blog/2018/08/05/high-contention-allocator">how high contention allocator works in FoundationDB.</a></p>
@@ -330,7 +334,7 @@
 <p><strong>Thank you</strong> for reading my post! Feel free to react to this article, I am also available on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> if needed.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/notes-about-etcd/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Notes about ETCD</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/distsys-resources/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Best resources to learn about data and distributed systems</span></a>
   </nav>
@@ -338,17 +342,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

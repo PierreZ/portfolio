@@ -23,20 +23,21 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
-  <link rel="canonical" href="https://pierrezemb.fr">
+  
+  <link rel="canonical" href="https://pierrezemb.fr/tags/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
   <meta property="og:site_name" content="Pierre Zemb&#x27;s Blog">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://pierrezemb.fr">
-  <meta property="og:title" content="Pierre Zemb&#x27;s Blog">
-  <meta property="og:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
+  <meta property="og:url" content="https://pierrezemb.fr/tags/">
+  <meta property="og:title" content="Tags">
+  <meta property="og:description" content="Every tag used on Pierre Zemb&#x27;s Blog, most used first.">
   <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@PierreZ">
   <meta name="twitter:creator" content="@PierreZ">
-  <meta name="twitter:title" content="Pierre Zemb&#x27;s Blog">
-  <meta name="twitter:description" content="Distributed systems, FoundationDB, Rust, and simulation testing, written from production experience.">
+  <meta name="twitter:title" content="Tags">
+  <meta name="twitter:description" content="Every tag used on Pierre Zemb&#x27;s Blog, most used first.">
   <meta property="og:image" content="https://pierrezemb.fr/images/myself.jpg">
   <meta name="twitter:image" content="https://pierrezemb.fr/images/myself.jpg"><script defer src="https://plausible.io/js/pa-YUTyBK3EWpBoZR4gYgoZp.js"></script>
   <script>
@@ -67,29 +68,26 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
-      <a href="https://pierrezemb.fr/tags/">Tags</a>
+      <a href="https://pierrezemb.fr/tags/" aria-current="page">Tags</a>
       <a href="https://pierrezemb.fr/talks/">Talks</a>
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="tags">./read --quorum tags</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · 80 tags · committed</span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -106,27 +104,28 @@
 
   <main id="main">
     
+<h1 class="sr-only">Tags</h1>
 <div class="sec-head">ls ./tags</div>
 <div class="taglist">
-  <a class="tag" href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems<span class="cnt">34</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems<span class="cnt">35</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/database/">#database<span class="cnt">20</span></a>
-  <a class="tag" href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb<span class="cnt">16</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb<span class="cnt">17</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/storage/">#storage<span class="cnt">14</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/testing/">#testing<span class="cnt">12</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/simulation/">#simulation<span class="cnt">11</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/rust/">#rust<span class="cnt">10</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering<span class="cnt">6</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/diving-into/">#diving-into<span class="cnt">6</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/deterministic/">#deterministic<span class="cnt">6</span></a>
-  <a class="tag" href="https://pierrezemb.fr/tags/software-engineering/">#software-engineering<span class="cnt">5</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/performance/">#performance<span class="cnt">5</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/consensus/">#consensus<span class="cnt">5</span></a>
+  <a class="tag" href="https://pierrezemb.fr/tags/notes/">#notes<span class="cnt">4</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/llm/">#llm<span class="cnt">4</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/hbase/">#hbase<span class="cnt">4</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/transactions/">#transactions<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/sql/">#sql<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/personal/">#personal<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/opensource/">#opensource<span class="cnt">3</span></a>
-  <a class="tag" href="https://pierrezemb.fr/tags/notes/">#notes<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/messaging/">#messaging<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/etcd/">#etcd<span class="cnt">3</span></a>
   <a class="tag" href="https://pierrezemb.fr/tags/timeseries/">#timeseries<span class="cnt">2</span></a>
@@ -192,17 +191,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

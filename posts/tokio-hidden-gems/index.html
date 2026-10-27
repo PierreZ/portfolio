@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/tokio-hidden-gems/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -59,7 +60,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/tokio-hidden-gems.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/tokio-hidden-gems.md">
 
 
   <script>
@@ -76,9 +77,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -86,19 +87,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;tokio-hidden-gems">./read --quorum posts&#x2F;tokio-hidden-gems</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -119,13 +117,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / tokio-hidden-gems
   </div>
 
-  <h2 class="title">Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</h2>
+  <h1 class="title">Unlocking Tokio&#x27;s Hidden Gems: Determinism, Paused Time, and Local Execution</h1>
   <div class="meta-row"><span class="m"><b>2025-05-18</b></span>
     <span class="m">read: <b>~6 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2025/tokio-hidden-gems.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2025/tokio-hidden-gems.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/rust/">#rust</a> <a href="https://pierrezemb.fr/tags/tokio/">#tokio</a> <a href="https://pierrezemb.fr/tags/async/">#async</a> <a href="https://pierrezemb.fr/tags/testing/">#testing</a> <a href="https://pierrezemb.fr/tags/concurrency/">#concurrency</a> <a href="https://pierrezemb.fr/tags/deterministic/">#deterministic</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -148,7 +146,8 @@
   <div class="prose">
     <p>Tokio is the powerhouse of asynchronous Rust, celebrated for its blazing speed and robust concurrency primitives. Many of us interact with its core components daily—<code>spawn</code>, <code>select!</code>, <code>async fn</code>, and the rich ecosystem of I/O utilities. But beyond these well-trodden paths lie some incredibly potent, albeit less-publicized, features that can dramatically elevate your testing strategies, offer more nuanced task management, and grant you surgical control over your runtime's execution.</p>
 <p>Today, let's pull back the curtain on a few of these invaluable tools: current-thread runtimes for embracing single-threaded flexibility with <code>!Send</code> types, seeded runtimes for taming non-determinism, and the paused clock for mastering time in your tests.</p>
-<h2 id="effortless-send-futures-with-current-thread-runtimes">Effortless <code>!Send</code> Futures with Current-Thread Runtimes<a class="zola-anchor" href="#effortless-send-futures-with-current-thread-runtimes" aria-label="Anchor link for: effortless-send-futures-with-current-thread-runtimes">🔗</a></h2>
+<h2 id="effortless-send-futures-with-current-thread-runtimes">Effortless <code>!Send</code> Futures with Current-Thread Runtimes<a class="zola-anchor" href="#effortless-send-futures-with-current-thread-runtimes" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>While Tokio's multi-threaded scheduler is a marvel for CPU-bound and parallel I/O tasks, there are scenarios where a single-threaded execution model is simpler or even necessary. This is particularly true when dealing with types that are not <code>Send</code> (i.e., cannot be safely transferred across threads), such as <code>Rc&lt;T&gt;</code> or <code>RefCell&lt;T&gt;</code>, or when you want to avoid the overhead and complexity of synchronization primitives like <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> for state shared only within a single thread of execution.</p>
 <p>Tokio's <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html#method.new_current_thread"><code>Builder::new_current_thread()</code></a> followed by <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html#method.build_local"><code>build_local()</code></a> (part of the same <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html"><code>Builder</code></a> API) provides a streamlined way to create a runtime that executes tasks on the thread that created it. This setup inherently supports spawning <code>!Send</code> futures using <a rel="external" href="https://docs.rs/tokio/latest/tokio/task/fn.spawn_local.html"><code>tokio::task::spawn_local</code></a> without needing to manually manage a <code>LocalSet</code> for basic cases. This approach aligns well with ongoing discussions in the Tokio community aimed at simplifying <code>!Send</code> task management.</p>
 <p>This <code>build_local()</code> method not only simplifies handling <code>!Send</code> types today but also reflects the direction Tokio is heading. The Tokio team is exploring ways to make this even more integrated and ergonomic through a proposed <strong><code>LocalRuntime</code></strong> type (<a rel="external" href="https://github.com/tokio-rs/tokio/issues/6739">#6739</a>). The vision for <code>LocalRuntime</code> is a runtime that is inherently <code>!Send</code> (making <code>!Send</code> task management seamless within its context), where <code>tokio::spawn</code> and <code>tokio::task::spawn_local</code> would effectively behave identically.</p>
@@ -160,111 +159,114 @@
 </ul>
 <p>Essentially, Tokio is moving towards making single-threaded <code>!Send</code> execution more straightforward and deeply integrated. The <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html#method.build_local"><code>build_local()</code></a> method is a current gem that aligns you with this forward-looking approach.</p>
 <p>Here's how you typically set one up (the <code>build_local()</code> way):</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name z-namespace"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">runtime</span><span class="z-keyword">::</span><span class="z-entity z-name z-type">Builder</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">runtime</span><span class="z-keyword">::</span><span class="z-entity z-name">Builder</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name z-function"> main</span><span>(</span><span>)</span><span> {</span></span>
-<span class="giallo-l"><span class="z-storage">    let</span><span class="z-storage"> mut</span><span class="z-variable z-other"> rt</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> Builder</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">new_current_thread</span><span>(</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">enable_all</span><span>(</span><span>)</span><span class="z-comment"> //</span><span class="z-comment"> Enable I/O, time, etc.</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">build_local</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-storage">mut</span><span class="z-entity z-name z-namespace"> Default</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">default</span><span>(</span><span>)</span><span>)</span><span class="z-comment"> //</span><span class="z-comment"> Builds a runtime on the current thread</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name"> main</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    let</span><span class="z-storage"> mut</span><span class="z-variable z-other"> rt</span><span class="z-keyword"> =</span><span class="z-entity z-name"> Builder</span><span class="z-keyword">::</span><span class="z-entity z-name">new_current_thread</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">enable_all</span><span>(</span><span>)</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> Enable I/O, time, etc.</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">build_local</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-storage">mut</span><span class="z-entity z-name"> Default</span><span class="z-keyword">::</span><span class="z-entity z-name">default</span><span>(</span><span>)</span><span>)</span><span class="z-punctuation z-definition z-comment"> //</span><span class="z-comment"> Builds a runtime on the current thread</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">unwrap</span><span>(</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> The runtime itself is the &#39;LocalSet&#39; in this context</span></span>
-<span class="giallo-l"><span class="z-variable z-other">    rt</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">block_on</span><span>(</span><span class="z-keyword">async</span><span> {</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Spawn !Send futures here using tokio::task::spawn_local(...)</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> For example:</span></span>
-<span class="giallo-l"><span class="z-storage">        let</span><span class="z-variable z-other"> rc_value</span><span class="z-keyword"> =</span><span class="z-entity z-name z-namespace"> std</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">rc</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">Rc</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">new</span><span>(</span><span class="z-constant z-numeric">5</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">task</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">spawn_local</span><span>(</span><span class="z-keyword">async</span><span class="z-keyword"> move</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">            println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">RC value: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-keyword"> *</span><span class="z-variable z-other">rc_value</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span>        }</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> The runtime itself is the &#39;LocalSet&#39; in this context</span></span>
+<span class="giallo-l"><span class="z-variable z-other">    rt</span><span class="z-keyword">.</span><span class="z-entity z-name">block_on</span><span>(</span><span class="z-keyword">async</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Spawn !Send futures here using tokio::task::spawn_local(...)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> For example:</span></span>
+<span class="giallo-l"><span class="z-storage z-type">        let</span><span class="z-variable z-other"> rc_value</span><span class="z-keyword"> =</span><span class="z-entity z-name"> std</span><span class="z-keyword">::</span><span class="z-entity z-name">rc</span><span class="z-keyword">::</span><span class="z-entity z-name">Rc</span><span class="z-keyword">::</span><span class="z-entity z-name">new</span><span>(</span><span class="z-constant">5</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">task</span><span class="z-keyword">::</span><span class="z-entity z-name">spawn_local</span><span>(</span><span class="z-keyword">async</span><span class="z-keyword"> move</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">RC value: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-keyword"> *</span><span class="z-variable z-other">rc_value</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span class="z-keyword">.</span><span class="z-entity z-name">unwrap</span><span>(</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">        println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Running !Send futures on a current-thread runtime!</span><span class="z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Running !Send futures on a current-thread runtime!</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>    }</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>This approach simplifies designs where tasks don't need to cross thread boundaries, allowing for more straightforward state management.</p>
-<h2 id="taming-non-determinism-seeded-runtimes">Taming Non-Determinism: Seeded Runtimes<a class="zola-anchor" href="#taming-non-determinism-seeded-runtimes" aria-label="Anchor link for: taming-non-determinism-seeded-runtimes">🔗</a></h2>
+<h2 id="taming-non-determinism-seeded-runtimes">Taming Non-Determinism: Seeded Runtimes<a class="zola-anchor" href="#taming-non-determinism-seeded-runtimes" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>One of the challenges in testing concurrent systems is non-determinism. When multiple futures are ready to make progress simultaneously, such as in a <a rel="external" href="https://docs.rs/tokio/latest/tokio/macro.select.html"><code>tokio::select!</code></a> macro, the order in which they are polled can vary between runs. This can make reproducing and debugging race conditions or specific interleavings tricky.</p>
 <p>Tokio offers a solution: <strong>seeded runtimes</strong>. By providing a specific <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html#method.rng_seed"><code>RngSeed</code></a> when building the runtime, you can make certain scheduler behaviors deterministic. This is particularly useful for <code>select!</code> statements involving multiple futures that become ready around the same time.</p>
 <p>Consider this example, which demonstrates how a seed can influence which future 'wins' a <code>select!</code> race:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name z-namespace"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">runtime</span><span class="z-keyword">::</span><span>{</span><span class="z-entity z-name z-type">Builder</span><span>,</span><span class="z-entity z-name z-type"> RngSeed</span><span>}</span><span>;</span></span>
-<span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name z-namespace"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">time</span><span class="z-keyword">::</span><span>{</span><span>sleep</span><span>,</span><span class="z-entity z-name z-type"> Duration</span><span>}</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">runtime</span><span class="z-keyword">::</span><span>{</span><span class="z-entity z-name">Builder</span><span>,</span><span class="z-entity z-name"> RngSeed</span><span>}</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">time</span><span class="z-keyword">::</span><span>{</span><span>sleep</span><span>,</span><span class="z-entity z-name"> Duration</span><span>}</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">//</span><span class="z-comment"> Example function to show deterministic select!</span></span>
-<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name z-function"> demo_deterministic_select</span><span>(</span><span>)</span><span> {</span></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> Try changing this seed to see the select! behavior change (but consistently per seed).</span></span>
-<span class="giallo-l"><span class="z-storage">    let</span><span class="z-variable z-other"> seed</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> RngSeed</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_bytes</span><span>(</span><span class="z-string">b</span><span class="z-string">&quot;</span><span class="z-string">my_fixed_seed_001</span><span class="z-string">&quot;</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> e.g., let seed = RngSeed::from_bytes(b&quot;another_seed_002&quot;);</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Example function to show deterministic select!</span></span>
+<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name"> demo_deterministic_select</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> Try changing this seed to see the select! behavior change (but consistently per seed).</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    let</span><span class="z-variable z-other"> seed</span><span class="z-keyword"> =</span><span class="z-entity z-name"> RngSeed</span><span class="z-keyword">::</span><span class="z-entity z-name">from_bytes</span><span>(</span><span class="z-string">b</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">my_fixed_seed_001</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> e.g., let seed = RngSeed::from_bytes(b&quot;another_seed_002&quot;);</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-storage">    let</span><span class="z-storage"> mut</span><span class="z-variable z-other"> rt</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> Builder</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">new_current_thread</span><span>(</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">enable_time</span><span>(</span><span>)</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Pausing the clock is crucial here to ensure both tasks become ready </span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> at the *exact same logical time* after we call `tokio::time::advance`.</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> This makes the seed&#39;s role in tie-breaking very clear.</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">start_paused</span><span>(</span><span class="z-constant z-language">true</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">rng_seed</span><span>(</span><span class="z-variable z-other">seed</span><span>)</span><span class="z-comment">     //</span><span class="z-comment"> Apply the seed for deterministic polling order</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">build_local</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-storage">mut</span><span class="z-entity z-name z-namespace"> Default</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">default</span><span>(</span><span>)</span><span>)</span></span>
-<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    let</span><span class="z-storage"> mut</span><span class="z-variable z-other"> rt</span><span class="z-keyword"> =</span><span class="z-entity z-name"> Builder</span><span class="z-keyword">::</span><span class="z-entity z-name">new_current_thread</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">enable_time</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Pausing the clock is crucial here to ensure both tasks become ready </span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> at the *exact same logical time* after we call `tokio::time::advance`.</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> This makes the seed&#39;s role in tie-breaking very clear.</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">start_paused</span><span>(</span><span class="z-constant">true</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">rng_seed</span><span>(</span><span class="z-variable z-other">seed</span><span>)</span><span class="z-punctuation z-definition z-comment">     //</span><span class="z-comment"> Apply the seed for deterministic polling order</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">build_local</span><span>(</span><span class="z-keyword">&amp;</span><span class="z-storage">mut</span><span class="z-entity z-name"> Default</span><span class="z-keyword">::</span><span class="z-entity z-name">default</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">        .</span><span class="z-entity z-name">unwrap</span><span>(</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> Now, let&#39;s run some tasks and see select! in action.</span></span>
-<span class="giallo-l"><span class="z-variable z-other">    rt</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">block_on</span><span>(</span><span class="z-keyword">async</span><span> {</span></span>
-<span class="giallo-l"><span class="z-storage">        let</span><span class="z-variable z-other"> task_a</span><span class="z-keyword"> =</span><span class="z-keyword"> async</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">            sleep</span><span>(</span><span class="z-entity z-name z-namespace">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_millis</span><span>(</span><span class="z-constant z-numeric">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">            println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Task A finished.</span><span class="z-string">&quot;</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-string">            &quot;</span><span class="z-string">Result from A</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> Now, let&#39;s run some tasks and see select! in action.</span></span>
+<span class="giallo-l"><span class="z-variable z-other">    rt</span><span class="z-keyword">.</span><span class="z-entity z-name">block_on</span><span>(</span><span class="z-keyword">async</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">        let</span><span class="z-variable z-other"> task_a</span><span class="z-keyword"> =</span><span class="z-keyword"> async</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            sleep</span><span>(</span><span class="z-entity z-name">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name">from_millis</span><span>(</span><span class="z-constant">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Task A finished.</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">            &quot;</span><span class="z-string">Result from A</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>        }</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-storage">        let</span><span class="z-variable z-other"> task_b</span><span class="z-keyword"> =</span><span class="z-keyword"> async</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">            sleep</span><span>(</span><span class="z-entity z-name z-namespace">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_millis</span><span>(</span><span class="z-constant z-numeric">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">            println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Task B finished.</span><span class="z-string">&quot;</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span class="z-string">            &quot;</span><span class="z-string">Result from B</span><span class="z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">        let</span><span class="z-variable z-other"> task_b</span><span class="z-keyword"> =</span><span class="z-keyword"> async</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            sleep</span><span>(</span><span class="z-entity z-name">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name">from_millis</span><span>(</span><span class="z-constant">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Task B finished.</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">            &quot;</span><span class="z-string">Result from B</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
 <span class="giallo-l"><span>        }</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> Advance time so both sleeps complete and both tasks become ready.</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">time</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">advance</span><span>(</span><span class="z-entity z-name z-namespace">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_millis</span><span>(</span><span class="z-constant z-numeric">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> Advance time so both sleeps complete and both tasks become ready.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">time</span><span class="z-keyword">::</span><span class="z-entity z-name">advance</span><span>(</span><span class="z-entity z-name">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name">from_millis</span><span>(</span><span class="z-constant">50</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> With the same seed, the select! macro will consistently pick the same</span></span>
-<span class="giallo-l"><span class="z-comment">        //</span><span class="z-comment"> branch if both are ready. Change the seed to see if the other branch gets picked.</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-namespace">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">select!</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> With the same seed, the select! macro will consistently pick the same</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> branch if both are ready. Change the seed to see if the other branch gets picked.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">select!</span><span> {</span></span>
 <span class="giallo-l"><span class="z-variable z-other">            res_a</span><span class="z-keyword"> =</span><span class="z-variable z-other"> task_a</span><span class="z-keyword"> =&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">                println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Select chose Task A, result: &#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> res_a</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Select chose Task A, result: &#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> res_a</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>            }</span></span>
 <span class="giallo-l"><span class="z-variable z-other">            res_b</span><span class="z-keyword"> =</span><span class="z-variable z-other"> task_b</span><span class="z-keyword"> =&gt;</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">                println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Select chose Task B, result: &#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> res_b</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Select chose Task B, result: &#39;</span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string">&#39;</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> res_b</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>            }</span></span>
 <span class="giallo-l"><span>        }</span></span>
 <span class="giallo-l"><span>    }</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name z-function"> main</span><span>(</span><span>)</span><span> {</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">    demo_deterministic_select</span><span>(</span><span>)</span><span>;</span></span>
-<span class="giallo-l"><span>}</span></span></code></pre><h2 id="mastering-time-paused-clock-and-auto-advancement">Mastering Time: Paused Clock and Auto-Advancement<a class="zola-anchor" href="#mastering-time-paused-clock-and-auto-advancement" aria-label="Anchor link for: mastering-time-paused-clock-and-auto-advancement">🔗</a></h2>
+<span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name"> main</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    demo_deterministic_select</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="mastering-time-paused-clock-and-auto-advancement">Mastering Time: Paused Clock and Auto-Advancement<a class="zola-anchor" href="#mastering-time-paused-clock-and-auto-advancement" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Testing time-dependent behavior (timeouts, retries, scheduled tasks) can be slow and flaky. Waiting for real seconds or minutes to pass during tests is inefficient. Tokio's time facilities can be <strong>paused</strong> and <strong>manually advanced</strong>, giving you precise control over the flow of time within your tests.</p>
 <p>When you initialize a runtime with <a rel="external" href="https://docs.rs/tokio/latest/tokio/runtime/struct.Builder.html#method.start_paused"><code>start_paused(true)</code></a>, the runtime's clock will not advance automatically based on wall-clock time. Instead, you use <code>tokio::time::advance(Duration)</code> to move time forward explicitly.</p>
 <p>What's particularly neat is Tokio's <strong>auto-advance</strong> feature when the runtime is paused and idle. This works because Tokio's runtime separates the <strong>executor</strong> (which polls your async code until it's blocked) from the <strong>reactor</strong> (which wakes tasks based on I/O or timer events). If all tasks are sleeping, the executor is idle. The reactor can then identify the next scheduled timer, allowing Tokio to automatically advance its clock to that point. This prevents tests from hanging indefinitely while still allowing for controlled time progression.</p>
 <p>Here's your example illustrating this:</p>
-<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name z-namespace"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name z-namespace">time</span><span class="z-keyword">::</span><span>{</span><span class="z-entity z-name z-type">Duration</span><span>,</span><span class="z-entity z-name z-type"> Instant</span><span>,</span><span> sleep</span><span>}</span><span>;</span></span>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">use</span><span class="z-entity z-name"> tokio</span><span class="z-keyword">::</span><span class="z-entity z-name">time</span><span class="z-keyword">::</span><span>{</span><span class="z-entity z-name">Duration</span><span>,</span><span class="z-entity z-name"> Instant</span><span>,</span><span> sleep</span><span>}</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-keyword">async</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-function"> auto_advance_kicks_in_when_idle_example</span><span>(</span><span>)</span><span> {</span></span>
-<span class="giallo-l"><span class="z-storage">    let</span><span class="z-variable z-other"> start</span><span class="z-keyword"> =</span><span class="z-entity z-name z-type"> Instant</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">now</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">async</span><span class="z-keyword"> fn</span><span class="z-entity z-name"> auto_advance_kicks_in_when_idle_example</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    let</span><span class="z-variable z-other"> start</span><span class="z-keyword"> =</span><span class="z-entity z-name"> Instant</span><span class="z-keyword">::</span><span class="z-entity z-name">now</span><span>(</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> Sleep for 5 seconds. Since the runtime is paused, this would normally hang.</span></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> However, if no other tasks are active, Tokio auto-advances time.</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">    sleep</span><span>(</span><span class="z-entity z-name z-namespace">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_secs</span><span>(</span><span class="z-constant z-numeric">5</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> Sleep for 5 seconds. Since the runtime is paused, this would normally hang.</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> However, if no other tasks are active, Tokio auto-advances time.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    sleep</span><span>(</span><span class="z-entity z-name">Duration</span><span class="z-keyword">::</span><span class="z-entity z-name">from_secs</span><span>(</span><span class="z-constant">5</span><span>)</span><span>)</span><span class="z-keyword">.</span><span class="z-keyword">await</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-storage">    let</span><span class="z-variable z-other"> elapsed</span><span class="z-keyword"> =</span><span class="z-variable z-other"> start</span><span class="z-keyword">.</span><span class="z-entity z-name z-function">elapsed</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    let</span><span class="z-variable z-other"> elapsed</span><span class="z-keyword"> =</span><span class="z-variable z-other"> start</span><span class="z-keyword">.</span><span class="z-entity z-name">elapsed</span><span>(</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-comment">    //</span><span class="z-comment"> This will be exactly 5 seconds (simulated time)</span></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">    assert_eq!</span><span>(</span><span class="z-variable z-other">elapsed</span><span>,</span><span class="z-entity z-name z-type"> Duration</span><span class="z-keyword">::</span><span class="z-entity z-name z-function">from_secs</span><span>(</span><span class="z-constant z-numeric">5</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    //</span><span class="z-comment"> This will be exactly 5 seconds (simulated time)</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    assert_eq!</span><span>(</span><span class="z-variable z-other">elapsed</span><span>,</span><span class="z-entity z-name"> Duration</span><span class="z-keyword">::</span><span class="z-entity z-name">from_secs</span><span>(</span><span class="z-constant">5</span><span>)</span><span>)</span><span>;</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span class="z-entity z-name z-function">    println!</span><span>(</span><span class="z-string">&quot;</span><span class="z-string">Elapsed (simulated): </span><span class="z-string">{</span><span class="z-string">:?</span><span class="z-string">}</span><span class="z-string">&quot;</span><span>,</span><span class="z-variable z-other"> elapsed</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    println!</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Elapsed (simulated): </span><span class="z-string">{</span><span class="z-string">:?</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable z-other"> elapsed</span><span>)</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>In this scenario, <code>sleep(Duration::from_secs(5)).await</code> doesn't cause your test to wait for 5 real seconds. Because the clock is paused and this <code>sleep</code> is the only pending timed event, Tokio advances its internal clock by 5 seconds, allowing the sleep to complete almost instantaneously in real time. This makes testing timeouts, scheduled events, and other time-sensitive logic fast and reliable.</p>
-<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">🔗</a></h2>
+<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Tokio offers more than just speed; it's a powerful toolkit. Features like current-thread runtimes for <code>!Send</code> tasks, seeded runtimes for deterministic tests, and a controllable clock for time-based logic help build robust and debuggable async Rust applications. These 'hidden gems' allow you to confidently handle complex concurrency and testing. So, explore Tokio's depth—the right tool for your challenge might be closer than you think.</p>
 <hr />
 <p>Feel free to reach out with any questions or to share your thoughts. You can find me on <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a>, <a rel="external" href="https://twitter.com/PierreZ">Twitter</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/simulation-driven-development/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">What if we embraced simulation-driven development?</span></a>
     <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/understanding-fdb-record-layer-continuations/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Bypassing FoundationDB&#x27;s Transaction Limits with Record Layer Continuations</span></a>
   </nav>
@@ -272,17 +274,17 @@
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 

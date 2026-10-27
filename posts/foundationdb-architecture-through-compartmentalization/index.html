@@ -23,6 +23,7 @@
   <link rel="stylesheet" id="syntax-dark" href="https://pierrezemb.fr/giallo-dark.css" disabled>
   <link rel="alternate" type="application/atom+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/atom.xml">
   <link rel="alternate" type="application/rss+xml" title="Pierre Zemb&#x27;s Blog" href="https://pierrezemb.fr/rss.xml">
+  
   <link rel="canonical" href="https://pierrezemb.fr/posts/foundationdb-architecture-through-compartmentalization/">
   <meta name="author" content="Pierre Zemb">
   <meta name="theme-color" content="#15324d">
@@ -57,7 +58,7 @@
   <link rel="manifest" href="https://pierrezemb.fr/site.webmanifest">
 
   
-<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">
+<link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">
 
 
   <script>
@@ -74,9 +75,9 @@
 </head>
 <body>
 <a class="skip-link" href="#main">skip to content</a><div class="sheet">
-  <div class="topnav">
+  <header class="topnav">
   <a class="logo" href="https://pierrezemb.fr">Pierre Zemb</a>
-  <nav>
+  <nav aria-label="main">
       <a href="https://pierrezemb.fr/">Home</a>
       <a href="https://pierrezemb.fr/posts/">Blog</a>
       <a href="https://pierrezemb.fr/tags/">Tags</a>
@@ -84,19 +85,16 @@
       <a href="https://pierrezemb.fr/podcasts/">Podcasts</a>
       <a href="https://pierrezemb.fr/contact/">Contact</a>
   </nav>
-  <div class="nav-search">
-    <input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts">
-    <div class="search-results" id="search-results"></div>
-  </div>
-  <button class="flip" id="flipbtn" type="button" aria-label="toggle color theme">⊕ dark</button>
-</div>
+  <div class="nav-search" role="search"><input type="search" id="search" placeholder="search…" autocomplete="off" aria-label="search posts" aria-controls="search-results" aria-expanded="false"><div class="search-results" id="search-results"></div><p id="search-status" class="sr-only" aria-live="polite"></p></div>
+  <button class="flip" id="flipbtn" type="button">⊕ dark</button>
+</header>
 
   <div class="console">
   <div class="log" aria-hidden="true">
     <div class="ln" id="console-cmd"><span class="sig">root@pierrezemb.fr</span>:<span class="path">~&#x2F;blog</span>$ <span id="read-cmd" data-target="posts&#x2F;foundationdb-architecture-through-compartmentalization">./read --quorum posts&#x2F;foundationdb-architecture-through-compartmentalization</span></div>
     <div class="ln out"><span id="console-out"><span class="ok">✓</span> quorum 2/3 · served by <span class="rc-node">node-0</span></span><span class="cursor"></span></div>
   </div>
-  <button class="readmode" id="readbtn" type="button" aria-label="switch read mode" aria-pressed="false" title="switch to single read (R=1)">read: quorum</button>
+  <button class="readmode" id="readbtn" type="button" title="switch to single read (R=1)">read: quorum</button>
   <div class="cluster-cell">
     <svg class="cluster" width="58" height="40" viewBox="0 0 58 40" aria-label="cluster of 3 replicas">
   <line class="link" x1="29" y1="8" x2="12" y2="32"/>
@@ -117,13 +115,13 @@
     <span class="sig">~</span> / <a href="https://pierrezemb.fr/posts/">blog</a> / foundationdb-architecture-through-compartmentalization
   </div>
 
-  <h2 class="title">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</h2>
+  <h1 class="title">Explaining FoundationDB&#x27;s Architecture Through Compartmentalization</h1>
   <div class="meta-row"><span class="m"><b>2026-08-13</b></span>
     <span class="m">read: <b>~6 min</b></span>
-    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/1cc5bec75ecbfe6ac4d9b5527facce8d40841d77/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">markdown</a></span>
+    <span class="m"><a href="https://raw.githubusercontent.com/PierreZ/pierrezemb.fr/851794a16825421cccd913c1771cea08e4710b5c/content/posts/2026/foundationdb-architecture-through-compartmentalization.md">markdown</a></span>
     <span class="m tags">tags: <a href="https://pierrezemb.fr/tags/distributed-systems/">#distributed-systems</a> <a href="https://pierrezemb.fr/tags/foundationdb/">#foundationdb</a> <a href="https://pierrezemb.fr/tags/consensus/">#consensus</a> <a href="https://pierrezemb.fr/tags/algorithms/">#algorithms</a></span>
   </div>
-  <nav class="toc">
+  <nav class="toc" aria-label="table of contents">
     <div class="h">index of sections</div>
     
 <ol>
@@ -144,13 +142,15 @@
   </nav>
 
   <div class="prose">
-    <h2 id="the-architecture-i-couldn-t-explain">The architecture I couldn't explain<a class="zola-anchor" href="#the-architecture-i-couldn-t-explain" aria-label="Anchor link for: the-architecture-i-couldn-t-explain">🔗</a></h2>
+    <h2 id="the-architecture-i-couldn-t-explain">The architecture I couldn't explain<a class="zola-anchor" href="#the-architecture-i-couldn-t-explain" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>One thing always puzzled me about FoundationDB: compared to many distributed databases, its architecture looks almost excessive: GRV proxies, commit proxies, resolvers, log servers, storage servers, and that's only the data plane. When I say that I operate FDB, people often ask, "Isn't that complicated? There are so many processes and roles." After years of operating FDB for <a rel="external" href="https://www.clever-cloud.com/materia/">Materia</a> at Clever Cloud, I understood what every component did, but I couldn't explain why the system had been split that way. Michael Whittaker's <a rel="external" href="https://mwhittaker.github.io/publications/compartmentalized_paxos.html"><strong>Scaling Replicated State Machines with Compartmentalization</strong></a> (VLDB 2021) finally gave me the vocabulary I was missing.</p>
 <p>Start with his talk, it explains the paper better than I could:</p>
 <div class="embed-video ">
   <iframe src="https:&#x2F;&#x2F;www.youtube-nocookie.com&#x2F;embed&#x2F;LWFml1LFIqc" title="Scaling Replicated State Machines with Compartmentalization" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
-<h2 id="a-different-way-to-look-at-distributed-systems">A different way to look at distributed systems<a class="zola-anchor" href="#a-different-way-to-look-at-distributed-systems" aria-label="Anchor link for: a-different-way-to-look-at-distributed-systems">🔗</a></h2>
+<h2 id="a-different-way-to-look-at-distributed-systems">A different way to look at distributed systems<a class="zola-anchor" href="#a-different-way-to-look-at-distributed-systems" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>When we learn distributed systems, we usually learn to partition data and replicate it. The paper asks a different question: <strong>which responsibilities are accidentally coupled inside the bottleneck?</strong></p>
 <p>It calls the answer <strong>compartmentalization</strong>: separate those responsibilities, then scale each one independently.</p>
 <p>The MultiPaxos leader is its canonical example, since it sequences commands into the log and handles communication for the whole protocol. For f = 1, each command gives the leader one client message, four messages exchanged with a quorum of two acceptors, and two messages to replicas, seven messages in total, so adding acceptors or replicas only gives it more nodes to talk to.</p>
@@ -184,7 +184,8 @@ sequenceDiagram
     Note over L: 2 messages touch leader
     Note over P: 7 messages touch proxy
 </div>
-<h2 id="how-i-read-systems-now">How I read systems now<a class="zola-anchor" href="#how-i-read-systems-now" aria-label="Anchor link for: how-i-read-systems-now">🔗</a></h2>
+<h2 id="how-i-read-systems-now">How I read systems now<a class="zola-anchor" href="#how-i-read-systems-now" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Since reading the paper, I read distributed systems through the same short list of questions.</p>
 <ul>
 <li><strong>How many RPCs does each component touch per request?</strong></li>
@@ -222,7 +223,8 @@ sequenceDiagram
 </div>
 <p>FoundationDB does not minimize the total number of round trips. It keeps the RPC count low at the serialized role. The Master sees batched version requests and live committed version reports, while GRV and commit proxies carry the client traffic. Commit proxies coordinate the fan-out to resolvers and TLogs.</p>
 <p>The remaining work is divided along its own boundaries. Resolvers partition conflict checking by key range, TLogs durably retain mutation streams for storage servers, and storage servers serve reads directly once clients locate the relevant ranges. The scalable responsibilities have their own pools, while the Master remains a singleton. FDB's process count comes from those separate scaling decisions.</p>
-<h2 id="every-split-has-a-cost">Every split has a cost<a class="zola-anchor" href="#every-split-has-a-cost" aria-label="Anchor link for: every-split-has-a-cost">🔗</a></h2>
+<h2 id="every-split-has-a-cost">Every split has a cost<a class="zola-anchor" href="#every-split-has-a-cost" aria-hidden="true" tabindex="-1">#</a>
+</h2>
 <p>Compartmentalization isn't free. The paper's 6x speedup used 6.66x the machines, a command crosses six network delays instead of four, and running more machines shortens the expected time to f failures. Those additional roles also create more RPC paths, upgrade boundaries, and interactions between roles during failures.</p>
 <div class="note">
   <span class="note-h">note</span>
@@ -234,25 +236,25 @@ sequenceDiagram
 <p>Feel free to reach out with any questions or to share your experiences with compartmentalization. You can find me on <a rel="external" href="https://twitter.com/PierreZ">Twitter</a>, <a rel="external" href="https://bsky.app/profile/pierrezemb.fr">Bluesky</a> or through my <a rel="external" href="https://pierrezemb.fr">website</a>.</p>
 
   </div>
-  <nav class="pn">
+  <nav class="pn" aria-label="previous and next posts">
     <a class="pn-item pn-prev" href="https://pierrezemb.fr/posts/why-apache-avro-needs-two-schemas/"><span class="pn-lbl">&larr; prev</span><span class="pn-ttl">Why Apache Avro Needs Two Schemas</span></a>
-    <span class="pn-item pn-empty"></span>
+    <a class="pn-item pn-next" href="https://pierrezemb.fr/posts/notes-about-cell-based-architecture/"><span class="pn-lbl">next &rarr;</span><span class="pn-ttl">Notes about cell-based architecture</span></a>
   </nav>
 </article>
 
   </main>
 
-  <div class="foot">
+  <footer class="foot">
   <div class="cell">
     <span class="label">revision history</span>
-    © 2026 Pierre Zemb · last rev. 2026-10-02
+    © 2026 Pierre Zemb · last rev. 2026-10-27
   </div>
   <div class="cell">
     <span class="label">contact</span>
     <div class="links"><a href="https://github.com/PierreZ" rel="me noopener" target="_blank">github</a><a href="https://x.com/PierreZ" rel="me noopener" target="_blank">twitter</a><a href="https://bsky.app/profile/pierrezemb.fr" rel="me noopener" target="_blank">bluesky</a><a href="https://www.linkedin.com/in/%F0%9F%91%A8%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-pierre-zemb-8004125b/" rel="me noopener" target="_blank">linkedin</a><a href="https://fosstodon.org/@PierreZ" rel="me noopener" target="_blank">mastodon</a><a href="https://pierrezemb.fr/rss.xml">rss</a>
     </div>
   </div>
-</div>
+</footer>
 
 </div>
 
